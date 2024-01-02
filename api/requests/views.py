@@ -15,7 +15,7 @@ class TransactionPerSession(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         if self.request.query_params.get('user'):
-            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user'),transaction_id__date_of_transaction=today).order_by('-id')
+            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).order_by('-id')
             return queryset
         else:
             queryset = TransactionStatus1.objects.all().order_by('-id')
