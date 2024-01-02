@@ -25,15 +25,15 @@
       <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
         <thead style="line-height:15px;">
           <th>
-            <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="280px" height="70px">
+            <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="60px">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-            <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="180px" height="120px">
+            <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="130px" height="120px">
           </th>  
         </thead>      
       </table>
       Transaction code: &nbsp;<u>{{data.tracking_number}}</u>
-      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE">
+      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 12px;">
         <tr>
           <td>Medicine</td>
           <td>Regular Price (each)</td>
@@ -60,11 +60,11 @@
         <tr>
           <td>*nothing follows*</td>
           <td colspan="4" style="text-align: right;">Grand Total</td>
-          <td style="border-bottom: 1px solid black">{{calculate.total_payment}}</td>
+          <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2}}</td>
         </tr>
       </table>
 
-      <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+      <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center; ">
           <tr style="font-weight:bold;text-align: left;">
             <td colspan="4">
               <label>Prepared by: </label>
@@ -87,7 +87,7 @@
           <tr style="font-size: 13px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-              <label>Allen Efren O. Hilado</label>
+              <label>{{data.swo.get_fullname|upper}}</label>
             </td>
             <td></td>
             <td colspan="3" width="130px">
@@ -120,15 +120,15 @@
         <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height:15px;">
             <th>
-              <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="280px" height="70px">
+              <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="60px">
             </th>
             <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-              <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="180px" height="120px">
+              <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="130px" height="120px">
             </th>  
           </thead>      
         </table>
         Transaction code: &nbsp;<u>{{data.tracking_number}}</u>
-        <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE">
+        <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 12px;">
           <tr>
             <td>Medicine</td>
             <td>Regular Price (each)</td>
@@ -155,7 +155,7 @@
           <tr>
             <td>*nothing follows*</td>
             <td colspan="4" style="text-align: right;">Grand Total</td>
-            <td style="border-bottom: 1px solid black">{{calculate.total_payment}}</td>
+            <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2}}</td>
           </tr>
         </table>
   
@@ -182,7 +182,7 @@
             <tr style="font-size: 13px;font-weight: bold;">
               <td></td>
               <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-                <label>Allen Efren O. Hilado</label>
+                <label>{{data.swo.get_fullname|upper}}</label>
               </td>
               <td></td>
               <td colspan="3" width="130px">

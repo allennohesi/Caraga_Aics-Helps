@@ -508,6 +508,7 @@
                                             <th class="text-center">PENDING ASSESSMENT</th>
                                             <th class="text-center">ONGOING ASSESSMENT</th>
                                             <th class="text-center">COMPLETE ASSESSMENT</th>
+                                            <th class="text-center">FOR CASE STUDY</th>
                                             <th class="text-center">ACTIVE</th>
                                         </thead>
                                         {% for row in active_swo %}
@@ -517,6 +518,7 @@
                                             <td class="text-center">{{row.get_total}}</td>
                                             <td class="text-center">{{row.get_ongoing}}</td>
                                             <td class="text-center">{{row.get_complete}}</td>
+                                            <td class="text-center">{{row.case_study}}</td>
                                             <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
                                             
                                         </tbody>
