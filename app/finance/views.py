@@ -41,6 +41,7 @@ def generate_serial_string(oldstring, prefix=None):
 									str("1").zfill(4)).strip()
 
 @login_required
+@groups_only('Super Administrator', 'Biller','Finance')
 def financial_transaction(request):
 	if request.method == "POST":
 		with transaction.atomic():
@@ -68,7 +69,7 @@ def financial_transaction(request):
 	return render(request,'financial/finance.html', context)
 
 @login_required
-@groups_only('Social Worker', 'Super Administrator')
+@groups_only('Super Administrator', 'Biller','Finance')
 def finance_assessment(request, pk):
 
 	data = Transaction.objects.filter(id=pk).first()

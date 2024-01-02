@@ -136,7 +136,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Super Administrator" %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-success">{% count_assessment_all %}</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
@@ -156,15 +156,26 @@
                                         </ul>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
+                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
-                                            <h6>Finance Transaction</h6>
+                                            <h6>Biller</h6>
+                                            <p>Modules for Billers</p>
+                                        </div>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'financial_transaction' %}"><i data-feather="download"></i><span>Billing</span></a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" or user|check_group_permission:"Super Administrator" %}
+                                    <li class="sidebar-main-title">
+                                        <div>
+                                            <h6>Finance Transactions</h6>
                                             <p>Modules for finance</p>
                                         </div>
                                     </li>
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'financial_transaction' %}"><i data-feather="cast"></i><span>Financial Transaction</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'fund_source' %}"><i data-feather="edit"></i><span>Fund Source</span></a>
                                     </li>
                                     {% endif %}
                                     <li class="sidebar-main-title">
@@ -174,7 +185,7 @@
                                         </div>
                                     </li>
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactions' %}"><i data-feather="cast"></i><span>Transactions</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactions' %}"><i data-feather="cast"></i><span>Signatories Transactions</span></a>
                                     </li>
                                     {% if user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
@@ -203,6 +214,7 @@
                                                     <li><a href="{% url 'sub_category' %}">Sub-Category</a></li>
                                                     <li><a href="{% url 'type_of_assistance' %}">Type of Assistance</a></li>
                                                     <li><a href="{% url 'signatories' %}">Signatories</a></li>
+                                                    <li><a href="{% url 'fund_source' %}">Fund source</a></li>
                                                 </ul>
                                             </li>
                                             <li><a href="javascript:void(0);" class="submenu-title">Location <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
