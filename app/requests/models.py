@@ -337,6 +337,11 @@ class SocialWorker_Status(models.Model):
         data = TransactionStatus1.objects.filter(Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6) | Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=3)).count()
         return data
 
+    @property
+    def case_study(self):
+        data = TransactionStatus1.objects.filter(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6,transaction_id__is_case_study=2).count()
+        return data
+
     class Meta:
         managed = False
         db_table = 'swo_status_tbl'
