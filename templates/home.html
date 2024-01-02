@@ -1,0 +1,216 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% load tags %}
+<style>
+#assessment-table {
+    text-transform: uppercase;
+    }
+
+#completed-table {
+    text-transform: uppercase;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Dashboard</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6">
+          <div class="card">
+              <div class="card-body" id="">
+                <canvas id="myChart2" style="width:100%"></canvas>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-6">
+          <div class="card">
+              <div class="card-body" id="">
+                  <canvas id="myChart1" style="width:100%"></canvas>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body" id="">
+              <canvas id="counttransaction" style="width:100%"></canvas>
+            </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+          <div class="card">
+              <div class="card-body" id="">
+                  <canvas id="countstaff" style="width:100%"></canvas>
+              </div>
+          </div>
+      </div>
+      <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body" id="">
+              <div class="d-flex flex-row-reverse bd-highlight">
+                <div class="p-2 bd-highlight"><a href="{% url 'print_ProvidedBYSWO' %}" target="_blank">Print</a></div>
+              </div>
+              <div class="table table-responsive">
+                <table class="table table-bordered table-hover" id="">
+                    <thead>
+                        <th>Social Workers</th>
+                        <th class="text-center">Provided with Hotmeals</th>
+                        <th class="text-center">Provided with Foodpack</th>
+                        <th class="text-center">Provided with Hygienekit</th>
+                        <th class="text-center">ACTIVE</th>
+                    </thead>
+                    {% for row in countingHotmeal%}
+                    <tbody>
+                        
+                        <td>{{row.user.get_fullname|upper}}</td>
+                        <td class="text-center">{{row.count_hmeals}}</td>
+                        <td class="text-center">{{row.food_pack}}</td>
+                        <td class="text-center">{{row.hygienekit}}</td>
+                        <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
+                        
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script>
+  var xValues = ["ONHOLD TRANSACTION", "CANCELLED TRANSACTION", "COMPLETE TRANSACTION", "PENDING TRANSACTION", "ONGOING TRANSACTIONS"];
+  var yValues = [{{hold}},{{cancelled}}, {{completed}}, {{pending}}, {{ongoing}}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+  new Chart("counttransaction", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Client Transaction History"
+      }
+    }
+  });
+</script>
+<script>
+  var xValues = ["Service Provider", "Social Worker", "Super Administrator", "Verifier"];
+  var yValues = [{{sp}},{{swo}}, {{am}}, {{vr}}];
+  var barColors = ["#AED8E6", "#BED1DF","#CECBD8","#DFC4D1","#EFBECA"];
+  
+  new Chart("countstaff", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "User Summary Report"
+      }
+    }
+  });
+</script>
+<script>
+var xValues = ["Active", "Inactive"];
+var yValues = [{{active_emp}},{{inactive_emp}}];
+var barColors = [
+  "#F6A39D",
+  "#F6E2C5",
+];
+
+new Chart("myChart1", {
+  type: "doughnut",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    title: {
+      display: true,
+      text: "Active and Inactive Users"
+    }
+  }
+});  
+</script>
+<script>
+var xValues = ["Financial Assistance", "Material Assistance", "Psychosocial"];
+var yValues = [{{financial}}, {{material}}, {{psychological}}];
+var barColors = [
+  "#B1B2FF",
+  "#AAC4FF",
+  "#D2DAFF",
+];
+
+new Chart("myChart2", {
+  type: "doughnut",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues,
+    }]
+  },
+  options: {
+    title: {
+      display: true,
+      text: "Assistance Summary"
+    }
+  }
+});  
+</script>
+
+<script>
+
+
+function drawChart() {
+var data = google.visualization.arrayToDataTable([
+  ['Contry', 'Mhl'],
+  ['Italy',55],
+  ['France',49],
+  ['Spain',44],
+  ['USA',24],
+  ['Argentina',15]
+]);
+
+var options = {
+  title:'World Wide Wine Production'
+};
+
+var chart = new google.visualization.BarChart(document.getElementById('myChart'));
+  chart.draw(data, options);
+}
+</script>
+{% endblock %}

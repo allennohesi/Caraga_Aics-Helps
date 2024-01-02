@@ -1,0 +1,875 @@
+{% load tags %}
+{% load static %}
+<div class="row" id="client_content">
+    <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i>Back</a>
+    <hr>
+    <div class="col-sm-12">
+        <div class="text-center">
+          <div class="cardheader"></div>
+          <div class="user-image">
+            {% if pict %}
+            <img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150">
+            {% else %}
+                {% if transaction.client.sex.name == "Male" %}
+                <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+                {% elif transaction.client.sex.name == "Female" %}
+                <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+                {% endif %}
+            {% endif %}
+          </div>
+          <div class="info">
+            <div class="row">
+                <div class="col-sm-6 col-lg-4 order-sm-1 order-xl-0">
+                    <div class="row">
+                    <div class="col-md-6">
+                        <div class="ttl-info text-start">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ttl-info text-start">
+                        <h6><i class="fa fa-calendar"></i> Tracking Number</h6><span class="badge badge-primary">{{ transaction.tracking_number|upper }}</span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+              <div class="col-sm-12 col-lg-4 order-sm-0 order-xl-1">
+                <div class="user-designation">
+                    <div class="title">{{ transaction.client.get_client_fullname_formatted|upper }}</div>
+                    <div class="desc">Representative</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4 order-sm-2 order-xl-2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ttl-info text-start">
+                            <h6><i class="fa fa-phone"></i> Contact Number</h6><span>{{ transaction.client.contact_number|upper }}</span>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+    </div>
+    <br><br><br><br>
+    <ul class="nav nav-pills" id="tabUL" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link" id="pills-information" data-bs-toggle="pill" href="#information" role="tab">
+                <i class="fa fa-file-o"></i> Information
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-assessment" data-bs-toggle="pill" href="#assessment" role="tab">
+                <i class="fa fa-question"></i> Assessment
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-timeline" data-bs-toggle="pill" href="#for-action" role="tab">
+                <i class="fa fa-calendar-o"></i> Tracking
+            </a>
+        </li>
+        &nbsp;&nbsp;
+        {% comment %} {% if Problem_Assessment.sw_assessment != None %}
+        <li class="nav-item">
+            <div class="btn-group">
+                <a type="button" style="align-right:400px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Print
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
+                  {% if transaction.service_provider %}<li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li>{% endif %}
+                  <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Elibility(Guarantee Letter)</a></li>
+                </ul>
+              </div>
+        </li>
+        {% endif %} {% endcomment %}
+        {% if transaction.fund_source_id %}
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalProvided" data-role='add_provided' data-id="{{ transaction.id }}" role="tab">
+                <i class="fa fa-id-card-o"></i> Provided to client
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="tab-content" id="pills-icontabContent">
+        <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel" readonly>
+            <small>Client Identifying Information</small>
+            <br><br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" class="form-control" value="{{ transaction.client.get_client_fullname|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Birthdate</label>
+                        <input type="date" class="form-control" id="birthdate" value="{{ transaction.client.birthdate|date:'Y-m-d' }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="text" class="form-control" id="age" value="{{ transaction.client.get_age }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Sex</label>
+                        <input type="text" class="form-control" id="sex" value="{{ transaction.client.sex.name|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Relationship to Beneficiary</label>
+                        <input type="text" class="form-control" value="{{ transaction.relation.name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" class="form-control" id="contact_number" value="{{ transaction.client.contact_number }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.civil_status.name|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Region <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Province <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.prov_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>City <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.city_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Barangay <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.brgy_name|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>House / Block / Lot No.</label>
+                        <input type="text" class="form-control" id="house_no" value="{{ transaction.client.house_no|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Street</label>
+                        <input type="text" class="form-control" id="street" value="{{ transaction.client.street|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Subdivision / Village</label>
+                        <input type="text" class="form-control" id="village" value="{{ transaction.client.village|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>ID Presented</label>
+                        <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.presented %}{{transaction.client.presented.presented}}{% else %}NO{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>4Ps ID Number</label>
+                        <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.presented_id_no %}{{ transaction.client.presented_id_no }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>4Ps Member</label>
+                        <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.is_4ps %}YES{% else %}NO{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>4Ps ID Number</label>
+                        <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.number_4ps_id_number %}{{ transaction.client.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Indigenous People</label>
+                        <input type="text" class="form-control" id="indi" value="{% if transaction.client.is_indi %}YES{% else %}NO{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Tribe</label>
+                        <input type="text" class="form-control" id="tribe" value="{% if transaction.client.tribu %}{{ transaction.client.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            {% if transaction.client_id != transaction.bene_id %}
+            <small>Beneficiary Identifying Information</small>
+            <br><br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Beneficiary Name</label>
+                        <input type="text" class="form-control" value="{{ transaction.bene.get_client_fullname|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Birthdate</label>
+                        <input type="date" class="form-control" id="bene_birthdate" value="{{ transaction.bene.birthdate|date:'Y-m-d' }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="text" class="form-control" id="bene_age" value="{{ transaction.bene.get_age }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Sex</label>
+                        <input type="text" class="form-control" id="bene_sex" value="{{ transaction.bene.sex.name|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" class="form-control" id="bene_contact_number" value="{{ transaction.bene.contact_number }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <input type="text" class="form-control" id="bene_civil_status" value="{{ transaction.bene.civil_status.name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Indigenous People</label>
+                        <input type="text" class="form-control" id="bene_indi" value="{% if transaction.bene.is_indi %}YES{% else %}NO{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Tribe</label>
+                        <input type="text" class="form-control" id="bene_tribe" value="{% if transaction.bene.tribu.name %}{{ transaction.bene.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Region <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Province <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.prov_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>City <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.city_name|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Barangay <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.brgy_name|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>House / Block / Lot No.</label>
+                        <input type="text" class="form-control" id="bene_house_no" value="{{ transaction.bene.house_no|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Street</label>
+                        <input type="text" class="form-control" id="bene_street" value="{{ transaction.bene.street|upper }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Subdivision / Village</label>
+                        <input type="text" class="form-control" id="bene_village" value="{{ transaction.bene.village|upper }}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>4Ps Member</label>
+                        <input type="text" class="form-control" id="bene_is_4psmember" value="{% if transaction.bene.is_4ps %}YES{% else %}NO{% endif %}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>4Ps ID Number</label>
+                        <input type="text" class="form-control" id="bene_4ps_id_number" value="{% if transaction.bene.number_4ps_id_number %}{{ transaction.bene.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <small>Beneficiary Family Composistion</small>
+            <br><br>
+            {% else %}
+            <small>Client and Benefiary are the same</small>
+            {% endif %}
+            <div class="row mb-3">
+                <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="family_composistion_table">
+                    <thead>
+                        <th>Full Name</th>
+                        <th class="text-center">Sex</th>
+                        <th class="text-center">Birthdate</th>
+                        <th class="text-center">Relation</th>
+                        <th class="text-center">Age</th>
+                        <th class="text-center">Occupation</th>
+                        <th class="text-center">Salary per month</th>
+                    </thead>
+                    <tbody>
+                        {% if family_composistion %}
+                            {% for row in family_composistion %}
+                             <tr>
+                                <td>{{ row.get_family_fullname_formatted }}</td>
+                                <td class="text-center">{{ row.sex.name }}</td>
+                                <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td>
+                                <td class="text-center">{{ row.relation.name }}</td>
+                                <td class="text-center">{{ row.get_age }}</td>
+                                <td class="text-center">{{ row.occupation.occupation_name }}</td>
+                                <td class="text-center">{{ row.salary }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <td colspan="5" class="text-center">No data available.</td>
+                        {% endif %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade m-t-30" id="assessment" role="tabpanel">
+            <form id="submitAssessmentForm">
+                <input type="text" value="{{transaction.id}}" name="transaction_id" hidden>
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Priority Line <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="priority_name" required>
+                                {% for row in PriorityLine %}
+                                {% if row.id == transaction.priority_id %}
+                                <option value="{{ row.id }}" selected>{{ row.priority_name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.priority_name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Case Study <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="case_study" required>
+                                <option></option>
+                                {% if transaction.is_case_study == "1" %}
+                                <option value="1" selected>NO</option>
+                                <option value="2">YES</option>
+                                {% else %}
+                                <option value="1">NO</option>
+                                <option value="2"selected>YES</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Client's Category</label>
+                            <select class="form-control select" name="client_category" required>
+                                {% for row in category %}
+                                {% if row.id == transaction.client_category_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Sub-Category</label>
+                            <select class="form-control select" name="client_subcategory" required>
+                                {% for row in sub_category %}
+                                {% if row.id == transaction.client_sub_category_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Beneficiary's Category</label>
+                            <select class="form-control select" name="beneficiary_category" required>
+                                {% for row in category %}
+                                {% if row.id == transaction.bene_category_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Sub-Category</label>
+                            <select class="form-control select" name="bene_subcategory" required>
+                                {% for row in sub_category %}
+                                {% if row.id == transaction.bene_sub_category_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group">
+                        <label>Purpose</label>
+                        <textarea class="form-control" name="" rows="6" cols="40" readonly> {% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group">
+                        <label>Social Worker's Assessment</label>
+                        <textarea class="form-control" name="sw_asessment" rows="10" cols="40" required>{% if Problem_Assessment.sw_assessment == None %}{% else %}{{ Problem_Assessment.sw_assessment|upper }}{% endif %}</textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Provided with</label><br>
+                            &nbsp; <input class="form-check-input" id="gl" name="hot_meals" value="1" type="checkbox" {% if transaction.provided_hotmeal %} checked {% else %} {% endif %}> HOT MEALS
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="food_packs" value="1" type="checkbox" {% if transaction.provided_foodpack %} checked {% else %} {% endif %}> FOOD PACKS
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="pcv" name="hygiene_kit" value="1" type="checkbox" {% if transaction.provided_hygienekit %} checked {% else %} {% endif %}> HYGIENE KIT
+                        </div>
+                    </div>
+                </div>
+                <small>Recommended Services and Assistance</small>
+                <hr>
+                <br>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            &nbsp; <input class="form-check-input" id="gl" name="guarantee_letter" value="1" type="checkbox" {% if transaction.is_gl == 1 %} checked {% else %} {% endif %}> Guarantee Letter
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="cash_voucher" value="1" type="checkbox" {% if transaction.is_cv == 1 %} checked {% else %} {% endif %}> Cash Voucher
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="pcv" name="petty_cash" value="1" type="checkbox" {% if transaction.is_pcv == 1 %} checked {% else %} {% endif %}> Petty Cash Voucher
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_cash" value="1" type="checkbox" {% if transaction.is_ce_cash %} checked {% endif %}> CE Cash
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_gl" value="1" type="checkbox" {% if transaction.is_ce_gl %} checked {% endif %}> CE Guaratantee Letter
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Assistance Type <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="assistance_type" id="assistance_type" required>
+                                <option value="">None</option>
+                                {% for row in assistance_type %}
+                                {% if row.id == transaction.lib_type_of_assistance_id %}
+                                <option value="{{ row.id }}" selected>{{ row.type_name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.type_name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Assistance Category <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="assistance_category" id="assistance_category" required>
+                                {% for row in TypeOfAssistance %}
+                                {% if row.id == transaction.lib_assistance_category_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Sub Type of Assistances (Optional)</label>
+                            <select class="form-control select" name="sub_type_of_assistance" id="sub_type_of_assistance">
+                                {% comment %} {% for row in SubModeofAssistance %}
+                                {% if row.id == transaction.lib_sub_assistance_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %} {% endcomment %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Fund Source <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="fund_source" id="fund_source" required>
+                                <option></option>
+                                {% for row in fund_source %}
+                                {% if row.id == transaction.fund_source_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                {% comment %} <button type="submit" class="btn btn-primary btn-lg">{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button> {% endcomment %}
+            </form>
+        </div>
+        <div class="tab-pane fade m-t-30" id="for-action" role="tabpanel">
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <p class="text-center">Timeline</p>
+                    <section style="background-color: #F0F2F5;">
+                        <div class="container py-5">
+                          <div class="main-timeline">
+                            {% if transaction_status.is_verified %}
+                            <div class="timeline left">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                    <h3>Verifier Side Information</h3>
+                                    <p class="mb-0">Date Start: {{transaction_status.verified_time_start}} Date End: {{transaction_status.verified_time_end}}.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if transaction_status.is_swo %}
+                            <div class="timeline right">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                    <h3>Social Worker Side Information</h3>
+                                    <p class="mb-0">Time Start: {{transaction_status.swo_time_start}} Time End: {{transaction_status.swo_time_end}}.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if transaction_status.is_verified == 1 and transaction_status.is_swo == 1 %}
+                            <div class="timeline left">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                        <h3>Transaction Ended</h3>
+                                        <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} and Transaction End: {{transaction_status.swo_time_end}}.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProvidedLabel">Provided data to client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="load_data">
+                </div>
+              </div>
+            </div>
+        </div>
+        {% if transaction_status.swo_time_start == null %}
+        <div class="modal fade" id="check" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form id="startTransaction">
+                    {% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h6 class="modal-title" id="staticBackdropLabel">Start Transaction in this <br> Tracking Number: <small style="color:red;">{{ transaction.tracking_number|upper }}</small></h6>
+                            <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" value="{{ transaction.id }}" name="start_id" hidden>
+                            <div class="form-group">
+                                <div class="row mb-3">
+                                    <div class="form-group">
+                                        <label>Client for this Assessment:</label>
+                                        <input type="text" class="form-control" value="{{ transaction.client.get_client_fullname|upper }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Benefiary for this Assessment:</label>
+                                        <input type="text" class="form-control" value="{{ transaction.bene.get_client_fullname|upper }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Encoded By:</label>
+                                        <input type="text" class="form-control" value="{{ transaction.client.registered_by.get_client_fullname|upper }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Assigned Social Worker:</label>
+                                        <input type="text" class="form-control" value="{{ transaction.swo.get_client_fullname|upper }}" readonly>
+                                    </div>
+                                </div>
+                                {% comment %} <label>Start Date - Time</label>
+                                <input type="datetime-local" class="form-control" id="start_time" name="start_time" required> {% endcomment %}
+                            </div>
+                        </div>
+                        <div class="modal-footer" align="left">
+                            <button type="submit" class="btn btn-primary">Start Transaction</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            {% if transaction_status.status == 7 %}
+
+            <div class="modal fade" id="check" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form id="startTransaction">
+                        {% csrf_token %}
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h6 class="modal-title" id="staticBackdropLabel">Start Transaction in this <br> Tracking Number: <small style="color:red;">{{ transaction.tracking_number|upper }}</small></h6>
+                                <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" value="{{ transaction.id }}" name="start_id" hidden>
+                                <div class="form-group">
+                                    <div class="row mb-3">
+                                        <div class="form-group">
+                                            <label>Client for this Assessment:</label>
+                                            <input type="text" class="form-control" value="{{ transaction.client.get_client_fullname|upper }}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Benefiary for this Assessment:</label>
+                                            <input type="text" class="form-control" value="{{ transaction.bene.get_client_fullname|upper }}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Encoded By:</label>
+                                            <input type="text" class="form-control" value="{{ transaction.client.registered_by.get_client_fullname|upper }}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Assigned Social Worker:</label>
+                                            <input type="text" class="form-control" value="{{ transaction.swo.get_client_fullname|upper }}" readonly>
+                                        </div>
+                                    </div>
+                                    {% comment %} <label>Start Date - Time</label>
+                                    <input type="datetime-local" class="form-control" id="start_time" name="start_time" required> {% endcomment %}
+                                </div>
+                            </div>
+                            <div class="modal-footer" align="left">
+                                <button type="submit" class="btn btn-primary">Start Transaction</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        {% endif %}
+    </div>
+</div>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        {% if transaction_status.swo_time_start == null %}
+        $("#check").modal('show');
+        {% else %}
+            {% if transaction_status.status == 7 %}
+            $("#check").modal('show');
+            {% endif%}
+        {% endif %}
+
+        var $option = $("<option selected></option>").val('{{ transaction.service_provider_id }}').text('{{ transaction.service_provider.name }}');
+        $('#service_provider').append($option).trigger('change');
+
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select'
+        });
+        $('#back, #close_modal').on('click', function(){
+            window.location.href = "{% url 'transactions' %}"
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
+
+        $('.user').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_user' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#submitAssessmentForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to update this new client / beneficiary?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'save_assessment' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#startTransaction').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You will Start your Transaction Now",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'StartTime' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $("#check").modal('hide');
+                                            $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $(document).on('click','a[data-role=add_provided]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
+        });
+    });
+</script>
+{% endblock %}

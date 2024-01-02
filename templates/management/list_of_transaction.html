@@ -1,0 +1,62 @@
+<div class="default-according" id="accordionclose">
+    <div class="card">
+        <div class="collapse show" id="transaction_content" data-bs-parent="#accordionclose">
+            <div class="card-body">
+                <div class="ribbon ribbon-clip ribbon-primary">List of Transaction</div>
+                <br><br>
+                <table class="table table-bordered w-100" id="list_of_transaction">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Tracking Number</th>
+                            <th>Beneficiary Name</th>
+                            <th>Client Name</th>
+                            <th class="text-center">Date of Transaction</th>
+                            <th class="text-end">Status</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#list_of_transaction').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 4, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/management/transaction/list/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>Details</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'tracking_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'bene.first_name, bene.last_name', 'className': 'text-start', 'sortable': false },
+                {'data': 'client', 'name': 'client.first_name, client.last_name', 'className': 'text-start', 'sortable': false },
+                {'data': 'date_of_transaction', 'className': 'text-center' },
+                {'data': 'status', 'className': 'text-end', 'sortable': false, 'searchable': false },
+            ]
+        });
+
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/management/transaction/view/' + id);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+import os
+from django import template
+
+from app.requests.models import TransactionServiceAssistance, Mail, TransactionStatus1, Transaction
+from app.models import AuthUser, AuthUserGroups
+
+register = template.Library()
+
+
+@register.filter
+def check_group_permission(user, group_name):
+    if user.groups.filter(name=group_name).exists():
+        return True
+    return False
+
+
+@register.filter
+def filename(value):
+    return os.path.basename(value.file.name)
+
+
+@register.simple_tag
+def get_user_info(user_id):
+    return AuthUser.objects.filter(id=user_id).first().get_fullname
+
+
+@register.simple_tag
+def get_user_role(user_id):
+    return AuthUserGroups.objects.filter(user_id=user_id).first().group.name
+
+
+
+@register.simple_tag
+def get_transaction_service_assistance(transaction_id, sa_id):
+    return TransactionServiceAssistance.objects.filter(transaction_id=transaction_id, service_assistance_id=sa_id).first()
+
+
+
+
+@register.simple_tag
+def get_count_mail():
+    return TransactionStatus1.objects.filter(is_swo=None).count()
+
+
+@register.simple_tag
+def count_pending():
+    # verifier = TransactionStatus1.objects.filter(is_verified=1).count()
+    # assessment = TransactionStatus1.objects.filter(is_swo=1).count()
+    # return abs(verifier - assessment)
+    return TransactionStatus1.objects.filter(is_verified=1).count()
+
+@register.simple_tag
+def count_assessment_all():
+    # print(user_id)
+    # for_interview = TransactionStatus.objects.filter(user_id=user_id, status='For Interview').count()
+    # print(for_interview)
+    return TransactionStatus1.objects.filter(is_swo=None).count()
+    # data = TransactionStatus.objects.filter(user_id=user_id).count().first()
+    # print(data)
+
+@register.simple_tag
+def count_ongoing():
+    return TransactionStatus1.objects.filter(status=2).count()
+

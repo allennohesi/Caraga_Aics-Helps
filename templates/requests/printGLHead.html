@@ -1,0 +1,326 @@
+{%  load static %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guarantee Letter Head</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+  <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <style>
+    @page{
+      size: legal portrait;
+
+    }
+
+  </style>
+</head>
+<body class="legal portrait">
+     
+  <section class="sheet page">
+    <div class="container-fluid" style="font-family:Arial, sans-serif;"> 
+      <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
+        <thead style="line-height:15px;">
+          <th>
+            <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="250px" height="60px">
+          </th>
+          <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
+            <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
+            <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
+            <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
+            <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
+          </th>        
+        </thead>          
+      </table>
+      <!-- Letter Head -->
+      <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:20px;border-top-color: black;border-color: white;text-align: center;">
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2" style="text-align: right;font-weight: bold;">
+            GL No.
+          </td>
+          <td width="160px"  style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.tracking_number}}</label>            
+          </td>
+        </tr>
+        <tr>
+          <td width="10px" style="text-align:left;font-size: 15px;">
+            <label>Date</label>
+          </td>
+          <td width="150px" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.date_entried|date:"M. d, Y"}}</label>
+          </td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2" ></td>
+          <td colspan="2"></td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:10px;border-top-color: black;border-color: white;text-align: center;">
+        <tr>
+          <td width="300px" style="text-align:left;">
+            <label style="font-weight: bold;">Addressee: <u>{{data.service_provider.name}}</u></label><br>
+            <label>Position: N/a</label><br>
+            <label>Address: N/a</label><br>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <!-- End of Letter Head -->
+      <!-- Letter Body -->
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:10px;border-top-color: black;border-color: white;text-align: center;">
+        <tr>
+          <td width="150px" style="text-align:left;font-size: 15px;">
+            <label>Dear Ma'am/Sir,</label>
+          </td>
+          <td width="150px;">
+            <label></label>
+          </td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2" ></td>
+          <td colspan="2"></td>
+        </tr>        
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:10px;border-top-color: black;border-color: white;text-align: Center;">
+        <tr>
+          <td width="800px" style="text-align: left;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>This has reference to the request for the</label>
+          </td>
+          <td width="400px" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.lib_type_of_assistance.type_name|upper}}</label>
+          </td>
+          <td width="560px" style="text-align: left;">
+            <label>assistance of herein client</label>
+          </td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-10px;border-top-color: black;border-color: white;text-align: Center;font-weight: bold;">
+        <tr>
+          <td width="150px" style="border-bottom: 1px solid black;">
+            <label>{{data.client.get_client_fullname}}</label>
+          </td>
+          <td width="100px" >
+            <label>for his/her</label>
+          </td>
+          <td width="180px" style="border-bottom: 1px solid black;">
+            <label>{{data.relation.name|upper}}</label>
+          </td>
+          <td width="20px">
+            <label>,</label>
+          </td>
+          <td width="300px" style="border-bottom: 1px solid black;">
+            <label>{{data.bene.get_client_fullname}}</label>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:30px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td>
+            <label>The Department of Social Welfare and Development has assessed and validated the said request for</label><br>
+            <label>assistance through the Crisis Intervention Division. Thus, the Department is using this letter to guarantee the</label>
+          </td>
+        </tr>        
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td width="260px">
+            <label>payment of the bill in the amount of</label>
+          </td>
+          <td style="border-bottom: 1px solid black;text-align: center;font-weight:bold;">
+            <label><span id="numtoword">waw</span></label>
+          </td>
+          <td width="20px">
+            <label>Php</label>
+          </td>
+          <td width="150px" style="border-bottom: 1px solid black;text-align: center;font-weight: bold;">
+            {{calculate.total_payment}}
+          </td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:30px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td width="560px">
+            <label>To facilitate the payment, please submit to the Crisis Intervention Division through</label>
+          </td>
+          <td width="200px" style="border-bottom: 1px solid black;text-align: center;line-height: 15px;font-weight: bold;">Guarantee Letter</td>          
+        </tr>
+        <tr>
+          <td colspan="2">
+            <label>the following documents for the preparation of Disbursement Voucher with one week after service has been </label><br>
+            <label>completed.</label>
+          </td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-20px;border-top-color: black;border-color: white;text-align: center;">
+        <tr>
+          <td>
+            <label>Ø Guarantee Letter (GL) from the DSWD with your company's "received" stamp</label><br>
+            <label>Ø Statement of Accounts (SOA) or Billing Statement addressed to DSWD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td>
+            <label>Please be informed that said payment will be directly deposited to your company's bank acount. Should</label>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td width="130px">
+            <label>there be any query, you may call us at </label>
+          </td>
+          <td width="150px" style="border-bottom: 1px solid black;">
+            <b>342-5619 loc. 241</b>
+          </td>
+          <td width="80px"></td>
+        </tr>
+      </table>
+      <!-- End of Letter Body -->
+      <!-- Letter Footer -->
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-10px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td width="200px">
+            <label>For your consideration.</label><br><br>
+            <label>Thank you</label><br><br>
+            <label>Very truly yours,</label><br><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid black;">            
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td width="280px">
+            <label><b><u>{{data.signatories.get_fullname|upper}}</b></u></label><br>
+            <label>Approving Authority</label><br>
+            {% comment %} <label>Position: CIS HEAD</label><br>
+            <label>Office: CRISIS INTERVENTION SECTION</label><br> {% endcomment %}
+          </td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:10px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td width="85px">
+            <label>Valid until</label>
+          </td>
+          <td width="150px" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{validity}}</label>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:-20px;border-top-color: black;border-color: white;text-align: left;">
+        <tr>
+          <td>
+            <label>*validity period includes the time of receipt of the guarantee letter by the service provider</label>
+          </td>
+        </tr>
+      </table>
+
+
+
+
+
+
+      
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:20px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;border-bottom: 1px solid black;">
+            <td colspan="4"></td>
+            <td colspan="4">
+              <label>Page 1 of 1</label>
+            </td>
+            <td colspan="4">
+            </td>
+          </tr>          
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-25px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;font-weight: bold;">
+            <td colspan="4"></td>
+            <td  colspan="4">
+              <img height="70px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
+              <label>DSWD Central Office, IBP Road, Batasan Pambansa Complex, Constitution Hills, Quezon City, Philippines 112  </label><br><label>Website: http://www.dswd.gov.ph  Email: ciu.co@dswd.gov.ph   Tel Nos.: 8962-2813 or 8931-8100 local 509,510  Telefax: (632) 931-8191</label>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+<script>
+  // System for American Numbering 
+  var th_val = ['', 'thousand', 'million', 'billion', 'trillion'];
+  // System for uncomment this line for Number of English 
+  // var th_val = ['','thousand','million', 'milliard','billion'];
+   
+  var dg_val = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  var tn_val = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  var tw_val = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+  function toWordsconver(s) {
+    s = s.toString();
+      s = s.replace(/[\, ]/g, '');
+      if (s != parseFloat(s))
+          return 'not a number ';
+      var x_val = s.indexOf('.');
+      if (x_val == -1)
+          x_val = s.length;
+      if (x_val > 15)
+          return 'too big';
+      var n_val = s.split('');
+      var str_val = '';
+      var sk_val = 0;
+      for (var i = 0; i < x_val; i++) {
+          if ((x_val - i) % 3 == 2) {
+              if (n_val[i] == '1') {
+                  str_val += tn_val[Number(n_val[i + 1])] + ' ';
+                  i++;
+                  sk_val = 1;
+              } else if (n_val[i] != 0) {
+                  str_val += tw_val[n_val[i] - 2] + ' ';
+                  sk_val = 1;
+              }
+          } else if (n_val[i] != 0) {
+              str_val += dg_val[n_val[i]] + ' ';
+              if ((x_val - i) % 3 == 0)
+                  str_val += 'hundred ';
+              sk_val = 1;
+          }
+          if ((x_val - i) % 3 == 1) {
+              if (sk_val)
+                  str_val += th_val[(x_val - i - 1) / 3] + ' ';
+              sk_val = 0;
+          }
+      }
+      if (x_val != s.length) {
+          var y_val = s.length;
+          str_val += 'point ';
+          for (var i = x_val + 1; i < y_val; i++)
+              str_val += dg_val[n_val[i]] + ' ';
+      }
+      return str_val.replace(/\s+/g, ' ');
+  }
+  
+  var number = {{calculate.total_payment}}
+  var numtoword = toWordsconver(number) + "PESOS"
+  document.getElementById("numtoword").innerHTML = numtoword.toUpperCase();
+  document.getElementById("numtoword2").innerHTML = numtoword.toUpperCase();
+  
+  </script>
+</html>

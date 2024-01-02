@@ -1,0 +1,137 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Client / Beneficiary</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Client / Beneficiary</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body" id="client_content">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm" id="client-beneficiary-list">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID Number</th>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Full name</th>
+                                    <th>Sex</th>
+                                    <th class="text-center">Contact Number</th>
+                                    <th class="text-center">Birthdate</th>
+                                    <th class="text-center">Address</th>
+                                    <th class="text-end">Date of Registration</th>
+                                    <th class="text-end">View Transaction</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalProvidedLabel">Tracking of Transaction Client/Benefiary</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="load_data">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#client-beneficiary-list').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 12, 25, 50, 100 ],
+            'order': [[ 1, 'asc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/client-beneficiary/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                    
+                },
+                {'data': 'unique_id_number',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='details' data-title='"+ data + "'>"+ data +"</a>"
+                    },
+                    'sortable': false
+                },
+                {'data': 'last_name'  },
+                {'data': 'first_name' },
+                {'data': 'middle_name' },
+                {'data': 'client_bene_fullname' },
+                {'data': 'sex', 'name':'sex.name' },
+                {'data': 'contact_number',
+                    'render': function(data, type, row, meta) {
+                        return "+63" + data
+                    },
+                    'className': 'text-center',
+                    'sortable': false
+                },
+                {'data': 'birthdate', 'className': 'text-center', 'sortable': false  },
+                {'data': 'address', 'className': 'text-center', 'sortable': false, 'searchable': false},
+                {'data': 'date_of_registration',
+                    'className': 'text-end',
+                    'sortable': false
+                },
+                {'data': 'id', 'className': 'text-center', 
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='view_transactions' data-id="+ row['id'] + ">View Transaction</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+            ]
+
+        });
+        $(document).on('click','a[data-role=view_transactions]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            console.log(id);
+            $('#empid').val(id)
+            $('#myModal').modal('show').find('#load_data').load('/client-beneficiary/view_transaction/modal_for_transaction/' +id);
+        });
+        $(document).on('click', 'a[data-role=details]', function(){
+            $('#client_content').load('/client-beneficiary/view/' + $(this).data('title'));
+        });
+    });
+    
+</script>
+
+{% endblock %}

@@ -1,0 +1,838 @@
+{% block content %}
+<ul class="nav nav-pills" id="pills-tab" role="tablist">
+<li class="nav-item">
+    <a class="nav-link active" id="pill-information" data-bs-toggle="pill" href="#information" role="tab">
+        <i class="fa fa-file-text-o"></i> Information
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" id="pill-assessment" data-bs-toggle="pill" href="#assessment" role="tab">
+        <i class="fa fa-question"></i> Assessment
+    </a>
+</li>
+</ul>
+<form id="submitDirectRequest">
+{% csrf_token %}
+<div class="tab-content" id="pills-icontabContent">
+    <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel">
+        <small>Client's Information</small>
+        <br><br>
+        <input type="text" name="client_bene_same" id="client_id" hidden> 
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Client Name <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control f-w-900 upper" id="full_name" name="full_name" value="{{client_id.get_client_fullname|upper}}" readonly>
+                    {% comment %} <select class="form-control select client_beneficiary" id="client_beneficiary" name="client" required></select> {% endcomment %}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Birthdate</label>
+                    <input type="date" class="form-control f-w-900 upper" id="birthdate" readonly>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="text" class="form-control f-w-900 upper" id="age" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Sex</label>
+                    <input type="text" class="form-control f-w-900 upper" id="sex" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Relationship to Beneficiary <span class="txt-danger">*</span></label>
+                    <select class="form-control select" id="relationship" name="relationship" required>
+                        <option></option>
+                        {% for row in relation %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" class="form-control f-w-900 upper" id="contact_number" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Civil Status</label>
+                    <input type="text" class="form-control f-w-900 upper" id="civil_status" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Region</label>
+                    <input type="text" class="form-control f-w-900 upper" id="region2" readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Province</label>
+                    <input type="text" class="form-control f-w-900 upper" id="province2" readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" class="form-control f-w-900 upper" id="city2" readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Barangay</label>
+                    <input type="text" class="form-control f-w-900 upper" id="barangay2" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>House / Block / Lot No.</label>
+                    <input type="text" class="form-control f-w-900 upper" id="house_no" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Street</label>
+                    <input type="text" class="form-control f-w-900 upper" id="street" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Subdivision / Village</label>
+                    <input type="text" class="form-control f-w-900 upper" id="village" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>ID Presented</label>
+                    <input type="text" class="form-control f-w-900 upper" id="id_presented" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>ID Number</label>
+                    <input type="text" class="form-control f-w-900 upper" id="id_presentedNo" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>4Ps Member</label>
+                    <input type="text" class="form-control f-w-900 upper" id="is_4psmember1" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>4Ps ID Number</label>
+                    <input type="text" class="form-control f-w-900 upper" id="4ps_id_number1" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Indigenous People</label>
+                    <input type="text" class="form-control f-w-900 upper" id="indi1" readonly>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Tribe</label>
+                    <input type="text" class="form-control f-w-900 upper" id="tribe1" readonly>
+                </div>
+            </div>
+            <br><br>
+            <div class="card" id="display_transaction">
+                <div class="card-body">
+                    <label>Client's Transaction History</label>
+                    <div class="table table-responsive">
+                        <table class="table table-bordered table-hover" id="transaction-table">
+                            <thead>
+                                <th>Tracking Number</th>
+                                <th class="text-center">Type of Assistance</th>
+                                <th class="text-center">Assistance Category</th>
+                                <th class="text-center">Social Worker</th>
+                                <th class="text-center">Status</th>
+                            </thead>
+                            <tbody>
+                                <td colspan="5" class="text-center">No data available.</td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <br>
+            <small id="note" style="color:red;">CLIENT AND BENEFIARY ARE THE SAME (UNCHECK IF NOT)</small>
+            <small id="notsame" style="color:red;">CLIENT AND BENEFIARY ARE NOT THE SAME (CHECK IF SAME)</small>
+        </div>
+        <hr>
+        <div class="form-group float-end">
+            <input type="checkbox" class="form-check-input" id="same_with_client" name="same_with_client"> Same with Client
+        </div>
+        <br>
+        <div id="same">
+            <small>Beneficiary Identifying Information</small>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Beneficiary Name <span class="txt-danger">*</span></label>
+                        <select class="form-control select client_beneficiary" id="beneficiary" name="beneficiary"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Birthdate</label>
+                        <input type="date" class="form-control f-w-900 upper" id="bene_birthdate" readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_age" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Sex</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_sex" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_contact_number" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Civil Status</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_civil_status" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Indigenous People</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_indi" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Tribe</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_tribe" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Region</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_region" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Province</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_province" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_city" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Barangay</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_barangay" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>House / Block / Lot No.</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_house_no" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Street</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_street" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Subdivision / Village</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_village" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>ID Presented</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_IDPresented" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>ID Number</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_IDNo" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>4Ps Member</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_is_4psmember" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>4Ps ID Number</label>
+                        <input type="text" class="form-control f-w-900 upper" id="bene_4ps_id_number" readonly>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <small>Beneficiary Family Composistion</small>
+            <br><br>
+            <div class="row mb-3">
+                <div class="table table-responsive">
+                    <table class="table table-bordered table-hover" id="family-composition-tablee">
+                        <thead>
+                            <th>Full Name</th>
+                            <th class="text-center">Sex</th>
+                            <th class="text-center">Birthdate</th>
+                            <th class="text-center">Relation</th>
+                            <th class="text-center">Age</th>
+                            <th class="text-center">Occupation</th>
+                            <th class="text-end">Salary per month</th>
+                        </thead>
+                        <tbody>
+                            <td colspan="7" class="text-center">No data available.</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <a class="btn btn-primary btn-lg" id="next">Next</a>
+            </div>
+        </div>
+        <br><br>
+    </div>
+    <div class="tab-pane fade m-t-30" id="assessment" role="tabpanel">
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <b>
+                <label>On-site / Off-site <span class="txt-danger">*</span></label><br>
+                <input type="text" id="new" name="status" hidden>
+                &nbsp; &nbsp; &nbsp;<input type="radio" value="1" id="new_client" required> New &nbsp; &nbsp; &nbsp;<input type="radio" id="returning_client" value="2" required> Returning
+                &nbsp; &nbsp; &nbsp;<input type="radio" name="site" value="1" required> On-Site
+                &nbsp; <input class="form-check-input" id="walkin" name="walkin" value="1" type="checkbox"> WALK-IN
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="referral" name="referral" value="1" type="checkbox"> REFERRAL
+                <input type="radio" name="site" value="2" disabled> Off-Site
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="checkbox" name="online" value="1" type="checkbox" disabled> ONLINE
+            </div>
+        </div>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <div class="form-group">
+                    <label>Priority Line <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="priority_name" required>
+                        <option></option>
+                        {% for row in PriorityLine %}
+                        <option value="{{ row.id }}">{{ row.priority_name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Case Study <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="case_study" required>
+                        <option></option>
+                        <option value="1">No</option>
+                        <option value="2">Yes</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <div class="form-group">
+                    <label>Client's Category <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="clients_category" required>
+                        <option></option>
+                        {% for row in category %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Sub-Category <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="clients_subcategory" required>
+                        <option></option>
+                        {% for row in sub_category %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <div class="form-group">
+                    <label>Beneficiary's Category <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="bene_category" required>
+                        <option></option>
+                        {% for row in category %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Sub-Category <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="bene_subcategory" required>
+                        <option></option>
+                        {% for row in sub_category %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group">
+                <label>Problem(s) Presented <span class="txt-danger">*</span></label>
+                <textarea class="form-control f-w-900" rows="10" name="problem" required></textarea>
+            </div>
+        </div>
+        <small>Recommended Services and Assistance</small>
+        <hr>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-9">
+                <b>
+                &nbsp; <input class="form-check-input" id="gl" name="guarantee_letter" value="1" type="checkbox"> Guarantee Letter
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="cash_voucher" value="1" type="checkbox"> Cash Voucher
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="pcv" name="petty_cash" value="1" type="checkbox"> Petty Cash Voucher
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_cash" value="1" type="checkbox"> CE Cash
+                &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_gl" value="1" type="checkbox"> CE Guaratantee Letter
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Assistance Type <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="assistance_type" id="assistance_type" required>
+                        <option value="">Choose</option>
+                        {% for row in assistance_type %}
+                        <option value="{{ row.id }}">{{ row.type_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Assistance Category <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="assistance_category" id="assistance_category" required>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Sub Type of Assistances (Optional)</label>
+                    <select class="form-control select" name="sub_type_of_assistance" id="sub_type_of_assistance">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            {% comment %} <div class="col-md-6">
+                <div class="form-group">
+                <label>Assigned to Social Worker <span class="txt-danger">*</span></label>
+                <select class="form-control user" name="user"></select>
+                </div>
+            </div> {% endcomment %}
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Date Entried <span class="txt-danger">*</span></label>
+                    <input type="datetime-local" class="form-control f-w-900 upper" name="date_entried" id="birthdate" min="1900-05-01T00:00" required>
+                </div>
+            </div>
+        </div>
+        <br>
+        <small>Active Social Worker</small>
+        <hr>
+        <div class="row mb-3">
+            <div class="table table-responsive">
+                <table class="table table-bordered table-hover" id="">
+                    <thead>
+                        <th>ASSIGNED</th>
+                        <th class="text-center">PENDING ASSESSMENT</th>
+                        <th class="text-center">ONGOING ASSESSMENT</th>
+                        <th class="text-center">COMPLETE ASSESSMENT</th>
+                        <th class="text-center">ACTIVE</th>
+                    </thead>
+                    {% for row in active_swo %}
+                    <tbody>
+                        <td><input type="radio" name="user" value="{{row.user.id}}"> {{row.user.get_fullname|upper}}</td>
+                        <td class="text-center">{{row.get_total}}</td>
+                        <td class="text-center">{{row.get_ongoing}}</td>
+                        <td class="text-center">{{row.get_complete}}</td>
+                        <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
+                        
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="form-group">
+                <a class="btn btn-primary btn-lg" id="previous">Previous</a>
+                {% if active_swo %}
+                <button type="submit" class="btn btn-primary btn-lg">Finished</button>
+                {% endif %}
+            </div>
+        </div>
+        <br><br>
+    </div>
+</div>
+</form>
+{% endblock %}
+{% block script %}
+<script>
+
+    $('#notsame').show();
+    $('#note').hide();
+    $("#sub_type_of_assistance").on("change", function(e) {
+        var reg_price = $("#sub_type_of_assistance").val()
+    });
+
+    $('#display_transaction').hide();
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select'
+        });
+
+        $('#next').on('click', function(){
+            if ($('#relationship').val() != ""){
+                new bootstrap.Tab(document.querySelector('#pills-tab a[href="#assessment"]')).show();
+            } else {
+                Swal.fire("Oops...", "Please choose a relationship before proceeding to the next page.", "warning");
+            }
+        });
+
+        $('#previous').on('click', function(){
+            new bootstrap.Tab(document.querySelector('#pills-tab a[href="#information"]')).show();
+        });
+
+        birthdate.max = new Date().toISOString().split("T")[0];
+
+        $('.client_beneficiary').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_client_beneficiary' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    {% comment %} $('#relationship').val("").trigger('change');
+                    $('#same_with_client').prop('checked', false); {% endcomment %}
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+
+        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
+
+
+        var id = {{client_id.id}}
+        {% comment %} var id = $(this).val(); {% endcomment %}
+            $.ajax({
+                url: '/requests/get-client-information/' + id,
+                type: 'GET',
+                success: function(response){
+                    $('#new').val(response.new);
+                    if((response.new) == 1){
+                        $('#new_client').prop('checked', true);
+                        $('#returning_client').prop('checked', false);
+                    }else{
+                        $('#new_client').prop('checked', false);
+                        $('#returning_client').prop('checked', true);
+                    }
+                    $('#birthdate').val(response.birthdate);
+                    $('#age').val(response.age);
+                    $('#sex').val(response.sex);
+                    $('#contact_number').val(response.contact_number);
+                    $('#civil_status').val(response.civil_status);
+                    $('#region2').val(response.region);
+                    $('#province2').val(response.province);
+                    $('#city2').val(response.city);
+                    $('#barangay2').val(response.barangay);
+                    $('#house_no').val(response.house_no);
+                    $('#village').val(response.village);
+                    $('#street').val(response.street);
+                    $('#is_4psmember1').val(response.is_4ps);
+                    $('#4ps_id_number1').val(response.id_number_4ps);
+                    $('#indi1').val(response.is_indi);
+                    $('#tribe1').val(response.tribe);
+                    $('#client_id').val(response.client_id);
+                    $('#id_presented').val(response.id_presented);
+                    $('#id_presentedNo').val(response.id_presentedNo);
+
+                    var transaction_history = response.transaction_history
+                    var template = "";
+                    for(var i=0; i < transaction_history.length; i++) {
+                        template += `
+                            <tr>
+                            <td class="f-w-900 upper">`+ transaction_history[i]['tracking_number'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ transaction_history[i]['type_of_assitance'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ transaction_history[i]['assistance_category'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ transaction_history[i]['social_worker'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ transaction_history[i]['status'] +`</td>
+                            </tr>
+                        `
+                    }
+                    if(template){
+                        $('#display_transaction').show();
+                        $('#transaction-table tbody').html(template)
+                    }else{
+                        $('#transaction-table tbody').html(template)
+                        $('#display_transaction').hide();
+                    }
+                }
+            });
+
+        $('#same_with_client').on('change', function(){
+            if($("#same_with_client").is(':checked')){
+                $('#same').slideToggle(); 
+                {% comment %} $('#same').hide(); {% endcomment %}
+                $('#note').show();
+                $('#notsame').hide();
+                relation = $('#relationship').find("option:contains('SELF')").val();
+                $('#relationship').val(relation).trigger('change');
+
+                if($('#client_beneficiary').val() != null) {
+                    var $option = $("<option selected></option>").val($('#client_beneficiary').val()).text($('#client_beneficiary').select2('data')[0].text);
+                    $('#beneficiary').append($option).trigger('change');
+                    getBeneficiary($('#client_beneficiary').val());
+                    relation = $('#relationship').find("option:contains('SELF')").val();
+                    $('#relationship').val(relation).trigger('change');
+                }
+            } else {
+                $('#same').slideToggle(); 
+                $('#note').hide();
+                $('#notsame').show();
+
+                $('#beneficiary').val('').trigger('change');
+                $('#bene_birthdate').val("");
+                $('#bene_age').val("");
+                $('#bene_sex').val("");
+                $('#bene_contact_number').val("");
+                $('#bene_civil_status').val("");
+                $('#bene_province').val("");
+                $('#bene_city').val("");
+                $('#bene_barangay').val("");
+                $('#bene_house_no').val("");
+                $('#bene_village').val("");
+                $('#bene_street').val("");
+                $('#bene_region').val("");
+                $('#bene_is_4psmember').val("");
+                $('#bene_4ps_id_number').val("");
+                $('#bene_indi').val("");
+                $('#bene_tribe').val("");
+                $('#relationship').val("").trigger('change');
+                $('#user').val("")
+                $('#priority_name').val("")
+                $('#case_study').val("")
+                $('#bene_IDPresented').val("");
+                $('#bene_IDNo').val("");
+                $('#family-composition-tablee tbody tr').remove();
+            }
+        });
+        $('[name="cash_voucher"]').change(function()
+        {
+          if ($(this).is(':checked')) {
+            $('#pcv').prop('checked', true);
+          }else{
+            $('#pcv').prop('checked', false);
+          };
+        });
+        if(!$("#same_with_client").is(':checked')){
+            $('#beneficiary').on('change', function(){
+                getBeneficiary($(this).val());
+            });
+        }
+        function getBeneficiary(id){
+            $.ajax({
+                url: '/requests/get-beneficiary-information/' + id,
+                type: 'GET',
+                success: function(response){
+                    $('#bene_birthdate').val(response.birthdate);
+                    $('#bene_age').val(response.age);
+                    $('#bene_sex').val(response.sex);
+                    $('#bene_contact_number').val(response.contact_number);
+                    $('#bene_civil_status').val(response.civil_status);
+                    $('#bene_region').val(response.region);
+                    $('#bene_province').val(response.province);
+                    $('#bene_city').val(response.city);
+                    $('#bene_barangay').val(response.barangay);
+                    $('#bene_house_no').val(response.house_no);
+                    $('#bene_village').val(response.village);
+                    $('#bene_street').val(response.street);
+                    $('#bene_is_4psmember').val(response.is_4ps);
+                    $('#bene_4ps_id_number').val(response.id_number_4ps);
+                    $('#bene_indi').val(response.is_indi);
+                    $('#bene_tribe').val(response.tribe);
+                    $('#bene_IDPresented').val(response.id_presented);
+                    $('#bene_IDNo').val(response.id_presentedNo);
+
+                    var family_composistion = response.family_composistion
+
+                    var template = "";
+                    for(var i=0; i < family_composistion.length; i++) {
+                        template += `
+                            <tr>
+                            <td class="f-w-900 upper">`+ family_composistion[i]['fullname'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['sex'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['birthdate'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['relation'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['age'] +`</td>
+                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['occupation'] +`</td>
+                            <td class="text-end f-w-900 upper">`+ family_composistion[i]['salary'] +`</td>
+                            </tr>
+                        `
+                    }
+
+                    $('#family-composition-tablee tbody').html(template)
+                }
+           });
+        }
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+        $('.user').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_user' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#submitDirectRequest').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to file this new transaction?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'InsertDirectRequests' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: response.tracking_number,
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            location.reload();
+                                            $('.select').val('').trigger('change');
+                                            $('#submitDirectRequest').trigger('reset');
+                                            new bootstrap.Tab(document.querySelector('#pills-tab a[href="#information"]')).show();
+                                            $('#family-composition-tablee tbody tr').remove();
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

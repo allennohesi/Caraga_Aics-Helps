@@ -1,0 +1,147 @@
+{%  load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Petty Cash Voucher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+    <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+</head>
+<style>
+    @page{
+        size: legal portrait;
+
+    }
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+    table, th, td {
+        border:1px solid black;
+    }
+    .square {
+        height: 40px;
+        width: 40px;
+        border: 1px solid black;
+        font-size:30px;
+      }
+</style>
+<body class="legal portrait">
+    <section class="sheet page">
+        <div class="container-fluid">
+            <br>
+            <table style="width:800px;">
+                <tr>
+                    <th width="50%"><center>PETTY CASH VOUCHER </center> <br><br>Entity Name: DSWD-FO Caraga <br> Fund Cluster: {{data.fund_source.name|upper}}</th>
+                    <th width="50%">No <br><br>Date:{{today}}</th>
+                </tr>
+                <tr>
+                    <th width="50%">Name of Payee: <u>{{data.client.get_client_fullname}}</u> <br> <br> <u>{{data.client.house_no|upper}} {{data.client.street|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}} </u></th>
+                    <th width="50%"></th>
+                </tr>
+                <tr>
+                    <th width="50%"><i>I. To be filled up upon request</i></th>
+                    <th width="50%"><i>I. To be filled up upon liquidation</i></th>
+                </tr>
+                <tr>
+                    <th>
+                        <table border="1" bordercolor="blue" margin>
+                            <tr>
+                                <th width="200px"><center>Particular</center></th>
+                                <th width="200px"><center>Amount</center></th>
+                            </tr>
+                            <tr>
+                                <th width="200px" height:"50px;"><center><br> <br> {{data.lib_type_of_assistance.type_name}} <br> <br> <br> <br> <br> <br> <br> <br> <br> <br></center></th>
+                                <th width="200px"><center><br> <br> {{calculate.total_payment}} <br> <br> <br> <br> <br> <br> <br> <br> <br> <br></center></th>
+                            </th>
+                        </table>
+                    </th>
+                    <th width="50%"><center> TOTAL AMOUNT GRANTED: Php: <u>{{calculate.total_payment}}</u> <br> <br> Total Amount Paid Per <br> <br> OR No. <br> <br> Amount Refunded/ <br> (REIMBURSED)</center></th>
+                </tr>
+                <tr>
+                    <th width="50%"><div class="square">&nbsp;A</div>
+                        <center><u> {{data.swo.get_fullname}}</u>
+                            <p>Signature Over Printed Name <br>
+                                Name of the Requestor
+                            </p>
+                        </center>
+                        <br>
+                        <i>&nbsp;Approved by:</i>
+                            <center><u> ANA T. SEMACIO</u>
+                                <p>Signature Over Printed Name <br>
+                                    CIS HEAD
+                                </p>
+                            </center>                            
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                    </th>
+                    <th width="50%"><div class="square">&nbsp;C</div>
+                        <center><input type="checkbox" id="fund" name="" value="fund">
+                        <label for="fund"> Received Refund</label><br></center>
+                        <br>
+                        <center><input type="checkbox" id="fund" name="" value="fund">
+                        <label for="fund"> Reimbursement Paid</label><br></center>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <center><u> </u>
+                            <p> Signature Over Printer Name <br>
+                                Petty Cash Custodian
+                            </p>
+                        </center>
+                        <br>
+                        <br>
+                        <br>
+                        <br>                        
+                    </th>
+                </tr>
+                <tr>
+                    <th width="50%"><div class="square">&nbsp;B</div> Paid by:
+                        <center><u> LENBIE MAY S. COMMANDANTE </u>
+                            <p>Signature Over Printed Name <br>
+                                Patty Cash Custodian
+                            </p>
+                        </center>
+                        <br>
+                        <i>&nbsp;Cash Received by:</i>
+                            <center><u> ANA T. SEMACIO</u>
+                                <p>Signature Over Printed Name <br>
+                                    CIS HEAD <br>
+                                    Date: <u>{{today}}</u>
+                                </p>
+                            </center>                            
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                    </th>
+                    <th width="50%"><div class="square">&nbsp;D</div>
+                        <center><input type="checkbox" id="fund" name="" value="fund">
+                        <label for="fund"> Received Refund</label><br></center>
+                        <br>
+                        <center><input type="checkbox" id="fund" name="" value="fund">
+                        <label for="fund"> Reimbursement Paid</label><br></center>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <center><u> </u>
+                            <p> Signature Over Printer Name <br>
+                                 <br>Date: <u>{{today}}</u>
+                            </p>
+                        </center>
+                        <br>
+                        <br>
+                        <br>
+                        <br>                        
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </section>
+</body>
+
+</html>

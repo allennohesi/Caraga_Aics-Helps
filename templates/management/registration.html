@@ -1,0 +1,338 @@
+<div class="default-according" id="accordionclose">
+    <div class="card">
+        <div class="collapse show" id="beneficiary" data-bs-parent="#accordionclose">
+            <form id="submitForm">
+                <div class="card-body">
+                    <div class="ribbon ribbon-clip ribbon-primary">Register Identifying Information</div>
+                    {% csrf_token %}
+                    <br><br>
+                    <small class="text-danger">Note: Please fill in the form below and indicate 'N/A' if not applicable.</small>
+                    <br><br>
+                    <div class="alertDiv"></div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Last Name <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="last_name" required autocomplete="off">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>First Name <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="first_name" required autocomplete="off">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Middle Name</label>
+                                <input type="text" class="form-control" name="middle_name" autocomplete="off">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Suffix</label>
+                                <select class="form-control select" name="suffix">
+                                    <option></option>
+                                    {% for row in suffix %}
+                                    <option value="{{ row.id }}">{{ row.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Birth Date <span class="txt-danger">*</span></label>
+                                <input type="date" class="form-control" name="birthdate" required>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Sex <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="sex" required>
+                                    <option></option>
+                                    {% for row in sex %}
+                                    <option value="{{ row.id }}">{{ row.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Contact Number <span class="txt-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+63</span>
+                                    <input type="text" class="form-control" maxlength="11" onkeypress="return isNumberKey(event)" name="contact_number" autocomplete="off" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Civil Status <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="civil_status" required>
+                                    <option></option>
+                                    {% for row in civil_status %}
+                                    <option value="{{ row.id }}">{{ row.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Province <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="province" id="province" required>
+                                    <option></option>
+                                    {% for row in province %}
+                                    <option value="{{ row.id }}">{{ row.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>City <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="city" id="city" required></select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Barangay <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="barangay" id="barangay" required></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>House / Block / Lot No. <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="house_no" autocomplete="off" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Street <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="street" autocomplete="off" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Subdivision / Village <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="village" autocomplete="off" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Occupation <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="occupation" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Salary <span class="txt-danger">*</span></label>
+                                <input type="text" class="form-control" name="salary" autocomplete="off" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>4Ps Member <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="4ps_member" id="4ps_member" required>
+                                    <option></option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>4Ps ID Number</label>
+                                <input type="text" class="form-control" name="4ps_id_number" id="4ps_id_number" readonly autocomplete="off">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Indigenous People <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="indi" id="indi" required>
+                                    <option></option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Tribe</label>
+                                <input type="text" class="form-control" name="tribe" id="tribe" readonly autocomplete="off">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <small>Family Composistion</small>
+                    <br><br>
+                    <div class="row mb-3">
+                        <table class="table table-bordered w-100">
+                            <thead>
+                                <th width="30%">Full Name</th>
+                                <th>Birth Date</th>
+                                <th>Occupation</th>
+                                <th>Salary per month</th>
+                                <th>
+                                    <center>
+                                        <button type="button" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
+                                    </center>
+                                </th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+
+        var template = `
+            <tr>
+                <td>
+                    <input type="text" class="form-control" name="full_name[]" autocomplete="off">
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="birthdate[]">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="occupation[]" autocomplete="off">
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="salary[]" autocomplete="off">
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td>
+                    <center>
+                        <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+                    </>center>
+                </td>
+            </tr>
+        `;
+
+        $('#add-family').on('click', function(){
+            $('table tbody').prepend(template);
+        });
+
+        $(document).on('click', 'button[data-role=remove]', function(){
+            $(this).closest('tr').remove();
+        });
+
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+
+        new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', select2options);
+        new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', select2options);
+
+        $('#4ps_member').on('change', function(){
+            if($(this).val() == "0") {
+                $('#4ps_id_number').prop('readonly', true);
+            } else {
+                $('#4ps_id_number').prop('readonly', false);
+            }
+        });
+
+        $('#indi').on('change', function(){
+            if($(this).val() == "0") {
+                $('#tribe').prop('readonly', true);
+            } else {
+                $('#tribe').prop('readonly', false);
+            }
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        $('#submitForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to add this new client / beneficiary?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'management' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('.select').val('').trigger('change');
+                                            $('#submitForm').trigger('reset');
+                                        }
+                                    });
+                                } else {
+                                    $('.alertDiv').html(
+                                        `
+                                            <div class="alert alert-danger">
+                                                <i class="fa fa-info-circle"></i>&emsp;
+                                                `+ response.msg +`
+                                            </div><br>
+                                        `
+                                    )
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

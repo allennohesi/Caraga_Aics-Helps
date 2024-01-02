@@ -1,0 +1,191 @@
+<style>
+  /* The actual timeline (the vertical ruler) */
+  .main-timeline {
+    position: relative;
+  }
+  
+  /* The actual timeline (the vertical ruler) */
+  .main-timeline::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    background-color: #939597;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -3px;
+  }
+  
+  /* Container around content */
+  .timeline {
+    position: relative;
+    background-color: inherit;
+    width: 50%;
+  }
+  
+  /* The circles on the timeline */
+  .timeline::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: -13px;
+    background-color: #939597;
+    border: 5px solid #f5df4d;
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  /* Place the container to the left */
+  .left {
+    padding: 0px 40px 20px 0px;
+    left: 0;
+  }
+  
+  /* Place the container to the right */
+  .right {
+    padding: 0px 0px 20px 40px;
+    left: 50%;
+  }
+  
+  /* Add arrows to the left container (pointing right) */
+  .left::before {
+    content: " ";
+    position: absolute;
+    top: 18px;
+    z-index: 1;
+    right: 30px;
+    border: medium solid white;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent white;
+  }
+  
+  /* Add arrows to the right container (pointing left) */
+  .right::before {
+    content: " ";
+    position: absolute;
+    top: 18px;
+    z-index: 1;
+    left: 30px;
+    border: medium solid white;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent white transparent transparent;
+  }
+  
+  /* Fix the circle for containers on the right side */
+  .right::after {
+    left: -12px;
+  }
+  
+  /* Media queries - Responsive timeline on screens less than 600px wide */
+  @media screen and (max-width: 600px) {
+    /* Place the timelime to the left */
+    .main-timeline::after {
+      left: 31px;
+    }
+  
+    /* Full-width containers */
+    .timeline {
+      width: 100%;
+      padding-left: 70px;
+      padding-right: 25px;
+    }
+  
+    /* Make sure that all arrows are pointing leftwards */
+    .timeline::before {
+      left: 60px;
+      border: medium solid white;
+      border-width: 10px 10px 10px 0;
+      border-color: transparent white transparent transparent;
+    }
+  
+    /* Make sure all circles are at the same spot */
+    .left::after,
+    .right::after {
+      left: 18px;
+    }
+  
+    .left::before {
+      right: auto;
+    }
+  
+    /* Make all right containers behave like the left ones */
+    .right {
+      left: 0%;
+    }
+  }
+</style>
+<div class="row">
+  <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a>
+  {% if transaction_status.0.status == "Pending" %}
+  <div class="col-lg-12">
+      <form id="submitForActionForm">
+      {% csrf_token %}
+      <div class="row mb-3">
+          <div class="col-md-6">
+              <label>Action <span class="txt-danger">*</span></label>
+              <select class="form-control select" name="status" required>
+                  <option value="For Interview">For Interview / Assessment</option>
+                  <option value="Cancelled">Cancel</option>
+              </select>
+          </div>
+          <div class="col-md-6">
+              <label>Assigned to (Optional)</label>
+              <select class="form-control user" name="user"></select>
+          </div>
+      </div>
+      <div class="row mb-3">
+          <div class="col-md-12">
+              <label>Remarks</label>
+              <textarea class="form-control" rows="5" name="remarks"></textarea>
+          </div>
+      </div>
+      <div class="row mb-3">
+          <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+          </div>
+      </div>
+      </form>
+  </div>
+  {% endif %}
+  <div class="col-lg-12">
+      <p class="text-center">Timeline</p>
+      <section style="background-color: #F0F2F5;">
+          <div class="container py-5">
+            <div class="main-timeline">
+              {% if transaction_status.is_verified %}
+              <div class="timeline left">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h3>Verifier History</h3>
+                    <p class="mb-0">Date Verified: {{transaction_status.verified_time_start}} <br> Verified End: {{transaction_status.verified_time_end}}.</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if transaction_status.is_swo %}
+              <div class="timeline right">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h3>Social Worker History</h3>
+                    <p class="mb-0">Assessment Start: {{transaction_status.swo_time_start}} <br> Assessment End: {{transaction_status.swo_time_end}}.</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if transaction_status.upload_time_end %}
+              <div class="timeline left">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h3>Transaction Summary</h3>
+                    <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} <br> Transaction End: {{transaction_status.swo_time_end}}.</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+  </div>
+</div>

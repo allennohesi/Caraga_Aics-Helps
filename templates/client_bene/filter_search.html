@@ -1,0 +1,75 @@
+{% load tags %}
+{% load static %}
+<form id="update_emp_assistance">
+    <center>
+      {% if pict %}
+      <img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150">
+      {% else %}
+          {% if transaction.sex.name == "Male" %}
+          <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+          {% elif transaction.sex.name == "Female" %}
+          <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+          {% else %}
+          {% endif %}
+      {% endif %}
+    </center>
+    <br>
+    <table class="table table-info display" id="basic-1">
+      <thead>
+        <tr>
+          <p>As Representative Data</p>
+          <th scope="col">Tracking Number</th>
+          <th class="text-center">Relationship</th>
+          <th scope="col">Representative Category</th>
+          <th scope="col">Assistance Type</th>
+          <th scope="col">Date of Transaction</th>
+          <th class="text-center">Next Transaction</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% if transactionClientData %}
+      {% for row in transactionClientData %}  
+        <tr>
+          <th>{{row.tracking_number|upper}}</th>
+          <th class="text-center">{{row.relation.name|upper}}</th>
+          <td>{{row.bene_category.name|upper}}</td>
+          <td>{{row.lib_type_of_assistance.type_name|upper}}</td>
+          <td>{{row.date_of_transaction|date:"M. d, Y"|upper}}</td>
+          <td class="text-center">{{clientNextTransaction|upper}}</td>
+        </tr>
+      {% endfor%}
+      {% else %}
+        <p>No data</p>
+      {% endif %}
+      </tbody>
+    </table>
+    <br>
+    <table class="table table-info">
+        <thead>
+          <tr>
+            <p>As Benefiary Data</p>
+            <th scope="col">Tracking Number</th>
+            <th class="text-center">Relationship</th>
+            <th scope="col">Benefiary Category</th>
+            <th scope="col">Assistance Type</th>
+            <th scope="col">Date of Transaction</th>
+            <th class="text-center">Next Transaction</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if transactionClientData %}
+        {% for row in transactionBeneData %}  
+          <tr>
+            <th>{{row.tracking_number|upper}}</th>
+            <th class="text-center">{{row.relation.name|upper}}</th>
+            <td>{{row.bene_category.name|upper}}</td>
+            <td>{{row.lib_type_of_assistance.type_name|upper}}</td>
+            <td>{{row.date_of_transaction|date:"Y-m-d"|upper}}</td>
+            <td class="text-center">{{beneNextTransaction|upper}}</td>
+          </tr>
+        {% endfor%}
+        {% else %}
+        <p>No data</p>
+        {% endif %}
+      </table>
+</form>

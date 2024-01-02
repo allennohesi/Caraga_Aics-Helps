@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+{% block content %}
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Incoming</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Incoming</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <ul class="nav nav-pills" id="tabUL" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
+                                <i class="fa fa-file-o"></i> All Transactions
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
+                            <small>Client Pending Transaction</small>
+                            <hr>
+                            <div class="table-responsive text-nowrap table-scroll">
+                                <table class="table table-responsive table-sm table-bordered" id="incoming-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="width:100">Action</th>
+                                            <th>Track</th>
+                                            <th>Tracking Number</th>
+                                            <th>Beneficiary Name</th>
+                                            <th>Client Name</th>
+                                            <th class="text-center">Date of Transaction</th>
+                                            <th class="text-center">Assigned to SWO</th>
+                                            <th class="text-center">Case Study</th>
+                                            <th class="text-center">Priority</th>
+                                            <th class="text-center">Verified</th>
+                                            <th class="text-center">Assessed</th>
+                                            <th class="text-center">Transaction Status</th>
+                                            <th class="text-center">Remarks Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="Tracking_modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="startTransaction">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title" id="staticBackdropLabel">Tracking of Transaction</h6>
+                <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="load_data">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#incoming-table').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 8, 25, 50, 100 ],
+            'order': [[ 2, 'asc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/transaction/session/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'transaction',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>Details</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'transaction',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.first_name, transaction.bene.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false},
+                {'data': 'client', 'name': 'transaction.client.first_name, transaction.client.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false},
+                {'data': 'verified_time_start', 'className': 'text-center', },
+                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
+                {'data': 'is_case_study', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                        'render': function(data,type,row,meta){
+                            if(row['is_case_study'] == 1){
+                                return "<td>For Case Study</td>"
+                            }else{
+                                return "<td>Not for case Study</td>"
+                            }
+                        }
+                },
+                {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
+                        'render': function(data,type,row,meta){
+                            if(row['priority_id'] == 1){
+                                return "<span class='badge badge-primary'>"+ TA +"</span>" 
+                            }else{
+                                return "<span class='badge badge-primary'>"+ row['priority'] +"</span>" 
+                            }
+                        }
+                },
+                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_verified']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'is_swo', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_swo']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'action', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['action'] == null){
+                            return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
+                        }else if(row['action'] == 1){
+                            return "<span class='badge badge-dark'>Pending</span>"
+                        }else if(row['action'] == 2){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }else if(row['action'] == 3){
+                            return "<span class='badge badge-info'>For Uploading Picture</span>"
+                        }else if(row['action'] == 4){
+                            return "<span class='badge badge-danger'>Hold</span>"
+                        }else if(row['action'] == 5){
+                            return "<span class='badge badge-danger'>Cancelled</span>"
+                        }else if(row['action'] == 6){
+                            return "<span class='badge badge-success'>Completed</span>"
+                        }else if(row['action'] == 7){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }
+                    }
+                },
+                {'data': 'remarks_action', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['remarks_action'] == null){
+                            return "<td></td>"
+                        }else{
+                            return row['remarks_action']
+                        }
+                    }            
+                },
+            ]
+        });
+
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/requests/incoming/view/' + id);
+        });
+
+        $(document).on('click','a[data-role=direct]', function(){ // FOR MODAL SUMMARY
+            var id = $(this).data('id');
+            $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,741 @@
+{%  load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>General Intake Sheet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+  <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <style>
+    @page{
+      size: legal portrait;
+
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+  </style>
+</head>
+<body class="legal portrait">
+     
+  <section class="sheet page">
+    <div class="container-fluid"> 
+      <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
+        <thead style="line-height:15px;">
+          <th>
+            <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="50px">
+          </th>
+          <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
+            <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
+            <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
+            <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
+            <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
+          </th>        
+        </thead>
+        <tr style="line-height: 10px;">
+            <td colspan="2" style="text-align: center;font-family: Times, Times New Roman">
+              <label style="font-size: 19px;font-weight: bold;">GENERAL INTAKE SHEET</label><br>
+              <label style="font-size: 10px;background: black;color: white;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAARING MAGPATULONG SUMAGOT SA DSWD PERSONNEL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            </td>
+          </tr>    
+      </table>
+      <table class="title2 table table-bordered" style="border-color: white;margin-bottom: 0px;">
+        <tr style="font-size:10px;font-weight: bold;">
+          <td style="border-right:1px solid black;">
+            <label>QN:</label>
+          </td>
+          <td colspan="2" style="border: 1px solid black;">
+            <label>{{transactionStartEnd.queu_number}}</label>
+          </td>
+          <td style="border-right:1px solid black;">
+            <label>PCN:</label>
+          </td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td></td>
+          <td style="border-right:1px solid black;">
+            <label>Time Start: </label>
+          </td>
+          <td colspan="4" style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"g:i a"}}</td>
+          <td style="border-right:1px solid black;">
+            <label>Date:</label>
+          </td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"M"}}</td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"d"}}</td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"Y"}}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="category table table-bordered" style="border-color:white;margin-top: -15px;font-size: 10px;font-weight: bold;">
+         <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+            {% if data.is_return_new == 1 %}
+            <input type="radio" name="new" value="1" checked> NEW &nbsp; <input type="radio" name="status" value="2"> RETURNING
+            {% else %}
+            <input type="radio" name="new" value="1"> NEW &nbsp; <input type="radio" name="status" value="2" checked> RETURNING
+            {% endif %}
+          </td>
+          <td>
+            <span> <input type="radio" name="" checked> Onsite</span>&nbsp;&nbsp;&nbsp;
+            <span> <input type="checkbox" name="" {% if data.is_walkin %} checked {% else %} {% endif %}> Walk-in</span>           
+            <span> <input type="checkbox" name="" {% if data.is_referral %} checked {% else %} {% endif %}> Referral</span>&nbsp;&nbsp;&nbsp;
+            <span> <input type="radio" name=""> Off-site</span>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><u>{{data.tracking_number}}</u></td>
+        </tr>
+      </table>
+
+      <div style="background-color: black;color: white;margin-top: -20px;">
+        <label>&nbsp;IMPORMASYON NG BENEPISYARYO <span style="font-size:13px;">(Beneficiary's Identifying Information)</span></label>
+      </div>
+      <div style="font-family: Snell Roundhand, cursive">
+        <table class="beneficiary-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="3">
+              <label>{{data.bene.last_name|upper}}</label>
+            </td>
+            <td colspan="4">
+              <label>{{data.bene.first_name|upper}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.bene.middle_name|upper}}</label>
+            </td>
+            <td colspan="2">
+              <label>{% if data.bene.suffix_id != None %}{{data.bene.suffix.name}}{% else %} {% endif %}</label>
+            </td>          
+          </tr>
+          <tr style="font-size:10px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="3">
+              <span>Apelyido <span style="font-size:8px;">(Last Name)</span></span>
+            </td>
+            <td colspan="4">
+              <span>Unang Pangalan <span style="font-size:8px;">(First Name)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Gitnang Pangalan <span style="font-size:8px;">(Middle Name)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
+            </td>           
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>{{data.bene.house_no|upper}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.bene.barangay.brgy_name|upper}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.bene.barangay.city_code.city_name|upper}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.bene.barangay.city_code.prov_code.prov_name|upper}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.bene.barangay.city_code.prov_code.region_code.region_name|upper}}</label>
+            </td>        
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>House No./Street/Purok <span style="font-size:6px;">(Ex. 123 Sun)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Barangay <span style="font-size:6px;">(Ex. Balacan)</span></span>
+            </td>
+            <td colspan="3">
+              <span>City/Municipality <span style="font-size:6px;">(Ex. Quezon City)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Province/District <span style="font-size:6px;">(Ex. Dist III)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
+            </td>        
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>{{data.bene.contact_number|upper}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.bene.birthdate|upper}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.bene.get_age|upper}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.bene.sex.name|upper}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.bene.civil_status.name|upper}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.bene.occupation.occupation_name|upper}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.bene.salary}}</label>
+            </td>                              
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>Numero ng Telepono <span style="font-size:6px;">(Mobile No.)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Kapanganakan <span style="font-size:6px;"></span></span>
+            </td>
+            <td colspan="2">
+              <span>Edad <span style="font-size:6px;"></span></span>
+            </td>
+            <td colspan="1">
+              <span>Kasarian <span style="font-size:6px;">(Gender)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Civil Status <span style="font-size:6px;">(Katayuang)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Trabaho <span style="font-size:6px;">(Occupation)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Buwanang Kita <span style="font-size:6px;">(Monthly Salary)</span></span>
+            </td>          
+          </tr>
+        </table>
+      </div>
+      <!--- Kinatawan -->
+      <div style="background-color: black;color: white;margin-top: -16px;">
+        <label>&nbsp;IMPORMASYON NG KINATAWAN<span style="font-size:13px;"> (Representative's Identifying Information)</span></label>
+      </div>
+      {% if data.client_id == data.bene_id %}
+      <div style="font-family: Snell Roundhand, cursive">
+        <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="3">
+              <label>N/a</label>
+            </td>
+            <td colspan="4">
+              <label>N/a</label>
+            </td>
+            <td colspan="3">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>          
+          </tr>
+          <tr style="font-size:10px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="3">
+              <span>Apelyido <span style="font-size:8px;">(Last Name)</span></span>
+            </td>
+            <td colspan="4">
+              <span>Unang Pangalan <span style="font-size:8px;">(First Name)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Gitnang Pangalan <span style="font-size:8px;">(Middle Name)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
+            </td>           
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="3">
+              <label>N/a</label>
+            </td>
+            <td colspan="3">
+              <label>N/a</label>
+            </td>
+            <td colspan="3">
+              <label>N/a</label>
+            </td>
+            <td colspan="1">
+              <label>N/a</label>
+            </td>        
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>House No./Street/Purok <span style="font-size:6px;">(Ex. 123 Sun)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Barangay <span style="font-size:6px;">(Ex. Balacan)</span></span>
+            </td>
+            <td colspan="3">
+              <span>City/Municipality <span style="font-size:6px;">(Ex. Quezon City)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Province/District <span style="font-size:6px;">(Ex. Dist III)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
+            </td>        
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>
+            <td colspan="2">
+              <label>N/a</label>
+            </td>                              
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>Numero ng Telepono <span style="font-size:6px;">(Mobile No.)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Kapanganakan <span style="font-size:6px;">(Birthdate)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Edad <span style="font-size:6px;">(Age)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Kasarian <span style="font-size:6px;">(Gender)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Civil Status <span style="font-size:6px;">(Katayuang)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Trabaho <span style="font-size:6px;">(Occupation)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Buwanang Kita <span style="font-size:6px;">(Monthly Salary)</span></span>
+            </td>          
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="border-bottom: 1px solid black;"></td>
+          </tr>
+          <tr style="font-size: 12px;text-align: center;">
+            <td colspan="4" style="border-bottom: 1px solid black;">
+              <label>{{data.relation.name|upper}}</label>
+            </td>
+            <td colspan="5"></td>
+            <td colspan="2" style="border-right: 1px solid black;">
+              <label>Time end:</label>
+            </td>
+            <td style="border: 1px solid black;">{{transactionStartEnd.swo_time_end|date:"g:i a"}}</td>
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="4">
+              <label>Relasyon sa Benepisyaryo <span style="font-size:6px;">(Relationship to the Beneficiary)</span></label>
+            </td>
+            <td colspan="5"></td>
+            <td colspan="2"></td>
+            <td></td>          
+          </tr>
+        </table>
+      </div>
+      {% else %}
+      <div style="font-family: Snell Roundhand, cursive">
+        <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="3">
+              <label>{{data.client.last_name}}</label>
+            </td>
+            <td colspan="4">
+              <label>{{data.client.first_name}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.client.middle_name}}</label>
+            </td>
+            <td colspan="2">
+              <label>{% if data.client.suffix_id != None %}{{data.client.suffix.name}}{% else %} {% endif %}</label>
+            </td>          
+          </tr>
+          <tr style="font-size:10px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="3">
+              <span>Apelyido <span style="font-size:8px;">(Last Name)</span></span>
+            </td>
+            <td colspan="4">
+              <span>Unang Pangalan <span style="font-size:8px;">(First Name)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Gitnang Pangalan <span style="font-size:8px;">(Middle Name)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
+            </td>           
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>{{data.client.house_no}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.client.barangay.brgy_name}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.client.barangay.city_code.city_name}}</label>
+            </td>
+            <td colspan="3">
+              <label>{{data.client.barangay.city_code.prov_code.prov_name}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.client.barangay.city_code.prov_code.region_code.region_name}}</label>
+            </td>        
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>House No./Street/Purok <span style="font-size:6px;">(Ex. 123 Sun)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Barangay <span style="font-size:6px;">(Ex. Balacan)</span></span>
+            </td>
+            <td colspan="3">
+              <span>City/Municipality <span style="font-size:6px;">(Ex. Quezon City)</span></span>
+            </td>
+            <td colspan="3">
+              <span>Province/District <span style="font-size:6px;">(Ex. Dist III)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
+            </td>        
+          </tr>
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+            <td colspan="2">
+              <label>{{data.client.contact_number}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.client.birthdate}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.client.get_age}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.client.sex.name}}</label>
+            </td>
+            <td colspan="1">
+              <label>{{data.client.sex.name}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.client.occupation.occupation_name}}</label>
+            </td>
+            <td colspan="2">
+              <label>{{data.client.salary}}</label>
+            </td>                              
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="2">
+              <span>Numero ng Telepono <span style="font-size:6px;">(Mobile No.)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Kapanganakan <span style="font-size:6px;">(Birthdate)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Edad <span style="font-size:6px;">(Age)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Kasarian <span style="font-size:6px;">(Gender)</span></span>
+            </td>
+            <td colspan="1">
+              <span>Civil Status <span style="font-size:6px;">(Katayuang)</span></span>
+            </td>      
+            <td colspan="2">
+              <span>Trabaho <span style="font-size:6px;">(Occupation)</span></span>
+            </td>
+            <td colspan="2">
+              <span>Buwanang Kita <span style="font-size:6px;">(Monthly Salary)</span></span>
+            </td>          
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="border-bottom: 1px solid black;"></td>
+          </tr>
+          <tr style="font-size: 12px;text-align: center;">
+            <td colspan="4" style="border-bottom: 1px solid black;">
+              <label>{{data.relation.name}}</label>
+            </td>
+            <td colspan="5"></td>
+            <td colspan="2" style="border-right: 1px solid black;">
+              <label>Time end:</label>
+            </td>
+            <td style="border: 1px solid black;">{{transactionStartEnd.swo_time_end|date:"g:i a"}}</td>
+          </tr>
+          <tr style="font-size:8px;font-weight: bold;text-align: center;line-height: 0px;">
+            <td colspan="4">
+              <label>Relasyon sa Benepisyaryo <span style="font-size:6px;">(Relationship to the Beneficiary)</span></label>
+            </td>
+            <td colspan="5"></td>
+            <td colspan="2"></td>
+            <td></td>          
+          </tr>
+        </table>
+      </div>
+      {% endif %}
+      <!-- Assessment -->
+      <div style="background-color: black;color: white;margin-top: -16px;text-align: center;font-size: 14px;">
+        <label>Huwag sulatan ang DSWD lamang ang pwede gumamit<span style="font-size:11px;"> (Do not write below this part for DSWD's use only)</span></label>
+      </div>
+      <div style="font-family: DejaVu Sans Mono">
+        <table class="assessment table table-bordered" style="margin-top:0px;border-top-color: black;border-color: black;line-height: 10px;">
+          <tr style="text-align:center;font-size: 12px;, monospace;font-weight: bold;line-height: 0px;">
+            <td colspan="2">
+              <label>Beneficiary Category</label>
+            </td>
+            <td>
+              <label>Social Worker's Assessment</label>
+            </td>
+          </tr>
+          <tr style="font-size: 10px;, monospace;font-weight: bold;">
+            <td width="105px;">
+              <span style="font-size:10px">Target Sector: </span><br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 1 %} checked {% else %} {% endif %}> FHONA <br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 2 %} checked {% else %} {% endif %}> WEDC <br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 3 %} checked {% else %} {% endif %}> YNSP <br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 4 %} checked {% else %} {% endif %}> PWD <br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 5 %} checked {% else %} {% endif %}> SC <br>
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 6 %} checked {% else %} {% endif %}> PLHIV <br>
+              
+            </td>
+            <td width="280px;">
+              <span>Specify Sub-Category <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 1 %} checked {% else %} {% endif %}> Solo Parents <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 2 %} checked {% else %} {% endif %}> Indigenous People <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 3 %} checked {% else %} {% endif %}> Recovering Person who used drugs <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 4 %} checked {% else %} {% endif %}> 4PS DSWD Beneficiary <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 5 %} checked {% else %} {% endif %}> Street Dwellers <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 6 %} checked {% else %} {% endif %}> Psychosocial/Mental/Learning Disability <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 7 %} checked {% else %} {% endif %}> Stateless Person/Asylum Seekers/Refugees <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 8 %} checked {% else %} {% endif %}> Others:  <br>
+              </span>
+            </td>
+            <td style="font-size:14px">{{transaction_data.sw_assessment}}</td>
+          </tr>
+        </table>
+      </div>
+      <!-- Family Composition -->
+      <div style="background-color: black;color: white;margin-top: -16px;">
+        <label style="font-size:15px;">&nbsp;KOMPOSISYON NG PAMILYA<span> (Family Composition)</span></label>
+      </div>
+      <div style="font-family: Andale Mono, monospace;font-weight: bold;">
+        <table class="family-composition table table-bordered" style="border-color:white;">
+          <tr style="font-size:12px;text-align: center;line-height: 0px;">
+            <th width="300px;" style="border-left-color: black;">
+              <label>Buong Pangalan</label>
+              <span>(Complete Name)</span>
+            </th>
+            <th>
+              <label>Relasyon sa Benepisyaryo</label><br>
+            </th>
+            <th>
+              <label>Edad</label><br>
+            </th>
+            <th>
+              <label>Trabaho</label>
+            </th>
+            <th style="border-right-color: black;">
+              <label>Buwanang kita</label>
+            </th>
+          </tr>
+          <tr style="font-size: 8px;line-height:0px;text-align: center;border-bottom-color: black;">
+            <td style="border-left-color: black;">
+              <span>(Complete Name)</span>
+            </td>
+            <td>
+              <span>(Relationship to the Beneficiary)</span>
+            </td>
+            <td>
+              <span>(Age)</span>
+            </td>
+            <td>
+              <span>(Occupation)</span>
+            </td>
+            <td style="border-right-color: black;">
+              <span>(Monthly Salary)</span>
+            </td>
+          </tr>
+          {% for row in roster %}
+          <tr style="border-color: black; font-size:9.5px">
+            <td>{{row.get_family_fullname_formatted|upper}}</td>
+            <td>{{row.relation.name|upper}}</td>
+            <td>{{row.get_age}}</td>
+            <td>{{row.occupation.occupation_name|upper}}</td>
+            <td>{{row.salary}}</td>
+            
+          </tr>
+          {% endfor %}
+        </table>
+        <table class="table table-bordered" style="margin-top: -16px;border-color: white;">
+            <tr style="font-size:10px;border-bottom-color: black;">
+              <td width="149px" style="border-left-color: black;">
+                <input type="checkbox" name="financial-assistance" {% if data.lib_type_of_assistance_id == 1 %} checked {% else %} {% endif %}> Financial Assistance <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 1 %} checked {% else %} {% endif %}> Medical <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 2 %} checked {% else %} {% endif %}> Funeral <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 3 %} checked {% else %} {% endif %}> Transportation <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 4 %} checked {% else %} {% endif %}> Educational
+              </td>
+              <td width="140px">
+                <br>
+                <input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 5 %} checked {% else %} {% endif %}> Food Assistance <br><br>
+                &nbsp;&nbsp; Cash Assistance for 
+                <input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 6 %} checked {% else %} {% endif %}> Other Support Services <br>
+              </td>
+              <td colspan="2" width="100px">
+                <input type="checkbox" name="material-assistance" {% if data.lib_type_of_assistance_id == 2 %} checked {% else %} {% endif %}> Material Assistance <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 7 %} checked {% else %} {% endif %}> Family Food Packs <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 8 %} checked {% else %} {% endif %}> Other Food Items <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 9 %} checked {% else %} {% endif %}> Hygiene & Sleeping Kits <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 10 %} checked {% else %} {% endif %}> Assistive Device & Technologies
+              </td>
+              <td width="151px">
+                <input type="checkbox" name="material-assistance" {% if data.lib_type_of_assistance_id == 3 %} checked {% else %} {% endif %}> Psychosocial Support: <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 11 %} checked {% else %} {% endif %}> Psychological <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First Aid (PFA) <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 12 %} checked {% else %} {% endif %}> Social Work <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Counseling <br>
+              </td>
+              <td width="100px" style="border-right-color: black;">
+                <input type="checkbox" name="material-assistance"> Referral: <br><br>
+                __________________<br>__________________<br>__________________
+              </td>
+            </tr>            
+        </table>
+        <table class="provided-list table table-bordered" style="font-size:12px;text-align: center;line-height: 0px;border-bottom-color: black;border-color: 1px solid black;border-left: 1px solid black;border-right: 1px solid black;margin-top: -16px;">
+            <tr style="">
+              <td colspan="3" width="200px" >
+                <label>Provided</label>
+              </td>
+              <td width="150px">
+                <label>Amount</label>
+              </td>
+              <td width="100px">
+                <label>Fund Source</label>
+              </td>
+            </tr>
+
+            <tr style="font-size:12px;text-align: center;line-height: 0px;">
+                <td colspan="3">
+                  <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label>
+                </td>
+                <td>{{calculate.total_payment}}</td>
+                <td>{{data.fund_source.name|upper}}</td>
+            </tr>         
+        </table>
+        <table class="table table-bordered" style="margin-top: -16px;font-size:10px;border:1px solid black;">
+            <tr style="text-align: center;" >
+              <td colspan="2" rowspan="2" width="150px">
+                <small>"I declare under oath that I personally accomplished the GIS Form and all the information provided herewith are TRUE, CORRECT, VALID & COMPLETE pursuant to existing laws, rules, and regulations of the Republic of the Philippines. I authorized the Agency Head/validate the contents stated herein. I also AGREE that any MISINTERPETATION and information/acts to DEFRAUD the government including attached documents shall cause the filling of appropriate case/s against me"
+                  <br>
+                  <br>
+                  <label><u>{{data.client.get_client_fullname}}</u><br>Buong Pangalan at Pirma<br><small>(Signature over Printed Name)</label>
+                </small>
+              </td>
+              <td>&nbsp;</td>
+              <td width="150px" rowspan="2"><br><br><br>
+                <label><br><br><u>{{data.swo.get_fullname}}</u><br>Social Worker<br><small>(Signature over Printed Name)</small></label>
+              </td>
+              <td width="150px" rowspan="2"><br><br><br>
+                <label><br><br><u>ANA T. SEMACIO</u><br>Approving Authority<br><small>(Signature over Printed Name)</small></label>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+            </tr>            
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-10px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;border-bottom: 1px solid black;">
+            <td colspan="4"></td>
+            <td colspan="4">
+              <label>Page 1 of 1</label>
+            </td>
+            <td colspan="4">
+            </td>
+          </tr>          
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-25px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;font-weight: bold;">
+            <td colspan="4"></td>
+            <td  colspan="4">
+              <img height="45px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
+              <label>DSWD Central Office, IBP Road, Batasan Pambansa Complex, Constitution Hills, Quezon City, Philippines 112  </label><br><label>Website: http://www.dswd.gov.ph  Email: ciu.co@dswd.gov.ph   Tel Nos.: 8962-2813 or 8931-8100 local 509,510  Telefax: (632) 931-8191</label>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

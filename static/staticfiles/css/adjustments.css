@@ -1,0 +1,43 @@
+.modal-title, .modal-subtitle {
+    margin-right: auto;
+}
+
+.btn-close {
+    top: 20px;right: 20px;
+}
+
+.nav-sub-childmenu li a {
+    font-size: 13px !important;
+}
+
+.select2-container--open{
+    z-index: 999999;
+}
+
+.border-none {
+    border:none !important;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.txt-default{
+    color: #2c323f !important;
+}
+
+hr{
+    border: 1px solid #b0bec5 !important;
+}
+
+.select{
+    border: 1px solid #ced4da !important;
+}
+
+.swal2-container {
+    z-index: 999999 !important;
+}
+
+.display-none{
+    display: none;
+}

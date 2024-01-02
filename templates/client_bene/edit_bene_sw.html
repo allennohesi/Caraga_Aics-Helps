@@ -1,0 +1,412 @@
+<form id="updateInformationForm">
+{% csrf_token %}
+<a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Back</a>
+<hr>
+<small>Note: Please fill in the form below and indicate 'N/A' if not applicable and leave blank if field is optional.</small>
+<br><br>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label>ID Number</label>
+        <input type="text" class="form-control" value="{{ information.unique_id_number }}" readonly>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Last Name <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="last_name" required autocomplete="off" value="{{ information.last_name }}">
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>First Name <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="first_name" required autocomplete="off" value="{{ information.first_name }}">
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Middle Name (Optional)</label>
+            <input type="text" class="form-control" name="middle_name" autocomplete="off" value="{{ information.middle_name }}">
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Suffix (Optional)</label>
+            <select class="form-control select" name="suffix">
+                <option></option>
+                {% for row in suffix %}
+                {% if row.id == information.suffix_id %}
+                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                {% else %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Birth Date <span class="txt-danger">*</span></label>
+            <input type="date" class="form-control" name="birthdate" value="{{ information.birthdate|date:'Y-m-d' }}" required>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Sex <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="sex" required>
+                <option></option>
+                {% for row in sex %}
+                {% if row.id == information.sex_id %}
+                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                {% else %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Contact Number <span class="txt-danger">*</span></label>
+            <div class="input-group">
+                <span class="input-group-text">+63</span>
+                <input type="text" class="form-control" maxlength="11" onkeypress="return isNumberKey(event)" name="contact_number" value="{{ information.contact_number }}" autocomplete="off" required>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Civil Status <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="civil_status" required>
+                <option></option>
+                {% for row in civil_status %}
+                {% if row.id == information.civil_status_id %}
+                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                {% else %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Province <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="province" id="province" required>
+                <option></option>
+                {% for row in province %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>City <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="city" id="city" required></select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Barangay <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="barangay" id="barangay" required></select>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>House / Block / Lot No. <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="house_no" value="{{ information.house_no }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Street <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="street" value="{{ information.street }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Subdivision / Village <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="village" value="{{ information.village }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Occupation <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="occupation" value="{{ information.occupation }}" autocomplete="off" required>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Salary <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" name="salary" value="{{ information.salary }}" autocomplete="off" required>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>4Ps Member <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="4ps_member" id="4ps_member" required>
+                <option></option>
+                <option value="1" {% if information.is_4ps %}selected{% endif %}>Yes</option>
+                <option value="0" {% if not information.is_4ps %}selected{% endif %}>No</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>4Ps ID Number <span class="txt-danger" id="txt-id-number"></span></label>
+            <input type="text" class="form-control" name="4ps_id_number" id="4ps_id_number" value="{% if information.number_4ps_id_number %}{{ information.number_4ps_id_number }}{% else %}N/A{% endif %}" {% if not information.is_4ps %}readonly{% endif %} autocomplete="off">
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Indigenous People <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="indi" id="indi" required>
+                <option></option>
+                <option value="1" {% if information.is_indi %}selected{% endif %}>Yes</option>
+                <option value="0" {% if not information.is_indi %}selected{% endif %}>No</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Tribe <span class="txt-danger" id="txt-tribe"></span></label>
+            <select class="form-control select" name="tribe" id="tribe" {% if not information.is_indi %}disabled{% endif %}>
+                <option></option>
+                {% for row in tribe %}
+                {% if row.id == information.tribu_id %}
+                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                {% else %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+<small>Family Composistion</small>
+<br><br>
+<div class="row mb-3">
+    <div class="table-responsive">
+        <table class="table table-bordered w-100 table-sm" id="family-composition-table">
+            <thead>
+                <th width="30%">Full Name</th>
+                <th class="text-center">Birth Date</th>
+                <th class="text-center">Occupation</th>
+                <th class="text-center">Salary per month</th>
+                <th>
+                    <center>
+                        <button type="button" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
+                    </center>
+                </th>
+            </thead>
+            <tbody>
+                {% for family in family_composistion %}
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" value="{{ family.first_name }}" name="first_name[]" placeholder="First Name" autocomplete="off"><br>
+                        <input type="text" class="form-control" value="{{ family.middle_name }}" name="middle_name[]" placeholder="Middle Name" autocomplete="off"><br>
+                        <input type="text" class="form-control" value="{{ family.last_name }}" name="last_name[]" placeholder="Last Name" autocomplete="off"><br>
+                        <select class="form-control suffix-select" name="suffix[]">
+                            <option></option>
+                            {% for row in suffix %}
+                            {% if row.id == family.suffix_id %}
+                            <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                            {% else %}
+                            <option value="{{ row.id }}">{{ row.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </td>
+                    <td valign="middle">
+                        <input type="date" class="form-control" name="birthdate[]" value="{{ family.birthdate|date:'Y-m-d' }}">
+                    </td>
+                    <td valign="middle">
+                        <input type="text" class="form-control" name="occupation[]" value="{{ family.occupation }}" autocomplete="off">
+                        <div class="invalid-feedback"></div>
+                    </td>
+                    <td valign="middle">
+                        <input type="text" class="form-control" name="salary[]" value="{{ family.salary }}" autocomplete="off">
+                        <div class="invalid-feedback"></div>
+                    </td>
+                    <td valign="middle">
+                        <center>
+                            <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+                        </center>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<button type="submit" class="btn btn-primary btn-lg">Save changes</button>
+</form>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+
+        $('.suffix-select').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+
+        $('#back').on('click', function(){
+            window.location.href = "{% url 'assessment' %}"
+        });
+
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/requests/assessment/view/' + id);
+        });
+
+        var addressOptions = {
+            width: "100%",
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        }
+
+        $('#province').select2(addressOptions);
+        $('#city').select2(addressOptions);
+        $('#barangay').select2(addressOptions);
+
+        var processCity = new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', addressOptions);
+        var processBrgy = new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', addressOptions);
+
+        $('#province').val('{{ information.barangay.city_code.prov_code_id }}').trigger('change');
+
+        processCity.then( function(parent, child, items) {
+            $('#city').val('{{ information.barangay.city_code_id }}').trigger('change');
+        });
+
+        processBrgy.then( function(parent, child, items) {
+            $('#barangay').val('{{ information.barangay_id }}').trigger('change');
+        });
+
+        var template = `
+            <tr>
+                <td>
+                    <input type="text" class="form-control" name="first_name[]" placeholder="First Name" autocomplete="off"><br>
+                    <input type="text" class="form-control" name="middle_name[]" placeholder="Middle Name" autocomplete="off"><br>
+                    <input type="text" class="form-control" name="last_name[]" placeholder="Last Name" autocomplete="off"><br>
+                    <select class="form-control suffix-select" name="suffix[]">
+                        <option></option>
+                        {% for row in suffix %}
+                        <option value="{{ row.id }}">{{ row.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td valign="middle">
+                    <input type="date" class="form-control" name="birthdate[]">
+                </td>
+                <td valign="middle">
+                    <input type="text" class="form-control" name="occupation[]" autocomplete="off">
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td valign="middle">
+                    <input type="text" class="form-control" name="salary[]" autocomplete="off">
+                    <div class="invalid-feedback"></div>
+                </td>
+                <td valign="middle">
+                    <center>
+                        <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+                    </center>
+                </td>
+            </tr>
+        `;
+
+        $('#add-family').on('click', function(){
+            $('#family-composition-table tbody').prepend(template);
+            $('.suffix-select').select2({
+                width: "100%",
+                containerCssClass: 'select',
+
+                placeholder: 'Choose Suffix',
+            });
+        });
+
+        $(document).on('click', 'button[data-role=remove]', function(){
+            $(this).closest('tr').remove();
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        $('#updateInformationForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to update this new client / beneficiary?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'view_bene_swo' information.unique_id_number %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: "Oops...",
+                                        html:  response.msg,
+                                        icon: "warning",
+                                        allowOutsideClick: false,
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

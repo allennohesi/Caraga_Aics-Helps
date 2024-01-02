@@ -1,0 +1,265 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Suffix</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">Libraries</li>
+                    <li class="breadcrumb-item active">Suffix</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-suffix-modal"><i class="fa fa-plus"></i> Add Suffix</button>
+                    <br><br>
+                    <table class="table table-sm table-bordered table-hover w-100" id="suffix-table">
+                        <thead>
+                            <th>Action</th>
+                            <th>Name</th>
+                            <th>Updated By</th>
+                            <th>Updated At</th>
+                            <th>Status</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add-suffix-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">ADD SUFFIX</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="submitForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label>Name <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
+                        <div class="invalid-feedback" id="alert-on-name"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit-suffix-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">EDIT SUFFIX</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="submitEditForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="edit-id" name="edit-id">
+                    <div class="form-group mb-3">
+                        <label>Name <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-name" name="edit-name" autocomplete="off" required>
+                        <div class="invalid-feedback" id="alert-on-edit-name"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" class="form-check-input" name="edit-status" id="edit-status"> Status
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script for="init">
+    $(document).ready(function(){
+        $('#suffix-table').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 1, 'asc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/libraries/suffix/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='edit' data-id='"+ row['id'] + "'>Edit</a>"
+                    }
+                },
+                {'data': 'name', 'className': 'text-start' },
+                {'data': 'updated_by',
+                    'name': 'updated_by.last_name, updated_by.first_name',
+                    'className': 'text-center'
+                },
+                {'data': 'date_updated',
+                    'className': 'text-center'
+                },
+                {'data': 'status',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-circle txt-success"></i> Active'
+                        }else if (data == 0) {
+                            return '<i class="fa fa-circle txt-danger"></i> Inactive'
+                        }
+                    },
+                    'className': 'text-center'
+                },
+            ]
+        });
+
+        $(document).on('click', 'a[data-role=edit]', function(){
+            var id = $(this).data('id');
+            var name = $('#'+id).find('td:eq(1)').text();
+            var status = $('#'+id).find('td:eq(4)').text();
+
+            $('#edit-id').val(id);
+            $('#edit-name').val(name);
+            (status.trim() == "Active") ? $('#edit-status').attr('checked', true) : $('#edit-status').attr('checked', false)
+            $('#edit-suffix-modal').modal('show');
+        });
+    });
+</script>
+<script for="request">
+    $(document).ready(function(){
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        function clearValidation(){
+            $('.form-control').each(function() {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').html("");
+            });
+        }
+
+        $('#submitForm').on('submit', function(e){
+            e.preventDefault();
+            if (!validationForm()){
+                var form = new FormData(this);
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to add this new suffix?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'suffix' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#submitForm').trigger('reset');
+                                            $('#suffix-table').DataTable().ajax.reload();
+                                            clearValidation();
+                                            $('#add-suffix-modal').modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    $('#name').addClass('is-invalid');
+                                    $('#alert-on-name').html(response.msg);
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+
+        $('#submitEditForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to edit this new suffix?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'edit_suffix' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#submitEditForm').trigger('reset');
+                                            $('#suffix-table').DataTable().ajax.reload();
+                                            clearValidation()
+                                            $('#edit-suffix-modal').modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    $('#edit-name').addClass('is-invalid');
+                                    $('#alert-on-edit-name').html(response.msg);
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

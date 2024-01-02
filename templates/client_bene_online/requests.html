@@ -1,0 +1,545 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>New Requests</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">New Requests</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pill-information" data-bs-toggle="pill" href="#information" role="tab">
+                                <i class="fa fa-file-text-o"></i> Information
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pill-assessment" data-bs-toggle="pill" href="#assessment" role="tab">
+                                <i class="fa fa-question"></i> Assessment
+                            </a>
+                        </li>
+                    </ul>
+                    <form id="submitNewRequestForm">
+                    {% csrf_token %}
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel">
+                            <small>Client Identifying Information</small>
+                            <br><br>
+                            <input type="text" name="client_id" id="client_id" hidden> 
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Client Name <span class="txt-danger">*</span></label>
+                                        <input class="form-control " id="client_beneficiary" name="client"  value="{{information.get_client_fullname}}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Birthdate</label>
+                                        <input type="text" class="form-control f-w-900 upper" value="{{information.birthdate}}" id="birthdate" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="text" class="form-control f-w-900 upper" value="{{information.get_age}}" id="age" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Sex</label>
+                                        <input type="text" class="form-control f-w-900 upper" value="{{information.sex.name}}" id="sex" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Relationship to Beneficiary <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" id="relationship" name="relationship" required>
+                                            <option></option>
+                                            {% for row in relation %}
+                                            {% if row.id == 1 %}
+                                            <option value="{{row.id}}" selected>{{ row.name|upper }}</option>
+                                            {% else %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Contact Number</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="contact_number" value="{{information.contact_number|upper}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Civil Status</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="civil_status" value="{{information.civil_status.name|upper}}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Region</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="region" value="{{ information.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Province</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="province" value="{{ information.barangay.city_code.prov_code.prov_name|upper }}"  readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="city" value="{{ information.barangay.city_code.city_name|upper }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Barangay</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="barangay" value="{{ information.barangay.brgy_name|upper }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>House / Block / Lot No.</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="house_no" value="{{ information.house_no|upper }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Street</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="street" value="{{ information.street|upper }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Subdivision / Village</label>
+                                        <input type="text" class="form-control f-w-900 upper" id="village" value="{{ information.village|upper }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ID Presented</label>
+                                        <select class="form-control select" name="id_presented" id="id_presented" readonly>
+                                            <option></option>
+                                            {% for row in presented_id %}
+                                            {% if row.id == information.presented_id %}
+                                            <option value="{{ row.id }}" selected>{{ row.presented }}</option>
+                                            {% else %}
+                                            <option value="{{ row.id }}">{{ row.presented }}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ID Number</label>
+                                        <input type="text" class="form-control" name="presented_id_no" id="presented_id_no" value="{% if information.presented_id_no %}{{ information.presented_id_no }}{% else %}{% endif %}" autocomplete="off" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>4Ps Member</label>
+                                        <select class="form-control select" name="4ps_member" id="4ps_member" required>
+                                            <option></option>
+                                            <option value="1" {% if information.is_4ps %}selected{% endif %}>Yes</option>
+                                            <option value="0" {% if not information.is_4ps %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>4Ps ID Number</label>
+                                        <input type="text" class="form-control" name="4ps_id_number" id="4ps_id_number" value="{% if information.number_4ps_id_number %}{{ information.number_4ps_id_number }}{% else %}{% endif %}" {% if not information.is_4ps %}readonly{% endif %} readonly autocomplete="off">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Indigenous People</label>
+                                        <select class="form-control select" name="indi" id="indi" required>
+                                            <option></option>
+                                            <option value="1" {% if information.is_indi %}selected{% endif %}>Yes</option>
+                                            <option value="0" {% if not information.is_indi %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Tribe</label>
+                                        <input type="text" class="form-control" id="tribe" value="{% if information.tribu %}{{ information.tribu.name|upper }}{% else %}{% endif %}" readonly>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class="card" id="display_transaction">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <br>
+                                            <label>Client's Transaction History</label>
+                                            <br>
+                                            <div class="table table-responsive">
+                                                <table class="table table-bordered table-hover" id="transaction-table">
+                                                    <thead>
+                                                        <th>Tracking Number</th>
+                                                        <th class="text-center">Type of Assistance</th>
+                                                        <th class="text-center">Assistance Category</th>
+                                                        <th class="text-center">Social Worker</th>
+                                                        <th class="text-center">Date of Transaction Assessment</th>
+                                                        <th class="text-center">Status</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <td colspan="7" class="text-center">No data available.</td>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <small>Beneficiary Identifying Information</small>
+                            <div class="form-group float-end">
+                                <input type="checkbox" class="form-check-input" id="same_with_client" checked> Same with Client
+                            </div>
+                            <br><br>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-lg" id="next">Next</a>
+                                </div>
+                            </div>
+                            <br><br>
+                        </div>
+                        <div class="tab-pane fade m-t-30" id="assessment" role="tabpanel">
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <b>
+                                    <label>On-site / Off-site <span class="txt-danger">*</span></label><br>
+                                    <input type="text" id="new" name="status" hidden>
+                                    {% if checking %}
+                                    &nbsp; &nbsp; &nbsp;<input type="radio" value="1" id="new_client"> New &nbsp; &nbsp; &nbsp; <input type="radio" id="returning_client" value="2" name="status" required> checked Returning 
+                                    {% else %}
+                                    &nbsp; &nbsp; &nbsp;<input type="radio" value="1" id="new_client" name="status" checked> New &nbsp; &nbsp; &nbsp; <input type="radio" id="returning_client" value="2" required> Returning 
+                                    {% endif %}
+                                    &nbsp; &nbsp; &nbsp;<input type="radio" name="site" value="1" required> On-Site
+                                    &nbsp; <input class="form-check-input" id="walkin" name="walkin" value="1" type="checkbox"> WALK-IN
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="referral" name="referral" value="1" type="checkbox"> REFERRAL
+                                    <input type="radio" name="site" value="2" checked> Off-Site
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="checkbox" name="online" value="1" type="checkbox" checked> ONLINE
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label>Priority Lane <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="priority_name" required>
+                                            <option></option>
+                                            {% for row in PriorityLine %}
+                                            <option value="{{ row.id }}">{{ row.priority_name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Case Study <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="case_study" required>
+                                            <option></option>
+                                            <option value="1">No</option>
+                                            <option value="2">Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label>Client's Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="clients_category" required>
+                                            <option></option>
+                                            {% for row in category %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Sub-Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="clients_subcategory" required>
+                                            <option></option>
+                                            {% for row in sub_category %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label>Beneficiary's Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="bene_category" required>
+                                            <option></option>
+                                            {% for row in category %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Sub-Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="bene_subcategory" required>
+                                            <option></option>
+                                            {% for row in sub_category %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="form-group">
+                                    <label>Purpose <span class="txt-danger">*</span></label>
+                                    <textarea class="form-control f-w-900" rows="10" name="problem" required></textarea>
+                                </div>
+                            </div>
+                            <small>Recommended Services and Assistance</small>
+                            <hr>
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <b>
+                                    &nbsp; <input class="form-check-input" id="gl" name="guarantee_letter" value="1" type="checkbox"> Guarantee Letter
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="cash_voucher" value="1" type="checkbox"> Cash Voucher
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="pcv" name="petty_cash" value="1" type="checkbox"> Petty Cash Voucher
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_cash" value="1" type="checkbox"> CE Cash
+                                    &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_gl" value="1" type="checkbox"> CE Guaratantee Letter
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Assistance Type <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="assistance_type" id="assistance_type" required>
+                                            <option value="">Choose</option>
+                                            {% for row in assistance_type %}
+                                            <option value="{{ row.id }}">{{ row.type_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Assistance Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="assistance_category" id="assistance_category" required>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-dark" role="alert">
+                                Financial Assistance (PDF ONLY) requirements : Valid ID - Billing Statement - Doctors feed <br>
+                                Medical Assitance (PDF ONLY) requirements : Valid ID - Billing Statement - Doctors feed
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="formFile" class="form-label">Uploading of Requirements</label>
+                                        <input class="form-control" type="file" name="requirements" id="formFile" accept="application/pdf" onchange="ValidateSingleInput(this);" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Date Entried <span class="txt-danger">*</span></label>
+                                        <input type="datetime-local" class="form-control f-w-900 upper" name="date_entried" id="birthdate" min="1900-05-01T00:00" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-lg" id="previous">Previous</a>           
+                                    <button type="submit" class="btn btn-primary btn-lg">Finished</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function ValidateSingleInput(input) {
+        const file = input.files[0];
+  
+        if (file) {
+          const fileType = file.type;
+          if (fileType !== 'application/pdf') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'The file extension you have entered is invalid! ',
+                footer: 'Valid extensions are PDF'
+              })
+              input.value = '';
+          }
+        }
+      }
+  </script>
+<script>
+    $("#sub_type_of_assistance").on("change", function(e) {
+        var reg_price = $("#sub_type_of_assistance").val()
+    });
+
+    $('#display_transaction').hide();
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select'
+        });
+
+        $('#next').on('click', function(){
+            if ($('#relationship').val() != ""){
+                new bootstrap.Tab(document.querySelector('#pills-tab a[href="#assessment"]')).show();
+            } else {
+                Swal.fire("Oops...", "Please choose a relationship before proceeding to the next page.", "warning");
+            }
+        });
+        $('#previous').on('click', function(){
+            new bootstrap.Tab(document.querySelector('#pills-tab a[href="#information"]')).show();
+        });
+
+        birthdate.max = new Date().toISOString().split("T")[0];
+
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+
+        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
+
+        $('[name="cash_voucher"]').change(function()
+        {
+          if ($(this).is(':checked')) {
+            $('#pcv').prop('checked', true);
+          }else{
+            $('#pcv').prop('checked', false);
+          };
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+        $('.user').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_user' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#submitNewRequestForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to file this new transaction?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'requestsOnline' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: response.tracking_number,
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            location.reload();
+                                            $('.select').val('').trigger('change');
+                                            $('#submitNewRequestForm').trigger('reset');
+                                            new bootstrap.Tab(document.querySelector('#pills-tab a[href="#information"]')).show();
+                                            $('#family-composition-table tbody tr').remove();
+                                            $('#transaction-table tbody tr').remove();
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

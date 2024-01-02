@@ -1,0 +1,216 @@
+{% load tags %}
+{% load static %}
+<div class="row" id="modal_voucher">
+    <form id="submitVoucherData">
+        {% csrf_token %}
+        <div class="card">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Tracking Number</label>
+                        <select class="form-control select transaction" id="transaction" name="transaction_id" required></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" class="form-control f-w-900 upper" name="date" id="fullname">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Assistance Category</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="toa">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Assistance Type</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="assistance_type">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Client Category</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="client_category">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Client Sub-Category</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="client_sub_category">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Service Provider</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="service_provider">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Fund Source</label>
+                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="fund_source">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Submit</label>
+                        <button class="form-control f-w-900 upper" type="submit">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="card">
+        <div class="d-flex flex-row-reverse bd-highlight">
+            <div class="p-2 bd-highlight"><a href="{% url 'print_voucher' voucherTitle.id %}" target="_blank">Print</a></div>
+        </div>
+        <table class="table table-responsive table-sm table-bordered" id="voucher-data">
+            <thead>
+                <tr>
+                    <th class="text-center">Tracking Number</th>
+                    <th class="text-center">Tracking Number</th>
+                    <th class="text-center">Assistance Category</th>
+                    <th class="text-center">Assistance Type</th>
+                    <th class="text-center">Assistance Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in voucherData %}
+                <tbody>
+                    <td class="text-center"><a href='#' data-role='remove' data-id='{{row.id}}'>Remove</a></td>
+                    <td class="text-center">{{row.transactionStatus.transaction.tracking_number}}</td>
+                    <td class="text-center">{{row.transactionStatus.transaction.lib_type_of_assistance.type_name}}</td>
+                    <td class="text-center">{{row.transactionStatus.transaction.lib_assistance_category.name}}</td>
+                    <td class="text-center">{{row.transactionStatus.transaction.get_total.total}}</td>
+                </tbody>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $('.transaction').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select',
+        allowClear: true,
+        ajax: {
+            url: "{% url 'get_all_transaction' %}",
+            method: "GET",
+            datatype: "json",
+            data: function(params) {
+                return {
+                    searchTerm: params.term
+                }
+            },
+            processResults: function(response) {
+                return {
+                    results:response
+                };
+            },
+            cache: true
+        }
+    });
+    var select2options = {
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose',
+    }
+	$(document).on('click', 'a[data-role=remove]', function(){
+    	var id = $(this).data('id');
+    	Swal.fire({
+		  title: "Are you sure",
+          text: "You want to remove this in Voucher?",
+		  icon: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#3498DB",
+		  confirmButtonText: "Yes",
+		  allowOutsideClick: false,
+		}).then((result) => {
+		    if (result.isConfirmed) {
+		        Swal.showLoading()
+				$.ajax({
+					url: "{% url 'remove_voucherData' %}",
+					data: {
+						id: id
+					},
+					type: "POST"
+				})
+				.done(function(data){
+					if (data.data == 'success'){
+						Swal.fire({
+						  title: "Good job!",
+						  text: "Data removed in voucher",
+						  icon: "success",
+						  confirmButtonColor: "#3498DB",
+						  allowOutsideClick: false,
+						}).then((result) => {
+		    				if (result.isConfirmed) {
+                                $('#modal_voucher').load('/financial-transaction/voucher_modal/modal/{{ voucherTitle.id }}');
+						  	}
+						});
+					}
+				});
+			}
+		});
+    });
+    $('#transaction').on('change', function(){
+        var id = $(this).val();
+           $.ajax({
+                url: '/financial-transaction/get_data_transaction/' + id,
+                type: 'GET',
+                success: function(response){
+                    $('#fullname').val(response.fullname);
+                    $('#toa').val(response.toa);
+                    $('#assistance_type').val(response.ta);
+                    $('#client_category').val(response.ct);
+                    $('#client_sub_category').val(response.csc);
+                    $('#service_provider').val(response.service_provider);
+                    $('#fund_source').val(response.fund_source);
+                }
+           });
+    });
+    $('#submitVoucherData').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to submit add this data?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'voucher_modal' voucherTitle.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#modal_voucher').load('/financial-transaction/voucher_modal/modal/{{ voucherTitle.id }}');
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+</script>

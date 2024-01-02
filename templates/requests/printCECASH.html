@@ -1,0 +1,598 @@
+{%  load static %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C.E. Cash</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+  <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <style>
+    @page{
+      size: legal portrait;
+
+    }
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+  </style>
+</head>
+<body class="legal portrait">
+     
+  <section class="sheet page">
+    <div class="container-fluid"> 
+      <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
+        <thead style="line-height:15px;">
+          <th>
+            <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="250px" height="50px">
+          </th>
+          <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
+            <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
+            <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
+            <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
+            <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
+          </th>        
+        </thead>          
+      </table>
+      <table class="title table table-bordered" style="margin-top: 0px;margin-bottom: 0px;border-color: white;">
+        <thead style="line-height: 20px;">
+            <td colspan="2" style="text-align: center;font-family: Arial, sans-serif">
+              <label style="font-size: 19px;font-weight: bold;">CERTIFICATE OF ELIGIBILITY</label><br>
+              <label style="font-size: 19px;">(Financial Assistance)</label>
+            </td>
+        </thead>  
+      </table>
+      <table class="title2 table table-bordered" style="border-color: white;margin-bottom: 0px;">
+        <tr style="font-size:10px;font-weight: bold;">
+          <td style="border-right:1px solid black;">
+            <label>QN:</label>
+          </td>
+          <td colspan="2" style="border: 1px solid black;">
+            <label>{{transactionStartEnd.queu_number}}</label>
+          </td>
+          <td style="border-right:1px solid black;">
+            <label>PCN:</label>
+          </td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td style="border-right:1px solid black;border: 1px solid black;"></td>
+          <td></td>
+          <td>
+          </td>
+          <td colspan="4"></td>
+          <td style="border-right:1px solid black;">
+            <label>Date:</label>
+          </td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"M"}}</td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"d"}}</td>
+          <td style="border: 1px solid black;">{{transactionStartEnd.verified_time_start|date:"Y"}}</td>
+        </tr>
+      </table>
+      
+      <table class="category table table-bordered" style="border-color:white;font-size: 10px;font-weight: bold;">
+         <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+            {% if data.is_return_new == 1 %}
+            <input type="radio" name="new" value="1" checked> NEW &nbsp; <input type="radio" name="status" value="2"> RETURNING
+            {% else %}
+            <input type="radio" name="new" value="1"> NEW &nbsp; <input type="radio" name="status" value="2" checked> RETURNING
+            {% endif %}
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            <span> <input type="radio" name="" checked> Onsite</span>&nbsp;&nbsp;&nbsp;
+            <span> <input type="checkbox" name="" {% if data.is_walkin %} checked {% else %} {% endif %}> Walk-in</span>     
+          </td>
+          <td>
+            <span> <input type="checkbox" name="" {% if data.is_referral %} checked {% else %} {% endif %}> Referral</span>&nbsp;&nbsp;&nbsp;
+            <span> <input type="radio" name=""> Off-site</span>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><u>{{data.tracking_number}}</u></td>
+        </tr>
+      </table>
+
+      <!---Body --->
+      
+      <div style="font-family: Arial, sans-serif">
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-10px;border-top-color: black;border-color: white;">
+          <!---Sentence 1 --->
+          <tr style="text-align:center;">
+            <td colspan="3" style="text-align:left;">
+              <label>This is to certify that,</label>
+            </td>
+            <td colspan="5" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>{{data.client.full_name|upper}}</label>
+            </td>
+            <td colspan="3">
+              <span> {% if data.client.sex.name == "Male" %}<input type="checkbox" name="" checked> Male &nbsp;&nbsp;&nbsp;{% else %}<input type="checkbox" name=""> Male </span>{% endif %}
+              <span> {% if data.client.sex.name == "Female" %}<input type="checkbox" name="" checked> Female{% else %} <input type="checkbox" name=""> Female </span> {% endif %}
+            </td>
+            <td style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>{{data.client.get_age}}</label>
+            </td>     
+          </tr>
+          <tr style="text-align:center;font-size:10px;">
+            <td colspan="3">
+              
+            </td>
+            <td colspan="5">
+              <label style="font-weight: bold;">Kumpletong Pangalan <label style="font-size:8px;font-weight: normal;">(First name, Middle name, Last name)</label></label>
+            </td>
+            <td colspan="3">
+              <label style="font-weight: bold;">Kasarian <label style="font-size:8px;font-weight: normal;">(Sex)</label></label>
+            </td>
+            <td>
+              <label style="font-weight: bold;">Edad <label style="font-size:8px;font-weight: normal;">(Age)</label></label>
+            </td>
+          </tr>
+          <!---End of Sentence 1 --->
+          <!---Sentence 2 --->
+          <tr style="text-align:center;">
+            <td colspan="3" style="text-align:left;">
+              <label>and presently residing at </label>
+            </td>
+            <td colspan="9" style="border-bottom: 1px solid black;">
+              <label style="font-weight:bold;">{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</label>
+            </td>
+          </tr>
+          <tr style="text-align:center;">
+            <td colspan="3">
+              
+            </td>
+            <td colspan="9">
+              <label style="font-weight: bold;">Kumpletong Tirahan <label style="font-size:8px;font-weight: normal;">(Complete Address)</label></label>
+            </td>
+          </tr>
+          <!---End of Sentence 2 --->
+          <!---Sentence 3 --->
+          <tr>
+            <td colspan="12" style="text-align:left;">
+              <label>has been found eligble for assistance after assessment and validation conducted, for his/herself or through the representation of his/her.</label>
+            </td>
+          </tr>
+          <!---End of Sentence 3 --->
+          <!---Sentence 4 --->
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top: -10px;border-top-color: black;border-color: white;">
+          <tr style="text-align:center;">
+            <td colspan="3" style="border-bottom: 1px solid black;">
+              <label style="font-weight: bold;">{{data.relation.name|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="8" style="border-bottom: 1px solid black;">
+              <label style="font-weight: bold;">{{data.bene.full_name|upper}}</label>
+            </td>
+          </tr>
+          <tr style="text-align:center;font-size:10px;">
+            <td colspan="3">
+              <label style="font-weight: bold;">Relasyon ng Kinatawan sa Benepisyaryo <label style="font-size:8px;font-weight: normal;">(Relationship of the Representative to Beneficiary)</label></label>
+            </td>
+            <td></td>
+            <td colspan="8">
+              <label style="font-weight: bold;">Buong Pangalan ng Benepisyaryo <label style="font-size:8px;font-weight: normal;">(Name of Beneficiary)</label></label>
+            </td>
+          </tr>
+        </table>
+        <!---End of Sentence 4 --->
+        <!---Table 1 --->
+        <div style="background-color: #ECE8DD;color: black;margin-top: -16px;text-align: center;font-size: 14px;font-weight: bold;border: 1px solid black;">
+          <label>Records of the case such as the following are confidentially filed at the Crisis Intervention Division (CID)</label>
+        </div>
+        <div style="font-family: DejaVu Sans Mono">
+          <table class="assessment table table-bordered" style="margin-top:2.5px;border-top: 1px solid black;line-height: 10px;">
+            <tr style="font-size: 11px;, monospace;font-weight: bold;border: white;">
+              <td width="170px;" style="border-left:1px solid black;border-bottom: 1px solid black;">
+                  <input type="checkbox" name="sector" checked> General Intake Sheet <br>
+                  <input type="checkbox" name="sector"> Valid I.D. Presented <br><br>
+                  <label><u>{{data.client.presented.presented}} ID NO: {{data.client.presented_id_no}}</u></label><br><br>
+                  {% if data.client.is_4ps %}<input type="checkbox" name="sector" checked> 4PS DSWD I.D. #<u>{{data.client.number_4ps_id_number}}</u>{% else %} <input type="checkbox" name="sector"> 4PS DSWD I.D.  {% endif %}<br>
+                  <input type="checkbox" name="sector"> Justification <br>
+                
+              </td>
+              <td width="250px;" style="border-bottom: 1px solid black;">
+                  <input type="checkbox" name="sector"> Medical Certificate/Abstract <br>
+                  <input type="checkbox" name="sector"> Prescriptions <br>
+                  <input type="checkbox" name="sector"> Statement of Account <br>
+                  <input type="checkbox" name="sector"> Treatment Protocol <br>
+                  <input type="checkbox" name="sector"> Quotation <br>
+                </span>
+              </td>
+              <td style="border-bottom: 1px solid black;">
+                  <input type="checkbox" name="sector"> Discharge Summary <br>
+                  <input type="checkbox" name="sector"> Laboratory <br>
+                  <input type="checkbox" name="sector"> Charge Slip <br>
+                  <input type="checkbox" name="sector"> Funeral Contract <br>
+                  <input type="checkbox" name="sector"> Death Certificate <br>
+              </td>
+              <td style="border-bottom: 1px solid black;border-right: 1px solid black;">
+                  <input type="checkbox" name="sector"> Death Summary <br>
+                  <input type="checkbox" name="sector"> Referral Letter <br>
+                  <input type="checkbox" name="sector"> Social Case Study Report <br>
+                  <input type="checkbox" name="sector"> Others<br><br>
+                  <label>_______________________</label>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <!---End of Table 1 --->
+        <!---Sentence 5 --->        
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-10px;border-top-color: black;border-color: white;">          
+          <tr style="text-align:center;">
+            <td colspan="3" width="180px;" style="text-align:left;">
+              <label>The Client is hereby recommended to receive </label>
+            </td>
+            <td colspan="3" width="100px;" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>{{data.lib_type_of_assistance.type_name}}</label>
+            </td>
+            <td colspan="3" width="75px;">
+              <label>assistance for</label>
+            </td>
+            <td colspan="3" width="100px;" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>OTHER SUPPORT SERVICES</label>
+            </td>     
+          </tr>                   
+        </table>
+        <!---End of Sentence 5 --->
+        <!---Sentence 6 ---> 
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;border-top-color: black;border-color: white;text-align: center;">          
+          <tr>
+            <td colspan="2" width="100px;" style="text-align:left;">
+              <label>in the amount of </label>
+            </td>
+            <td colspan="2" width="320px" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label><span id="numtoword">waw</span></label>
+            </td>
+            <td colspan="2" width="5px">
+              <label>Php.</label>
+            </td>
+            <td colspan="2" width="60" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>₱ {{calculate.total_payment}}</label>
+            </td>  
+            <td colspan="2" >
+              <label>CHARGEABLE AGAINST: PSP</label>
+            </td>
+            <td colspan="2" style="border-bottom: 1px solid black;font-weight: bold;">
+              <label>{{data.fund_source.name}}</label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            <td colspan="2">
+              <label>(Year)</label>
+            </td>
+          </tr>
+        </table>
+        <!---End of Sentence 6 --->
+        <!---Sentence 7 ---> 
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-15px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-weight:bold;">
+            <td colspan="4">
+              <label>Conforme: </label>
+            </td>
+            <td colspan="4">
+              <label>Prepared by: </label>
+            </td>
+            <td colspan="4">
+              <label>Approved by: </label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+          </tr>
+          <tr style="font-size: 13px;font-weight: bold;">
+            <td></td>
+            <td colspan="3" width="100px" style="border-bottom:1px solid black;">
+              <label>{{data.client.get_client_fullname|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="130px" style="border-bottom:1px solid black;">
+              <label>{{data.swo.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="2" width="135px" style="border-bottom:1px solid black;">
+              {% if esignature.signature_file.url %}<img height="40px" style="float:center;" src="{{esignature.signature_file.url}}"><br>{% endif %}
+              <label>{{data.signatories.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+          </tr>
+          <tr style="font-weight: bold;font-size: 14px;">
+            <td></td>
+            <td colspan="3" width="100px">
+              <label>Beneficiary/Representative</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="100px">
+              <label>Social Worker</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+            <td colspan="2" width="100px">
+              <label>Approving Authority</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+        <!---End of Sentence 7--->
+        <!---Acknowledgement Receipt--->
+        <div style="background-color: gray;color: white;margin-top: -16px;text-align: center;font-size: 14px;font-weight: bold;border: 1px solid black;margin-bottom: 10px;">
+          <label>Acknowledgement Receipt</label>
+        </div> 
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top: -5px;border-top-color: black;border-color: white;text-align: center;">
+          <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td>
+            </td>
+            <td colspan="4"></td>
+            <td style="border-right:1px solid black;text-align: right;">
+              <label>Date:</label>
+            </td>
+            <td width="20px" style="border: 1px solid black;">
+              <label>{{transactionStartEnd.verified_time_start|date:"M"}}</label>
+            </td>
+            <td width="20px" style="border: 1px solid black;">
+              <label>{{transactionStartEnd.verified_time_start|date:"d"}}</label>
+            </td>
+            <td width="50px" style="border: 1px solid black;">
+              <label>{{transactionStartEnd.verified_time_start|date:"Y"}}</label>
+            </td>
+          </tr>
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top: -5px;border-top-color: black;border-color: white;text-align: center;">
+          <tr>
+            <td width="150px;" style="text-align:left;">
+              <input type="checkbox" name="sector" checked> Financial Assistance 
+            </td>
+            <td colspan="4" width="80px;" style="border-bottom:1px solid black;">
+              <label><span id="numtoword2"></span></label>
+            </td>
+            <td colspan="2" style="text-align:right;font-weight: bold;">
+              <label>Php</label>
+            </td>
+            <td colspan="4" width="50px" style="border-bottom:1px solid black;">
+              <label>₱ {{calculate.total_payment}}</label>
+            </td>
+            <td colspan="2">
+              
+            </td>
+          </tr>
+          <tr>
+            <td width="150px;" style="text-align:left;">
+              
+            </td>
+            <td colspan="4" width="80px;" >
+              <label>(Amount in words)</label>
+            </td>
+            <td colspan="2" style="text-align:right;font-weight: bold;">
+              
+            </td>
+            <td colspan="4" width="50px">
+              
+            </td>
+            <td colspan="2">
+              
+            </td>
+          </tr>          
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top: -25px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="text-align:left;">
+            <td width="120px;" style="text-align:left;">
+              
+            </td>
+            <td colspan="2" width="120px;" >
+              {% if data.lib_assistance_category_id == 1 %}<input type="checkbox" name="sector" checked> Medical Assistance {% else %} <input type="checkbox" name="sector"> Medical Assistance {% endif %}<br>
+              {% if data.lib_assistance_category_id == 2 %}<input type="checkbox" name="sector" checked> Funeral Assistance {% else %} <input type="checkbox" name="sector"> Funeral Assistance {% endif %} <br>
+            </td>
+            <td colspan="2" width="130px;">
+              {% if data.lib_assistance_category_id == 3 %}<input type="checkbox" name="sector" checked> Transportation Assistance {% else %} <input type="checkbox" name="sector"> Transportation Assistance {% endif %} <br>
+              {% if data.lib_assistance_category_id == 4 %}<input type="checkbox" name="sector"> Educational Assistance {% else %} <input type="checkbox" name="sector"> Educational Assistance {% endif %} <br>
+            </td>
+            <td colspan="3" width="210px">
+              {% if data.lib_assistance_category_id == 5 %}<input type="checkbox" name="sector"> Food Assistance  {% else %} <input type="checkbox" name="sector"> Food Assistance  {% endif %}<br>
+              {% if data.lib_assistance_category_id == 6 %}<input type="checkbox" name="sector"> Cash Assistance for Support Services {% else %} <input type="checkbox" name="sector"> Cash Assistance for Support Services  {% endif %} <br>
+            </td>
+            <td>
+              
+            </td>
+          </tr>
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-15px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-weight:bold;">
+            <td colspan="4">
+              <label>Tinanggap ni: </label>
+            </td>
+            <td colspan="4">
+              <label>Binayaran ni: </label>
+            </td>
+            <td colspan="4">
+              <label>Sinaksihan ni: </label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+          </tr>
+          <tr style="font-size: 13px;font-weight: bold;">
+            <td></td>
+            <td colspan="3" width="100px" style="border-bottom:1px solid black;">
+              <label>{{data.client.get_client_fullname|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="130px" style="border-bottom:1px solid black;">
+              {% if esignature.signature_file.url %}<img height="40px" style="float:center;" src="{{esignature.signature_file.url}}"><br>{% endif %}
+              <label>{{data.signatories.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="2" width="130px" style="border-bottom:1px solid black;">
+              <label>{{data.swo.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+          </tr>
+          <tr style="font-weight: bold;font-size: 14px;">
+            <td></td>
+            <td colspan="3" width="100px">
+              <label>Beneficiary/Representative</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="100px">
+              <label>RDO / SDO</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+            <td colspan="2" width="100px">
+              <label>SWO / ADMIN</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-15px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="border-top:2px solid black;">
+            <td></td>
+            <td></td>
+            <td style="text-align:right;font-weight: bold;">
+              <label>*E.O 163 series 2022</label>
+            </td>
+          </tr>          
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-30px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;border-bottom: 1px solid black;">
+            <td colspan="4"></td>
+            <td colspan="4">
+              <label>Page 1 of 1</label>
+            </td>
+            <td colspan="4">
+            </td>
+          </tr>          
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-25px;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-size: 8px;font-weight: bold;">
+            <td colspan="4"></td>
+            <td  colspan="4">
+              <img height="45px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
+              <label>DSWD Central Office, IBP Road, Batasan Pambansa Complex, Constitution Hills, Quezon City, Philippines 112  </label><br><label>Website: http://www.dswd.gov.ph  Email: ciu.co@dswd.gov.ph   Tel Nos.: 8962-2813 or 8931-8100 local 509,510  Telefax: (632) 931-8191</label>
+
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</body>
+<script>
+// System for American Numbering 
+var th_val = ['', 'thousand', 'million', 'billion', 'trillion'];
+// System for uncomment this line for Number of English 
+// var th_val = ['','thousand','million', 'milliard','billion'];
+ 
+var dg_val = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+var tn_val = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+var tw_val = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+function toWordsconver(s) {
+  s = s.toString();
+    s = s.replace(/[\, ]/g, '');
+    if (s != parseFloat(s))
+        return 'not a number ';
+    var x_val = s.indexOf('.');
+    if (x_val == -1)
+        x_val = s.length;
+    if (x_val > 15)
+        return 'too big';
+    var n_val = s.split('');
+    var str_val = '';
+    var sk_val = 0;
+    for (var i = 0; i < x_val; i++) {
+        if ((x_val - i) % 3 == 2) {
+            if (n_val[i] == '1') {
+                str_val += tn_val[Number(n_val[i + 1])] + ' ';
+                i++;
+                sk_val = 1;
+            } else if (n_val[i] != 0) {
+                str_val += tw_val[n_val[i] - 2] + ' ';
+                sk_val = 1;
+            }
+        } else if (n_val[i] != 0) {
+            str_val += dg_val[n_val[i]] + ' ';
+            if ((x_val - i) % 3 == 0)
+                str_val += 'hundred ';
+            sk_val = 1;
+        }
+        if ((x_val - i) % 3 == 1) {
+            if (sk_val)
+                str_val += th_val[(x_val - i - 1) / 3] + ' ';
+            sk_val = 0;
+        }
+    }
+    if (x_val != s.length) {
+        var y_val = s.length;
+        str_val += 'point ';
+        for (var i = x_val + 1; i < y_val; i++)
+            str_val += dg_val[n_val[i]] + ' ';
+    }
+    return str_val.replace(/\s+/g, ' ');
+}
+
+var number = {{calculate.total_payment}}
+var numtoword = toWordsconver(number) + "PESOS"
+document.getElementById("numtoword").innerHTML = numtoword.toUpperCase();
+document.getElementById("numtoword2").innerHTML = numtoword.toUpperCase();
+
+</script>
+</html>

@@ -1,0 +1,127 @@
+<form id="submitEditForm">
+    {% csrf_token %}
+    <div class="modal-body">
+        <div class="form-group mb-3">
+            <label>First Name <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Last Name <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Middle Name (Optional)</label>
+            <input type="text" class="form-control" id="middle_name" name="middle_name" value="{% if user.middle_name %}{{ user.middle_name }}{% endif %}" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Email <span class="txt-danger">*</span></label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Username <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" autocomplete="off" required>
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Group <span class="txt-danger">*</span></label>
+            <select class="form-control select" name="group" required>
+                <option></option>
+                {% for row in group %}
+                    {% if row.id == user_group.group_id %}
+                    <option value="{{ row.id }}" selected>{{ row.name|upper  }}</option>
+                    {% else %}
+                    <option value="{{ row.id }}">{{ row.name|upper  }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <input type="checkbox" class="form-check-input" name="is_superuser" id="is_superuser" {% if user.is_superuser %}checked{% endif %}> Is Super User
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="form-check-input" name="is_staff" id="is_staff" {% if user.is_staff %}checked{% endif %}> Is Staff
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
+    </div>
+</form>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        function clearValidation(){
+            $('.form-control').each(function() {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').html("");
+            });
+        }
+
+        $('#submitEditForm').on('submit', function(e){
+            e.preventDefault();
+            if (!validationForm()){
+                var form = new FormData(this);
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to register this new user?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'edit_user' user.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#submitEditForm').trigger('reset');
+                                            $('#user-table').DataTable().ajax.reload();
+                                            clearValidation();
+                                            $('#edit-user-modal').modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Oops...', response.msg, 'warning');
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

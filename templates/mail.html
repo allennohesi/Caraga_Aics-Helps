@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Mail</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Mail</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered" id="mail-table">
+                        <thead>
+                            <th>Assigned to</th>
+                            <th>Message</th>
+                            <th class="text-center">Date and Time</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#mail-table').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 2, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/transaction/list/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
+                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                'render': function(data,type,row,meta){
+                    if(row['is_verified']){
+                        return '<td> The Client is verified and is for Assessmenet (KINDLY CHECK THE ASSESSMENT LIST) </td>'
+                    }else{
+                        return '<i class="fa fa-times-circle txt-danger"></i>'
+                    }
+                    }            
+                },
+                {'data': 'verified_time_start', 'className': 'text-center', },
+            ]
+        });
+    });
+</script>
+{% endblock %}

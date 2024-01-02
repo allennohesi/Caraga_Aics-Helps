@@ -1,0 +1,369 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Transactions</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Transactions</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <ul class="nav nav-pills" id="tabUL" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
+                                <i class="fa fa-file-o"></i> Assigned to me
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pills-transaction_all" data-bs-toggle="pill" href="#transaction_all" role="tab">
+                                <i class="fa fa-file-o"></i> All Transactions
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
+                            <small>Assigned to me</small>
+                            <hr>
+                            <table class="table table-responsive table-sm table-bordered" id="assigned-to-me">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Details</th>
+                                        <th>Tracking Number</th>
+                                        <th>Beneficiary Name</th>
+                                        <th>Client Name</th>
+                                        <th class="text-center">Date of Transaction</th>
+                                        <th class="text-center">Assigned to SWO</th>
+                                        <th class="text-center">Verified</th>
+                                        <th class="text-center">Assessed</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Total</th>
+                                        <th class="text-center">Signatories Status</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade m-t-30" id="transaction_all" role="tabpanel">
+                            <small>All Pending Transaction</small>
+                            <hr>
+                            <table class="table table-responsive table-sm table-bordered" id="assessment-table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Details</th>
+                                        <th>Tracking Number</th>
+                                        <th>Beneficiary Name</th>
+                                        <th>Client Name</th>
+                                        <th class="text-center">Date of Transaction</th>
+                                        <th class="text-center">Assigned to SWO</th>
+                                        <th class="text-center">Verified</th>
+                                        <th class="text-center">Assessed</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Total</th>
+                                        <th class="text-center">Signatories Status</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#assigned-to-me').DataTable({ //ASSIGNED TO SELF
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 12, 25, 50, 100 ],
+            'order': [[ 2, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/signatories/data/?format=datatables&user={{ request.user.id }}',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='approved', 'className': 'text-center', data-id="+ row['id'] + ">Approve</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'status',
+                    'render': function(data, type, row, meta) {
+                        if(row['status'] == 1){
+                            return "<td>Start Transaction</td>"
+                        }else if(row['status'] == 2){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 3){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 6){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 7){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else{
+                            return "<td>Start Transaction</td>"
+                        }
+                    },
+                'className': 'text-center',
+                'sortable': false,
+                },
+                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.first_name, transaction.bene.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false},
+                {'data': 'client', 'name': 'transaction.client.first_name, transaction.client.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false},
+                {'data': 'verified_time_start', 'className': 'text-center', },
+                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
+                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_verified']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'is_swo', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_swo']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'action', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['action'] == null){
+                            return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
+                        }else if(row['action'] == 1){
+                            return "<span class='badge badge-dark'>Pending</span>"
+                        }else if(row['action'] == 2){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }else if(row['action'] == 3){
+                            return "<span class='badge badge-info'>For Uploading Picture</span>"
+                        }else if(row['action'] == 4){
+                            return "<span class='badge badge-danger'>Hold</span>"
+                        }else if(row['action'] == 5){
+                            return "<span class='badge badge-danger'>Cancelled</span>"
+                        }else if(row['action'] == 6){
+                            return "<span class='badge badge-success'>Completed</span>"
+                        }else if(row['action'] == 7){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }
+                    }
+                },
+                {'data': 'total_value', 'name': 'get_total', 'className': 'text-center', 'sortable': false , 'searchable':false},
+                {'data': 'signatories_approved', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['signatories_approved'] == 1){
+                            return "<span class='badge badge-success'>Approved</span>"
+                        }else{
+                            return "<span class='badge badge-warning'>N/a</span>"
+                        }
+                    }
+                },
+            ]
+        });
+        $('#assessment-table').DataTable({ //ASSIGNED TO OTHER SOCIALWOERKER
+            'serverSide': true, 
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 12, 25, 50, 100 ],
+            'order': [[ 2, 'asc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/signatories/data/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='approved', 'className': 'text-center', data-id="+ row['id'] + ">Approve</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'status',
+                    'render': function(data, type, row, meta) {
+                        if(row['status'] == 1){
+                            return "<td>Start Transaction</td>"
+                        }else if(row['status'] == 2){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 3){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 6){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else if(row['status'] == 7){
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                        }else{
+                            return "<td>Start Transaction</td>"
+                        }
+                    },
+                    'className': 'text-center',
+                    'sortable': false,
+                },
+                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.first_name, transaction.bene.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false},
+                {'data': 'client', 'name': 'transaction.client.first_name, transaction.client.last_name', 'className': 'text-start', 'sortable': false , 'searchable':false },
+                {'data': 'verified_time_start', 'className': 'text-center', },
+                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
+                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_verified']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'is_swo', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['is_swo']){
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else{
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    }            
+                },
+                {'data': 'action', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['action'] == null){
+                            return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
+                        }else if(row['action'] == 1){
+                            return "<span class='badge badge-dark'>Pending</span>"
+                        }else if(row['action'] == 2){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }else if(row['action'] == 3){
+                            return "<span class='badge badge-info'>For Uploading Picture</span>"
+                        }else if(row['action'] == 4){
+                            return "<span class='badge badge-danger'>Hold</span>"
+                        }else if(row['action'] == 5){
+                            return "<span class='badge badge-danger'>Cancelled</span>"
+                        }else if(row['action'] == 6){
+                            return "<span class='badge badge-success'>Completed</span>"
+                        }else if(row['action'] == 7){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }
+                    }
+                },
+                {'data': 'total_value', 'name': 'get_total', 'className': 'text-center', 'sortable': false , 'searchable':false},
+                {'data': 'signatories_approved', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                'render': function(data,type,row,meta){
+                    if(row['signatories_approved'] == 1){
+                        return "<span class='badge badge-success'>Approved</span>"
+                    }else{
+                        return "<span class='badge badge-warning'>N/a</span>"
+                    }
+                }
+            },
+            ]
+        });
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/requests/transactions/signatories/view/' + id);
+        });
+    });
+	$(document).on('click', 'a[data-role=approved]', function(){
+    	var id = $(this).data('id');
+    	Swal.fire({
+		  title: "Are you sure",
+          text: "You want to approve this guarantee letter?",
+		  icon: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#3498DB",
+		  confirmButtonText: "Yes",
+		  allowOutsideClick: false,
+		}).then((result) => {
+		    if (result.isConfirmed) {
+		        Swal.showLoading()
+				$.ajax({
+					url: "{% url 'approveTransactions' %}",
+					data: {
+						id: id
+					},
+					type: "POST"
+				})
+				.done(function(data){
+					if (data.data == 'success'){
+						Swal.fire({
+						  title: "Good job!",
+						  text: "Guarantee Letter approved",
+						  icon: "success",
+						  confirmButtonColor: "#3498DB",
+						  allowOutsideClick: false,
+						}).then((result) => {
+		    				if (result.isConfirmed) {
+                                $('#modal_view').load('/requests/provided/{{ transaction.id }}');
+                                $('#assigned-to-me').DataTable().ajax.reload();
+                                $('#assessment-table').DataTable().ajax.reload();
+						  	}
+						});
+					}
+				});
+			}
+		});
+    });
+    $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+        var id = $(this).data('id');
+        $('#empid').val(id)
+        $('#myModal').modal('show')
+    });
+    $(document).on('click','a[data-role=PrintingModal]', function(){ // For Printing Purposes Only
+        var id = $(this).data('id');
+        var tracking = $('#'+id).children('td:eq(2)').text();
+        $('#Eid').val(id)
+        $('#trackingno').val(tracking)
+        $('#PrintingModal').modal('show').find('#load_data').load('/requests/printingModal/' +id);
+    });
+    $(document).on('click','a[data-role=AssessmentStatus]', function(){ // For assessmentStatus
+        var id = $(this).data('id');
+        var tracking = $('#'+id).children('td:eq(2)').text();
+        $('#Eid').val(id)
+        $('#trackingno').val(tracking)
+        $('#PrintingModal').modal('show').find('#load_data').load('/requests/assessmentStatusModal/' +id);
+    });
+    function validationForm(){
+        var invalid = false;
+        $('.form-control').each(function() {
+            if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                $(this).addClass('is-invalid');
+                $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                invalid = true;
+            }
+        });
+        return invalid;
+    }
+
+
+
+</script>
+{% endblock %}

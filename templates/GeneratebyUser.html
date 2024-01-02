@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Generate Excel</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">User</a>
+                    </li>
+                    <li class="breadcrumb-item active">Choice</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body" id="client_content">
+                    <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Generate All</a>
+                    <form action="{% url 'generateByUser' %}" method="POST">
+                        {% csrf_token %}
+                        <hr>
+                        <small>Note: This will only generate the category of the client.</small>
+                        <br><br>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="Client_category_checkbox" value="Client_category" id="flexCheckIndeterminate" required>
+                            <label class="form-check-label" for="flexCheckIndeterminate">
+                                Client Category <span class="txt-danger">*</span>
+                            </label>
+                          </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Client Category <span class="txt-danger">*</span></label>
+                                    <select class="form-control select" name="clientCategory">
+                                        <option></option>
+                                        {% for row in ClientCategory %}
+                                        <option value="{{ row.id }}">{{ row.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">Export</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body" id="client_content">
+                    <form action="{% url 'generateByUser' %}" method="POST">
+                        {% csrf_token %}
+                        <hr>
+                        <small>Note: This will only generate the sex disaggregated data of the client.</small>
+                        <br><br>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="Client_category_checkbox" value="Sex" id="flexCheckIndeterminate" required>
+                            <label class="form-check-label" for="flexCheckIndeterminate">
+                                Sex Disaggregated <span class="txt-danger">*</span>
+                            </label>
+                            <br>
+                            <input type="radio" id="male" name="sex_disagregated" value="male" required>
+                            <label for="male">Male</label><br>
+                            <input type="radio" id="female" name="sex_disagregated" value="female" required>
+                            <label for="female">Female</label><br>
+                          </div>
+                        <button type="submit" class="btn btn-primary btn-lg">Export</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+$('.select').select2({
+    width: '100%',
+    placeholder: 'Choose',
+    containerCssClass: 'select'
+});
+
+    
+</script>
+
+{% endblock %}

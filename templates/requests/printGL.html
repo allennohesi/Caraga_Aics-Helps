@@ -1,0 +1,609 @@
+{%  load static %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form 4.A Guarantee Letter</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  {% comment %} <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="sizes.css"> {% endcomment %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/size.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+</head>
+<style>
+  .print-clean {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px solid black;
+}
+input {border:0;outline:0;}
+input:focus {outline:none!important;}
+</style>
+<body class="A4 portrait">
+     
+  <section class="sheet">
+    <div class="container-fluid">
+      <table class="title table table-bordered" style="margin-top: 30px;margin-bottom: 0px;border-color: white;font-family: Helvetica, sans-serif;">
+          <tr style="border-top: 1px solid black;">
+            <td width="280px" style="font-size: 6px;font-weight: bold;border-left: 1px solid black;">
+                <span>DSWD-FO Caraga-PSD-016-Form 4.A Guarantee Letter (For Service Providers with MOA) </span>
+                <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="40px">
+            </td>
+            <td style="text-align: center;line-height: 12px;" width="300px">
+                <label style="font-weight: bold;font-size: 10px;">Republic of the Philippines</label>
+                <label style="font-size: 10px;">DEPARTMENT OF SOCIAL WELFARE AND DEVELOPMENT</label>
+                <label style="font-weight: bold;font-size: 12px;">CRISIS INTERVENTION SECTION</label>
+                <label style="font-size: 8px;">R. Palma st., Dagohoy, Butuan City, Philippines 860</label>
+            </td>
+            <td rowspan="2" style="text-align: center;border-right: 1px solid black;">
+                <img src="{% static 'qrcode/GL.png' %}" style="margin-top: 0px;" width="180px" height="120px">
+            </td>
+          </tr> 
+          <tr style="font-size: 10px;font-display: block;line-height: 0px;border-left: 1px solid black;">
+            <td colspan="2">
+              <label>Date: </label>
+              <span style="text-decoration: underline;margin-right: 50px;">{{data.date_entried|date:"M. d, Y"}}</span>
+
+              <label>Valid Until: </label>
+              <span style="text-decoration: underline;"><input type="text" name="" class="print-clean" value="{{validity}} only."> </span>
+              &nbsp;&nbsp;
+              <label>GL Code: </label>
+              <span><u>{{data.tracking_number}}</u></span>
+            </td>
+          </tr>
+      </table>
+      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-bottom: 0px;border-color: white;">
+        <tr style="border-left: 1px solid black;">
+          <td style="font-size: 10px;font-weight: bold;">
+            <label style="text-decoration:underline;">{{data.service_provider.name}}.</label>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;border-left: 1px solid black;">
+          <td width="160px">
+            <label>Dear Sir/Ma'am: </label>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;border-left: 1px solid black;">
+          <td colspan="4">
+            <label>The Deparment of Social Welfare and Development guarantees to pay the amount of:  </label>
+          </td>
+          <td colspan="6" style="text-align:center;font-weight: bold;border-bottom: 1px solid black;border-right: 1px solid black;">
+            <label><span id="numtoword2"></span></label>
+          </td>
+        </tr>
+        <tr style="font-size: 5px;line-height: 0px;border-left: 1px solid black;">
+          <td colspan="4">
+            <label></label>
+          </td>
+          <td colspan="6" style="text-align:center;font-weight: bold;border-right: 1px solid black;">
+            <label>AMOUNT IN WORDS</label>
+          </td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;text-align: center;">
+          <td style="border-bottom: 1px solid black;font-weight: bold;border-left: 1px solid black;">
+            <label><span>&#8369;</span> {{calculate.total_payment}} </label>
+          </td>
+          <td width="5px">for</td>
+          <td style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.client.get_client_fullname|upper}}</label>
+          </td>
+          <td width="60px">resident of: </td>
+          <td colspan="6" style="border-bottom: 1px solid black;font-weight: bold;border-right: 1px solid black;">
+            <label>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</label>
+          </td>
+        </tr>
+        <tr style="font-size: 5px;line-height: 0px;text-align: center;">
+          <td style="font-weight: bold;border-left: 1px solid black;">
+            <label>AMOUNT IN FIGURES</label>
+          </td>
+          <td width="5px"></td>
+          <td style="font-weight: bold;">
+            <label>NAME OF CLIENT</label>
+          </td>
+          <td></td>
+          <td colspan="6" style="font-weight: bold;border-right: 1px solid black;">
+            <label>CLIENT'S ADDRESS</label>
+          </td>
+        </tr>
+      </table> 
+      <table class="letter-body-2 table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 8px;font-family: Helvetica, sans-serif;text-align: CENTER;">
+        <tr style="line-height: 0px;border-left: 1px solid black;">
+          <td width="10px">
+            <label>for</label>
+          </td>
+          <td width="50px" colspan="3" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.lib_assistance_category.name|upper}}</label>
+          </td>
+          <td width="65px">
+            <label>intended for</label>
+          </td>
+          <td width="50px" colspan="2" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.bene.get_client_fullname|upper}}</label>
+          </td>
+          <td></td>
+          <td style="border-bottom: 1px solid black;font-weight: BOLD;">
+            <label>{{data.relation.name|upper}}</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="line-height:0px;font-size: 5px;border-left: 1px solid black;">
+          <td>
+            <label></label>
+          </td>
+          <td colspan="3" style="font-weight: bold;">
+            <label>TYPE OF ASSISTANCE</label>
+          </td>
+          <td>
+            <label></label>
+          </td>
+          <td colspan="2" style="font-weight: bold;">
+            <label>NAME OF BENEFICIARY</label>
+          </td>
+          <td></td>
+          <td style="font-weight: BOLD;">
+            <label>RELATIONSHIP</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+      </table>
+      <table class="indication table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 7px;font-family: Helvetica, sans-serif;text-align: CENTER;">
+        <tr style="border-left: 1px solid black;">
+          <td rowspan="{{ct}}" width="450px" style="text-align:left;border-right: 1px solid black;">
+            <label>Please be informed that the check is payable to your company. Should you have any query, you may call us at 342-5619 local <span style="font-weight:bold;">241. </span><br>Thank you for your consideration.</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>DESCRIPTION</label>
+          </td>
+          <td width="52px" style="border:1px solid black;font-weight: bold;">
+            <label>Reg. Price</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>Qty</label>
+          </td>
+          <td width="55px" style="border:1px solid black;font-weight: bold;">
+            <label>Disc. Price</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>Qty</label>
+          </td>
+          <td width="48px;" style="border:1px solid black;font-weight: bold;">
+            <label>TOTAL</label>
+          </td>
+        </tr>
+        {% for row in provided_data %}
+        <tr style="font-size:5px;line-height: 0px;font-weight: bold;">
+          <td style="border:1px solid black;text-align: left;">
+            <label>{{row.provided_data}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.regular_price}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.regular_quantity}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.discount_price}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.discount_quantity}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.total}}</label>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;">
+          <td style="border-right:1px solid black;border-left:1px solid black;"></td> 
+          <td colspan="5" style="border:1px solid black;">
+            <label>TOTAL: </label>
+          </td>
+          <td style="border:1px solid black;">
+            <label><span>&#8369;</span> {{calculate.total_payment}} </label>
+          </td>
+        </tr>
+      </table>
+      <table class="Signatories table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 7px;font-family: Helvetica, sans-serif;text-align:CENTER;">
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td width="115px">
+            <label>PREPARED BY:</label>
+          </td>
+          <td width="180px" style="border-bottom:1px solid black;">
+            <label>{{data.swo.get_fullname|upper}}, RSW</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>SOCIAL WELFARE OFFICER</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td>
+            <label>APPROVED BY:</label>
+          </td>
+          <td style="border-bottom:1px solid black;">
+            <label>{{data.signatories.get_fullname|upper}}</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>APPROVING AUTHORITY</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td>
+            <label>ASSISTANCE RECEIVED BY:</label>
+          </td>
+          <td style="border-bottom:1px solid black;">
+            <label>{{data.client.get_client_fullname|upper}}</label>
+          </td>
+          <td style="font-size:5px;text-align: left;border-right: 1px solid black;">
+            <label>Date Received: <span style="text-decoration:underline;">{{data.date_entried|date:"M. d, Y"}}</span></label>
+          </td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>SIGNATURE OF CLIENT OVER PRINTED NAME</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:left;line-height: 8px;font-size:5px;font-weight: bold;border-left: 1px solid black;border-bottom: 1px solid black;">
+          <td>
+            <label style="color: red;">IMPORTANT: NO SUKLI POLICY</label><br>
+            <span>Original: DSWD COPY</span>
+          </td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+      </table>
+      <!-- Cut Area -->
+      <div style="margin-top:10px;">
+        <span style="font-size:18px;" class="fa fa-scissors">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</span>
+      </div>
+      <!-- Cut Area -->
+      <table class="title table table-bordered" style="margin-top: 10px;margin-bottom: 0px;border-color: white;font-family: Helvetica, sans-serif;">
+          <tr style="border-top: 1px solid black;">
+            <td width="280px" style="font-size: 6px;font-weight: bold;border-left: 1px solid black;">
+                <span>DSWD-FO Caraga-PSD-016-Form 4.A Guarantee Letter (For Service Providers with MOA)</span>
+                <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="40px">
+            </td>
+            <td style="text-align: center;line-height: 12px;" width="300px">
+                <label style="font-weight: bold;font-size: 10px;">Republic of the Philippines</label>
+                <label style="font-size: 10px;">DEPARTMENT OF SOCIAL WELFARE AND DEVELOPMENT</label>
+                <label style="font-weight: bold;font-size: 12px;">CRISIS INTERVENTION SECTION</label>
+                <label style="font-size: 8px;">R. Palma st., Dagohoy, Butuan City, Philippines 8600</label>
+            </td>
+            <td rowspan="2" style="text-align: center;border-right: 1px solid black;">
+              <img src="{% static 'qrcode/GL.png' %}" style="margin-top: 0px;" width="180px" height="120px">
+            </td>
+          </tr> 
+          <tr style="font-size: 10px;font-display: block;line-height: 0px;border-left: 1px solid black;">
+            <td colspan="2">
+              <label>Date: </label>
+              <span style="text-decoration: underline;margin-right: 50px;">{{data.date_entried|date:"M. d, Y"}}</span>
+
+              <label>Valid Until: </label>
+              <span style="text-decoration: underline;"><input type="text" name="" class="print-clean" value="{{validity}} only."> </span>
+              &nbsp;&nbsp;
+              <label>GL Code: </label>
+              <span>{{data.tracking_number}}</span>
+            </td>
+          </tr>
+      </table>
+      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-bottom: 0px;border-color: white;">
+        <tr style="border-left: 1px solid black;">
+          <td style="font-size: 10px;font-weight: bold;">
+            <label style="text-decoration:underline;">{{data.service_provider.name}}.</label>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;border-left: 1px solid black;">
+          <td width="160px">
+            <label>Dear Sir/Ma'am: </label>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;border-left: 1px solid black;">
+          <td colspan="4">
+            <label>The Deparment of Social Welfare and Development guarantees to pay the amount of:  </label>
+          </td>
+          <td colspan="6" style="text-align:center;font-weight: bold;border-bottom: 1px solid black;border-right: 1px solid black;">
+            <label><span id="numtoword">waw</span></label>
+          </td>
+        </tr>
+        <tr style="font-size: 5px;line-height: 0px;border-left: 1px solid black;">
+          <td colspan="4">
+            <label></label>
+          </td>
+          <td colspan="6" style="text-align:center;font-weight: bold;border-right: 1px solid black;">
+            <label>AMOUNT IN WORDS</label>
+          </td>
+        </tr>
+        <tr style="font-size: 8px;line-height: 0px;text-align: center;">
+          <td style="border-bottom: 1px solid black;font-weight: bold;border-left: 1px solid black;">
+            <label><span>&#8369;</span> {{calculate.total_payment}} </label>
+          </td>
+          <td width="5px">for</td>
+          <td style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.client.get_client_fullname|upper}}</label>
+          </td>
+          <td width="60px">resident of: </td>
+          <td colspan="6" style="border-bottom: 1px solid black;font-weight: bold;border-right: 1px solid black;">
+            <label>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</label>
+          </td>
+        </tr>
+        <tr style="font-size: 5px;line-height: 0px;text-align: center;">
+          <td style="font-weight: bold;border-left: 1px solid black;">
+            <label>AMOUNT IN FIGURES</label>
+          </td>
+          <td width="5px"></td>
+          <td style="font-weight: bold;">
+            <label>NAME OF CLIENT</label>
+          </td>
+          <td></td>
+          <td colspan="6" style="font-weight: bold;border-right: 1px solid black;">
+            <label>CLIENT'S ADDRESS</label>
+          </td>
+        </tr>
+      </table> 
+      <table class="letter-body-2 table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 8px;font-family: Helvetica, sans-serif;text-align: CENTER;">
+        <tr style="line-height: 0px;border-left: 1px solid black;">
+          <td width="10px">
+            <label>for</label>
+          </td>
+          <td width="50px" colspan="3" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.lib_assistance_category.name|upper}}</label>
+          </td>
+          <td width="65px">
+            <label>intended for</label>
+          </td>
+          <td width="50px" colspan="2" style="border-bottom: 1px solid black;font-weight: bold;">
+            <label>{{data.bene.get_client_fullname|upper}}</label>
+          </td>
+          <td></td>
+          <td style="border-bottom: 1px solid black;font-weight: BOLD;">
+            <label>{{data.relation.name|upper}}</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="line-height:0px;font-size: 5px;border-left: 1px solid black;">
+          <td>
+            <label></label>
+          </td>
+          <td colspan="3" style="font-weight: bold;">
+            <label>TYPE OF ASSISTANCE</label>
+          </td>
+          <td>
+            <label></label>
+          </td>
+          <td colspan="2" style="font-weight: bold;">
+            <label>NAME OF BENEFICIARY</label>
+          </td>
+          <td></td>
+          <td style="font-weight: BOLD;">
+            <label>RELATIONSHIP</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+      </table>
+      <table class="indication table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 7px;font-family: Helvetica, sans-serif;text-align: CENTER;">
+        <tr style="border-left: 1px solid black;">
+          <td rowspan="{{ct}}" width="450px" style="text-align:left;border-right: 1px solid black;">
+            <label>Please be informed that the check is payable to your company. Should you have any query, you may call us at 342-5619 local <span style="font-weight:bold;">241. </span><br>Thank you for your consideration.</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>DESCRIPTION</label>
+          </td>
+          <td width="52px" style="border:1px solid black;font-weight: bold;">
+            <label>Reg. Price</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>Qty</label>
+          </td>
+          <td width="55px" style="border:1px solid black;font-weight: bold;">
+            <label>Disc. Price</label>
+          </td>
+          <td style="border:1px solid black;font-weight: bold;">
+            <label>Qty</label>
+          </td>
+          <td width="48px;" style="border:1px solid black;font-weight: bold;">
+            <label>TOTAL</label>
+          </td>
+        </tr>
+        {% for row in provided_data %}
+        <tr style="font-size:5px;line-height: 0px;font-weight: bold;">
+          <td style="border:1px solid black;text-align: left;">
+            <label>{{row.provided_data}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.regular_price}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.regular_quantity}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.discount_price}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.discount_quantity}}</label>
+          </td>
+          <td style="border:1px solid black;">
+            <label>{{row.total}}</label>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;">
+          <td style="border-right:1px solid black;border-left:1px solid black;"></td>           
+          <td colspan="5" style="border:1px solid black;">
+            <label>TOTAL: </label>
+          </td>
+          <td style="border:1px solid black;">
+            <label><span>&#8369;</span> {{calculate.total_payment}} </label>
+          </td>
+        </tr>
+      </table>
+      <table class="Signatories table table-bordered" style="border-color: white;margin-bottom: 0px;font-size: 7px;font-family: Helvetica, sans-serif;text-align:CENTER;">
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td width="115px">
+            <label>PREPARED BY:</label>
+          </td>
+          <td width="180px" style="border-bottom:1px solid black;">
+            <label>{{data.swo.get_fullname|upper}}, RSW</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>SOCIAL WELFARE OFFICER</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td>
+            <label>APPROVED BY:</label>
+          </td>
+          <td style="border-bottom:1px solid black;">
+            <label>{{data.signatories.get_fullname|upper}}</label>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>APPROVING AUTHORITY</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:7px;font-weight: bold;border-left: 1px solid black;">
+          <td>
+            <label>ASSISTANCE RECEIVED BY:</label>
+          </td>
+          <td style="border-bottom:1px solid black;">
+            <label>{{data.client.get_client_fullname|upper}}</label>
+          </td>
+          <td style="font-size:5px;text-align: left;border-right: 1px solid black;">
+            <label>Date Received: <span style="text-decoration:underline;">{{data.date_entried|date:"M. d, Y"}}</span></label>
+          </td>
+        </tr>
+        <tr style="text-align:center;line-height: 0px;font-size:5px;font-weight: bold;border-left: 1px solid black;">
+          <td></td>
+          <td>
+            <label>SIGNATURE OF CLIENT OVER PRINTED NAME</label>
+          </td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+        <tr style="text-align:left;line-height: 8px;font-size:5px;font-weight: bold;border-left: 1px solid black;border-bottom: 1px solid black;">
+          <td>
+            <label style="color: red;">IMPORTANT: NO SUKLI POLICY</label><br>
+            <span>Duplicate: Service Provider's Copy</span>
+          </td>
+          <td></td>
+          <td style="border-right: 1px solid black;"></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+</body>
+<script>
+// System for American Numbering 
+var th_val = ['', 'thousand', 'million', 'billion', 'trillion'];
+// System for uncomment this line for Number of English 
+// var th_val = ['','thousand','million', 'milliard','billion'];
+ 
+var dg_val = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+var tn_val = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+var tw_val = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+function toWordsconver(s) {
+  s = s.toString();
+    s = s.replace(/[\, ]/g, '');
+    if (s != parseFloat(s))
+        return 'not a number ';
+    var x_val = s.indexOf('.');
+    if (x_val == -1)
+        x_val = s.length;
+    if (x_val > 15)
+        return 'too big';
+    var n_val = s.split('');
+    var str_val = '';
+    var sk_val = 0;
+    for (var i = 0; i < x_val; i++) {
+        if ((x_val - i) % 3 == 2) {
+            if (n_val[i] == '1') {
+                str_val += tn_val[Number(n_val[i + 1])] + ' ';
+                i++;
+                sk_val = 1;
+            } else if (n_val[i] != 0) {
+                str_val += tw_val[n_val[i] - 2] + ' ';
+                sk_val = 1;
+            }
+        } else if (n_val[i] != 0) {
+            str_val += dg_val[n_val[i]] + ' ';
+            if ((x_val - i) % 3 == 0)
+                str_val += 'hundred ';
+            sk_val = 1;
+        }
+        if ((x_val - i) % 3 == 1) {
+            if (sk_val)
+                str_val += th_val[(x_val - i - 1) / 3] + ' ';
+            sk_val = 0;
+        }
+    }
+    if (x_val != s.length) {
+        var y_val = s.length;
+        str_val += 'point ';
+        for (var i = x_val + 1; i < y_val; i++)
+            str_val += dg_val[n_val[i]] + ' ';
+    }
+    return str_val.replace(/\s+/g, ' ');
+}
+
+var number = {{calculate.total_payment}}
+var numtoword = toWordsconver(number) + "PESOS"
+document.getElementById("numtoword").innerHTML = numtoword.toUpperCase();
+document.getElementById("numtoword2").innerHTML = numtoword.toUpperCase();
+</script>
+</html>

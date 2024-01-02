@@ -1,0 +1,246 @@
+<form id="submitEditForm">
+    {% csrf_token %}
+    <div class="modal-body">
+        <div class="form-group mb-3">
+            <label>Name <span class="txt-danger">*</span></label>
+            <input type="text" class="form-control" id="edit-name" name="edit-name" value="{{ service_provider.name }}" autocomplete="off" required>
+            <div class="invalid-feedback" id="alert-on-edit-name"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label>Acronym</label>
+            <input type="text" class="form-control" id="edit-acronym" name="edit-acronym" value="{{ service_provider.acronym }}" autocomplete="off">
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group mb-3">
+            <input type="checkbox" class="form-check-input" name="edit-status" id="edit-status" {% if service_provider.status %}checked{% endif %}> Status
+        </div>
+        <div id="edit-focal-person-content">
+            {% for row in focal_person %}
+            {% if forloop.first %}
+            <div class="row mb-3">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Contact Person <span class="txt-danger">*</span></label>
+                        <select class="form-control select edit-contact-person{{ row.id }} edit-contact-person" name="contact_person[]" required></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" class="form-control" name="contact_number[]" value="{{ row.contact_number }}" autocomplete="off">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3" style="margin-top: 40px;">
+                        <input type="checkbox" class="form-check-input" name="focal_status[]" {% if row.status %}checked{% endif %}> Is Active
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary btn-block w-100" id="edit-add"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="row mb-3">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Contact Person <span class="txt-danger">*</span></label>
+                        <select class="form-control select edit-contact-person{{ row.id }} edit-contact-person" name="contact_person[]" required></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" class="form-control" name="contact_number[]" value="{{ row.contact_number }}" autocomplete="off">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3" style="margin-top: 40px;">
+                        <input type="checkbox" class="form-check-input" name="focal_status[]" {% if row.status %}checked{% endif %}> Is Active
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-danger btn-block w-100" data-role="edit-remove-data" data-id="{{ row.id }}"><i class="fa fa-minus"></i></button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" type="submit">Save changes</button>
+    </div>
+</form>
+{% block script %}
+<script>
+    template = `
+               <div class="row mb-3">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Contact Person <span class="txt-danger">*</span></label>
+                            <select class="form-control select edit-contact-person" name="contact_person[]" required></select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" class="form-control" name="contact_number[]" autocomplete="off">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-3" style="margin-top: 40px;">
+                            <input type="checkbox" class="form-check-input" name="focal_status[]" checked> Is Active
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-danger btn-block w-100" data-role="edit-remove"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+    $('#edit-add').on('click', function(){
+        $('#edit-focal-person-content').append(template);
+        editContactPersonInit();
+    });
+
+    editContactPersonInit();
+    function editContactPersonInit(){
+        $('.edit-contact-person').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_user' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    {% for row in focal_person %}
+        var $option = $("<option selected></option>").val('{{ row.user_id }}').text('{{ row.user.get_fullname }}');
+        $('.edit-contact-person' + {{ row.id }}).append($option).trigger('change');
+    {% endfor %}
+
+    $(document).on('click', 'button[data-role=edit-remove]', function(){
+        $(this).closest('.row').remove();
+    });
+
+    $(document).on('click', 'button[data-role=edit-remove-data]', function(){
+        var id = $(this).data('id');
+        var content  = $(this).closest('.row')
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to delete this focal person?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function (){
+                return $.post({
+                    url: "{% url 'delete_focal_service_provider' %}",
+                    data: { id: id },
+                    success : function (response){
+                        if(!response.error){
+                            Swal.fire({
+                                title: "Good job!",
+                                html:  response.msg,
+                                icon: "success",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed){
+                                    $('#sp-table').DataTable().ajax.reload();
+                                    content.remove();
+                                }
+                            });
+                        } else {
+                            $('#edit-name').addClass('is-invalid');
+                            $('#alert-on-edit-name').html(response.msg);
+                        }
+                    }
+                });
+            },
+        });
+    });
+
+    function validationForm(){
+        var invalid = false;
+        $('.form-control').each(function() {
+            if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                $(this).addClass('is-invalid');
+                $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                invalid = true;
+            }
+        });
+        return invalid;
+    }
+
+    $('#submitEditForm').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to edit this new service provider?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'edit_service_provider' service_provider.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#sp-table').DataTable().ajax.reload();
+                                        $('#edit-sp-modal').modal('hide');
+                                    }
+                                });
+                            } else {
+                                $('#edit-name').addClass('is-invalid');
+                                $('#alert-on-edit-name').html(response.msg);
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

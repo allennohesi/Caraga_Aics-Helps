@@ -1,0 +1,70 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Management</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Management</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-12">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                <a class="nav-link" data-bs-toggle="pill" href="#list-transaction" data-title="{% url 'list_of_transaction' %}" role="tab" aria-selected="true">List of Transaction</a>
+                                <a class="nav-link active" data-bs-toggle="pill" href="#transaction" data-title="{% url 'new_transaction' %}" role="tab" aria-selected="true">New Transaction</a>
+                                <a class="nav-link" data-bs-toggle="pill" href="#client-beneficiary" data-title="{% url 'registration' %}" role="tab" aria-selected="true">Registration</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-10 col-xs-12">
+                            <div class="tab-content">
+                                <div id="html-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.nav-link').on('click', function(){
+            $('.nav-link').each(function(){
+                $(this).removeClass('active');
+            });
+            $(this).addClass('active');
+            callPage($(this).data('title'));
+        });
+
+        function callPage(pageRefInput) {
+            $.ajax({
+                url: pageRefInput,
+                type: "GET",
+                dataType: 'text',
+                beforeSend: function() {
+                },
+                success: function(response) {
+                    $('#html-content').html(response);
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

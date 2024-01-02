@@ -1,0 +1,552 @@
+<div class="default-according" id="accordionclose">
+    <div class="card">
+        <div class="collapse show" id="transaction" data-bs-parent="#accordionclose">
+            <div class="card-body">
+                <div class="ribbon ribbon-clip ribbon-primary">New Transaction</div>
+                <br><br>
+                <form id="submitTransactionForm">
+                    {% csrf_token %}
+                    <ul class="nav nav-pills nav-justified" id="tabUL" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pills-information" data-bs-toggle="pill" href="#information" role="tab">
+                                <i class="fa fa-file-o"></i> Information
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="pills-assessment" data-bs-toggle="pill" href="#assessment" role="tab">
+                                <i class="fa fa-question"></i> Assessment
+                            </a>
+                        </li>
+                    </ul>
+                    <br>
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active" id="information" role="tabpanel">
+                            <small>Client's Identifying Information</small>
+                            <br><br>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Client Name <span class="txt-danger">*</span></label>
+                                        <select class="form-control select client_beneficiary" id="client_beneficiary" name="client" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Birthdate</label>
+                                        <input type="date" class="form-control" id="birthdate" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="text" class="form-control" id="age" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Sex</label>
+                                        <input type="text" class="form-control" id="sex" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Relationship to Beneficiary <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" id="relationship" name="relationship" required>
+                                            <option></option>
+                                            {% for row in relation %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Contact Number</label>
+                                        <input type="text" class="form-control" id="contact_number" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Civil Status</label>
+                                        <input type="text" class="form-control" id="civil_status" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Province</label>
+                                        <input type="text" class="form-control" id="province" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control" id="city" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Barangay</label>
+                                        <input type="text" class="form-control" id="barangay" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>House / Block / Lot No.</label>
+                                        <input type="text" class="form-control" id="house_no" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Street</label>
+                                        <input type="text" class="form-control" id="street" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Subdivision / Village</label>
+                                        <input type="text" class="form-control" id="village" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>4Ps Member</label>
+                                        <input type="text" class="form-control" id="is_4psmember" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>4Ps ID Number</label>
+                                        <input type="text" class="form-control" id="4ps_id_number" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Indigenous People</label>
+                                        <input type="text" class="form-control" id="indi" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Tribe</label>
+                                        <input type="text" class="form-control" id="tribe" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <small>Beneficiary Identifying Information</small>
+                            <div class="form-group float-end">
+                                <input type="checkbox" class="form-check-input" id="same_with_client"> Same with Client
+                            </div>
+                            <br><br>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Beneficiary Name <span class="txt-danger">*</span></label>
+                                        <select class="form-control select client_beneficiary" id="beneficiary" name="beneficiary" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Birthdate</label>
+                                        <input type="date" class="form-control" id="bene_birthdate" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="text" class="form-control" id="bene_age" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Sex</label>
+                                        <input type="text" class="form-control" id="bene_sex" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Contact Number</label>
+                                        <input type="text" class="form-control" id="bene_contact_number" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Civil Status</label>
+                                        <input type="text" class="form-control" id="bene_civil_status" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Indigenous People</label>
+                                        <input type="text" class="form-control" id="bene_indi" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Tribe</label>
+                                        <input type="text" class="form-control" id="bene_tribe" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Province</label>
+                                        <input type="text" class="form-control" id="bene_province" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control" id="bene_city" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Barangay</label>
+                                        <input type="text" class="form-control" id="bene_barangay" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>House / Block / Lot No.</label>
+                                        <input type="text" class="form-control" id="bene_house_no" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Street</label>
+                                        <input type="text" class="form-control" id="bene_street" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Subdivision / Village</label>
+                                        <input type="text" class="form-control" id="bene_village" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>4Ps Member</label>
+                                        <input type="text" class="form-control" id="bene_is_4psmember" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>4Ps ID Number</label>
+                                        <input type="text" class="form-control" id="bene_4ps_id_number" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <small>Beneficiary Family Composistion</small>
+                            <br><br>
+                            <div class="row mb-3">
+                                <table class="table table-bordered table-hover" id="family_composistion_table">
+                                    <thead>
+                                        <th>Full Name</th>
+                                        <th>Birthdate</th>
+                                        <th>Age</th>
+                                        <th>Occupation</th>
+                                        <th>Salary per month</th>
+                                    </thead>
+                                    <tbody>
+                                        <td colspan="5" class="text-center">No data available.</td>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row float-end">
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-lg" id="next">Next</a>
+                                </div>
+                            </div>
+                            <br><br>
+                        </div>
+                        <div class="tab-pane fade" id="assessment" role="tabpanel">
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label>Client's Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="client_category" required>
+                                            <option></option>
+                                            {% for row in category %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Sub-Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="client_subcategory" required>
+                                            <option></option>
+                                            {% for row in sub_category %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label>Beneficiary's Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="bene_category" required>
+                                            <option></option>
+                                            {% for row in category %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Sub-Category <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="bene_subcategory" required>
+                                            <option></option>
+                                            {% for row in sub_category %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="form-group">
+                                    <label>Problem(s) Presented <span class="txt-danger">*</span></label>
+                                    <textarea class="form-control" rows="10" name="problem" required></textarea>
+                                </div>
+                            </div>
+                            <hr>
+                            <small>Records required for the case are confidentially filed at the Crisis Intervention Unit</small>
+                            <br><br>
+                            <div class="row mb-3">
+                                {% for row in file_type %}
+                                <div class="col-md-4">
+                                    <div class="project-box">
+                                        <input type="hidden" name="file_id[]" value="{{ row.id }}">
+                                        <label>{{ row.name }} <span class="txt-danger">*</span></label>
+                                        <input type="file" class="form-control" name="files[]" required>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row float-end">
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-lg" id="previous">Previous</a>
+                                    <button type="submit" class="btn btn-primary btn-lg">Finished</button>
+                                </div>
+                            </div>
+                            <br><br>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+
+        $('#next').on('click', function(){
+            new bootstrap.Tab(document.querySelector('#tabUL a[href="#assessment"]')).show();
+        });
+
+        $('#previous').on('click', function(){
+            new bootstrap.Tab(document.querySelector('#tabUL a[href="#information"]')).show();
+        });
+
+        $('.client_beneficiary').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_client_beneficiary' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+
+        $('#client_beneficiary').on('change', function(){
+            var id = $(this).val();
+               $.ajax({
+                    url: '/management/get-client-information/' + id,
+                    type: 'GET',
+                    success: function(response){
+                        $('#birthdate').val(response.birthdate);
+                        $('#age').val(response.age);
+                        $('#sex').val(response.sex);
+                        $('#contact_number').val(response.contact_number);
+                        $('#civil_status').val(response.civil_status);
+                        $('#province').val(response.province);
+                        $('#city').val(response.city);
+                        $('#barangay').val(response.barangay);
+                        $('#house_no').val(response.house_no);
+                        $('#village').val(response.village);
+                        $('#street').val(response.street);
+                        $('#is_4psmember').val(response.is_4ps);
+                        $('#4ps_id_number').val(response.id_number_4ps);
+                        $('#indi').val(response.is_indi);
+                        $('#tribe').val(response.tribe);
+                    }
+               });
+        });
+
+        $('#same_with_client').on('change', function(){
+            if($("#same_with_client").is(':checked')){
+                if($('#client_beneficiary').val() != null) {
+                    var $option = $("<option selected></option>").val($('#client_beneficiary').val()).text($('#client_beneficiary').select2('data')[0].text);
+                    $('#beneficiary').append($option).trigger('change');
+                    getBeneficiary($('#client_beneficiary').val());
+                } else {
+                    Swal.fire('Oops...', 'Please choose a client first before proceeding.', 'warning');
+                }
+            }
+        });
+
+        $('#beneficiary').on('change', function(){
+            getBeneficiary($(this).val());
+        });
+
+        function getBeneficiary(id){
+            $.ajax({
+                url: '/management/get-client-information/' + id,
+                type: 'GET',
+                success: function(response){
+                    $('#bene_birthdate').val(response.birthdate);
+                    $('#bene_age').val(response.age);
+                    $('#bene_sex').val(response.sex);
+                    $('#bene_contact_number').val(response.contact_number);
+                    $('#bene_civil_status').val(response.civil_status);
+                    $('#bene_province').val(response.province);
+                    $('#bene_city').val(response.city);
+                    $('#bene_barangay').val(response.barangay);
+                    $('#bene_house_no').val(response.house_no);
+                    $('#bene_village').val(response.village);
+                    $('#bene_street').val(response.street);
+                    $('#bene_is_4psmember').val(response.is_4ps);
+                    $('#bene_4ps_id_number').val(response.id_number_4ps);
+                    $('#bene_indi').val(response.is_indi);
+                    $('#bene_tribe').val(response.tribe);
+
+                    var family_composistion = response.family_composistion
+                    for(var i=0; i < family_composistion.length; i++) {
+                        $('#family_composistion_table tbody').html(`
+                            <td>`+ family_composistion[i]['fullname'] +`</td>
+                            <td class="text-center">`+ family_composistion[i]['birthdate'] +`</td>
+                            <td class="text-center">`+ family_composistion[i]['age'] +`</td>
+                            <td class="text-center">`+ family_composistion[i]['occupation'] +`</td>
+                            <td class="text-end">`+ family_composistion[i]['salary'] +`</td>
+                        `);
+                    }
+                }
+           });
+        }
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        $('#submitTransactionForm').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to file this new transaction?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'new_transaction' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: response.tracking_number,
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            callPage("{% url 'new_transaction' %}");
+                                        }
+                                    });
+                                } else {
+                                    $('.alertDiv').html(
+                                        `
+                                            <div class="alert alert-danger">
+                                                <i class="fa fa-info-circle"></i>&emsp;
+                                                `+ response.msg +`
+                                            </div><br>
+                                        `
+                                    )
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+
+        function callPage(pageRefInput) {
+            $.ajax({
+                url: pageRefInput,
+                type: "GET",
+                dataType: 'text',
+                beforeSend: function() {
+                },
+                success: function(response) {
+                    $('#html-content').html(response);
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

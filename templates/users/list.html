@@ -1,0 +1,369 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>User List</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">User</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-user-modal"><i class="fa fa-plus"></i> Register User</button>
+                    <br><br>
+                    <table class="table table-sm table-bordered table-hover w-100" id="user-table">
+                        <thead>
+                            <th>Information</th>
+                            <th>Change Password</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Role</th>
+                            <th class="text-center">Staff</th>
+                            <th class="text-center">Super User</th>
+                            <th class="text-center">Updated By</th>
+                            <th class="text-center">Updated At</th>
+                            <th class="text-end">Status</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add-user-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">REGISTER USER</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" oninput="this.value = this.value.toUpperCase()" aria-label="Close"></button>
+            </div>
+            <form id="submitForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label>First Name <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control " id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Last Name <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Middle Name (Optional)</label>
+                        <input type="text" class="form-control" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Email <span class="txt-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Username <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" autocomplete="off" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Password <span class="txt-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <p id="password-validation-message" style="color: red;"></p>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Group <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="group" required>
+                            <option></option>
+                            {% for row in group %}
+                            <option value="{{ row.id }}">{{ row.name|upper  }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="checkbox" class="form-check-input" name="is_superuser" id="is_superuser"> Is Super User
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" class="form-check-input" name="is_staff" id="is_staff"> Is Staff
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit-user-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">EDIT USER</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="edit-content"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="change_password" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="changepassword">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="staticBackdropLabel">Start Transaction in this <br> Tracking Number: <small style="color:red;">{{ transaction.tracking_number|upper }}</small></h6>
+                    <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" value="{{ transaction.id }}" name="start_id" hidden>
+                    <div class="form-group">
+                        <div class="row mb-3">
+                            <div class="form-group">
+                                <label>Client for this Assessment:</label>
+                                <input type="text" id="empid" class="form-control" name="empid" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Benefiary for this Assessment:</label>
+                                <input type="password" name="password" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" align="left">
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    document.getElementById("password").addEventListener("input", function() {
+      const password = this.value;
+      const passwordValidationMessage = document.getElementById("password-validation-message");
+
+      // Check if the password meets the criteria
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasSpecialCharacter = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
+      const isLengthValid = password.length >= 8;
+
+      if (hasUppercase && hasSpecialCharacter && isLengthValid) {
+        passwordValidationMessage.textContent = "Password is valid.";
+      } else {
+        passwordValidationMessage.textContent = "Password must have at least 1 uppercase letter, 1 special character, and be at least 8 characters long.";
+      }
+    });
+  </script>
+<script>
+    $(document).ready(function(){
+        $('#user-table').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 1, 'asc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/user/list/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='edit' data-id='"+ row['id'] + "'>Edit</a>"
+                    },
+                    'searchable': false,
+                    'sortable': false,
+                    'className': 'text-center'
+                },
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='javascript:void(0);' data-role='change_password' data-id='"+ row['id'] + "'>Update</a>"
+                    },
+                    'searchable': false,
+                    'sortable': false,
+                    'className': 'text-center'
+                },
+                {'data': 'username'},
+                {'data': 'fullname', 'name': 'first_name, middle_name, last_name'},
+                {'data': 'email', 'className': 'text-center', 'sortable': false},
+                {'data': 'role', 'className': 'text-center', 'searchable': false, 'sortable': false },
+                {'data': 'is_staff',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else if (data == 0) {
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    },
+                    'className': 'text-center',
+                    'searchable': false,
+                    'sortable': false
+                },
+                {'data': 'is_superuser',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-check-circle txt-success"></i>'
+                        }else if (data == 0) {
+                            return '<i class="fa fa-times-circle txt-danger"></i>'
+                        }
+                    },
+                    'className': 'text-center',
+                    'searchable': false,
+                    'sortable': false
+                },
+                {'data': 'updated_by', 'className': 'text-center', 'sortable': false, 'searchable': false},
+                {'data': 'date_updated', 'className': 'text-center', 'sortable': false, 'searchable': false},
+                {'data': 'is_active',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-circle txt-success"></i> Active'
+                        }else if (data == 0) {
+                            return '<i class="fa fa-circle txt-danger"></i> Inactive'
+                        }
+                    },
+                    'className': 'text-end',
+                    'searchable': false,
+                    'sortable': false
+                },
+            ]
+        });
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+        function clearValidation(){
+            $('.form-control').each(function() {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').html("");
+            });
+        }
+
+        $('#submitForm').on('submit', function(e){
+            e.preventDefault();
+            if (!validationForm()){
+                var form = new FormData(this);
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to register this new user?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'user_list' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#submitForm').trigger('reset');
+                                            $('#user-table').DataTable().ajax.reload();
+                                            clearValidation();
+                                            $('#add-user-modal').modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Oops...', response.msg, 'warning');
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#changepassword').on('submit', function(e){
+            e.preventDefault();
+            if (!validationForm()){
+                var form = new FormData(this);
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to register this new user?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'change_password' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            location.reload()
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Oops...', response.msg, 'warning');
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });        
+        $(document).on('click', 'a[data-role=edit]', function(){
+            $('#edit-content').load('/users/edit/' + $(this).data('id'), function(){
+                $('#edit-user-modal').modal('show');
+            });
+        });
+        $(document).on('click','a[data-role=change_password]', function(){ 
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#change_password').modal('show');
+            //$('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
+        });
+    });
+</script>
+{% endblock %}
