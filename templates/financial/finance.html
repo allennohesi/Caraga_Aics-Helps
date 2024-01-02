@@ -4,14 +4,14 @@
     <div class="page-title">
         <div class="row">
             <div class="col-6">
-                <h3>Finance</h3>
+                <h3>Biller</h3>
             </div>
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="breadcrumb-item active">Finance</li>
+                    <li class="breadcrumb-item active">Biller</li>
                 </ol>
             </div>
         </div>
@@ -25,19 +25,9 @@
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
-                                <i class="fa fa-file-o"></i> Create Voucher
+                                <i class="fa fa-file-o"></i> Create Billing for service provider
                             </a>
                         </li>
-                        {% comment %} <li class="nav-item">
-                            <a class="nav-link" id="pills-transaction_all" data-bs-toggle="pill" href="#transaction_all" role="tab">
-                                <i class="fa fa-file-o"></i> All Pending Transaction
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="pills-completed" data-bs-toggle="pill" href="#completed" role="tab">
-                                <i class="fa fa-calendar-o"></i> All Completed Transaction
-                            </a>
-                        </li> {% endcomment %}
                     </ul>
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">

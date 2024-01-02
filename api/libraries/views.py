@@ -3,9 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.libraries.serializers import CategorySerializer, MOASerializer, MOASSSerializer, ServiceProviderSerializer, \
     SubCategorySerializer, TypeOfAssistanceSerializer, RelationSerializer, SexSerializer, SuffixSerializer, \
-    ProvinceSerializer, CitySerializer, BarangaySerializer, TribeSerializer, SignatoriesSerializer
+    ProvinceSerializer, CitySerializer, BarangaySerializer, TribeSerializer, SignatoriesSerializer, FundSourceSerializer
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
-    TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, Tribe, SignatoriesTbl
+    TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource
+
+class FundSourceViews(generics.ListAPIView):
+    queryset = FundSource .objects.all()
+    serializer_class = FundSourceSerializer
+    permission_classes = [IsAuthenticated]
 
 class SignatoriesViews(generics.ListAPIView):
     queryset = SignatoriesTbl .objects.all()
