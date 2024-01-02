@@ -67,18 +67,24 @@ def service_provider(request):
 
 @login_required
 def fund_source(request):
-    name=request.POST.get('fund_source')
-    check = FundSource.objects.filter(name=request.POST.get('fund_source'))
-    if not check:
-        FundSource.objects.create(
-            name=name,
-            updated_by_id=request.user.id,
-            status=True,
-            date_updated=datetime.now()
-        )
-        return JsonResponse({'error': False, 'msg': "New Fund Source '{}' has been added successfully.".format(name)})
-    else:
-        return JsonResponse({'error': True, 'msg': "Fund Source '{}' is already existed.".format(name)})
+    if request.method == "POST":
+        name=request.POST.get('fund_source')
+        check = FundSource.objects.filter(name=request.POST.get('fund_source'))
+        if not check:
+            FundSource.objects.create(
+                name=name,
+                updated_by_id=request.user.id,
+                status=True,
+                date_updated=datetime.now()
+            )
+            return JsonResponse({'error': False, 'msg': "New Fund Source '{}' has been added successfully.".format(name)})
+        else:
+            return JsonResponse({'error': True, 'msg': "Fund Source '{}' is already existed.".format(name)})
+        
+    context = {
+        'title': 'Fund-Source'
+    }
+    return render(request, 'libraries/fund_source.html', context)
     
 @login_required
 @groups_only('Super Administrator')
