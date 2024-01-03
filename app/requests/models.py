@@ -218,7 +218,7 @@ class Transaction(models.Model):
 class transaction_description(models.Model):
     tracking_number = models.ForeignKey(Transaction, models.DO_NOTHING, to_field='tracking_number')
     provided_data = models.CharField(max_length=255, blank=True, null=True)
-    regular_price = models.IntegerField()
+    regular_price = models.FloatField()
     regular_quantity = models.IntegerField()
     discount_price = models.FloatField()
     discount_quantity = models.IntegerField()

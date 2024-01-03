@@ -595,8 +595,9 @@ def printCEGL(request, pk):
 	display_family_roster = ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=transaction.bene_id).all()
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number)
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
-
+	
 	esig = SignatoriesTbl.objects.filter(signatories_id=transaction.signatories, status=1).first()
+	purpose_assessment = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 	context = {
 		'data': transaction,
 		'roster': display_family_roster,
@@ -605,6 +606,7 @@ def printCEGL(request, pk):
 		'transactionStartEnd':transactionStartEnd,
 		'calculate': calculate,
 		'esignature':esig,
+		'purpose_assessment':purpose_assessment,
 	}
 	return render(request,"requests/printCEGL.html", context)
 
@@ -618,6 +620,7 @@ def printCECASH(request, pk):
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
 
 	esig = SignatoriesTbl.objects.filter(signatories_id=transaction.signatories, status=1).first()
+	purpose_assessment = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 	context = {
 		'data': transaction,
 		'roster': display_family_roster,
@@ -626,6 +629,7 @@ def printCECASH(request, pk):
 		'transactionStartEnd':transactionStartEnd,
 		'calculate': calculate,
 		'esignature':esig,
+		'purpose_assessment':purpose_assessment,
 	}
 	return render(request,"requests/printCECASH.html", context)
 
