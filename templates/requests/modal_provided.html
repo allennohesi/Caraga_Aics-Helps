@@ -1,449 +1,476 @@
 <style>
-.hidden {
-    display: none;
-    }
-</style>
-<div class="row" id="modal_view">
-    {% if transaction.signatories_id %}
-    
-    <div class="row">
-        <div class="col-sm-3">
-          <div class="card">
-            <div class="btn-group">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                Printable Forms
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
-                <li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li>
-                <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
-                <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
-                <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
-                <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
-                <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Separated link</a></li>
-            </ul>
-            </div>
-          </div>
-        </div>
-    </div>
-    {% endif %}
-    {% if transaction.service_provider_id == null %}
-    <p>
-        <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Add service provider</a>
-    </p>
-    <div class="row">
-    <div class="col">
-        <div class="collapse multi-collapse" id="multiCollapseExample1">
-        <div class="card card-body">
-            <form id="add_service_provider">
-                {% csrf_token %}
-                <div class="row mb-3">
-                    <div class="form-group">
-                        <label>Service provider</label>
-                        <input type="text" class="form-control" name="service_provider" placeholder="Add service provider">
-                    </div>
+    .hidden {
+        display: none;
+        }
+    </style>
+    <div class="row" id="modal_view">
+        {% if transaction.signatories_id %}
+        
+        <div class="row">
+            <div class="col-sm-3">
+              <div class="card">
+                <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Printable Forms
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Separated link</a></li>
+                </ul>
                 </div>
-                <div class="row mb-3">
-                    <div class="form-group">
-                        <label>Acronym</label>
-                        <input type="text" class="form-control" name="acronym" placeholder="Add acronym">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" class="form-control" name="contactnumber" placeholder="Add contact number">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-        </div>
-    </div>
-    </div>
-    {% endif %}
-    <form id="submitformProvided">
-        {% csrf_token %}
-        {% if transaction.service_provider_id == null %}
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Service Provider <span class="txt-danger">*</span></label>
-                    <select class="form-control select1 hidden" name="service_provider" id="service_pr" required>
-                        <option></option>
-                        {% for row in service_provider  %}
-                        <option value="{{ row.id }}">{{ row.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+              </div>
             </div>
         </div>
-        {% else %}
-        <label>Service Provider: <u>{{transaction.service_provider.name}}</u></label>
         {% endif %}
-        <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment}}" hidden>
-        <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Provided with</label>
-                    <input type="text" class="form-control" name="provided" id="provided" required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Regular Price <span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="regprice" onkeypress='validate(event)' id="reg_price" required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Quantity<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Discount<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Quantity<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required readonly>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Total<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <input type="submit" class="btn btn-primary" name="regprice" value="+">
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Pre total <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
-                </div>
-            </div>
-        </div>
-        <div class="table-responsive text-nowrap table-scroll">
-            <table class="table table-responsive" width="100%" id="table">
-                <thead>
-                    <th class="text-center">Action</th>
-                    <th class="text-center">Transaction Provided</th>
-                    <th class="text-center">Service Provider</th>
-                    <th class="text-center">Regular Price</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-center">Discount Percentage</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-center">Total</th>
-                </thead>
-            </table>
-        </div>
-        <br>
-    </form>
-
-    <form id="Confirmation">
-        {% csrf_token %}
-        <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}" hidden>
-        <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
-        <div class="alert alert-secondary" role="alert">
-            Please confirm the total amount, if you're all set.
-        </div>
-        <p class="text-end">
-
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+        {% if transaction.service_provider_id == null %}
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Add service provider</a>
         </p>
-    </form>
-    <!-- Modal -->
-</div>
-<div class="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="row">
+        <div class="col">
+            <div class="collapse multi-collapse" id="multiCollapseExample1">
+            <div class="card card-body">
+                <form id="add_service_provider">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label>Service provider</label>
+                            <input type="text" class="form-control" name="service_provider" placeholder="Add service provider">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label>Acronym</label>
+                            <input type="text" class="form-control" name="acronym" placeholder="Add acronym">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" class="form-control" name="contactnumber" placeholder="Add contact number">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
-            <div class="modal-body">
-            ...
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+        {% endif %}
+        <form id="submitformProvided">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Service Provider <span class="txt-danger">*</span></label>
+                        <select class="form-control select1 hidden" name="service_provider" id="service_pr" required>
+                            <option></option>
+                            {% for row in service_provider  %}
+                            {% if row.id == transaction.service_provider_id %}
+                            <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                            {% else %}
+                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <label>Service Provider: <u>{{transaction.service_provider.name}}</u></label>
+            <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment}}" hidden>
+            <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
+            <input type="text" class="form-control" name="sid" id="sid" hidden>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Provided with</label>
+                        <input type="text" class="form-control" name="provided" id="provided" required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Regular Price <span class="txt-danger">*</span></label>
+                        <br>
+                        <input type="text" class="form-control" name="regprice" onkeypress='validate(event)' id="reg_price" required>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Quantity<span class="txt-danger">*</span></label>
+                        <br>
+                        <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Discount<span class="txt-danger">*</span></label>
+                        <br>
+                        <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Quantity<span class="txt-danger">*</span></label>
+                        <br>
+                        <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Total<span class="txt-danger">*</span></label>
+                        <br>
+                        <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="submit" class="btn btn-primary" name="regprice" value="+">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Pre total <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive text-nowrap table-scroll">
+                <table class="table table-responsive" width="100%" id="table">
+                    <thead>
+                        <th class="text-center">Delete</th>
+                        <th class="text-center">Edit</th>
+                        <th class="text-center">Transaction Provided</th>
+                        <th class="text-center">Service Provider</th>
+                        <th class="text-center">Regular Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Discount Percentage</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Total</th>
+                    </thead>
+                </table>
+            </div>
+            <br>
+        </form>
+    
+        <form id="Confirmation">
+            {% csrf_token %}
+            <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}" hidden>
+            <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
+            <div class="alert alert-secondary" role="alert">
+                Please confirm the total amount, if you're all set.
+            </div>
+            <p class="text-end">
+    
+                <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            </p>
+        </form>
+        <!-- Modal -->
+    </div>
+    <div class="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    $(document).ready(function(){
-        $('#table').DataTable({
-            'serverSide': true,
-            'processing': true,
-            'deferRender': true,
-            'lengthMenu': [ 4, 8, 12, 20 ],
-            'order': [[0, 'desc' ]],
-            'bDestroy': true,
-            'ajax': {
-                'url': '/api/requests/transactionDescription/list/?format=datatables&data={{ transaction.tracking_number }}',
-                'type': 'GET',
-            },
-            'fnCreatedRow': function (row, data, index) {
-                $(row).attr('id', data['id']);
-            },
-            'columns': [
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='delete', 'className': 'text-start', data-id="+ row['id'] + ">Delete</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
+    <script>
+        $(document).ready(function(){
+            $('#table').DataTable({
+                'serverSide': true,
+                'processing': true,
+                'deferRender': true,
+                'lengthMenu': [ 4, 8, 12, 20 ],
+                'order': [[0, 'desc' ]],
+                'bDestroy': true,
+                'ajax': {
+                    'url': '/api/requests/transactionDescription/list/?format=datatables&data={{ transaction.tracking_number }}',
+                    'type': 'GET',
                 },
-                {'data': 'provided_data',  'sortable': false},
-                {'data': 'service_provider',  'searchable':false, 'sortable': false},
-                {'data': 'regular_price',  'searchable':false, 'sortable': false},
-                {'data': 'regular_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'discount_price',  'searchable':false, 'sortable': false},
-                {'data': 'discount_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'total',  'searchable':false, 'sortable': false},
+                'fnCreatedRow': function (row, data, index) {
+                    $(row).attr('id', data['id']);
+                },
+                'columns': [
+                    {'data': 'id',
+                        'render': function(data, type, row, meta) {
+                            return "<a href='#' data-role='delete', 'className': 'text-start', data-id="+ row['id'] + ">Delete</a>"
+                        },
+                        'sortable': false,
+                        'searchable': false
+                    },
+                    {'data': 'id',
+                        'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='edit_meds' data-id="+ row['id'] + ">EDIT</a>"
+                        },
+                        'sortable': false,
+                        'searchable': false
+                    },
+                    {'data': 'provided_data',  'sortable': false},
+                    {'data': 'service_provider',  'searchable':false, 'sortable': false},
+                    {'data': 'regular_price',  'searchable':false, 'sortable': false},
+                    {'data': 'regular_quantity',  'searchable':false, 'sortable': false},
+                    {'data': 'discount_price',  'searchable':false, 'sortable': false},
+                    {'data': 'discount_quantity',  'searchable':false, 'sortable': false},
+                    {'data': 'total',  'searchable':false, 'sortable': false},
+                    
+                ]
+            });
+        });
+        $(document).on('click', 'a[data-role=delete]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to remove this data in Data Provided?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'removeTransactionData' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Data removed in Transaction Provided",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#modal_view').load('/requests/provided/{{ transaction.id }}');
+                                    $('#table').DataTable().ajax.reload();
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        $('.select1').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        });
+    
+        function doCalc(){
+            $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
+                var reg_price = $("#reg_price").val()
+                var quantity = $("#qty").val()
+                var discount_price = $("#dsc").val()
+                var discount_quantity = $("#tot").val()
+                var final_total = $("#final_total").val()
+    
+                var main = reg_price * quantity;
+    
+                var dec = (discount_price / 100).toFixed(2);
+                var mult = main * dec;
+                var discount = main - mult
+    
+                var result_percentage = reg_price * dec
+    
+                $('#result_of_percentage').val(result_percentage);
+                $('#qty1').val(quantity);
+                $('#tot').val(discount);
+    
+                var pre_total = parseInt(discount) + parseInt(final_total)
+                $('#pre_total').val(pre_total);
                 
-            ]
+            });
+        }
+        doCalc()
+        $(document).on('click','a[data-role=edit_meds]', function(){ // For assessmentStatus
+            var id = $(this).data('id');
+            var transaction_provided = $('#'+id).children('td:eq(2)').text();
+            var regularprice = $('#'+id).children('td:eq(4)').text();
+            var quantity = $('#'+id).children('td:eq(5)').text();
+            var discount = $('#'+id).children('td:eq(6)').text();
+            var quantity1 = $('#'+id).children('td:eq(7)').text();
+            var tot = $('#'+id).children('td:eq(8)').text();
+
+            $('#sid').val(id)
+            $('#provided').val(transaction_provided)
+            $('#reg_price').val(regularprice)
+            $('#qty').val(quantity)
+            $('#dsc').val(discount)
+            $('#qty1').val(quantity1)
+            $('#tot').val(tot)
+    
         });
-    });
-	$(document).on('click', 'a[data-role=delete]', function(){
-    	var id = $(this).data('id');
-    	Swal.fire({
-		  title: "Are you sure",
-          text: "You want to remove this data in Data Provided?",
-		  icon: "warning",
-		  showCancelButton: true,
-		  confirmButtonColor: "#3498DB",
-		  confirmButtonText: "Yes",
-		  allowOutsideClick: false,
-		}).then((result) => {
-		    if (result.isConfirmed) {
-		        Swal.showLoading()
-				$.ajax({
-					url: "{% url 'removeTransactionData' %}",
-					data: {
-						id: id
-					},
-					type: "POST"
-				})
-				.done(function(data){
-					if (data.data == 'success'){
-						Swal.fire({
-						  title: "Good job!",
-						  text: "Data removed in Transaction Provided",
-						  icon: "success",
-						  confirmButtonColor: "#3498DB",
-						  allowOutsideClick: false,
-						}).then((result) => {
-		    				if (result.isConfirmed) {
-                                $('#modal_view').load('/requests/provided/{{ transaction.id }}');
-                                $('#table').DataTable().ajax.reload();
-						  	}
-						});
-					}
-				});
-			}
-		});
-    });
-    $('.select1').select2({
-        width: '100%',
-        placeholder: 'Choose',
-        containerCssClass: 'select'
-    });
-
-    function doCalc(){
-        $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
-            var reg_price = $("#reg_price").val()
-            var quantity = $("#qty").val()
-            var discount_price = $("#dsc").val()
-            var discount_quantity = $("#tot").val()
-            var final_total = $("#final_total").val()
-
-            var main = reg_price * quantity;
-
-            var dec = (discount_price / 100).toFixed(2);
-            var mult = main * dec;
-            var discount = main - mult
-
-            var result_percentage = reg_price * dec
-
-            $('#result_of_percentage').val(result_percentage);
-            $('#qty1').val(quantity);
-            $('#tot').val(discount);
-
-            var pre_total = parseInt(discount) + parseInt(final_total)
-            $('#pre_total').val(pre_total);
-            
-
-        });
-    }
-    doCalc()
-
-    function validationForm(){
-        var invalid = false;
-        $('.form-control').each(function() {
-            if (/<[a-z][\s\S]*>/i.test($(this).val())) {
-                $(this).addClass('is-invalid');
-                $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
-                invalid = true;
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+        $('#submitformProvided').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to add this data",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'modal_provided' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#modal_view').load('/requests/provided/{{ transaction.id }}');
+                                            $('#table').DataTable().ajax.reload();
+                                        }
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
             }
         });
-        return invalid;
-    }
-    $('#submitformProvided').on('submit', function(e){
-        e.preventDefault();
-        var form = new FormData(this);
-        if (!validationForm()){
-            Swal.fire({
-                title: "Are you sure",
-                text: "You want to add this data",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonText: "Yes",
-                allowOutsideClick: false,
-                showLoaderOnConfirm: true,
-                preConfirm: function (){
-                    return $.post({
-                        url: "{% url 'modal_provided' transaction.id %}",
-                        data: form,
-                        success : function (response){
-                            if(!response.error){
-                                Swal.fire({
-                                    title: "Good job!",
-                                    html:  response.msg,
-                                    icon: "success",
-                                    allowOutsideClick: false,
-                                }).then((result) => {
-                                    if (result.isConfirmed){
-                                        $('#modal_view').load('/requests/provided/{{ transaction.id }}');
-                                        $('#table').DataTable().ajax.reload();
-                                    }
-                                });
-                            }
-                        },
-                        cache       : false,
-                        contentType : false,
-                        processData : false,
-                    });
-                },
-            });
-        }
-    });
-    $('#Confirmation').on('submit', function(e){
-        e.preventDefault();
-        var form = new FormData(this);
-        if (!validationForm()){
-            Swal.fire({
-                title: "Are you sure",
-                text: "You want to confirm the total amount?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonText: "Yes",
-                allowOutsideClick: false,
-                showLoaderOnConfirm: true,
-                preConfirm: function (){
-                    return $.post({
-                        url: "{% url 'confirmAmount' %}",
-                        data: form,
-                        success : function (response){
-                            if(!response.error){
-                                Swal.fire({
-                                    title: "Good job!",
-                                    html:  response.msg,
-                                    icon: "success",
-                                    allowOutsideClick: false,
-                                }).then((result) => {
-                                    if (result.isConfirmed){
-                                        $('#modal_view').load('/requests/provided/{{ transaction.id }}');
-                                        $('#table').DataTable().ajax.reload();
-                                    }
-                                });
-                            }
-                        },
-                        cache       : false,
-                        contentType : false,
-                        processData : false,
-                    });
-                },
-            });
-        }
-    });
-    $('#add_service_provider').on('submit', function(e){
-        e.preventDefault();
-        var form = new FormData(this);
-        if (!validationForm()){
-            Swal.fire({
-                title: "Are you sure",
-                text: "You want to add new service provider?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonText: "Yes",
-                allowOutsideClick: false,
-                showLoaderOnConfirm: true,
-                preConfirm: function (){
-                    return $.post({
-                        url: "{% url 'service_provider' %}",
-                        data: form,
-                        success : function (response){
-                            if(!response.error){
-                                Swal.fire({
-                                    title: response.tracking_number,
-                                    html:  response.msg,
-                                    icon: "success",
-                                    allowOutsideClick: false,
-                                }).then((result) => {
-                                    if (result.isConfirmed){
-                                        $('#modal_view').load('/requests/provided/{{ transaction.id }}');
-                                        $('#table').DataTable().ajax.reload();
-                                    }
-                                });
-                            } else {
-                                Swal.fire("Oops...", response.msg, "warning");
-                            }
-                        },
-                        cache       : false,
-                        contentType : false,
-                        processData : false,
-                    });
-                },
-            });
-        }
-    });
-</script>
-<script>
-    function validate(evt) {
-        var theEvent = evt || window.event;
-        // Handle paste
-        if (theEvent.type === 'paste') {
-            key = event.clipboardData.getData('text/plain');
-        } else {
-        // Handle key press
-            var key = theEvent.keyCode || theEvent.which;
-            key = String.fromCharCode(key);
-        }
-        var regex = /[0-9]|\./;
-        if( !regex.test(key) ) {
-          theEvent.returnValue = false;
-          if(theEvent.preventDefault) theEvent.preventDefault();
-        }
-      }
-</script>
+        $('#Confirmation').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to confirm the total amount?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'confirmAmount' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#modal_view').load('/requests/provided/{{ transaction.id }}');
+                                            $('#table').DataTable().ajax.reload();
+                                        }
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#add_service_provider').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to add new service provider?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'service_provider' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: response.tracking_number,
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#modal_view').load('/requests/provided/{{ transaction.id }}');
+                                            $('#table').DataTable().ajax.reload();
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+    </script>
+    <script>
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            // Handle paste
+            if (theEvent.type === 'paste') {
+                key = event.clipboardData.getData('text/plain');
+            } else {
+            // Handle key press
+                var key = theEvent.keyCode || theEvent.which;
+                key = String.fromCharCode(key);
+            }
+            var regex = /[0-9]|\./;
+            if( !regex.test(key) ) {
+              theEvent.returnValue = false;
+              if(theEvent.preventDefault) theEvent.preventDefault();
+            }
+          }
+    </script>
+    
