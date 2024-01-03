@@ -5,7 +5,6 @@
     </style>
     <div class="row" id="modal_view">
         {% if transaction.signatories_id %}
-        
         <div class="row">
             <div class="col-sm-3">
               <div class="card">
@@ -83,20 +82,22 @@
                     </div>
                 </div>
             </div>
-            <label>Service Provider: <u>{{transaction.service_provider.name}}</u></label>
-            <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment}}" hidden>
+            <input type="checkbox" class="form-check-input" id="type_of_assistance" name="type_of_assistance"> Click me! If transaction is not Medicine Assistance 
+            <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment|floatformat:2}}" hidden>
             <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
             <input type="text" class="form-control" name="sid" id="sid" hidden>
+            <br>
+            <br>
             <div class="row mb-3">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label>Provided with</label>
+                        <label>Provided</label>
                         <input type="text" class="form-control" name="provided" id="provided" required>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Regular Price <span class="txt-danger">*</span></label>
+                        <label id="reprice_label">Reg-Price</label> <span class="txt-danger" id="required">*</span>
                         <br>
                         <input type="text" class="form-control" name="regprice" onkeypress='validate(event)' id="reg_price" required>
                     </div>
@@ -110,21 +111,28 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Discount<span class="txt-danger">*</span></label>
+                        <label>Discount %</label> <span class="txt-danger">*</span>
                         <br>
                         <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Disc-Price</label> <span class="txt-danger">*</span>
+                        <br>
+                        <input type="text" class="form-control" name="discounted_price" id="discounted_price" onkeypress='validate(event)' required>
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
                         <label>Quantity<span class="txt-danger">*</span></label>
                         <br>
-                        <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required readonly>
+                        <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group">
-                        <label>Total<span class="txt-danger">*</span></label>
+                        <label>Total</label>
                         <br>
                         <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
                     </div>
@@ -153,7 +161,7 @@
                         <th class="text-center">Service Provider</th>
                         <th class="text-center">Regular Price</th>
                         <th class="text-center">Quantity</th>
-                        <th class="text-center">Discount Percentage</th>
+                        <th class="text-center">Discounted Price</th>
                         <th class="text-center">Quantity</th>
                         <th class="text-center">Total</th>
                     </thead>
@@ -164,14 +172,14 @@
     
         <form id="Confirmation">
             {% csrf_token %}
-            <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}" hidden>
+            <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2}}{% else %}0{% endif %}" hidden>
             <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
             <div class="alert alert-secondary" role="alert">
                 Please confirm the total amount, if you're all set.
             </div>
             <p class="text-end">
     
-                <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+                <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
             </p>
         </form>
         <!-- Modal -->
@@ -286,6 +294,7 @@
                 var quantity = $("#qty").val()
                 var discount_price = $("#dsc").val()
                 var discount_quantity = $("#tot").val()
+                var quantity1 = $('#qty1').val()
                 var final_total = $("#final_total").val()
     
                 var main = reg_price * quantity;
@@ -297,12 +306,22 @@
                 var result_percentage = reg_price * dec
     
                 $('#result_of_percentage').val(result_percentage);
-                $('#qty1').val(quantity);
+                //$('#qty1').val(quantity);//
                 $('#tot').val(discount);
     
-                var pre_total = parseInt(discount) + parseInt(final_total)
-                $('#pre_total').val(pre_total);
                 
+                var discounted_total = (reg_price * discount_price) / 100;
+                var reg_price_total = reg_price - discounted_total
+                console.log("TOTAL AMOUNT DISCOUNTED",reg_price_total)
+
+                $('#discounted_price').val(reg_price_total)
+
+                var total2 = quantity1 * reg_price_total
+                var final_total_calculation = parseFloat(main) + parseFloat(total2)
+                $('#tot').val(final_total_calculation);
+                
+                //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
+                //$('#pre_total').val(pre_total);
             });
         }
         doCalc()
@@ -319,7 +338,7 @@
             $('#provided').val(transaction_provided)
             $('#reg_price').val(regularprice)
             $('#qty').val(quantity)
-            $('#dsc').val(discount)
+            $('#discounted_price').val(discount)
             $('#qty1').val(quantity1)
             $('#tot').val(tot)
     
@@ -452,6 +471,32 @@
                         });
                     },
                 });
+            }
+        });
+        $('#type_of_assistance').on('change', function(){
+            if($("#type_of_assistance").is(':checked')){
+                //HOSPITAL ASSISTANCE
+                document.getElementById('reprice_label').innerHTML = 'Bill Price';
+                $('#sid').val("")
+                $('#provided').val("")
+                $('#reg_price').val("")
+                $('#tot').val("")
+
+                $('#discounted_price').val("0")
+                $('#qty1').val(0)
+                $('#qty').val(1)
+                $("#dsc").val(0)
+            } else {
+                //MEDS ASSISTANCE
+                document.getElementById('reprice_label').innerHTML = 'Regular Price';
+                $('#sid').val("")
+                $('#provided').val("")
+                $('#reg_price').val("")
+                $('#qty1').val("")
+                $('#tot').val("")
+                $('#qty').val("")
+                $("#dsc").val("")
+                $('#discounted_price').val("")
             }
         });
     </script>

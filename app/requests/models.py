@@ -220,7 +220,7 @@ class transaction_description(models.Model):
     provided_data = models.CharField(max_length=255, blank=True, null=True)
     regular_price = models.DecimalField(max_digits=19, decimal_places=2)
     regular_quantity = models.IntegerField()
-    discount_price = models.FloatField()
+    discount_price = models.DecimalField(max_digits=19, decimal_places=2)
     discount_quantity = models.IntegerField()
     total = models.DecimalField(max_digits=19, decimal_places=2)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
