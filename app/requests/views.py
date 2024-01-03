@@ -452,7 +452,6 @@ def save_assessment(request, pk):
 				bene_sub_category_id=request.POST.get('bene_subcategory'),
 				lib_type_of_assistance_id=request.POST.get('assistance_type'),
 				lib_assistance_category_id=request.POST.get('assistance_category'),
-
 				fund_source_id=request.POST.get('fund_source'),
 				is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
 				is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
@@ -466,7 +465,6 @@ def save_assessment(request, pk):
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
 				problem_presented=request.POST.get('sw_purpose'),
-				
 			)
 			Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
 			if Check_exists.swo_time_end == None:
@@ -537,12 +535,11 @@ def confirmAmount(request):
 		#80 SDN
 		#81 SDS
 		#82 DINAGAT
-
-		if integer_value <= 5000:
+		if integer_value <= 50000:
 			data = Transaction.objects.filter(id=transaction_id).update(
 				signatories_id = 17, #ANA T. SEMACIO
 			)
-		elif integer_value >= 5001 and integer_value <= 75000:
+		elif integer_value >= 50001 and integer_value <= 75000:
 			data = Transaction.objects.filter(id=transaction_id).update(
 				signatories_id = 18, #JESSIE CATHERINE B. ARANAS
 			)
