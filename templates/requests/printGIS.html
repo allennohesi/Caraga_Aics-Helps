@@ -560,7 +560,7 @@
               <label>Social Worker's Assessment</label>
             </td>
           </tr>
-          <tr style="font-size: 10px;, monospace;font-weight: bold;">
+          <tr style="font-family: Arial; font-size: 10px; font-weight: normal;">
             <td width="105px;">
               <span style="font-size:10px">Target Sector: </span><br>
                 <input type="checkbox" name="sector" {% if data.bene_category_id == 1 %} checked {% else %} {% endif %}> FHONA <br>
@@ -583,7 +583,7 @@
                 <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 8 %} checked {% else %} {% endif %}> Others:  <br>
               </span>
             </td>
-            <td style="font-size:14px">{{transaction_data.sw_assessment}}</td>
+            <td style="font-size:12px">{{transaction_data.sw_assessment}}</td>
           </tr>
         </table>
       </div>
