@@ -86,7 +86,7 @@
         <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment}}" hidden>
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <div class="row mb-3">
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>Provided with</label>
                     <input type="text" class="form-control" name="provided" id="provided" required>
@@ -108,14 +108,7 @@
             </div>
             <div class="col-md-2">
                 <div class="form-group">
-                    <label>Discount Percentage<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Discounted Price<span class="txt-danger">*</span></label>
+                    <label>Discount<span class="txt-danger">*</span></label>
                     <br>
                     <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
                 </div>
@@ -124,12 +117,12 @@
                 <div class="form-group">
                     <label>Quantity<span class="txt-danger">*</span></label>
                     <br>
-                    <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required>
+                    <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required readonly>
                 </div>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <div class="form-group">
-                    <label>Total</label>
+                    <label>Total<span class="txt-danger">*</span></label>
                     <br>
                     <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
                 </div>
@@ -175,7 +168,7 @@
         </div>
         <p class="text-end">
 
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
         </p>
     </form>
     <!-- Modal -->
@@ -284,9 +277,8 @@
             var discount_price = $("#dsc").val()
             var discount_quantity = $("#tot").val()
             var final_total = $("#final_total").val()
-            var qty1 = $('#qty1').val()
 
-            var main = reg_price * quantity; // REGULAR PRICE * QUANTITY
+            var main = reg_price * quantity;
 
             var dec = (discount_price / 100).toFixed(2);
             var mult = main * dec;
@@ -294,28 +286,14 @@
 
             var result_percentage = reg_price * dec
 
-
             $('#result_of_percentage').val(result_percentage);
-            //$('#qty1').val(quantity);
+            $('#qty1').val(quantity);
+            $('#tot').val(discount);
 
             var pre_total = parseInt(discount) + parseInt(final_total)
             $('#pre_total').val(pre_total);
             
-            var discounted_total = (reg_price * discount_price) / 100;
-            var reg_price_total = reg_price - discounted_total
-            var total1 = reg_price + discount_quantity
 
-            var total2 = qty1 * reg_price_total //TOTAL SA DISCOUNTED
-            $('#total_discounted').val(reg_price_total)
-            
-            var pre_total = parseInt(main) + parseInt(total2)
-            console.log(pre_total)
-            $('#tot').val(pre_total);
-
-            console.log("TOTAL FIRST", main)
-            console.log("TOTAL AMOUNT DISCOUNTED",reg_price_total)
-            
-            console.log("TOTAL SA DISCOUNTED",total2)
         });
     }
     doCalc()
