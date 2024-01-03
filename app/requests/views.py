@@ -486,14 +486,16 @@ def save_assessment(request, pk):
 
 
 def modal_provided(request,pk):
+	from decimal import Decimal
 	transaction_id = Transaction.objects.filter(id=pk).first()
+	
 	if request.method == "POST":
 		with transaction.atomic():
 			check = Transaction.objects.filter(id=pk)
 			transaction_description.objects.create(
 				tracking_number_id=transaction_id.tracking_number,
 				provided_data=request.POST.get('provided'),
-				regular_price=request.POST.get('regprice'),
+				regular_price=Decimal(request.POST.get('regprice')),
 				regular_quantity=request.POST.get('qty'),
 				discount_price=request.POST.get('dsc'),
 				discount_quantity=request.POST.get('qty1'),
