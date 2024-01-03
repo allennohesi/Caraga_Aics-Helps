@@ -493,9 +493,9 @@ def modal_provided(request,pk):
 			if request.POST.get('sid'):
 				transaction_description.objects.filter(id=request.POST.get('sid')).update(
 					provided_data=request.POST.get('provided'),
-					regular_price=Decimal(request.POST.get('regprice')),
+					regular_price=request.POST.get('regprice'),
 					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('dsc'),
+					discount_price=request.POST.get('discounted_price'),
 					discount_quantity=request.POST.get('qty1'),
 					total=request.POST.get('tot'),	
 				)
@@ -509,9 +509,9 @@ def modal_provided(request,pk):
 				transaction_description.objects.create(
 					tracking_number_id=transaction_id.tracking_number,
 					provided_data=request.POST.get('provided'),
-					regular_price=Decimal(request.POST.get('regprice')),
+					regular_price=request.POST.get('regprice'),
 					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('dsc'),
+					discount_price=request.POST.get('discounted_price'),
 					discount_quantity=request.POST.get('qty1'),
 					total=request.POST.get('tot'),
 					user_id=request.user.id,
