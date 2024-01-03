@@ -495,8 +495,8 @@ def modal_provided(request,pk):
 					provided_data=request.POST.get('provided'),
 					regular_price=request.POST.get('regprice'),
 					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'),
-					discount_quantity=request.POST.get('qty1'),
+					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+					discount_quantity=request.POST.get('qty1'), #CHECKING
 					total=request.POST.get('tot'),	
 				)
 				Transaction.objects.filter(id=pk).update(
@@ -511,8 +511,8 @@ def modal_provided(request,pk):
 					provided_data=request.POST.get('provided'),
 					regular_price=request.POST.get('regprice'),
 					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'),
-					discount_quantity=request.POST.get('qty1'),
+					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+					discount_quantity=request.POST.get('qty1'), #CHECKING
 					total=request.POST.get('tot'),
 					user_id=request.user.id,
 				)
