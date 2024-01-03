@@ -465,6 +465,8 @@ def save_assessment(request, pk):
 			)
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
+				problem_presented=request.POST.get('sw_purpose'),
+				
 			)
 			Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
 			if Check_exists.swo_time_end == None:
