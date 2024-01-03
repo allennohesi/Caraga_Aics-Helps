@@ -546,7 +546,7 @@ function toWordsconver(s) {
     return str_val.replace(/\s+/g, ' ');
 }
 
-var number = {{calculate.total_payment}}
+var number = {{calculate.total_payment|floatformat:2}}
 var numtoword = toWordsconver(number) + "PESOS"
 document.getElementById("numtoword").innerHTML = numtoword.toUpperCase();
 
