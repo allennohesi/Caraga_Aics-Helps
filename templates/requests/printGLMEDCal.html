@@ -46,11 +46,11 @@
         {% for row in provided_data %}
         <tr style="background: white;">
           <td>{{row.provided_data}}</td>
-          <td>{{row.regular_price}}</td>
+          <td>{{row.regular_price|floatformat:2}}</td>
           <td>{{row.regular_quantity}}</td>
           <td>{{row.discount_price}}</td>
           <td>{{row.discount_quantity}}</td>
-          <td>{{row.total}}</td>
+          <td>{{row.total|floatformat:2}}</td>
         </tr>
         {% endfor %}
         <!-- Product Item -->
@@ -141,11 +141,11 @@
           {% for row in provided_data %}
           <tr style="background: white;">
             <td>{{row.provided_data}}</td>
-            <td>{{row.regular_price}}</td>
+            <td>{{row.regular_price|floatformat:2}}</td>
             <td>{{row.regular_quantity}}</td>
             <td>{{row.discount_price}}</td>
             <td>{{row.discount_quantity}}</td>
-            <td>{{row.total}}</td>
+            <td>{{row.total|floatformat:2}}</td>
           </tr>
           {% endfor %}
           <!-- Product Item -->
