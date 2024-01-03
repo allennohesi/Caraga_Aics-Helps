@@ -479,7 +479,7 @@
                 <div class="row mb-3">
                     <div class="form-group">
                         <label>Purpose</label>
-                        <textarea class="form-control" name="" rows="6" cols="40" readonly> {% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
+                        <textarea class="form-control" name="sw_purpose" rows="6" cols="40"> {% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
                     </div>
                 </div>
                 <div class="row mb-3">
