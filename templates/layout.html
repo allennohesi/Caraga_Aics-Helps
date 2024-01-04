@@ -127,13 +127,15 @@
                                             <p>On-site transaction</p>
                                         </div>
                                     </li>
+                                    
                                     {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
-                                        {% comment %} {% if count_open_assessment != 0 %}
-                                        <label class="badge badge-primary">{{ count_open_assessment }}</label>
-                                        {% endif %} {% endcomment %}
                                         <label class="badge badge-primary">{% count_assessment_all %}</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <label class="badge badge-primary"></label>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="cast"></i><span>Case Study</span></a>
                                     </li>
                                     {% endif %}
                                     {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" %}
