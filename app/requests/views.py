@@ -53,6 +53,7 @@ def requests(request):
 	# 		SocialWorker_Status.objects.filter(user_id=row.user_id).update(
 	# 			status=1 #2 = active, 1 inactive
 	# 		)
+
 	try:
 		if request.method == "POST":
 			check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
@@ -454,7 +455,8 @@ def view_assessment(request, pk):
 		'calculate': calculate,
 		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
 		'transactionProvided':transactionProvided,
-		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
+		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first(),
+		'relation': Relation.objects.filter(status=1),
 	}
 	return render(request, 'requests/view_assessment.html', context)
 
@@ -509,6 +511,7 @@ def save_assessment(request, pk):
 			check = Transaction.objects.filter(id=pk)
 			check.update(
 				swo_id=request.user.id,
+				relation_id=request.POST.get('relationship'),
 				priority=request.POST.get('priority_name'),
 				is_case_study=request.POST.get('case_study'),
 				client_category_id=request.POST.get('client_category'),
