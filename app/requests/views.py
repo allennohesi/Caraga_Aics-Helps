@@ -18,6 +18,8 @@ from django.db.models import Value, Sum, Count
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_control
+from django.http import HttpResponse
+from requests.exceptions import RequestException
 import uuid 
 import os
 today = date.today()
@@ -45,21 +47,75 @@ def generate_serial_string(oldstring, prefix=None):
 def requests(request):
 	today = date.today()
 	active_swo = SocialWorker_Status.objects.all()
-	for row in active_swo:
-		if row.date_transaction != today:
-			SocialWorker_Status.objects.filter(user_id=row.user_id).update(
-				status=1 #2 = active, 1 inactive
-			)    
-	if request.method == "POST":
-		check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
-		if check_transaction:
-			entriedDate1 = check_transaction.swo_time_end.date()
-			threemonths1 = timedelta(3*365/12)
-			result1 = (entriedDate1 + threemonths1).isoformat()
-			convertedDate = date.fromisoformat(result1)
-			present = datetime.now().date()
-			dateStr = convertedDate.strftime("%d %b, %Y")
-			if present > convertedDate:
+	# for row in active_swo:
+	# 	if row.date_transaction != today:
+	# 		SocialWorker_Status.objects.filter(user_id=row.user_id).update(
+	# 			status=1 #2 = active, 1 inactive
+	# 		)
+	try:
+		if request.method == "POST":
+			check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
+			if check_transaction:
+				entriedDate1 = check_transaction.swo_time_end.date()
+				threemonths1 = timedelta(3*365/12)
+				result1 = (entriedDate1 + threemonths1).isoformat()
+				convertedDate = date.fromisoformat(result1)
+				present = datetime.now().date()
+				dateStr = convertedDate.strftime("%d %b, %Y")
+				if present > convertedDate:
+					with transaction.atomic():
+						lasttrack = Transaction.objects.order_by('-tracking_number').first()
+						track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
+							generate_serial_string(None, 'AICS')
+
+						data = Transaction(
+							tracking_number=track_num,
+							relation_id=request.POST.get('relationship'),
+							client_id=request.POST.get('client'),
+							bene_id=request.POST.get('beneficiary'),
+							client_category_id=request.POST.get('clients_category'),
+							client_sub_category_id=request.POST.get('clients_subcategory'),
+							bene_category_id=request.POST.get('bene_category'),
+							bene_sub_category_id=request.POST.get('bene_subcategory'),
+							lib_type_of_assistance_id=request.POST.get('assistance_type'),
+							lib_assistance_category_id=request.POST.get('assistance_category'),
+							date_entried=request.POST.get('date_entried'),
+							swo_id=request.POST.get('user'),
+							is_case_study=request.POST.get('case_study'),
+							priority_id=request.POST.get('priority_name'),
+							is_return_new=request.POST.get('status'), 
+							is_onsite_offsite=request.POST.get('site'),
+							is_online=request.POST.get('online') if request.POST.get('online') else None,
+							is_walkin=request.POST.get('walkin') if request.POST.get('walkin') else None,
+							is_referral=request.POST.get('referral') if request.POST.get('referral') else None,
+							is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
+							is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
+							is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
+							is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
+							is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
+						)
+						data.save()
+
+						AssessmentProblemPresented.objects.create(
+							problem_presented=request.POST.get('problem'),
+							transaction_id=data.id
+						)
+						TransactionStatus1.objects.create(
+							transaction_id=data.id,
+							queu_number=request.POST.get('queu_number'),
+							verified_time_start=data.date_entried,
+							is_verified = "1",
+							verifier_id=request.user.id,
+							verified_time_end=data.date_entried,
+							status="1"
+						)
+						return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
+											'tracking_number': track_num})
+				else:
+					return JsonResponse({'error': True,
+											'msg': 'The assistance you get is not yet available, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
+
+			else:
 				with transaction.atomic():
 					lasttrack = Transaction.objects.order_by('-tracking_number').first()
 					track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
@@ -92,7 +148,6 @@ def requests(request):
 						is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
 					)
 					data.save()
-
 					AssessmentProblemPresented.objects.create(
 						problem_presented=request.POST.get('problem'),
 						transaction_id=data.id
@@ -107,59 +162,22 @@ def requests(request):
 						status="1"
 					)
 					return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
-										'tracking_number': track_num})
-			else:
-				return JsonResponse({'error': True,
-                                         'msg': 'The assistance you get is not yet available, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
-
-		else:
-			with transaction.atomic():
-				lasttrack = Transaction.objects.order_by('-tracking_number').first()
-				track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
-					generate_serial_string(None, 'AICS')
-
-				data = Transaction(
-					tracking_number=track_num,
-					relation_id=request.POST.get('relationship'),
-					client_id=request.POST.get('client'),
-					bene_id=request.POST.get('beneficiary'),
-					client_category_id=request.POST.get('clients_category'),
-					client_sub_category_id=request.POST.get('clients_subcategory'),
-					bene_category_id=request.POST.get('bene_category'),
-					bene_sub_category_id=request.POST.get('bene_subcategory'),
-					lib_type_of_assistance_id=request.POST.get('assistance_type'),
-					lib_assistance_category_id=request.POST.get('assistance_category'),
-					date_entried=request.POST.get('date_entried'),
-					swo_id=request.POST.get('user'),
-					is_case_study=request.POST.get('case_study'),
-					priority_id=request.POST.get('priority_name'),
-					is_return_new=request.POST.get('status'), 
-					is_onsite_offsite=request.POST.get('site'),
-					is_online=request.POST.get('online') if request.POST.get('online') else None,
-					is_walkin=request.POST.get('walkin') if request.POST.get('walkin') else None,
-					is_referral=request.POST.get('referral') if request.POST.get('referral') else None,
-					is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
-					is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
-					is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
-					is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
-					is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
-				)
-				data.save()
-				AssessmentProblemPresented.objects.create(
-					problem_presented=request.POST.get('problem'),
-					transaction_id=data.id
-				)
-				TransactionStatus1.objects.create(
-					transaction_id=data.id,
-					queu_number=request.POST.get('queu_number'),
-					verified_time_start=data.date_entried,
-					is_verified = "1",
-					verifier_id=request.user.id,
-					verified_time_end=data.date_entried,
-					status="1"
-				)
-				return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
 									'tracking_number': track_num})
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		print(ce)
+		error_message = f"Connection Error: {ce}"
+		return HttpResponse(error_message)
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		print(re)
+		error_message = f"Network Error: {re}"
+		return HttpResponse(error_message)
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		print(e)
+		error_message = f"Error: {e}"
+		return HttpResponse(error_message)
 
 	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
 
