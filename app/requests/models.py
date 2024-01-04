@@ -148,6 +148,14 @@ class ClientBeneficiaryFamilyComposition(models.Model):
         managed = False
         db_table = 'tbl_clientbene_family_roster'
 
+class ErrorLogData(models.Model):
+    error_log = models.TextField(blank=True, null=True)
+    location = models.TextField(blank=True, null=True)
+    date_time = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        managed = False
+        db_table = 'tbl_transaction_error_log'
 
 class Transaction(models.Model):
     tracking_number = models.CharField(max_length=255, blank=True, null=True, unique=True)
