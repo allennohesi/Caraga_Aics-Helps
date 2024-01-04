@@ -77,6 +77,30 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body" id="client_content">
+                    <form action="{% url 'generateByUser' %}" method="POST">
+                        {% csrf_token %}
+                        <hr>
+                        <small>Note: This will only generate the sex disaggregated data of the client.</small>
+                        <br><br>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="service_provider" value="service_provider" id="flexCheckIndeterminate" required>
+                            <label class="form-check-label" for="flexCheckIndeterminate">
+                                Sex Disaggregated <span class="txt-danger">*</span>
+                            </label>
+                            <br>
+                            <input type="radio" id="male" name="sex_disagregated" value="male" required>
+                            <label for="male">Male</label><br>
+                            <input type="radio" id="female" name="sex_disagregated" value="female" required>
+                            <label for="female">Female</label><br>
+                          </div>
+                        <button type="submit" class="btn btn-primary btn-lg">Export</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

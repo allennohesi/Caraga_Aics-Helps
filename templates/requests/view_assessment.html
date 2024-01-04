@@ -342,16 +342,89 @@
                     </div>
                 </div>
             </div>
-            <hr>
-            <small>Beneficiary Family Composistion</small>
-            <br><br>
             {% else %}
             <small>Client and Benefiary are the same</small>
+            <br>
             {% endif %}
+            <hr>
+            <small>Beneficiary Family Composistion</small>
+            <br>
+            <div class="row mb-3">
+                <div class="table-responsive">
+                    <form id="submitFamilyComposition">
+                        {% csrf_token %}
+                        <input type="text" name="bene_id" value="{% if transaction.client_id != transaction.bene_id %}{{ transaction.bene.id }}{% else %}{{ transaction.client.id }}{% endif %}" hidden>
+                        <table class="table table-bordered w-100 table-sm" id="family-composition-table">
+                            <table class="table table-bordered w-100 table-sm" id="family-composition-table">
+                                <thead>
+                                    <th width="30%">Full Name</th>
+                                    <th class="text-center">Sex and birthdate</th>
+                                    <th class="text-center">Birthdate</th>
+                                    <th class="text-center">Relationship</th>
+                                    <th class="text-center">Occupation</th>
+                                    <th class="text-center">Salary per month</th>
+                                    <th class="text-center">Action</th>
+                                </thead>
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" name="first_name" placeholder="First Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()" required><br>
+                                        <input type="text" class="form-control" name="middle_name" placeholder="Middle Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()"><br>
+                                        <input type="text" class="form-control" name="last_name" placeholder="Last Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()" required><br>
+                                        <select class="form-control select" name="suffix">
+                                            <option></option>
+                                            {% for row in suffix %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </td>
+                                    <td valign="middle">
+                                        <select class="form-control select" name="rosterSex" required>
+                                            <option></option>
+                                            {% for row in sex %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                    </td>
+                                    <td valign="middle">
+                                        <input type="date" class="form-control" name="birthdate" min="1900-05-11" required>
+                                    </td>       
+                                    <td valign="middle">
+                                        <select class="form-control select" name="relation" required>
+                                            <option></option>
+                                            {% for row in relation %}
+                                            <option value="{{ row.id }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td valign="middle">
+                                        <select class="form-control select" name="occupation" required>
+                                            <option></option>
+                                            {% for row in occupation %}
+                                            <option value="{{ row.id }}">{{ row.occupation_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td valign="middle">
+                                        <input type="text" class="form-control" name="salary" autocomplete="off" required>
+                                        <div class="invalid-feedback"></div>
+                                    </td>
+                                    <td valign="middle">
+                                        <center>
+                                            <button type="submit" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
+                                        </center>
+                                    </td>
+                                </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <br><br>
             <div class="row mb-3">
                 <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="family_composistion_table">
                     <thead>
+                        <th>Action</th>
                         <th>Full Name</th>
                         <th class="text-center">Sex</th>
                         <th class="text-center">Birthdate</th>
@@ -364,13 +437,14 @@
                         {% if family_composistion %}
                             {% for row in family_composistion %}
                              <tr>
+                                <td><a href='#' data-role='delete_fam_composition' data-id="{{row.id}}">Delete</a></td>
                                 <td>{{ row.get_family_fullname_formatted }}</td>
                                 <td class="text-center">{{ row.sex.name }}</td>
                                 <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td>
                                 <td class="text-center">{{ row.relation.name }}</td>
                                 <td class="text-center">{{ row.get_age }}</td>
                                 <td class="text-center">{{ row.occupation.occupation_name }}</td>
-                                <td class="text-center">{{ row.salary }}</td>
+                                <td class="text-center">{{ row.salary|floatformat:2 }}</td>
                             </tr>
                             {% endfor %}
                         {% else %}
@@ -531,7 +605,6 @@
                         <div class="form-group">
                             <label>Assistance Type <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="assistance_type" id="assistance_type" required>
-                                <option value="">None</option>
                                 {% for row in assistance_type %}
                                 {% if row.id == transaction.lib_type_of_assistance_id %}
                                 <option value="{{ row.id }}" selected>{{ row.type_name|upper }}</option>
@@ -936,11 +1009,91 @@
                 });
             }
         });
+        $('#submitFamilyComposition').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to submit this data?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'view_assessment' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $("#check").modal('hide');
+                                            $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $(document).on('click', 'a[data-role=delete_fam_composition]', function(){
+            var id = $(this).data('id');
+            console.log(id)
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to this data?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'remove_family_composition' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "You successfully deleted the data",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $("#check").modal('hide');
+                                    $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
+        });
         $(document).on('click','a[data-role=add_provided]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
             $('#empid').val(id)
             $('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
         });
+
     });
 </script>
 {% endblock %}
