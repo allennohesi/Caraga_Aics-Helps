@@ -386,7 +386,21 @@
                 <input type="text" value="{{transaction.id}}" name="transaction_id" hidden>
                 {% csrf_token %}
                 <div class="row mb-3">
-                    <div class="col-md-7">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Relationship to beneficiary <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="relationship" required>
+                                {% for row in relation %}
+                                {% if row.id == transaction.relation_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Priority <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="priority_name" required>
@@ -400,7 +414,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Case Study <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="case_study" required>
