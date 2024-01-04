@@ -164,10 +164,9 @@ def get_data_transaction(request, pk):
 	return JsonResponse({'fullname': fullname, 'toa': toa, 'ta': ta, 'ct': ct,'csc':csc,'service_provider': service_provider, 'fund_source': fund_source})
 
 def print_voucher(request, pk):
-	import random
-	test = finance_voucherData.objects.filter(voucher_id=pk).all()
+	data = finance_voucherData.objects.filter(voucher_id=pk).all()
 	sum = 0
-	for row in test:
+	for row in data:
 		totalValues = row.transactionStatus.transaction.get_total['total']
 		sum=sum+totalValues
 	total_values = sum
@@ -177,3 +176,25 @@ def print_voucher(request, pk):
 		'total': total_values
 	}
 	return render(request,'financial/Print_voucher.html', context)
+
+def print_service_provider(request):
+	sum=0
+	start_date_str = request.GET.get("start_date")
+	end_date_str = request.GET.get("end_date")
+
+	# Convert the date strings to datetime objects
+	start_date = datetime.strptime(start_date_str, "%Y-%m-%d") if start_date_str else None
+	end_date = datetime.strptime(end_date_str, "%Y-%m-%d") if end_date_str else None
+	if request.method == "GET":
+		data = TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider"),status=6,transaction_id__date_of_transaction__range=(start_date, end_date)).all()
+		for row in data:
+			totalValues = row.transaction.get_total['total']
+			sum=sum+totalValues
+	total_values = sum
+	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider"),status=6).first()
+	context={
+		'datas': data,
+		'total':total_values,
+		'service_provider':Service_provider,
+	}
+	return render(request,'financial/print_sprovider.html', context)

@@ -8,7 +8,8 @@ from app.forms import ImageForm
 from app.global_variable import groups_only
 from app.libraries.models import FileType, Relation, Category, SubCategory, ServiceProvider, ServiceAssistance, \
 	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, FundSource, SubModeofAssistance, TypeOfAssistance, \
-	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, SignatoriesTbl
+	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, SignatoriesTbl, Suffix, \
+	Sex, occupation_tbl
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
@@ -422,10 +423,30 @@ def assessmentStatusModal(request,pk):
 	}
 	return render(request, "requests/statusModal.html", context)
 
+@csrf_exempt
+def remove_family_composition(request):
+	if request.method == "POST":
+		ClientBeneficiaryFamilyComposition.objects.filter(id=request.POST.get('id')).delete()
+	return JsonResponse({'data': 'success'})
+
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
 def view_assessment(request, pk):
-
+	if request.method == "POST":
+		ClientBeneficiaryFamilyComposition.objects.create(
+			first_name=request.POST.get('first_name'),
+			middle_name=request.POST.get('middle_name'),
+			last_name=request.POST.get('last_name'),
+			suffix_id=request.POST.get('suffix'),
+			sex_id=request.POST.get('rosterSex'),
+			birthdate=request.POST.get('birthdate'),
+			relation_id=request.POST.get('relation'),
+			occupation_id=request.POST.get('occupation'),
+			salary=request.POST.get('salary'),
+			clientbene_id=request.POST.get('bene_id')
+		)
+		return JsonResponse({'data': 'success', 'msg': 'You submitted your data'})
+	
 	data = Transaction.objects.filter(id=pk).first()
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
 	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
@@ -457,6 +478,9 @@ def view_assessment(request, pk):
 		'transactionProvided':transactionProvided,
 		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first(),
 		'relation': Relation.objects.filter(status=1),
+		'suffix': Suffix.objects.filter(status=1).order_by('name'),
+        'sex': Sex.objects.filter(status=1).order_by('name'),
+		'occupation': occupation_tbl.objects.filter(is_active=1).order_by('id'),
 	}
 	return render(request, 'requests/view_assessment.html', context)
 
@@ -507,7 +531,6 @@ def show_sub_category(request): #DYNAMIC DISPLAY IN SELECT2
 def save_assessment(request, pk):
 	if request.method == "POST":
 		with transaction.atomic():
-			print("TEST", request.POST.get('case_study'))
 			check = Transaction.objects.filter(id=pk)
 			check.update(
 				swo_id=request.user.id,
@@ -546,7 +569,7 @@ def save_assessment(request, pk):
 				TransactionStatus1.objects.filter(transaction_id=pk).update(
 					is_swo="1",
 					end_assessment=today,
-					status="3",
+					#status="3",
 				)
 			return JsonResponse({'data': 'success',
 								 'msg': 'You have successfully submitted the assessment for tracking number {}.'.format(check.first().tracking_number)})
