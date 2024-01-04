@@ -11,7 +11,7 @@ from app.libraries.models import FileType, Relation, Category, SubCategory, Serv
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, SignatoriesTbl
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
-	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented
+	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
 from django.contrib.sessions.models import Session
 from app.models import AuthUser, AuthUserGroups
 from django.db.models import Value, Sum, Count
@@ -101,6 +101,10 @@ def requests(request):
 						except Exception as e:
 							print("ERROR")
 							Transaction.objects.filter(id=data.id).delete()
+							ErrorLogData.objects.create(
+								error_log=e,
+								location="SUBMISSION OF REQUEST IN CHECK TRANSACTION IF STATEMENT 1"
+							)
 							# If there is an exception, handle the error (log it or return an error response)
 							# You can also consider rolling back the transaction to maintain data consistency
 							# (If using a database that supports transactions)
@@ -121,11 +125,15 @@ def requests(request):
 								verified_time_end=data.date_entried,
 								status="1"
 							)
-							print("SUCCESS-------------------------")
+							print("SUCCESS")
 							return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
 												'tracking_number': track_num})
 						else:
 							Transaction.objects.filter(id=data.id).delete()
+							ErrorLogData.objects.create(
+								error_log=e,
+								location="SUBMISSION OF REQUEST IN CHECK TRANSACTION ELSE STATEMENT AND ELSE OF SUCCESS FLAG 2"
+							)
 							error_message = f"Error: {e}"
 							return HttpResponse(error_message)
 				else:
@@ -170,6 +178,10 @@ def requests(request):
 				except Exception as e:
 					print("ERROR")
 					Transaction.objects.filter(id=data.id).delete()
+					ErrorLogData.objects.create(
+						error_log=e,
+						location="SUBMISSION OF REQUEST IN CHECK TRANSACTION ELSE 3"
+					)
 					error_message = f"Error: {e}"
 					return HttpResponse(error_message)
 				
@@ -192,6 +204,10 @@ def requests(request):
 									'tracking_number': track_num})
 				else:
 					Transaction.objects.filter(id=data.id).delete()
+					ErrorLogData.objects.create(
+						error_log=e,
+						location="SUBMISSION OF REQUEST IN CHECK TRANSACTION ELSE ELSE 4"
+					)
 					error_message = f"Error: {e}"
 					return HttpResponse(error_message)
 				
