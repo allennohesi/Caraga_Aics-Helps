@@ -49,7 +49,7 @@
           <td>{{row.regular_price|floatformat:2}}</td>
           <td>{{row.regular_quantity}}</td>
           <td>{{row.discount_price|floatformat:2}}</td>
-          <td>{{row.regular_quantity}}</td>
+          <td>{{row.discount_quantity}}</td>
           <td>{{row.total|floatformat:2}}</td>
         </tr>
         {% endfor %}
@@ -141,7 +141,7 @@
             <td>{{row.regular_price|floatformat:2}}</td>
             <td>{{row.regular_quantity}}</td>
             <td>{{row.discount_price|floatformat:2}}</td>
-            <td>{{row.regular_quantity}}</td>
+            <td>{{row.discount_quantity}}</td>
             <td>{{row.total|floatformat:2}}</td>
           </tr>
           {% endfor %}
