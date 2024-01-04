@@ -1,4 +1,5 @@
 {%  load static %}
+{% load humanize %}
 <html>
 <head>
   <meta charset="utf-8">
@@ -36,20 +37,10 @@
       <table class="title table table-bordered" style="margin-top: 0px;margin-bottom: 0px;border-color: white;">
         <thead style="line-height: 20px;">
             <td colspan="2" style="text-align: center;font-family: Arial, sans-serif">
-              <label style="font-size: 19px;font-weight: bold;">VOUCHER</label><br>
-              <label style="font-size: 19px;">VOUCHER TITLE: <u>{{finance_voucher.voucher_title}}</u></label>
+              <label style="font-size: 18px;">SERVICE PROVIDER <br><b>{{service_provider.transaction.service_provider.name}}</b></label><br>
+              <label style="font-size: 19px;">Summary report list<u></u></label>
             </td>
         </thead>  
-      </table>
-
-      <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
-        <tr>
-          <td>
-            <span>Transaction Code: <b>{{finance_voucher.voucher_code}}</b></span>
-            <span>Date Of Transaction: <b>{{finance_voucher.date}}</b></span>
-
-          </td>
-        </tr>
       </table>
       <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: black;text-align: center;border: 2px solid;">
         <tr style="font-weight:bold;">
@@ -59,6 +50,9 @@
           </td>
           <td>
             Service Provider
+          </td>
+          <td>
+            Social worker officer
           </td>
           <td>
             Client Name
@@ -73,20 +67,21 @@
             Total
           </td>
         </tr>
-        {% for row in voucher_data %}
+        {% for row in datas %}
         <tr style="font-size:12px;">
-          <td>{{row.transactionStatus.transaction.tracking_number}}</td>
-          <td>{{row.transactionStatus.transaction.service_provider.name}}</td>
-          <td>{{row.transactionStatus.transaction.client.get_client_fullname}}</td>
-          <td>{{row.transactionStatus.transaction.bene.get_client_fullname}}</td>
-          <td>{{row.transactionStatus.transaction.lib_type_of_assistance.type_name}}</td>
-          <td>{{row.transactionStatus.transaction.get_total.total}}</td>
+          <td>{{row.transaction.tracking_number}}</td>
+          <td>{{row.transaction.service_provider.name}}</td>
+          <td>{{row.transaction.swo.get_client_fullname}}</td>
+          <td>{{row.transaction.client.get_client_fullname}}</td>
+          <td>{{row.transaction.bene.get_client_fullname}}</td>
+          <td>{{row.transaction.lib_type_of_assistance.type_name}}</td>
+          <td>{{row.transaction.get_total.total|floatformat:2}}</td>
         </tr>
         {% endfor %}
-        <td colspan="5" class="table-active">TOTAL DATA</td>
-        <td colspan="1" class="table-active">{{total}}</td>
+        <td colspan="6" class="table-active text-right">TOTAL DATA</td>
+        <td colspan="1" class="table-active">{{total|floatformat:2|intcomma}}</td>
       </table>
-        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+        {% comment %} <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
           <tr style="font-weight:bold;text-align: left;">
             <td colspan="4">
               <label>Prepared by: </label>
@@ -108,7 +103,7 @@
           </tr>
           <tr style="font-size: 13px;font-weight: bold;text-align: left;">
             <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-              <label><input type="text" placeholder="Input Signatories" style="width:150px;"</label>
+              <label><input type="text" placeholder="Input Signatories" style="width:150px;"></label>
             </td>
             <td></td>
             <td colspan="3" width="250px">
@@ -116,7 +111,7 @@
             </td>
             <td></td>
             <td colspan="2" width="130px" style="border-bottom:1px solid black;">
-              <label><input type="text" placeholder="Input Signatories" style="width:150px;"</label>
+              <label><input type="text" placeholder="Input Signatories" style="width:150px;"></label>
             </td>
             <td></td>
           </tr>
@@ -155,7 +150,7 @@
               <label>DSWD Central Office, IBP Road, Batasan Pambansa Complex, Constitution Hills, Quezon City, Philippines 112  </label><br><label>Website: http://www.dswd.gov.ph  Email: ciu.co@dswd.gov.ph   Tel Nos.: 8962-2813 or 8931-8100 local 509,510  Telefax: (632) 931-8191</label>
             </td>
           </tr>
-        </table>
+        </table> {% endcomment %}
       </div>
     </div>
   </section>

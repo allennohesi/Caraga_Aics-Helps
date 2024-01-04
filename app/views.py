@@ -466,6 +466,7 @@ def generateByUser(request):
     if request.method == "POST":
         clientCategory = request.POST.get('clientCategory')
         clientCategoryCheckbox = request.POST.get('Client_category_checkbox')
+        service_provider = request.POST.get('service_provider')
     
         today = datetime.today()
         year = today.strftime("%Y")
@@ -732,6 +733,9 @@ def generateByUser(request):
                     return response
                 else:
                     return render(request, '404.html')
+                
+        elif service_provider:
+            print(service_provider)
         else:
             return render(request, '404.html')
     context = {

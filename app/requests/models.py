@@ -123,7 +123,7 @@ class ClientBeneficiaryFamilyComposition(models.Model):
     relation = models.ForeignKey(Relation,models.DO_NOTHING)
     birthdate = models.DateField(blank=True, null=True)
     occupation = models.ForeignKey('occupation_tbl', models.DO_NOTHING)
-    salary = models.CharField(max_length=50, blank=True, null=True)
+    salary = models.DecimalField(max_digits=19, decimal_places=2)
     clientbene = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING)
 
     @property
@@ -192,7 +192,6 @@ class Transaction(models.Model):
     provided_hygienekit = models.SmallIntegerField(blank=True, null=True)
     signatories = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='signatories')
 
-
     @property
     def get_action_action(self):
         status = TransactionStatus1.objects.filter(transaction_id=self.id).first()
@@ -217,7 +216,11 @@ class Transaction(models.Model):
     def get_total(self):
         data = transaction_description.objects.filter(tracking_number_id=self.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
         return data
-
+    
+    @property
+    def get_sp_data(self):#SERVICE PROVIDER DATA
+        data = transaction_description.objects.filter(tracking_number_id=self.tracking_number).all()
+        return data
 
     class Meta:
         managed = False

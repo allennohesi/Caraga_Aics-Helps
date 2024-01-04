@@ -5,7 +5,7 @@ from app.requests.views import requests, get_client_info, incoming, view_incomin
     get_assistance_sub_category, printGIS, printGL, modal_provided, StartTime, \
     trackingModal, removeTransactionData, printCEGL, printingModal, printCECASH, printGLHead, printGLMEDCal, \
     printQueueing, queueIngDisplay, printPettyCashVoucher, assessmentStatusModal, confirmAmount, \
-    transactions, viewSignatoriesTransactions, approveTransactions
+    transactions, viewSignatoriesTransactions, approveTransactions, remove_family_composition \
 
 urlpatterns = [
     path('new/', requests, name='new_requests'),
@@ -36,6 +36,7 @@ urlpatterns = [
     path('queueIngDisplay', queueIngDisplay, name='queueIngDisplay'),
     path('printPettyCashVoucher/<int:pk>/', printPettyCashVoucher, name='printPettyCashVoucher'),
     path('confirmAmount', confirmAmount, name='confirmAmount'),
+    path('remove_family_composition', remove_family_composition,name='remove_family_composition'),
     #SIGNATORIES
     path('transactions/', transactions, name='transactions'),
     path('transactions/signatories/view/<int:pk>', viewSignatoriesTransactions, name='viewSignatoriesTransactions'),
