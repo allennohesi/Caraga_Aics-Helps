@@ -460,7 +460,22 @@
                 <input type="text" value="{{transaction.id}}" name="transaction_id" hidden>
                 {% csrf_token %}
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>New / Returning <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="new_returning" required>
+                                <option></option>
+                                {% if transaction.is_return_new == 1 %}
+                                <option value="1" selected>New</option>
+                                <option value="2">Returning</option>
+                                {% else %}
+                                <option value="1">New</option>
+                                <option value="2"selected>Returning</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Relationship to beneficiary <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="relationship" required>
@@ -474,7 +489,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Priority <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="priority_name" required>
@@ -488,7 +503,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Case Study <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="case_study" required>
