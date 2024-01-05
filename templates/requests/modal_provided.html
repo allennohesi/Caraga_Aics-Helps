@@ -318,6 +318,9 @@
 
                 var total2 = quantity1 * reg_price_total
                 var final_total_calculation = parseFloat(main) + parseFloat(total2)
+                
+                var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
+                $('#pre_total').val(pre_total_result);
                 $('#tot').val(final_total_calculation);
                 
                 //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)

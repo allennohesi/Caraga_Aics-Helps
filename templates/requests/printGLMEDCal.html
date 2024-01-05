@@ -28,7 +28,7 @@
             <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="200px" height="40px">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-            <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="80px" height="65px">
+            
           </th>  
         </thead>      
       </table>
@@ -48,7 +48,7 @@
           <td>{{row.provided_data}}</td>
           <td>{{row.regular_price|floatformat:2}}</td>
           <td>{{row.regular_quantity}}</td>
-          <td>{{row.discount_price|floatformat:2}}</td>
+          <td>{% if row.regular_price|floatformat:2 == row.discount_price|floatformat:2 %}0{% else %}{{row.discount_price|floatformat:2}}{% endif %}</td>
           <td>{{row.discount_quantity}}</td>
           <td>{{row.total|floatformat:2}}</td>
         </tr>
@@ -120,7 +120,7 @@
               <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="200px" height="40px">
             </th>
             <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-              <img src="{% static 'qrcode/medical_qr.png' %}" style="margin-top: 0px;" width="80px" height="65px">
+              <div id="qrcode"></div>
             </th>  
           </thead>      
         </table>
@@ -140,7 +140,7 @@
             <td>{{row.provided_data}}</td>
             <td>{{row.regular_price|floatformat:2}}</td>
             <td>{{row.regular_quantity}}</td>
-            <td>{{row.discount_price|floatformat:2}}</td>
+            <td>{% if row.regular_price|floatformat:2 == row.discount_price|floatformat:2 %}0{% else %}{{row.discount_price|floatformat:2}}{% endif %}</td>
             <td>{{row.discount_quantity}}</td>
             <td>{{row.total|floatformat:2}}</td>
           </tr>
@@ -214,4 +214,5 @@
   </section>
 
 </body>
+
 </html>

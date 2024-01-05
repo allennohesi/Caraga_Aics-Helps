@@ -803,9 +803,8 @@ def printGLMEDCal(request, pk):
 
 	data = "The Client is {}. and the Benefiary is {}. and the Social Worker is {}. The service provider is {}. The Client Category is {}. The Client Sub-Category is {}.".format(transaction.client.get_client_fullname,transaction.bene.get_client_fullname,transaction.swo.get_fullname, transaction.service_provider.name, \
 		transaction.client_category.acronym, transaction.client_sub_category.acronym)
-	print(data)
-	qrcode = segno.make_qr(data)
-	qrcode.save('./static/staticfiles/qrcode/medical_qr.png', scale=10)
+	# qrcode = segno.make_qr(data)
+	# qrcode.save('./static/staticfiles/qrcode/medical_qr.png', scale=10)
 
 
 	context = {
@@ -816,6 +815,7 @@ def printGLMEDCal(request, pk):
 		'calculate': calculate,
 		'validity':EndDate,
 		'ct':rows,
+		'datas':data,
 	}
 	return render(request,"requests/printGLMEDCal.html", context)
 
