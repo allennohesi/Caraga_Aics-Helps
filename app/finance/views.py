@@ -52,7 +52,7 @@ def financial_transaction(request):
 			lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
 
 			track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
-				generate_serial_string(None, 'VOUCHER')
+				generate_serial_string(None, 'AICS-DV')
 
 			finance_voucher.objects.create(
 				voucher_code=track_num,
@@ -112,11 +112,10 @@ def voucher_modal(request, pk):
 			voucher_id=pk,
 			transactionStatus_id=request.POST.get('transaction_id'),
 		)
-		TransactionStatus1.objects.filter(id=request.POST.get('transaction_id')).update(
-			finance_status=1
-		)
+		# TransactionStatus1.objects.filter(id=request.POST.get('transaction_id')).update(
+		# 	finance_status=1
+		# )
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	
 	
 	test = finance_voucherData.objects.filter(voucher_id=pk)
 	context = {
@@ -138,19 +137,25 @@ def remove_voucherData(request):
 
 @csrf_exempt
 def get_all_transaction(request):
-	json = []
-	if request.GET.get('searchTerm', ''):
-		transaction = TransactionStatus1.objects.filter(Q(transaction_id__tracking_number__icontains=request.GET.get('searchTerm'),status=6,finance_status=None))[:10]
-		if transaction:
-			for row in transaction:
-				json.append({'id': row.id,
-							 'text': row.transaction.tracking_number })
-		return JsonResponse(json, safe=False)
-	else:
-		return JsonResponse(json, safe=False)
+    json_data = []
+    search_term = request.GET.get('searchTerm', '')
+    if search_term:
+        transactions = TransactionStatus1.objects.filter(
+            Q(transaction_id__client_id__client_bene_fullname__icontains=search_term) &
+            Q(status__in=[5, 6]) &
+            Q(finance_status=None)
+        )[:10]
+
+        if transactions.exists():
+            json_data = list(transactions.values_list('id', 'transaction__client__client_bene_fullname', named=True))
+            json_data = [{'id': row.id, 'text': row.transaction__client__client_bene_fullname} for row in json_data]
+
+    return JsonResponse(json_data, safe=False)
+
 
 @login_required
 def get_data_transaction(request, pk):
+	print("TEST",pk)
 	data = TransactionStatus1.objects.filter(id=pk).first()
 
 	fullname = data.transaction.client.get_client_fullname

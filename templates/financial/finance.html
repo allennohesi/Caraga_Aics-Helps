@@ -37,13 +37,13 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>VOUCHER TITLE</label>
+                                            <label>DV Number</label>
                                             <input type="text" class="form-control f-w-900 upper" name="voucher_title" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>VOUCHER DATE</label>
+                                            <label>DV Date</label>
                                             <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
@@ -85,7 +85,7 @@
                                             <label>Service Provider <span class="txt-danger">*</span></label>
                                             <select class="form-control select1" name="service_provider" id="provider" required>
                                                 <option></option>
-                                                {% for row in service_provider  %}>
+                                                {% for row in service_provider  %}
                                                 <option value="{{ row.id }}">{{ row.name }}</option>
                                                 {% endfor %}
                                             </select>
@@ -197,7 +197,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-            <h6 class="modal-title" id="staticBackdropLabel">Request for Assistance</h6>
+            <h6 class="modal-title" id="staticBackdropLabel">DV Data creation: </h6>
             <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="load_data">
