@@ -841,6 +841,28 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	}
 	return render(request, "requests/print_pettyCashVoucher.html", context)
 
+def printPagPamatuod(request, pk): #PettyCashVoucher
+	transaction = Transaction.objects.filter(id=pk).first()
+	EndDate = transaction.date_entried.date() + timedelta(days=3)
+	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
+	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).all()
+	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
+	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
+	rows = count + 1
+
+	context = {
+		'data': transaction,
+		'data': transaction,
+		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
+		'provided_data': display_provided_data,
+		'display_provider': display_provider,
+		'calculate': calculate,
+		'validity':EndDate,
+		'ct':rows,
+		'today':today,
+	}
+	return render(request, "requests/printPagpamatuod.html", context)
+
 def printingModal(request, pk): #ForPrintingPurposesInAssessment
 	data = Transaction.objects.filter(id=pk).first()
 	context = {
