@@ -549,9 +549,10 @@ def save_assessment(request, pk):
 				is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
 				is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
 				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
-				provided_hotmeal = request.POST.get('hot_meals') if request.POST.get('hot_meals') else 0,
-				provided_foodpack = request.POST.get('food_packs') if request.POST.get('food_packs') else 0,
-				provided_hygienekit = request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
+				provided_hotmeal=request.POST.get('hot_meals') if request.POST.get('hot_meals') else 0,
+				provided_foodpack=request.POST.get('food_packs') if request.POST.get('food_packs') else 0,
+				provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
+				is_return_new=request.POST.get('new_returning'),
 			)
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
