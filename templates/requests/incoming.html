@@ -110,23 +110,23 @@
                     'sortable': false,
                     'searchable': false
                 },
-                {'data': 'action', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                {'data': 'status', 'className': 'text-center', 'searchable': false,
                     'render': function(data,type,row,meta){
-                        if(row['action'] == null){
+                        if(row['status'] == null){
                             return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
-                        }else if(row['action'] == 1){
+                        }else if(row['status'] == 1){
                             return "<span class='badge badge-dark'>Pending</span>"
-                        }else if(row['action'] == 2){
+                        }else if(row['status'] == 2){
                             return "<span class='badge badge-warning'>Ongoing</span>"
-                        }else if(row['action'] == 3){
+                        }else if(row['status'] == 3){
                             return "<span class='badge badge-info'>For Uploading Picture</span>"
-                        }else if(row['action'] == 4){
+                        }else if(row['status'] == 4){
                             return "<span class='badge badge-danger'>Hold</span>"
-                        }else if(row['action'] == 5){
+                        }else if(row['status'] == 5){
                             return "<span class='badge badge-danger'>Cancelled</span>"
-                        }else if(row['action'] == 6){
+                        }else if(row['status'] == 6){
                             return "<span class='badge badge-success'>Completed</span>"
-                        }else if(row['action'] == 7){
+                        }else if(row['status'] == 7){
                             return "<span class='badge badge-warning'>Ongoing</span>"
                         }
                     }
