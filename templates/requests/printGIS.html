@@ -569,7 +569,7 @@
                 <input type="checkbox" name="sector" {% if data.bene_category_id == 4 %} checked {% else %} {% endif %}> PWD <br>
                 <input type="checkbox" name="sector" {% if data.bene_category_id == 5 %} checked {% else %} {% endif %}> SC <br>
                 <input type="checkbox" name="sector" {% if data.bene_category_id == 6 %} checked {% else %} {% endif %}> PLHIV <br>
-              
+                <input type="checkbox" name="sector" {% if data.bene_category_id == 12 %} checked {% else %} {% endif %}> CHILD <br>
             </td>
             <td width="280px;">
               <span>Specify Sub-Category <br>
@@ -583,7 +583,7 @@
                 <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 8 %} checked {% else %} {% endif %}> Others:  <br>
               </span>
             </td>
-            <td style="font-size:12px">{{transaction_data.sw_assessment}}</td>
+            <td style="font-size: 11px; font-family: 'Calibri', sans-serif;">{{transaction_data.sw_assessment}}</td>
           </tr>
         </table>
       </div>
