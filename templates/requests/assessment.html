@@ -139,9 +139,6 @@
     <div class="modal-dialog">
         <div class="modal-content">
             {% csrf_token %}
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tracking Number: <input type="text" id="trackingno" readonly></h5>
-            </div>
             <div class="modal-body" id="load_data">
             </div>
         </div>
@@ -151,9 +148,6 @@
     <div class="modal-dialog">
         <div class="modal-content">
             {% csrf_token %}
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Transaction Status for: <input type="text" id="trackingno" readonly></h5>
-            </div>
             <div class="modal-body" id="load_data">
             </div>
         </div>
@@ -178,9 +172,9 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
-                {'data': 'id',
+                {'data': 'transaction',
                     'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='AssessmentStatus' data-id="+ row['id'] + ">CHANGE STATUS</a>"
+                        return "<a href='#' data-role='AssessmentStatus' data-id="+ row['transaction'] + ">CHANGE STATUS</a>"
                     },
                     'sortable': false,
                     'searchable': false
@@ -190,19 +184,20 @@
                         if(row['status'] == 1){
                             return "<td>Start Transaction</td>"
                         }else if(row['status'] == 2){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 3){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 6){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 7){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else{
                             return "<td>Start Transaction</td>"
                         }
                     },
                     'className': 'text-center',
                     'sortable': false,
+                    'searchable': false,
                 },
                 {'data': 'status', 'className': 'text-center', 'searchable': false,
                     'render': function(data,type,row,meta){
@@ -308,31 +303,32 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
-                {'data': 'id',
+                {'data': 'transaction',
                     'render': function(data, type, row, meta) {
-                    return "<a href='#' data-role='AssessmentStatus' data-id="+ row['id'] + ">CHANGE STATUS</a>"
+                    return "<a href='#' data-role='AssessmentStatus' data-id="+ row['transaction'] + ">CHANGE STATUS</a>"
                     },
                     'sortable': false,
                     'searchable': false
                 },
-                {'data': 'status',
+                {'data': 'transaction',
                     'render': function(data, type, row, meta) {
                         if(row['status'] == 1){
                             return "<td>Start Transaction</td>"
                         }else if(row['status'] == 2){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 3){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 6){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else if(row['status'] == 7){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
+                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>View</a>"
                         }else{
                             return "<td>Start Transaction</td>"
                         }
                     },
                     'className': 'text-center',
                     'sortable': false,
+                    'searchable': false,
                 },
                 {'data': 'status', 'className': 'text-center', 'searchable': false,
                     'render': function(data,type,row,meta){
@@ -437,14 +433,11 @@
         var id = $(this).data('id');
         var tracking = $('#'+id).children('td:eq(2)').text();
         $('#Eid').val(id)
-        $('#trackingno').val(tracking)
         $('#PrintingModal').modal('show').find('#load_data').load('/requests/printingModal/' +id);
     });
     $(document).on('click','a[data-role=AssessmentStatus]', function(){ // For assessmentStatus
         var id = $(this).data('id');
-        var tracking = $('#'+id).children('td:eq(2)').text();
         $('#Eid').val(id)
-        $('#trackingno').val(tracking)
         $('#PrintingModal').modal('show').find('#load_data').load('/requests/assessmentStatusModal/' +id);
     });
     function validationForm(){

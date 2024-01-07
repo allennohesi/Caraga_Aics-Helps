@@ -86,6 +86,16 @@ def fund_source(request):
     }
     return render(request, 'libraries/fund_source.html', context)
     
+def edit_fund_source(request):
+    if request.method == "POST":
+        name = request.POST.get('edit-name')
+        FundSource.objects.filter(id=request.POST.get('edit-id')).update(
+            name=name,
+            updated_by_id=request.user.id,
+            status=True if request.POST.get('edit-status') else False
+        )
+        return JsonResponse({'error': False, 'msg': "Fund source has '{}' has been added successfully.".format(name)})
+
 @login_required
 @groups_only('Super Administrator')
 def category(request):
@@ -167,7 +177,6 @@ def mode_of_admission(request):
         'title': 'Mode of Admission'
     }
     return render(request, 'libraries/mode_of_admission.html', context)
-
 
 @login_required
 @groups_only('Super Administrator')
