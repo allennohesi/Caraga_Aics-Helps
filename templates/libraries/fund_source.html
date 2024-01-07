@@ -29,8 +29,8 @@
                         <thead>
                             <th>Action</th>
                             <th>Name</th>
-                            <th>Acronym</th>
-                            <th>Updated By</th>
+                            <th>Updated by</th>
+                            <th>date updated</th>
                             <th>Status</th>
                         </thead>
                     </table>
@@ -64,15 +64,32 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="edit-sp-modal">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal fade" id="edit-relation-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header flex-column position-relative">
-                <h5 class="modal-title f-w-700">EDIT SERVICE PROVIDER</h5>
+                <h5 class="modal-title f-w-700">EDIT FUND SOURCE</h5>
                 <small class="modal-subtitle">Please fill out the form below.</small>
                 <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="edit-content"></div>
+            <form id="submitEditForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="edit-id" name="edit-id">
+                    <div class="form-group mb-3">
+                        <label>Name <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-name" name="edit-name" autocomplete="off" required>
+                        <div class="invalid-feedback" id="alert-on-edit-name"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" class="form-check-input" name="edit-status" id="edit-status"> Status
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -122,9 +139,14 @@
         });
 
         $(document).on('click', 'a[data-role=edit]', function(){
-            $('#edit-content').load('/libraries/service-provider/edit/' + $(this).data('id'), function(){
-                $('#edit-sp-modal').modal('show');
-            });
+            var id = $(this).data('id');
+            var name = $('#'+id).find('td:eq(1)').text();
+            var status = $('#'+id).find('td:eq(4)').text();
+
+            $('#edit-id').val(id);
+            $('#edit-name').val(name);
+            (status.trim() == "Active") ? $('#edit-status').attr('checked', true) : $('#edit-status').attr('checked', false)
+            $('#edit-relation-modal').modal('show');
         });
     });
 </script>
@@ -164,6 +186,51 @@
                     preConfirm: function (){
                         return $.post({
                             url: "{% url 'fund_source' %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $('#submitForm').trigger('reset');
+                                            $('.select').val("").trigger('change');
+                                            $('#fund-source').DataTable().ajax.reload();
+                                            clearValidation();
+                                            $('#add-sp-modal').modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    $('#name').addClass('is-invalid');
+                                    $('#alert-on-name').html(response.msg);
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#submitEditForm').on('submit', function(e){
+            e.preventDefault();
+            if (!validationForm()){
+                var form = new FormData(this);
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to edit this fund source?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'edit_fund_source' %}",
                             data: form,
                             success : function (response){
                                 if(!response.error){

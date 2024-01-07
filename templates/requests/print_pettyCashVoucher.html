@@ -1,4 +1,5 @@
 {%  load static %}
+{% load humanize %}
 <html>
 <head>
     <meta charset="utf-8">
@@ -52,11 +53,11 @@
                             </tr>
                             <tr>
                                 <th width="200px" height:"50px;"><center><br> <br> {{data.lib_type_of_assistance.type_name}} <br> <br> <br> <br> <br> <br> <br> <br> <br> <br></center></th>
-                                <th width="200px"><center><br> <br> {{calculate.total_payment}} <br> <br> <br> <br> <br> <br> <br> <br> <br> <br></center></th>
+                                <th width="200px"><center><br> <br> {{calculate.total_payment|floatformat:2|intcomma}} <br> <br> <br> <br> <br> <br> <br> <br> <br> <br></center></th>
                             </th>
                         </table>
                     </th>
-                    <th width="50%"><center> TOTAL AMOUNT GRANTED: Php: <u>{{calculate.total_payment}}</u> <br> <br> Total Amount Paid Per <br> <br> OR No. <br> <br> Amount Refunded/ <br> (REIMBURSED)</center></th>
+                    <th width="50%"><center> TOTAL AMOUNT GRANTED: Php: <u>{{calculate.total_payment|floatformat:2|intcomma}}</u> <br> <br> Total Amount Paid Per <br> <br> OR No. <br> <br> Amount Refunded/ <br> (REIMBURSED)</center></th>
                 </tr>
                 <tr>
                     <th width="50%"><div class="square">&nbsp;A</div>

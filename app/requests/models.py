@@ -218,9 +218,65 @@ class Transaction(models.Model):
         return data
     
     @property
+    def get_finance_total(self):
+        data = transaction_description.objects.filter(tracking_number_id=self.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
+        total = data['total'] if data['total'] is not None else 0.0  # Handle the case where total is None
+        # Format the total with 2 decimal places and commas
+        formatted_total = "{:,.2f}".format(total)
+        return formatted_total
+    
+    @property
+    def get_finance_status(self):
+        status_data = "Unknown"  # Initialize with a default value
+        status = TransactionStatus1.objects.filter(transaction=self).first()
+        if status:
+            if status.status == 1:
+                status_data = "Pending"
+            elif status.status == 2:
+                status_data = "Ongoing"
+            elif status.status == 3:
+                status_data = "Complete assessment"
+            elif status.status == 4:
+                status_data = "Hold"
+            elif status.status == 5:
+                status_data = "Cancelled"
+            elif status.status == 6:
+                status_data = "Complete assessment"
+            elif status.status == 7:
+                status_data = "Ongoing"
+        return status_data
+    
+    @property
     def get_sp_data(self):#SERVICE PROVIDER DATA
         data = transaction_description.objects.filter(tracking_number_id=self.tracking_number).all()
         return data
+
+    @property
+    def assessment(self):
+        data = AssessmentProblemPresented.objects.filter(transaction_id=self.id).first()
+        return data.sw_assessment if data.sw_assessment else "N/a"
+    
+    @property
+    def purpose(self):
+        data = AssessmentProblemPresented.objects.filter(transaction_id=self.id).first()
+        return data.problem_presented if data.problem_presented else "N/a"
+
+    @property
+    def date_time_assessment(self):
+        data = TransactionStatus1.objects.filter(transaction_id=self.id).first()
+        return data.swo_time_end if data.swo_time_end else "N/a"
+
+    @property
+    def finance_dv(self):
+        from app.finance.models import finance_voucherData
+        data = finance_voucherData.objects.filter(transactionStatus=self.id).first()
+        return data.voucher.voucher_title if data else "N/a"
+    
+    @property
+    def finance_dv_date(self):
+        from app.finance.models import finance_voucherData
+        data = finance_voucherData.objects.filter(transactionStatus=self.id).first()
+        return data.voucher.date if data else "N/a"
 
     class Meta:
         managed = False
@@ -350,7 +406,7 @@ class SocialWorker_Status(models.Model):
 
     @property
     def case_study(self):
-        data = TransactionStatus1.objects.filter(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6,transaction_id__is_case_study=2).count()
+        data = TransactionStatus1.objects.filter(Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6,transaction_id__is_case_study=2) | Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=3,transaction_id__is_case_study=2)).count()
         return data
 
     class Meta:

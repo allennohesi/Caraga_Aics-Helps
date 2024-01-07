@@ -1,4 +1,5 @@
 {%  load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -689,7 +690,7 @@
                 <td colspan="3">
                   <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label>
                 </td>
-                <td>{{calculate.total_payment|floatformat:2}}</td>
+                <td>{{calculate.total_payment|floatformat:2|intcomma}}</td>
                 <td style="width: 150px;">{{data.fund_source.name|upper}}</td>
             </tr>         
         </table>
