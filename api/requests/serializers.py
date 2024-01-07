@@ -32,7 +32,7 @@ class Transaction_DescriptionSerializer(serializers.ModelSerializer):
 
 #FOR THE FINANCE MODULE
 class FinanceVoucherSerializer(serializers.ModelSerializer):
-    date = serializers.DateField(format="%b %d, %Y - %H:%M %p", read_only=True)
+    date = serializers.DateField(format="%b %d, %Y", read_only=True)
     user = serializers.CharField(source='user.get_fullname', read_only=True, default=None)
     class Meta:
         model = finance_voucher

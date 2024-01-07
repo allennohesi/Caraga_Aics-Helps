@@ -1,4 +1,5 @@
 {%  load static %}
+{% load humanize %}
 <html>
 <head>
   <meta charset="utf-8">
@@ -269,7 +270,7 @@
               <label>Php.</label>
             </td>
             <td colspan="2" width="60" style="border-bottom: 1px solid black;font-weight: bold;">
-              <label>₱ {{calculate.total_payment|floatformat:2}}</label>
+              <label>₱ {{calculate.total_payment|floatformat:2|intcomma}}</label>
             </td>  
             <td colspan="2" >
               <label>CHARGEABLE AGAINST: PSP</label>
@@ -402,7 +403,7 @@
               <label>Php</label>
             </td>
             <td colspan="4" width="50px" style="border-bottom:1px solid black;">
-              <label>₱ {{calculate.total_payment|floatformat:2}}</label>
+              <label>₱ {{calculate.total_payment|floatformat:2|intcomma}}</label>
             </td>
             <td colspan="2">
               

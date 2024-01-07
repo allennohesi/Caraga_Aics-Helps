@@ -161,23 +161,15 @@
                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
-                                            <h6>Biller</h6>
+                                            <h6>Finance/Biller</h6>
                                             <p>Modules for Billers</p>
                                         </div>
-                                    </li>
-                                    <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'financial_transaction' %}"><i data-feather="download"></i><span>Billing</span></a>
-                                    </li>
-                                    {% endif %}
-                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" or user|check_group_permission:"Super Administrator" %}
-                                    <li class="sidebar-main-title">
-                                        <div>
-                                            <h6>Finance Transactions</h6>
-                                            <p>Modules for finance</p>
-                                        </div>
-                                    </li>
-                                    <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'fund_source' %}"><i data-feather="edit"></i><span>Fund Source</span></a>
+                                        <li class="sidebar-list">
+                                            <a class="sidebar-link sidebar-title link-nav" href="{% url 'financial_transaction' %}"><i data-feather="download"></i><span>Transactions</span></a>
+                                        </li>
+                                        <li class="sidebar-list">
+                                            <a class="sidebar-link sidebar-title link-nav" href="{% url 'fund_source' %}"><i data-feather="edit"></i><span>Fund Source</span></a>
+                                        </li>
                                     </li>
                                     {% endif %}
                                     <li class="sidebar-main-title">
@@ -216,7 +208,7 @@
                                                     <li><a href="{% url 'sub_category' %}">Sub-Category</a></li>
                                                     <li><a href="{% url 'type_of_assistance' %}">Type of Assistance</a></li>
                                                     <li><a href="{% url 'signatories' %}">Signatories</a></li>
-                                                    <li><a href="{% url 'fund_source' %}">Fund source</a></li>
+                                                    {% comment %} <li><a href="{% url 'fund_source' %}">Fund source</a></li> {% endcomment %}
                                                 </ul>
                                             </li>
                                             <li><a href="javascript:void(0);" class="submenu-title">Location <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
@@ -249,9 +241,10 @@
                                         <ul class="sidebar-submenu">
                                             <li><a href="javascript:void(0);" class="submenu-title">XLS <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
-                                                    <li><a href="{% url 'generateTransactions' %}" target="_blank">All Transactions</a></li>
-                                                    <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My Transaction</a></li>
-                                                    <li><a href="{% url 'generateByUser' %}">Users Choice</a></li>
+                                                    <li><a href="{% url 'export_csv' %}" target="_blank">Finance data</a></li>
+                                                    <li><a href="{% url 'generateTransactions' %}" target="_blank">All transactions</a></li>
+                                                    <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
+                                                    <li><a href="{% url 'generateByUser' %}">Users choice</a></li>
                                                 </ul>
                                             </li>
                                             {% comment %} <li><a href="javascript:void(0);" class="submenu-title">General <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>

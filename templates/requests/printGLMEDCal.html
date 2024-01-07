@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <html>
 <head>
   <meta charset="utf-8">
@@ -50,7 +51,7 @@
           <td>{{row.regular_quantity}}</td>
           <td>{% if row.regular_price|floatformat:2 == row.discount_price|floatformat:2 %}0{% else %}{{row.discount_price|floatformat:2}}{% endif %}</td>
           <td>{{row.discount_quantity}}</td>
-          <td>{{row.total|floatformat:2}}</td>
+          <td>{{row.total|floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
         <!-- Product Item -->
@@ -58,7 +59,7 @@
         <tr>
           <td>*nothing follows*</td>
           <td colspan="4" style="text-align: right;">Grand Total</td>
-          <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2}}</td>
+          <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2|intcomma}}</td>
         </tr>
       </table>
       <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center; ">
@@ -142,7 +143,7 @@
             <td>{{row.regular_quantity}}</td>
             <td>{% if row.regular_price|floatformat:2 == row.discount_price|floatformat:2 %}0{% else %}{{row.discount_price|floatformat:2}}{% endif %}</td>
             <td>{{row.discount_quantity}}</td>
-            <td>{{row.total|floatformat:2}}</td>
+            <td>{{row.total|floatformat:2|intcomma}}</td>
           </tr>
           {% endfor %}
           <!-- Product Item -->
@@ -152,7 +153,7 @@
           <tr>
             <td>*nothing follows*</td>
             <td colspan="4" style="text-align: right;">Grand Total</td>
-            <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2}}</td>
+            <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2|intcomma}}</td>
           </tr>
         </table>
   

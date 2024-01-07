@@ -4,15 +4,16 @@
     <div class="page-title">
         <div class="row">
             <div class="col-6">
-                <h3>Biller</h3>
+                <h3>Finance</h3>
             </div>
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="breadcrumb-item active">Biller</li>
-                    <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#sp">Service Provider</li>
+                    <li class="breadcrumb-item active">Finance</li>
+                    <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#fund_source">Fund source</li>
+                    <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#sp">Service provider</li>
                 </ol>
             </div>
         </div>
@@ -22,7 +23,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-body" id="finance_content">
+                <div class="card-body" id="transaction_content">
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
@@ -66,8 +67,8 @@
                                 <thead>
                                     <tr>
                                         <th>Action </th>
-                                        <th>Tracking Number</th>
-                                        <th>Voucher Title</th>
+                                        <th>AICS-DV tracking</th>
+                                        <th>Finance DV-number</th>
                                         <th>Voucher Created By</th>
                                         <th>Date</th>
                                         <th>Remarks</th>
@@ -107,48 +108,6 @@
                                 </div>
                             </form>
                             <hr>
-                            <table class="table table-responsive table-sm table-bordered" id="filter-provider">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Action</th>
-                                        <th class="text-center">Information</th>
-                                        <th>Tracking Number</th>
-                                        <th>Beneficiary Name</th>
-                                        <th>Client Name</th>
-                                        <th class="text-center">Date of Transaction</th>
-                                        <th class="text-center">Assigned to SWO</th>
-                                        <th class="text-center">Case Study</th>
-                                        <th class="text-center">Priority</th>
-                                        <th class="text-center">Verified</th>
-                                        <th class="text-center">Assessed</th>
-                                        <th class="text-center">Transaction Status</th>
-                                        <th class="text-center">Remarks Status</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div class="tab-pane fade m-t-30" id="completed" role="tabpanel">
-                            <small>Client Completed Transaction</small>
-                            <hr>
-                            <table class="table table-responsive table-sm table-bordered" id="completed-table">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Action</th>
-                                        <th class="text-center">Information</th>
-                                        <th>Tracking Number</th>
-                                        <th>Beneficiary Name</th>
-                                        <th>Client Name</th>
-                                        <th class="text-center">Date of Transaction</th>
-                                        <th class="text-center">Assigned to SWO</th>
-                                        <th class="text-center">Case Study</th>
-                                        <th class="text-center">Priority</th>
-                                        <th class="text-center">Verified</th>
-                                        <th class="text-center">Assessed</th>
-                                        <th class="text-center">Transaction Status</th>
-                                        <th class="text-center">Remarks Status</th>
-                                    </tr>
-                                </thead>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -172,6 +131,7 @@
                     <label for="end_date">End Date:</label>
                     <input class="form-control" type="date" name="end_date" id="end_date">
                 </div>
+                <br>
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>Service Provider <span class="txt-danger">*</span></label>
@@ -192,7 +152,45 @@
         </form>
       </div>
     </div>
-  </div>
+</div>
+<div class="modal fade" id="fund_source" aria-labelledby="fundsource" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fundsource">Generate report</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'export_fund_summary' %}" target="_blank" method="GET">
+        <div class="modal-body">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="start_date">Start Date:</label>
+                    <input class="form-control" type="date" name="start_date" id="start_date">
+                    <label for="end_date">End Date:</label>
+                    <input class="form-control" type="date" name="end_date" id="end_date">
+                </div>
+                <br>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Fund source</label><span class="txt-danger">*</span>
+                        <select class="form-control select1 hidden" name="fund_source" id="fund_source" required>
+                            <option value="all">Generate All</option>
+                            {% for row in fund_source  %}
+                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Print</button>
+        </div>
+        </form>
+      </div>
+    </div>
+</div>
 <div class="modal fade bd-example-modal-xl" id="voucher" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -264,7 +262,7 @@
             'columns': [
             {'data': 'id',
                 'render': function(data, type, row, meta) {
-                        return " <a href='#' data-role='cr_voucher' data-id="+ data + ">Details</a>"
+                        return " <a href='#' data-role='view_dv' data-id="+ data + ">Details</a>"
                     }
             },
             {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
@@ -280,115 +278,9 @@
             $('#voucher').modal('show').find('#load_data').load('/financial-transaction/voucher_modal/modal/' +id);
            });
 
-        $('#completed-table').DataTable({ //FOR COMPLETED DATA
-            'serverSide': true,
-            'processing': true,
-            'deferRender': true,
-            'lengthMenu': [ 8, 25, 50, 100 ],
-            'order': [[ 2, 'asc' ]],
-            'bDestroy': true,
-            'ajax': {
-                'url': '/api/requests/completed/transaction/list/?format=datatables',
-                'type': 'GET',
-            },
-            'fnCreatedRow': function (row, data, index) {
-                $(row).attr('id', data['id']);
-            },
-            'columns': [
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='hold' data-id="+ row['id'] + ">Change Status</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'status',
-                    'render': function(data, type, row, meta) {
-                        if(row['status'] != 1){
-                            return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['id'] + "'>View</a>"
-                        }else{
-                            return "<td>Start Transaction</td>"
-                        }
-                    },
-                'sortable': false,
-                'searchable': false,
-                'className': 'text-center',
-                },
-                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
-                {'data': 'beneficiary', 'name': 'transaction.bene.first_name, transaction.bene.last_name', 'className': 'text-start', 'sortable': false },
-                {'data': 'client', 'name': 'transaction.client.first_name, transaction.client.last_name', 'className': 'text-start', 'sortable': false },
-                {'data': 'verified_time_start', 'className': 'text-center', },
-                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-                {'data': 'is_case_study', 'className': 'text-center', 'sortable': false, 'searchable': false,
-                        'render': function(data,type,row,meta){
-                            if(row['is_case_study'] == 1){
-                                return "<td>For Case Study</td>"
-                            }else{
-                                return "<td>Not for case Study</td>"
-                            }
-                        }
-                },
-                {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
-                        'render': function(data,type,row,meta){
-                            if(row['priority_id'] == 1){
-                                return "<span class='badge badge-primary'>"+ TA +"</span>" 
-                            }else{
-                                return "<span class='badge badge-primary'>"+ row['priority'] +"</span>" 
-                            }
-                        }
-                },
-                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['is_verified']){
-                            return '<i class="fa fa-check-circle txt-success"></i>'
-                        }else{
-                            return '<i class="fa fa-times-circle txt-danger"></i>'
-                        }
-                    }            
-                },
-                {'data': 'is_swo', 'className': 'text-center', 'searchable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['is_swo']){
-                            return '<i class="fa fa-check-circle txt-success"></i>'
-                        }else{
-                            return '<i class="fa fa-times-circle txt-danger"></i>'
-                        }
-                    }            
-                },
-                {'data': 'action', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['action'] == null){
-                            return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
-                        }else if(row['action'] == 1){
-                            return "<span class='badge badge-dark'>Pending</span>"
-                        }else if(row['action'] == 2){
-                            return "<span class='badge badge-warning'>Ongoing</span>"
-                        }else if(row['action'] == 3){
-                            return "<span class='badge badge-success'>Completed</span>"
-                        }else if(row['action'] == 4){
-                            return "<span class='badge badge-danger'>Hold</span>"
-                        }else if(row['action'] == 5){
-                            return "<span class='badge badge-danger'>Cancelled</span>"
-                        }else{
-                            return row['action']
-                        }
-                    }
-                },
-                {'data': 'remarks_action', 'className': 'text-center', 'searchable': false, 'sortable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['remarks_action'] == null){
-                            return "<td></td>"
-                        }else{
-                            return row['remarks_action']
-                        }
-                    }            
-                },
-            ]
-        });
-        $(document).on('click', 'a[data-role=details]', function(){
+        $(document).on('click', 'a[data-role=view_dv]', function(){
             var id = $(this).data('id');
-            console.log(id)
-            $('#finance_content').load('/financial-transaction/assessment/view/' + id);
+            $('#transaction_content').load('/financial-transaction/view_dv_number/' + id); //pass data, and stay still in the body
         });
     });
     $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL

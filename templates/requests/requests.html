@@ -28,7 +28,7 @@
                                 <i class="fa fa-file-text-o"></i> Information
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" hidden>
                             <a class="nav-link" id="pill-assessment" data-bs-toggle="pill" href="#assessment" role="tab">
                                 <i class="fa fa-question"></i> Assessment
                             </a>
@@ -173,31 +173,6 @@
                                     <div class="form-group">
                                         <label>Tribe</label>
                                         <input type="text" class="form-control f-w-900 upper" id="tribe" readonly>
-                                    </div>
-                                </div>
-                                <br><br>
-                                <div class="card" id="display_transaction">
-                                    <div class="card-body">
-                                        <div class="row mb-3">
-                                            <br>
-                                            <label>Client's Transaction History</label>
-                                            <br>
-                                            <div class="table table-responsive">
-                                                <table class="table table-bordered table-hover" id="transaction-table">
-                                                    <thead>
-                                                        <th>Tracking Number</th>
-                                                        <th class="text-center">Type of Assistance</th>
-                                                        <th class="text-center">Assistance Category</th>
-                                                        <th class="text-center">Social Worker</th>
-                                                        <th class="text-center">Date of Transaction Assessment</th>
-                                                        <th class="text-center">Status</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <td colspan="7" class="text-center">No data available.</td>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -368,13 +343,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <br>
+                            <div class="row mb-3">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input class="form-check-input" id="justification" name="justification" value="1" type="checkbox"> Justification
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-md-7">
                                     <b>
                                     <label>On-site / Off-site <span class="txt-danger">*</span></label><br>
-                                    <input type="text" id="new" name="status" hidden>
-                                    &nbsp; &nbsp; &nbsp;<input type="radio" value="1" id="new_client" required> New &nbsp; &nbsp; &nbsp;<input type="radio" id="returning_client" value="2" required> Returning
+                                    <input type="text" id="new" name="status" hidden> <!--THIS IS FOR NEW AND RETURNING FUNCTION-->
                                     &nbsp; &nbsp; &nbsp;<input type="radio" name="site" value="1" required checked> On-Site
                                     &nbsp; <input class="form-check-input" id="walkin" name="walkin" value="1" type="checkbox" checked> WALK-IN
                                     &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="referral" name="referral" value="1" type="checkbox"> REFERRAL
@@ -383,7 +363,17 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-7">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>New/Returning <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="new_returning" required>
+                                            <option></option>
+                                            <option value="1">New</option>
+                                            <option value="2">Returning</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Priority <span class="txt-danger">*</span></label>
                                         <select class="form-control select" name="priority_name" required>
@@ -394,7 +384,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Case Study <span class="txt-danger">*</span></label>
                                         <select class="form-control select" name="case_study" required>
@@ -461,6 +451,30 @@
                             </div>
                             <small>Recommended Services and Assistance</small>
                             <hr>
+                            <br>
+                            <div class="card" id="display_transaction">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <label>Client's Transaction History</label>
+                                        <br>
+                                        <div class="table table-responsive">
+                                            <table class="table table-bordered table-hover" id="transaction-table">
+                                                <thead>
+                                                    <th>Tracking Number</th>
+                                                    <th class="text-center">Type of Assistance</th>
+                                                    <th class="text-center">Assistance Category</th>
+                                                    <th class="text-center">Social Worker</th>
+                                                    <th class="text-center">Date of Transaction Assessment</th>
+                                                    <th class="text-center">Status</th>
+                                                </thead>
+                                                <tbody>
+                                                    <td colspan="7" class="text-center">No data available.</td>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-md-7">
                                     <b>
@@ -614,13 +628,6 @@
                     type: 'GET',
                     success: function(response){
                         $('#new').val(response.new);
-                        if((response.new) == 1){
-                            $('#new_client').prop('checked', true);
-                            $('#returning_client').prop('checked', false);
-                        }else{
-                            $('#new_client').prop('checked', false);
-                            $('#returning_client').prop('checked', true);
-                        }
                         $('#birthdate').val(response.birthdate);
                         $('#age').val(response.age);
                         $('#sex').val(response.sex);

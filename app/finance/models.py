@@ -6,7 +6,8 @@ from django.dispatch import receiver
 from app.libraries.models import CivilStatus, Suffix, Sex, Barangay, Relation, FundSource, ServiceProvider, FileType, \
     Category, SubCategory, Tribe, ModeOfAdmission, ModeOfAssistance,SubModeofAssistance, TypeOfAssistance, Purpose, \
     LibAssistanceType, PriorityLine, medicine, occupation_tbl, AssistanceProvided, presented_id
-from app.requests.models import TransactionStatus1
+
+from app.requests.models import TransactionStatus1,Transaction
 from app.models import AuthUser
 from django.db.models import Value, Sum, Count
 today = date.today()
@@ -26,7 +27,7 @@ class finance_voucher(models.Model):
 
 class finance_voucherData(models.Model):
     voucher = models.ForeignKey('finance_voucher', models.DO_NOTHING, blank=True, null=True)
-    transactionStatus = models.ForeignKey(TransactionStatus1, models.DO_NOTHING)
+    transactionStatus = models.ForeignKey(Transaction, models.DO_NOTHING)
 
     class Meta:
         managed = False
