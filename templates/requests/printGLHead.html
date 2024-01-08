@@ -66,8 +66,7 @@
         <tr>
           <td width="300px" style="text-align:left;">
             <label style="font-weight: bold;">Addressee: <u>{{data.service_provider.name}}</u></label><br>
-            <label>Position: N/a</label><br>
-            <label>Address: N/a</label><br>
+            <label>Address: {% if data.service_provider.address %}{{data.service_provider.address}}{% endif %}</label><br>
           </td>
           <td></td>
           <td></td>

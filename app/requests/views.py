@@ -316,8 +316,22 @@ def view_incoming(request, pk):
 
 @login_required
 def trackingModal(request,pk):
+	data = Transaction.objects.filter(id=pk).first()
+	if request.method == "POST":
+		if request.POST.get("client_bene") == "Client":
+			Transaction.objects.filter(id=data.id).update(
+				client_id = request.POST.get("client_beneficiary")
+			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the client'})
+		else:
+			Transaction.objects.filter(id=data.id).update(
+				bene_id = request.POST.get("client_beneficiary")
+			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the beneficiary'})
+
 	context = {
-		'transaction_status': TransactionStatus1.objects.filter(transaction_id=pk).first()
+		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
+		'datas':data, #TRANSACTION TABLE
 	}
 	
 	return render(request,'requests/TrackingModal.html', context)

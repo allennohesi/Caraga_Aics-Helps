@@ -116,41 +116,52 @@
     }
   }
 </style>
-<div class="row">
-  <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a>
-  {% if transaction_status.0.status == "Pending" %}
+<div class="row" id="tracking_modal">
+  {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
   <div class="col-lg-12">
       <form id="submitForActionForm">
-      {% csrf_token %}
-      <div class="row mb-3">
-          <div class="col-md-6">
-              <label>Action <span class="txt-danger">*</span></label>
-              <select class="form-control select" name="status" required>
-                  <option value="For Interview">For Interview / Assessment</option>
-                  <option value="Cancelled">Cancel</option>
+        {% csrf_token %}
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="trackingNumber" class="form-label">TRACKING NUMBER</label>
+              <input type="text" class="form-control" id="trackingNumber" value="{{datas.tracking_number}}" readonly>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="trackingNumber" class="form-label">Current client</label>
+              <input type="text" class="form-control" id="trackingNumber" value="{{datas.client.client_bene_fullname}}" readonly>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="trackingNumber" class="form-label">Current beneficiary</label>
+              <input type="text" class="form-control" id="trackingNumber" value="{{datas.bene.client_bene_fullname}}" readonly>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>Client / Beneficiary</label><span class="txt-danger">*</span>
+              <select class="form-control select1 hidden" name="client_bene" id="client_bene" required>
+                  <option></option>
+                  <option value="Client">Client</option>
+                  <option value="Beneficiary">Beneficiary</option>
               </select>
           </div>
-          <div class="col-md-6">
-              <label>Assigned to (Optional)</label>
-              <select class="form-control user" name="user"></select>
           </div>
-      </div>
-      <div class="row mb-3">
           <div class="col-md-12">
-              <label>Remarks</label>
-              <textarea class="form-control" rows="5" name="remarks"></textarea>
+              <div class="form-group">
+                <label>Client Name</label><span class="txt-danger">*</span>
+                <select class="form-control select client_beneficiary" id="client_beneficiary" name="client_beneficiary" required></select>
+              </div>
           </div>
-      </div>
-      <div class="row mb-3">
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-          </div>
-      </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
   </div>
-  {% endif %}
   <div class="col-lg-12">
-      <p class="text-center">Timeline</p>
+      <p class="text-center">Timelines</p>
       <section style="background-color: #F0F2F5;">
           <div class="container py-5">
             <div class="main-timeline">
@@ -187,5 +198,86 @@
             </div>
           </div>
         </section>
-  </div>
+    </div>
 </div>
+<script>
+  $('.client_beneficiary').select2({
+      width: '100%',
+      placeholder: 'CHOOSE',
+      containerCssClass: 'select',
+      allowClear: true,
+      ajax: {
+          url: "{% url 'get_all_client_beneficiary' %}",
+          method: "GET",
+          dataType: "json",  // Corrected the property name to "dataType"
+          data: function(params) {
+              return {
+                  searchTerm: params.term
+              };
+          },
+          processResults: function(response) {
+              $('#relationship').val("").trigger('change');
+              $('#same_with_client').prop('checked', false);
+              return {
+                  results: response
+              };
+          },
+          cache: true
+      }
+  });
+  $('.select1').select2({
+    width: '100%',
+    placeholder: 'Choose',
+    containerCssClass: 'select'
+  });
+  function validationForm(){
+    var invalid = false;
+    $('.form-control').each(function() {
+        if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+            $(this).addClass('is-invalid');
+            $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+            invalid = true;
+        }
+    });
+    return invalid;
+  }
+  $('#submitForActionForm').on('submit', function(e){
+    e.preventDefault();
+    var form = new FormData(this);
+    if (!validationForm()){
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to update Client/Beneficiary?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function (){
+                return $.post({
+                    url: "{% url 'trackingModal' datas.id %}",
+                    data: form,
+                    success : function (response){
+                        if(!response.error){
+                            Swal.fire({
+                                title: "Good job!",
+                                html:  response.msg,
+                                icon: "success",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed){
+                                    $('#tracking_modal').load('/requests/tracking/{{ datas.id }}');
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                }
+                            });
+                        }
+                    },
+                    cache       : false,
+                    contentType : false,
+                    processData : false,
+                });
+            },
+        });
+    }
+});
+</script>
