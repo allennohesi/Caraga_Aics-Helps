@@ -525,7 +525,7 @@ function convertAmountToWords(amount) {
     }
   }
 
-  const formattedAmount = amount.toString().replace(/,/g, '');
+  const formattedAmount = amount.toFixed(2).toString().replace(/,/g, '');
   const [integerPart, decimalPart] = formattedAmount.split('.');
   const integerAmount = parseInt(integerPart, 10);
 
@@ -546,7 +546,7 @@ function convertAmountToWords(amount) {
   return result.trim();
 }
 
-const amountWithFraction = convertAmountToWords({{calculate.total_payment|floatformat:2}});
+const amountWithFraction = convertAmountToWords({{ calculate.total_payment|floatformat:2 }});
 document.getElementById("numtoword").innerHTML = amountWithFraction.toUpperCase();
 </script>
 </html>
