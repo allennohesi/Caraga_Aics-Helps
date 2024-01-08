@@ -546,63 +546,51 @@
   </section>
 </body>
 <script>
-// System for American Numbering 
-var th_val = ['', 'thousand', 'million', 'billion', 'trillion'];
-// System for uncomment this line for Number of English 
-// var th_val = ['','thousand','million', 'milliard','billion'];
- 
-var dg_val = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-var tn_val = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-var tw_val = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-function toWordsconver(s) {
-  s = s.toString();
-    s = s.replace(/[\, ]/g, '');
-    if (s != parseFloat(s))
-        return 'not a number ';
-    var x_val = s.indexOf('.');
-    if (x_val == -1)
-        x_val = s.length;
-    if (x_val > 15)
-        return 'too big';
-    var n_val = s.split('');
-    var str_val = '';
-    var sk_val = 0;
-    for (var i = 0; i < x_val; i++) {
-        if ((x_val - i) % 3 == 2) {
-            if (n_val[i] == '1') {
-                str_val += tn_val[Number(n_val[i + 1])] + ' ';
-                i++;
-                sk_val = 1;
-            } else if (n_val[i] != 0) {
-                str_val += tw_val[n_val[i] - 2] + ' ';
-                sk_val = 1;
-            }
-        } else if (n_val[i] != 0) {
-            str_val += dg_val[n_val[i]] + ' ';
-            if ((x_val - i) % 3 == 0)
-                str_val += 'hundred ';
-            sk_val = 1;
-        }
-        if ((x_val - i) % 3 == 1) {
-            if (sk_val)
-                str_val += th_val[(x_val - i - 1) / 3] + ' ';
-            sk_val = 0;
-        }
+function convertAmountToWords(amount) {
+  const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  function convertThreeDigitNumber(num) {
+    return (num >= 100 ? units[Math.floor(num / 100)] + ' Hundred ' : '') +
+      (num % 100 === 0 ? '' : convertTwoDigitNumber(num % 100));
+  }
+
+  function convertTwoDigitNumber(num) {
+    if (num < 10) {
+      return units[num];
+    } else if (num < 20) {
+      return teens[num - 10];
+    } else {
+      return tens[Math.floor(num / 10)] + ' ' + units[num % 10];
     }
-    if (x_val != s.length) {
-        var y_val = s.length;
-        str_val += 'point ';
-        for (var i = x_val + 1; i < y_val; i++)
-            str_val += dg_val[n_val[i]] + ' ';
-    }
-    return str_val.replace(/\s+/g, ' ');
+  }
+
+  const formattedAmount = amount.toString().replace(/,/g, '');
+  const [integerPart, decimalPart] = formattedAmount.split('.');
+  const integerAmount = parseInt(integerPart, 10);
+
+  const thousands = Math.floor(integerAmount / 1000);
+  const remainingAmount = integerAmount % 1000;
+
+  const thousandsInWords = thousands > 0 ? convertThreeDigitNumber(thousands) + ' Thousand ' : '';
+  const remainingAmountInWords = convertThreeDigitNumber(remainingAmount);
+
+  let result = thousandsInWords + remainingAmountInWords;
+
+  const centavos = parseInt(decimalPart || '0', 10);
+
+  if (centavos > 0) {
+    const centavosInWords = convertTwoDigitNumber(centavos);
+    result += ` and ${centavosInWords} Centavos`;
+  }
+
+  return result.trim();
 }
 
 var number = {{calculate.total_payment|floatformat:2}}
-var numtoword = toWordsconver(number) + "PESOS"
-document.getElementById("numtoword").innerHTML = numtoword.toUpperCase();
-document.getElementById("numtoword2").innerHTML = numtoword.toUpperCase();
-
+const amountWithCentavos = convertAmountToWords(number);
+document.getElementById("numtoword").innerHTML = amountWithCentavos.toUpperCase();
 
 
 </script>
