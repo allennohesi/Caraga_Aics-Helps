@@ -540,15 +540,13 @@ function convertAmountToWords(amount) {
   const centavos = parseInt(decimalPart || '0', 10);
 
   if (centavos > 0) {
-    const centavosInWords = convertTwoDigitNumber(centavos);
-    result += ` and ${centavosInWords} Centavos`;
+    result += ` ${centavos}/100`;
   }
 
   return result.trim();
 }
 
-var number = {{calculate.total_payment|floatformat:2}}
-const amountWithCentavos = convertAmountToWords(number);
-document.getElementById("numtoword").innerHTML = amountWithCentavos.toUpperCase();
+const amountWithFraction = convertAmountToWords({{calculate.total_payment|floatformat:2}});
+document.getElementById("numtoword").innerHTML = amountWithFraction.toUpperCase();
 </script>
 </html>
