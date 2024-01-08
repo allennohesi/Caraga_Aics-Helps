@@ -251,7 +251,12 @@
                 
               </td>
               <td width="250px;" style="border-bottom: 1px solid black;">
-                  <input type="checkbox" name="sector"> Medical Certificate/Abstract <br>
+                  {% if data.lib_assistance_category.name == "Medical Assistance" %}
+                  <input type="checkbox" name="sector" checked> Medical Certificate/Abstract
+                  {% else %}
+                  <input type="checkbox" name="sector"> Medical Certificate/Abstract
+                  {% endif %}
+                  <br>
                   <input type="checkbox" name="sector"> Prescriptions <br>
                   <input type="checkbox" name="sector"> Statement of Account <br>
                   <input type="checkbox" name="sector"> Treatment Protocol <br>
@@ -262,8 +267,13 @@
                   <input type="checkbox" name="sector"> Discharge Summary <br>
                   <input type="checkbox" name="sector"> Laboratory <br>
                   <input type="checkbox" name="sector"> Charge Slip <br>
+                  {% if data.lib_assistance_category.name == "Burial Assistance" %}
+                  <input type="checkbox" name="sector" checked> Funeral Contract <br>
+                  <input type="checkbox" name="sector" checked> Death Certificate <br>
+                  {% else %}
                   <input type="checkbox" name="sector"> Funeral Contract <br>
                   <input type="checkbox" name="sector"> Death Certificate <br>
+                  {% endif %}
               </td>
               <td style="border-bottom: 1px solid black;border-right: 1px solid black;">
                   <input type="checkbox" name="sector"> Death Summary <br>

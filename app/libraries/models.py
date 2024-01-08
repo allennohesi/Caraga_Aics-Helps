@@ -60,6 +60,7 @@ class ServiceProvider(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     acronym = models.CharField(max_length=50, blank=True, null=True)
     contact_number=models.CharField(max_length=255, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     updated_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
     status = models.BooleanField(blank=True, null=True)
     date_updated = models.DateTimeField(default=timezone.now)
