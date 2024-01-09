@@ -877,7 +877,7 @@ def approveTransactions(request):
 	return JsonResponse({'data': 'success'})
 
 @login_required
-@groups_only('Verifier', 'Super Administrator', 'Surveyor')
+@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
 def view_online_swo(request):
 	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
 	context = {
