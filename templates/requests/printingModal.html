@@ -2,7 +2,7 @@
 {% if transaction.service_provider %}
 <div class="row mb-3"id="modal_view">
     <a class="btn btn-outline-primary" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a>
-    <a class="btn btn-outline-primary" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a>
+    {% comment %} <a class="btn btn-outline-primary" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a> {% endcomment %}
     <a class="btn btn-outline-primary" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a>
     <a class="btn btn-outline-primary" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (FA)</a>
     <a class="btn btn-outline-primary" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a>
