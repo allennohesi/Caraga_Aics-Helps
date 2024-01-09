@@ -29,7 +29,7 @@
             </div>
         </div>
         {% endif %}
-        {% if transaction.service_provider_id == null %}
+        {% comment %} {% if transaction.service_provider_id == null %}
         <p>
             <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Add service provider</a>
         </p>
@@ -63,7 +63,7 @@
             </div>
         </div>
         </div>
-        {% endif %}
+        {% endif %} {% endcomment %}
         <form id="submitformProvided">
             {% csrf_token %}
             <div class="row mb-3">
