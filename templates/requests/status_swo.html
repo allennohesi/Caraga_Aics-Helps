@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+{% block content %}
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Incoming</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Incoming</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <ul class="nav nav-pills" id="tabUL" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
+                                <i class="fa fa-file-o"></i> All Transactions
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
+                            <small>Client Pending Transaction</small>
+                            <hr>
+                            <div class="table-responsive text-nowrap table-scroll">
+                                <table class="table table-bordered table-hover" id="">
+                                    <thead>
+                                        <th>ASSIGNED</th>
+                                        <th class="text-center">PENDING ASSESSMENT</th>
+                                        <th class="text-center">ONGOING ASSESSMENT</th>
+                                        <th class="text-center">COMPLETE ASSESSMENT</th>
+                                        <th class="text-center">FOR CASE STUDY</th>
+                                        <th class="text-center">ACTIVE</th>
+                                    </thead>
+                                    {% for row in active_sw %}
+                                    <tbody>
+                                        
+                                        <td>{{row.user.get_fullname|upper}}</td>
+                                        <td class="text-center">{{row.get_total}}</td>
+                                        <td class="text-center">{{row.get_ongoing}}</td>
+                                        <td class="text-center">{{row.get_complete}}</td>
+                                        <td class="text-center">{{row.case_study}}</td>
+                                        <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
+                                        
+                                    </tbody>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="Tracking_modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="startTransaction">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title" id="staticBackdropLabel">Tracking of Transaction</h6>
+                <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="load_data">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+
+{% endblock %}

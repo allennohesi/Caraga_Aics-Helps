@@ -875,3 +875,15 @@ def approveTransactions(request):
 			signatories_approved=1
 		)
 	return JsonResponse({'data': 'success'})
+
+@login_required
+@groups_only('Verifier', 'Super Administrator', 'Surveyor')
+def view_online_swo(request):
+	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
+	context = {
+		'title': 'Status View',
+		'active_sw': active_sw
+	}
+	return render(request, 'requests/status_swo.html', context)
+
+
