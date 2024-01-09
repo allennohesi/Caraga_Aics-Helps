@@ -264,12 +264,9 @@
     const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
   
     function convertThreeDigitNumber(num) {
-      return (num >= 100 ? units[Math.floor(num / 100)] + ' Hundred ' : '') +
-        (num % 100 === 0 ? '' : convertTwoDigitNumber(num % 100));
-    }
-  
-    function convertTwoDigitNumber(num) {
-      if (num < 10) {
+      if (num === 0) {
+        return '';
+      } else if (num < 10) {
         return units[num];
       } else if (num < 20) {
         return teens[num - 10];
@@ -285,7 +282,7 @@
     const thousands = Math.floor(integerAmount / 1000);
     const remainingAmount = integerAmount % 1000;
   
-    const thousandsInWords = thousands > 0 ? convertThreeDigitNumber(thousands) + ' Thousand ' : '';
+    const thousandsInWords = thousands > 0 ? (thousands === 10 ? 'Ten Thousand ' : convertThreeDigitNumber(thousands) + ' Thousand ') : '';
     const remainingAmountInWords = convertThreeDigitNumber(remainingAmount);
   
     let result = thousandsInWords + remainingAmountInWords;
