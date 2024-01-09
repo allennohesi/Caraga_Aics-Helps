@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from app.global_variable import groups_only
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
     TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, FocalServiceProvider, Tribe, region, FundSource, \
-    ServiceProvider, SignatoriesTbl
+    SignatoriesTbl
 from app.requests.models import ClientBeneficiary
 from app.models import AuthUser, AuthUserGroups
 
@@ -41,29 +41,6 @@ def update_signatories(request):
             return JsonResponse({'error': False, 'msg': "Signatories has been updated"})
         else:
             return JsonResponse({'error': True, 'msg': "ID does not exists"})
-
-@login_required
-def service_provider(request):
-    if request.method == "POST":
-        name=request.POST.get('service_provider')
-        check = ServiceProvider.objects.filter(name=request.POST.get('service_provider'))
-        if not check:
-            ServiceProvider.objects.create(
-                name=name,
-                acronym=request.POST.get('acronym'),
-                contact_number=request.POST.get('contactnumber'),
-                updated_by_id=request.user.id,
-                status=True,
-                date_updated=datetime.now()
-            )
-            return JsonResponse({'error': False, 'msg': "New service provider '{}' has been added successfully.".format(name)})
-        else:
-            return JsonResponse({'error': True, 'msg': "Fund service provider '{}' is already existed.".format(name)})
-        
-    context = {
-        'title': 'Service-Provider'
-    }
-    return render(request, 'libraries/service_provider.html', context)
 
 @login_required
 def fund_source(request):
@@ -377,7 +354,29 @@ def get_all_service_provider(request):
     else:
         return JsonResponse(json, safe=False)
 
-
+@login_required
+def service_provider(request):
+    if request.method == "POST":
+        name=request.POST.get('service_provider')
+        check = ServiceProvider.objects.filter(name=request.POST.get('service_provider'))
+        if not check:
+            ServiceProvider.objects.create(
+                name=name,
+                acronym=request.POST.get('acronym'),
+                address=request.POST.get('address'),
+                contact_number=request.POST.get('contactnumber'),
+                updated_by_id=request.user.id,
+                status=True,
+                date_updated=datetime.now()
+            )
+            return JsonResponse({'error': False, 'msg': "New service provider '{}' has been added successfully.".format(name)})
+        else:
+            return JsonResponse({'error': True, 'msg': "Fund service provider '{}' is already existed.".format(name)})
+        
+    context = {
+        'title': 'Service-Provider'
+    }
+    return render(request, 'libraries/service_provider.html', context)
 
 @login_required
 @groups_only('Super Administrator')
@@ -385,72 +384,22 @@ def edit_service_provider(request, pk):
     if request.method == "POST":
         name = request.POST.get('edit-name')
         acronym = request.POST.get('edit-acronym')
-        contact_person = request.POST.getlist('contact_person[]')
-        contact_number = request.POST.getlist('contact_number[]')
-        focal_status = request.POST.getlist('focal_status[]')
-
-        data = [
-            {'contact_person': cp, 'contact_number': cn, 'status': fs}
-            for cp, cn, fs in zip(contact_person, contact_number, focal_status)
-        ]
-
-        focal_person = FocalServiceProvider.objects.filter(service_provider_id=pk)
-        store = [row.id for row in focal_person]
-        with transaction.atomic():
-            if focal_person:
-                y = 1
-                x = 0
-                for row in data:
-                    if y > len(focal_person):
-                        FocalServiceProvider.objects.create(
-                            user_id=row['contact_person'],
-                            contact_number=row['contact_number'],
-                            status=True if row['status'] else False,
-                            service_provider_id=pk
-                        )
-                    else:
-                        FocalServiceProvider.objects.filter(id=store[x]).update(
-                            user_id=row['contact_person'],
-                            contact_number=row['contact_number'],
-                            status=True if row['status'] else False,
-                            service_provider_id=pk
-                        )
-                        y += 1
-                        x += 1
-
-                    check = AuthUserGroups.objects.filter(user_id=row['contact_person'])
-                    if check:
-                        check.update(group_id=4)
-                    else:
-                        AuthUserGroups.objects.create(user_id=row['contact_person'], group_id=4)
-
-            check = ServiceProvider.objects.filter(name=name, id=pk)
-            if check: # If no changes only status
-                ServiceProvider.objects.filter(id=pk).update(
-                    name=name,
-                    acronym=acronym,
-                    updated_by_id=request.user.id,
-                    date_updated=datetime.now(),
-                    status=True if request.POST.get('edit-status') else False
-                )
-                return JsonResponse({'error': False, 'msg': "Service Provider '{}' has been updated successfully.".format(name)})
-            else:
-                check = ServiceProvider.objects.filter(name=name)
-                if not check:
-                    ServiceProvider.objects.filter(id=pk).update(
-                        name=name,
-                        acronym=acronym,
-                        updated_by_id=request.user.id,
-                        date_updated=datetime.now(),
-                        status=True if request.POST.get('edit-status') else False
-                    )
-                    return JsonResponse({'error': False, 'msg': "New Service Provider '{}' has been added successfully.".format(name)})
-                else:
-                    return JsonResponse({'error': True, 'msg': "Service Provider '{}' is already existed.".format(name)})
-        return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
+        address = request.POST.get('address')
+        contact_number = request.POST.get('contactnumber')
+        check = ServiceProvider.objects.filter(id=pk)
+        if check: # If no changes only status
+            ServiceProvider.objects.filter(id=pk).update(
+                name=name,
+                acronym=acronym,
+                address=address,
+                contact_number=contact_number,
+                updated_by_id=request.user.id,
+                date_updated=datetime.now(),
+                status=True if request.POST.get('edit-status') else False
+            )
+            return JsonResponse({'error': False, 'msg': "Service Provider '{}' has been updated successfully.".format(name)})
     context = {
         'service_provider': ServiceProvider.objects.filter(id=pk).first(),
-        'focal_person': FocalServiceProvider.objects.filter(service_provider_id=pk)
     }
     return render(request, 'libraries/edit_service_provider.html', context)
 
