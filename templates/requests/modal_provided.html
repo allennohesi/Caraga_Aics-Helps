@@ -110,7 +110,7 @@
                         <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group">
                         <label>Discount %</label> <span class="txt-danger">*</span>
                         <br>
@@ -133,26 +133,27 @@
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <label>Total</label>
+                        <label>Final total</label>
                         <br>
                         <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <label>&nbsp;</label>
+                        <label>Action</label>
+                        <br>
                         <input type="submit" class="btn btn-primary" name="regprice" value="+">
                     </div>
                 </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Pre total <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
-                    </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <label>Pre total</label>
+                    <br>
+                    <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
                 </div>
             </div>
+            <br>
             <div class="table-responsive text-nowrap table-scroll">
                 <table class="table table-responsive" width="100%" id="table">
                     <thead>

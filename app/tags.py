@@ -4,6 +4,8 @@ from django import template
 from app.requests.models import TransactionServiceAssistance, Mail, TransactionStatus1, Transaction
 from app.models import AuthUser, AuthUserGroups
 
+from num2words import num2words
+
 register = template.Library()
 
 
@@ -62,3 +64,22 @@ def count_assessment_all():
 def count_ongoing():
     return TransactionStatus1.objects.filter(status=2).count()
 
+
+
+@register.filter(name='number_to_words')
+def number_to_words(value):
+    # Remove commas from the value
+    value = str(value).replace(',', '')
+
+    # Split the value into integer and decimal parts
+    integer_part, _, decimal_part = str(value).partition('.')
+
+    # Convert the integer part to words
+    words = num2words(int(integer_part), lang='en').title()
+
+    # Check if there is a decimal part
+    if decimal_part and decimal_part != '00':
+        # Append a space and the decimal part as a fraction
+        words += f" {decimal_part} / 100"
+
+    return words
