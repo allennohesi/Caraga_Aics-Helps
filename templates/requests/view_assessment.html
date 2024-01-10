@@ -2,11 +2,11 @@
 {% load static %}
 <style>
     .modal-xxl {
-        max-width: 90%;
+        max-width: 75%;
     }
 
     .modal-xxl .modal-dialog {
-        max-width: 100%;
+        max-width: 65%;
         width: auto;
     }
 </style>
@@ -626,7 +626,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Assistance Type <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="assistance_type" id="assistance_type" required>
@@ -640,7 +640,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Assistance Category <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="assistance_category" id="assistance_category" required>
@@ -654,7 +654,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Fund Source <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="fund_source" id="fund_source" required>
@@ -669,7 +669,21 @@
                             </select>
                         </div>
                     </div>
-                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Service Provider <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="service_provider" id="service_pr" required>
+                                <option></option>
+                                {% for row in service_provider  %}
+                                {% if row.id == transaction.service_provider_id %}
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 {% if requirements %}
                 <div class="col-md-4">
@@ -754,7 +768,7 @@
             <div class="modal-dialog modal-xxl">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalProvidedLabel">Provided data to client</h5>
+                    <h6 class="modal-title" id="modalProvidedLabel">Data provided</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="load_data">

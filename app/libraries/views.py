@@ -277,7 +277,7 @@ def get_all_client_beneficiary(request):
 
         json_data = [{'id': id, 'text': client_bene_fullname} for id, client_bene_fullname in clients]
         return JsonResponse(json_data, safe=False)
-
+    
     return JsonResponse([], safe=False)
 
 # @login_required
