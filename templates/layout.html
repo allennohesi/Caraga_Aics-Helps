@@ -130,9 +130,15 @@
                                     
                                     {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
-                                        <label class="badge badge-primary">{% count_assessment_all %}</label>
+                                        <label class="badge badge-primary">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
                                     </li>
+                                    <li class="sidebar-list">
+                                        <label class="badge badge-primary"></label>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'all_transactions' %}"><i data-feather="cast"></i><span>All transactions</span></a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-primary"></label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="cast"></i><span>Case Study</span></a>

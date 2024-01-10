@@ -347,6 +347,16 @@ def assessment(request):
 	return render(request, 'requests/assessment.html', context)
 
 @login_required
+@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
+def all_transactions(request):
+	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
+	context = {
+		'title': 'All Transactions',
+		'active_sw': active_sw
+	}
+	return render(request, 'requests/all_transactions.html', context)
+
+@login_required
 def assessmentStatusModal(request,pk):
 	if request.method == "POST":
 		data = TransactionStatus1.objects.filter(transaction_id=pk).update(
@@ -885,5 +895,7 @@ def view_online_swo(request):
 		'active_sw': active_sw
 	}
 	return render(request, 'requests/status_swo.html', context)
+
+
 
 
