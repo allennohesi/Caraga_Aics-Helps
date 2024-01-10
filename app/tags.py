@@ -53,12 +53,7 @@ def count_pending():
 
 @register.simple_tag
 def count_assessment_all():
-    # print(user_id)
-    # for_interview = TransactionStatus.objects.filter(user_id=user_id, status='For Interview').count()
-    # print(for_interview)
     return TransactionStatus1.objects.filter(is_swo=None).count()
-    # data = TransactionStatus.objects.filter(user_id=user_id).count().first()
-    # print(data)
 
 @register.simple_tag
 def count_ongoing():
