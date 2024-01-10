@@ -4,6 +4,9 @@ from api.requests.serializers import TransactionSerializer, Transaction_Descript
 from app.requests.models import Transaction, transaction_description, TransactionStatus1
 from app.finance.models import finance_voucher, finance_voucherData
 from datetime import datetime, timedelta, time, date
+from django.db.models import Q
+from rest_framework.pagination import LimitOffsetPagination
+
 today = date.today()
 # class TransactionViews(generics.ListAPIView):
 #     serializer_class = TransactionSerializer
@@ -15,18 +18,33 @@ class TransactionPerSession(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         if self.request.query_params.get('user'):
-            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).order_by('-id')
+            queryset = TransactionStatus1.objects.filter(
+                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=1) | 
+                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=2) | 
+                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=3) |
+                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=4) |
+                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=7) 
+                ).order_by('-id')
             return queryset
         else:
             queryset = TransactionStatus1.objects.all().order_by('-id')
             return queryset
 
-    
+class TransactionPerSessionAllViews(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    # permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        if self.request.query_params.get('user'):
+            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id')
+            return queryset
+        else:
+            queryset = TransactionStatus1.objects.all().order_by('-id')
+            return queryset
+
 class CompletedTransactionViews(generics.ListAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
     queryset = TransactionStatus1.objects.filter(is_verified=1,is_swo=1).order_by('-id')
-
 
 class TransactionDescriptionViews(generics.ListAPIView):
     serializer_class = Transaction_DescriptionSerializer
