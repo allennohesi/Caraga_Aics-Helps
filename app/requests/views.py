@@ -323,11 +323,15 @@ def trackingModal(request,pk):
 				client_id = request.POST.get("client_beneficiary")
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the client'})
-		else:
+		elif request.POST.get("client_bene") == "Beneficiary":
 			Transaction.objects.filter(id=data.id).update(
 				bene_id = request.POST.get("client_beneficiary")
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the beneficiary'})
+		elif request.POST.get("client_bene") == "swo":
+			Transaction.objects.filter(id=data.id).update(
+				swo_id = request.POST.get("swo_name")
+			)
 
 	context = {
 		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
@@ -509,6 +513,7 @@ def save_assessment(request, pk):
 				provided_foodpack=request.POST.get('food_packs') if request.POST.get('food_packs') else 0,
 				provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
 				is_return_new=request.POST.get('new_returning'),
+				service_provider=request.POST.get('service_provider'),
 			)
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
@@ -547,9 +552,9 @@ def modal_provided(request,pk):
 					discount_quantity=request.POST.get('qty1'), #CHECKING
 					total=request.POST.get('tot'),	
 				)
-				Transaction.objects.filter(id=pk).update(
-						service_provider_id=request.POST.get('service_provider'),
-				)
+				# Transaction.objects.filter(id=pk).update(
+				# 		service_provider_id=request.POST.get('service_provider'),
+				# )
 				return JsonResponse({'data': 'success',
 					'msg': 'The data provided to client, successfully updated'})
 			else:
@@ -564,9 +569,9 @@ def modal_provided(request,pk):
 					total=request.POST.get('tot'),
 					user_id=request.user.id,
 				)
-				Transaction.objects.filter(id=pk).update(
-						service_provider_id=request.POST.get('service_provider'),
-				)
+				# Transaction.objects.filter(id=pk).update(
+				# 		service_provider_id=request.POST.get('service_provider'),
+				# )
 				return JsonResponse({'data': 'success',
 									'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
