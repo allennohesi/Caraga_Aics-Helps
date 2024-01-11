@@ -171,6 +171,14 @@ def view_client_bene_info(request, pk):
 
 @login_required
 def registration(request):
+    data = ClientBeneficiary.objects.all()
+    for row in data:
+        today = date.today()
+        current_age = today.year - row.birthdate.year - ((today.month, today.day) < (row.birthdate.month, row.birthdate.day))
+        ClientBeneficiary.objects.filter(id=row.id).update(
+            age=current_age
+        )
+
     if request.method == "POST":
         with transaction.atomic():
             check_if_name_exists = ClientBeneficiary.objects.filter(
@@ -203,6 +211,7 @@ def registration(request):
                     middle_name=request.POST.get('middle_name'),
                     suffix_id=request.POST.get('suffix'),
                     birthdate=request.POST.get('birthdate'),
+                    age=request.POST.get('calculated_age'),
                     sex_id=request.POST.get('sex'),
                     contact_number=request.POST.get('contact_number') if request.POST.get('contact_number') else None,
                     civil_status_id=request.POST.get('civil_status'),
