@@ -264,6 +264,15 @@ def incoming(request):
 	# 	Transaction.objects.filter(tracking_number=row.tracking_number).update(
 	# 		total_amount=formatted_total
 	# 	)
+
+	data = Transaction.objects.all()
+	for row in data:
+		transaction_id = TransactionStatus1.objects.get(transaction_id=row.id)
+		Transaction.objects.filter(id=transaction_id.transaction_id).update(
+			status=transaction_id.status,
+			swo_date_time_start=transaction_id.swo_time_start,
+			swo_date_time_end=transaction_id.swo_time_end
+		)
 	context = {
 		'title': 'Incoming'
 	}
@@ -377,13 +386,9 @@ def assessmentStatusModal(request,pk):
 			status=request.POST.get("change_status"),
 			status_remarks=request.POST.get("remarks_transaction")
 		)
-		status = request.POST.get("change_status")
-		if status == "2":
-			data = "Assess"
-		elif status == "4":
-			data = "On-hold"
-		else:
-			data = "Cancelled"
+		data = Transaction.objects.filter(id=pk).update(
+			status=request.POST.get("change_status")
+		)
 
 	transactionStatus = TransactionStatus1.objects.filter(transaction_id=pk).first()
 	data = Transaction.objects.filter(id=pk).first()
@@ -461,6 +466,10 @@ def StartTime(request,pk):
 			swo_time_start=datetime.now(),
 			status=2
 		)
+		data = Transaction.objects.filter(id=pk).update(
+			swo_date_time_start=datetime.now(),
+			status=2
+		)
 		return JsonResponse({'data': 'success', 'msg': 'You successfully start the transaction'})
 
 @login_required
@@ -524,6 +533,8 @@ def save_assessment(request, pk):
 				provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
 				is_return_new=request.POST.get('new_returning'),
 				service_provider=request.POST.get('service_provider'),
+				status=3,
+				swo_date_time_end=datetime.now()
 			)
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
@@ -562,9 +573,6 @@ def modal_provided(request,pk):
 					discount_quantity=request.POST.get('qty1'), #CHECKING
 					total=request.POST.get('tot'),
 				)
-				# Transaction.objects.filter(id=pk).update(
-				# 		service_provider_id=request.POST.get('service_provider'),
-				# )
 				return JsonResponse({'data': 'success',
 					'msg': 'The data provided to client, successfully updated'})
 			else:
@@ -579,9 +587,6 @@ def modal_provided(request,pk):
 					total=request.POST.get('tot'),
 					user_id=request.user.id,
 				)
-				# Transaction.objects.filter(id=pk).update(
-				# 		service_provider_id=request.POST.get('service_provider'),
-				# )
 				return JsonResponse({'data': 'success',
 									'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
@@ -603,14 +608,6 @@ def confirmAmount(request):
 		float_value = float(total)
 		integer_value = int(float_value)
 
-		#client = Transaction.objects.filter(id=transaction_id).first()
-		#print(client.client.barangay.city_code.prov_code.id)
-		#print(client.client.barangay.city_code.prov_code.prov_name)
-		#78 ADN
-		#79 ADS
-		#80 SDN
-		#81 SDS
-		#82 DINAGAT
 		if integer_value <= 50000:
 			data = Transaction.objects.filter(id=transaction_id).update(
 				signatories_id = 17, #ANA T. SEMACIO
@@ -770,8 +767,6 @@ def printGLMEDCal(request, pk):
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).all()
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
-	# sample = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
-	# sample = transaction_description.objects.all().filter(tracking_number_id=transaction.tracking_number).values('tracking_number').annotate(total=Count('tracking_number'))
 	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
 	rows = count + 1
 
