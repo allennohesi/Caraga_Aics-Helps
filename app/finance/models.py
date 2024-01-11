@@ -73,7 +73,6 @@ class exporting_csv(models.Model):
     source_of_fund = models.CharField(max_length=255, blank=True, null=True)
     purpose = models.TextField(blank=True, null=True)
     date_transaction = models.DateField()
-    date_interview = models.DateField()
     swo_name = models.CharField(max_length=255, blank=True, null=True)
     service_provider = models.CharField(max_length=255, blank=True, null=True)
     gl_number = models.CharField(max_length=255, blank=True, null=True)
