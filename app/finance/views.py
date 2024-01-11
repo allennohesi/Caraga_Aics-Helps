@@ -171,7 +171,7 @@ def sync_csv(request):
 
 						relation = row.relation.name,
 						assistance_category = row.lib_assistance_category.name,
-						amount_of_assistance=row.total_amount,
+						amount_of_assistance=row.total_amount if row.total_amount else 0,
 						mode_of_release = "GL" if row.is_gl else "N/a",
 						source_of_referral = "Referral" if row.is_referral else "Walk-in",
 						source_of_fund = row.fund_source.name if row.fund_source else "",
