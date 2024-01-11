@@ -254,6 +254,16 @@ def get_bene_info(request, pk):
 @login_required
 @groups_only('Verifier', 'Super Administrator', 'Surveyor')
 def incoming(request):
+	data = Transaction.objects.all()
+	for row in data:
+		data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
+		total = data['total'] if data['total'] is not None else 0.0  # Handle the case where total is None
+		# Format the total with 2 decimal places and commas
+		formatted_total = "{:,.2f}".format(total)
+
+		Transaction.objects.filter(tracking_number=row.tracking_number).update(
+			total_amount=formatted_total
+		)
 	context = {
 		'title': 'Incoming'
 	}
@@ -550,7 +560,7 @@ def modal_provided(request,pk):
 					regular_quantity=request.POST.get('qty'),
 					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
 					discount_quantity=request.POST.get('qty1'), #CHECKING
-					total=request.POST.get('tot'),	
+					total=request.POST.get('tot'),
 				)
 				# Transaction.objects.filter(id=pk).update(
 				# 		service_provider_id=request.POST.get('service_provider'),
@@ -617,6 +627,9 @@ def confirmAmount(request):
 			data = Transaction.objects.filter(id=transaction_id).update(
 				signatories_id = 20, #RD
 			)
+		Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
+			total_amount=request.POST.get("final_total")
+		)
 		return JsonResponse({'data': 'success',
 						'msg': 'The total amount {} confirmed.'.format(total)})
 

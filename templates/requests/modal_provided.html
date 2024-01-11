@@ -124,6 +124,7 @@
 
     <form id="Confirmation">
         {% csrf_token %}
+        <input type="text" class="form-control" name="tracking_number" id="" value="{{transaction.tracking_number}}" hidden>
         <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2}}{% else %}0{% endif %}" hidden>
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <div class="alert alert-secondary" role="alert">

@@ -191,6 +191,7 @@ class Transaction(models.Model):
     provided_foodpack = models.SmallIntegerField(blank=True, null=True)
     provided_hygienekit = models.SmallIntegerField(blank=True, null=True)
     signatories = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='signatories')
+    total_amount = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_action_action(self):
