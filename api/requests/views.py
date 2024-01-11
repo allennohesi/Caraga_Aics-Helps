@@ -6,16 +6,23 @@ from app.finance.models import finance_voucher, finance_voucherData
 from datetime import datetime, timedelta, time, date
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination
-
+from rest_framework.pagination import PageNumberPagination
 today = date.today()
 # class TransactionViews(generics.ListAPIView):
 #     serializer_class = TransactionSerializer
 #     permission_classes = [IsAuthenticated]
 #     queryset = TransactionStatus1.objects.filter(is_swo=None).order_by('-id')
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+
 class TransactionPerSession(generics.ListAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
+    
     def get_queryset(self):
         if self.request.query_params.get('user'):
             queryset = TransactionStatus1.objects.filter(
@@ -32,7 +39,8 @@ class TransactionPerSession(generics.ListAPIView):
 
 class TransactionPerSessionAllViews(generics.ListAPIView):
     serializer_class = TransactionSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
     def get_queryset(self):
         if self.request.query_params.get('user'):
             queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id')
