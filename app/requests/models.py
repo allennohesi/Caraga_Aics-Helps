@@ -19,6 +19,7 @@ class ClientBeneficiary(models.Model):
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     suffix = models.ForeignKey(Suffix, models.DO_NOTHING, blank=True, null=True)
     birthdate = models.DateField(blank=True, null=True)
+    age = models.CharField(max_length=50, blank=True, null=True)
     sex = models.ForeignKey(Sex, models.DO_NOTHING)
     contact_number = models.CharField(max_length=50, blank=True, null=True)
     civil_status = models.ForeignKey(CivilStatus, models.DO_NOTHING)
@@ -192,6 +193,9 @@ class Transaction(models.Model):
     provided_hygienekit = models.SmallIntegerField(blank=True, null=True)
     signatories = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='signatories')
     total_amount = models.CharField(max_length=255, blank=True, null=True)
+    status = models.IntegerField()
+    swo_date_time_start = models.DateTimeField()
+    swo_date_time_end = models.DateTimeField()
 
     @property
     def get_action_action(self):
