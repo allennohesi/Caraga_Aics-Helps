@@ -254,16 +254,16 @@ def get_bene_info(request, pk):
 @login_required
 @groups_only('Verifier', 'Super Administrator', 'Surveyor')
 def incoming(request):
-	data = Transaction.objects.all()
-	for row in data:
-		data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
-		total = data['total'] if data['total'] is not None else 0.0  # Handle the case where total is None
-		# Format the total with 2 decimal places and commas
-		formatted_total = "{:,.2f}".format(total)
+	# data = Transaction.objects.all()
+	# for row in data:
+	# 	data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
+	# 	total = data['total'] if data['total'] is not None else 0.0  # Handle the case where total is None
+	# 	# Format the total with 2 decimal places and commas
+	# 	formatted_total = "{:,.2f}".format(total)
 
-		Transaction.objects.filter(tracking_number=row.tracking_number).update(
-			total_amount=formatted_total
-		)
+	# 	Transaction.objects.filter(tracking_number=row.tracking_number).update(
+	# 		total_amount=formatted_total
+	# 	)
 	context = {
 		'title': 'Incoming'
 	}
