@@ -2,7 +2,7 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import transaction
 from datetime import timedelta, date
 from app.forms import ImageForm
@@ -11,7 +11,7 @@ from app.libraries.models import FileType, Relation, Category, SubCategory, Serv
 	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, FundSource, SubModeofAssistance, TypeOfAssistance, \
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, FundSource
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
-	 Transaction, TransactionServiceAssistance, Mail, transaction_description, \
+	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.contrib.sessions.models import Session
 from app.models import AuthUser, AuthUserGroups
@@ -19,9 +19,8 @@ from django.db.models import Value, Sum, Count
 from datetime import datetime, timedelta, time, date
 from django.utils import timezone
 from django.contrib.auth.models import User
-from app.finance.models import finance_voucher, finance_voucherData
+from app.finance.models import finance_voucher, finance_voucherData, exporting_csv
 from django.db.models import Q
-
 import csv
 from django.utils.encoding import smart_str
 from io import StringIO
@@ -48,149 +47,187 @@ def generate_serial_string(oldstring, prefix=None):
 		return "{}-{}-{}-{}-{}".format(str(prefix), str(current_year).zfill(4), str(current_month).zfill(2), str(current_day).zfill(2),
 									str("1").zfill(4)).strip()
 
-def streaming_csv_view(request):
-	queryset = Transaction.objects.all()
-	# Create the HttpResponse object with CSV header.
-	response = HttpResponse(content_type="text/csv")
-	response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
-	csv_writer = csv.writer(response)
 
-	# Write the header
-	header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle Name", "Client Ext. name", "Client age",
-			  "Civil Status", "Birthday", "Client Sex", "Street", "Barangay", "Municipality", "Client District",
-			  "Province", "Region", "Bene Surname", "Bene First name", "Bene Middle Name", "Bene Ext. name", "Bene age",
-			  "Civil Status", "Birthday", "Bene Sex", "Street", "Barangay", "Municipality", "Bene District", "Bene Province",
-			  "Region", "Relation", "Type of assistance", "Assistance Category","Amount of assistance", "Mode of release", "Source of referral", #DONE
-			  "Source of fund", "Purpose", "Date Interview", "Interviewer/SWO", "Service provider", "GL Number",
-			  "DV Date", "DV Number", "Cancellation"]
-	csv_writer.writerow(header)
-	rows = [
-		[
-			smart_str(data.tracking_number),
-			smart_str(data.client.last_name),
-			smart_str(data.client.first_name),
-			smart_str(data.client.middle_name),
-			smart_str(data.client.suffix.name) if data.client.suffix and data.client.suffix.name else "N/a",
-			smart_str(data.client.get_age),
-			smart_str(data.client.civil_status.name),
-			smart_str(data.client.birthdate),
-			smart_str(data.client.sex.name),
-			smart_str(data.client.street),
-			smart_str(data.client.barangay.brgy_name),
-			smart_str(data.client.barangay.city_code.city_name),
-			smart_str(data.client.street),
-			smart_str(data.client.barangay.city_code.prov_code.prov_name),
-			smart_str(data.client.barangay.city_code.prov_code.region_code.region_name),
-			smart_str(data.bene.last_name),
-			smart_str(data.bene.first_name),
-			smart_str(data.bene.middle_name),
-			smart_str(data.bene.suffix.name) if data.bene.suffix and data.bene.suffix.name else "N/a",
-			smart_str(data.bene.get_age),
-			smart_str(data.bene.civil_status.name),
-			smart_str(data.bene.birthdate),
-			smart_str(data.bene.sex.name),
-			smart_str(data.bene.street),
-			smart_str(data.bene.barangay.brgy_name),
-			smart_str(data.bene.barangay.city_code.city_name),
-			smart_str(data.bene.street),
-			smart_str(data.bene.barangay.city_code.prov_code.prov_name),
-			smart_str(data.bene.barangay.city_code.prov_code.region_code.region_name),
-			smart_str(data.relation.name) if data.relation and data.relation.name else "",
-			smart_str(data.lib_type_of_assistance.type_name),
-			smart_str(data.lib_assistance_category.name),
-			smart_str(data.get_finance_total),
-			smart_str("GL") if data.is_gl== 1 else smart_str("Cash"),
-			smart_str("Walk-in") if data.is_walkin== 1 else smart_str("Referral"),
-			smart_str(data.fund_source.name) if data.fund_source and data.fund_source.name else "N/a",
-			smart_str(data.purpose),
-			smart_str(data.date_time_assessment),
-			smart_str(data.swo.get_fullname),
-			smart_str(data.service_provider.name) if data.service_provider and data.service_provider.name else "N/a",
-			smart_str("GL") if data.is_gl== 1 else smart_str("N/a"),
-			smart_str(data.finance_dv) if data.finance_dv else smart_str("N/a"),
-			smart_str(data.finance_dv_date) if data.finance_dv else smart_str("N/a"),
-			smart_str(data.get_finance_status),
-			# Add more fields as needed
-		]
-		for data in queryset
-	]
-	# Write all rows at once
-	csv_writer.writerows(rows)
+@login_required
+@groups_only('Super Administrator', 'Biller','Finance')
+def financial_transaction(request):
+	if request.method == "POST":
+		with transaction.atomic():
+			voucher=request.POST.get('voucher_title')
+			date=request.POST.get('date')
+			remarks=request.POST.get('remarks')
+			
+			lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
+			track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
+				generate_serial_string(None, 'CODE')
+
+			finance_voucher.objects.create(
+				voucher_code=track_num,
+				voucher_title=voucher,
+				date=date,
+				remarks=remarks,
+				user_id=request.user.id,
+				status=1,
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Data Saved.'})
+	context = {
+		'service_provider': ServiceProvider.objects.filter(status=1),
+		'fund_source': FundSource.objects.filter(status=1)
+	}
+	return render(request,'financial/finance.html', context)
+
+
+@login_required
+@groups_only('Super Administrator', 'Biller','Finance')
+def finance_assessment(request, pk):
+
+	data = Transaction.objects.filter(id=pk).first()
+	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
+	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
+	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
+
+	
+	context = {
+		'transaction': data,
+		'pict':picture,
+		'family_composistion': ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=data.bene_id),
+		'transaction_status': TransactionStatus1.objects.filter(transaction_id=pk).first(),
+		'category': Category.objects.filter(status=1).order_by('name'),
+		'sub_category': SubCategory.objects.filter(status=1).order_by('name'),
+		'service_assistance': ServiceAssistance.objects.filter(status=1).order_by('name'),
+		'type_of_assistance': TypeOfAssistance.objects.filter(status=1).order_by('name'),
+		'purpose': Purpose.objects.filter(status=1).order_by('name'),
+		'moass': ModeOfAssistance.objects.filter(status=1).order_by('name'),
+		'moadm': ModeOfAdmission.objects.filter(status=1).order_by('name'),
+		'fund_source': FundSource.objects.filter(status=1).order_by('name'),
+		'assistance_type': LibAssistanceType.objects.filter(is_active=1).order_by('type_name'),
+		'TypeOfAssistance': TypeOfAssistance.objects.filter(status=1,type_assistance_id=data.lib_type_of_assistance_id).order_by('name'),
+		'SubModeofAssistance': SubModeofAssistance.objects.filter(status=1,category_id=data.lib_assistance_category_id).order_by('name'),
+		'viewProvidedData': transaction_description.objects.filter(tracking_number_id=data.tracking_number).order_by('-id'),
+		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
+		'medicine': medicine.objects.filter(is_active=1),
+		'service_provider': ServiceProvider.objects.filter(status=1),
+		'calculate': calculate,
+		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
+		'transactionProvided':transactionProvided,
+	}
+	return render(request, 'financial/finance_assessment.html', context)
+
+def sync_csv(request):
+	with transaction.atomic():
+		queryset = Transaction.objects.all()
+
+		exporting_csv_objects = []
+
+		for row in queryset:
+			# Check if a record with the same tracking_number already exists
+			existing_record = exporting_csv.objects.filter(tracking_number=row.tracking_number).first()
+			if existing_record:
+				# If the amount has changed, update the existing record
+				if existing_record.amount_of_assistance != row.total_amount:
+					existing_record.amount_of_assistance = row.total_amount
+				# If the service_provider has changed, update the existing record
+				if existing_record.service_provider and existing_record.service_provider != row.service_provider:
+					existing_record.service_provider = row.service_provider.name
+				if existing_record.source_of_fund and existing_record.source_of_fund != row.fund_source:
+					existing_record.source_of_fund = row.fund_source.name
+				if existing_record.date_interview and existing_record.date_interview != row.date_time_assessment:
+					existing_record.date_interview = row.date_time_assessment
+				if existing_record.date_transaction and existing_record.date_transaction != row.date_time_transaction:
+					existing_record.date_transaction = row.date_time_transaction
+				existing_record.save()
+			else:
+				# If no existing record, create a new one
+				exporting_csv_objects.append(
+					exporting_csv(
+						tracking_number=row.tracking_number,
+						client_surname=row.client.last_name,
+						client_first_name=row.client.first_name,
+						client_middle_name=row.client.middle_name,
+						client_suffix = row.client.suffix.name if row.client.suffix else "",
+						age=row.client.get_age,
+						civil_status =row.client.civil_status.name,
+						birthday = row.client.birthdate,
+						sex =row.client.sex.name,
+						street =row.client.street,
+						barangay =row.client.barangay.brgy_name,
+						municipality =row.client.barangay.city_code.city_name,
+						district =row.client.street,
+						province =row.client.barangay.city_code.prov_code.prov_name,
+						region = row.client.barangay.city_code.prov_code.region_code.region_name,
+
+						bene_surname = row.bene.last_name,
+						bene_first_name= row.bene.first_name,
+						bene_middle_name = row.bene.middle_name,
+						bene_suffix = row.bene.suffix.name if row.bene.suffix else "",
+						bene_age =row.bene.get_age,
+						bene_civil_status =row.bene.civil_status.name,
+						bene_birthday = row.bene.birthdate,
+						bene_sex = row.bene.sex.name,
+						bene_street = row.bene.street,
+						bene_barangay = row.bene.barangay.brgy_name,
+						bene_municipality = row.bene.barangay.city_code.city_name,
+						bene_district = row.bene.street,
+						bene_province = row.bene.barangay.city_code.prov_code.prov_name,
+						bene_region = row.bene.barangay.city_code.prov_code.region_code.region_name,
+
+						relation = row.relation.name,
+						assistance_category = row.lib_assistance_category.name,
+						amount_of_assistance=row.total_amount,
+						mode_of_release = "GL" if row.is_gl else "N/a",
+						source_of_referral = "Referral" if row.is_referral else "Walk-in",
+						source_of_fund = row.fund_source.name if row.fund_source else "",
+						purpose = row.purpose,
+						date_transaction = row.date_time_transaction,
+						date_interview = row.date_time_assessment,
+						swo_name = row.swo.get_fullname,
+						service_provider = row.service_provider.name if row.service_provider else "",
+						gl_number = "",
+						dv_date = row.finance_dv,
+						dv_number = row.finance_dv_date,
+						status_of_transaction = row.get_finance_status,
+						status = 1,
+					)
+				)
+		exporting_csv.objects.bulk_create(exporting_csv_objects)
+		return redirect('financial_transaction')
+
+def export_report_csv(request):
+	data = exporting_csv.objects.all()
+
+	response = HttpResponse(
+		content_type="text/csv",
+		headers={"Content-Disposition": 'attachment; filename="financial_file.csv"'},
+	)
+
+	# Create a CSV writer and write the header
+	writer = csv.writer(response)
+	writer.writerow([field.name for field in exporting_csv._meta.fields])
+
+	# Write data rows
+	for row in data:
+		writer.writerow([getattr(row, field.name) for field in exporting_csv._meta.fields])
+
 	return response
-
-def export_csv(request):
-	return streaming_csv_view(request)
 
 def export_fund_summary(request):
 	if request.method == "GET":
 		if request.GET.get('fund_source') == "all":
-			queryset = Transaction.objects.all()
-			# Create the HttpResponse object with CSV header.
-			response = HttpResponse(content_type="text/csv")
-			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
-			csv_writer = csv.writer(response)
+			data = exporting_csv.objects.filter()
 
-			# Write the header
-			header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle Name", "Client Ext. name", "Client age",
-					"Civil Status", "Birthday", "Client Sex", "Street", "Barangay", "Municipality", "Client District",
-					"Province", "Region", "Bene Surname", "Bene First name", "Bene Middle Name", "Bene Ext. name", "Bene age",
-					"Civil Status", "Birthday", "Bene Sex", "Street", "Barangay", "Municipality", "Bene District", "Bene Province",
-					"Region", "Relation", "Type of assistance", "Assistance Category","Amount of assistance", "Mode of release", "Source of referral", #DONE
-					"Source of fund", "Purpose", "Date Interview", "Interviewer/SWO", "Service provider", "GL Number",
-					"DV Date", "DV Number", "Cancellation"]
-			csv_writer.writerow(header)
-			rows = [
-				[
-					smart_str(data.tracking_number),
-					smart_str(data.client.last_name),
-					smart_str(data.client.first_name),
-					smart_str(data.client.middle_name),
-					smart_str(data.client.suffix.name) if data.client.suffix and data.client.suffix.name else "N/a",
-					smart_str(data.client.get_age),
-					smart_str(data.client.civil_status.name),
-					smart_str(data.client.birthdate),
-					smart_str(data.client.sex.name),
-					smart_str(data.client.street),
-					smart_str(data.client.barangay.brgy_name),
-					smart_str(data.client.barangay.city_code.city_name),
-					smart_str(data.client.street),
-					smart_str(data.client.barangay.city_code.prov_code.prov_name),
-					smart_str(data.client.barangay.city_code.prov_code.region_code.region_name),
-					smart_str(data.bene.last_name),
-					smart_str(data.bene.first_name),
-					smart_str(data.bene.middle_name),
-					smart_str(data.bene.suffix.name) if data.bene.suffix and data.bene.suffix.name else "N/a",
-					smart_str(data.bene.get_age),
-					smart_str(data.bene.civil_status.name),
-					smart_str(data.bene.birthdate),
-					smart_str(data.bene.sex.name),
-					smart_str(data.bene.street),
-					smart_str(data.bene.barangay.brgy_name),
-					smart_str(data.bene.barangay.city_code.city_name),
-					smart_str(data.bene.street),
-					smart_str(data.bene.barangay.city_code.prov_code.prov_name),
-					smart_str(data.bene.barangay.city_code.prov_code.region_code.region_name),
-					smart_str(data.relation.name) if data.relation and data.relation.name else "",
-					smart_str(data.lib_type_of_assistance.type_name),
-					smart_str(data.lib_assistance_category.name),
-					smart_str(data.get_finance_total),
-					smart_str("GL") if data.is_gl== 1 else smart_str("Cash"),
-					smart_str("Walk-in") if data.is_walkin== 1 else smart_str("Referral"),
-					smart_str(data.fund_source.name) if data.fund_source and data.fund_source.name else "N/a",
-					smart_str(data.purpose),
-					smart_str(data.date_time_assessment),
-					smart_str(data.swo.get_fullname),
-					smart_str(data.service_provider.name) if data.service_provider and data.service_provider.name else "N/a",
-					smart_str("GL") if data.is_gl== 1 else smart_str("N/a"),
-					smart_str(data.finance_dv) if data.finance_dv else smart_str("N/a"),
-					smart_str(data.finance_dv_date) if data.finance_dv else smart_str("N/a"),
-					smart_str(data.get_finance_status),
-					# Add more fields as needed
-				]
-				for data in queryset
-			]
-			# Write all rows at once
-			csv_writer.writerows(rows)
+			response = HttpResponse(
+				content_type="text/csv",
+				headers={"Content-Disposition": 'attachment; filename="financial_file.csv"'},
+			)
+
+			# Create a CSV writer and write the header
+			writer = csv.writer(response)
+			writer.writerow([field.name for field in exporting_csv._meta.fields])
+
+			# Write data rows
+			for row in data:
+				writer.writerow([getattr(row, field.name) for field in exporting_csv._meta.fields])
+
 			return response
 		else:
 			start_date_str = request.GET.get("start_date")
@@ -297,42 +334,6 @@ def financial_transaction(request):
 		'fund_source': FundSource.objects.filter(status=1)
 	}
 	return render(request,'financial/finance.html', context)
-
-@login_required
-@groups_only('Super Administrator', 'Biller','Finance')
-def finance_assessment(request, pk):
-
-	data = Transaction.objects.filter(id=pk).first()
-	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
-	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
-	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
-
-	
-	context = {
-		'transaction': data,
-		'pict':picture,
-		'family_composistion': ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=data.bene_id),
-		'transaction_status': TransactionStatus1.objects.filter(transaction_id=pk).first(),
-		'category': Category.objects.filter(status=1).order_by('name'),
-		'sub_category': SubCategory.objects.filter(status=1).order_by('name'),
-		'service_assistance': ServiceAssistance.objects.filter(status=1).order_by('name'),
-		'type_of_assistance': TypeOfAssistance.objects.filter(status=1).order_by('name'),
-		'purpose': Purpose.objects.filter(status=1).order_by('name'),
-		'moass': ModeOfAssistance.objects.filter(status=1).order_by('name'),
-		'moadm': ModeOfAdmission.objects.filter(status=1).order_by('name'),
-		'fund_source': FundSource.objects.filter(status=1).order_by('name'),
-		'assistance_type': LibAssistanceType.objects.filter(is_active=1).order_by('type_name'),
-		'TypeOfAssistance': TypeOfAssistance.objects.filter(status=1,type_assistance_id=data.lib_type_of_assistance_id).order_by('name'),
-		'SubModeofAssistance': SubModeofAssistance.objects.filter(status=1,category_id=data.lib_assistance_category_id).order_by('name'),
-		'viewProvidedData': transaction_description.objects.filter(tracking_number_id=data.tracking_number).order_by('-id'),
-		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
-		'medicine': medicine.objects.filter(is_active=1),
-		'service_provider': ServiceProvider.objects.filter(status=1),
-		'calculate': calculate,
-		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
-		'transactionProvided':transactionProvided,
-	}
-	return render(request, 'financial/finance_assessment.html', context)
 
 
 @login_required 
