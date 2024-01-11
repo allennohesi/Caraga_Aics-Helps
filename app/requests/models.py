@@ -263,9 +263,16 @@ class Transaction(models.Model):
         return data.problem_presented if data.problem_presented else "N/a"
 
     @property
+    def date_time_transaction(self):
+        data = TransactionStatus1.objects.filter(transaction_id=self.id).first()
+        if data:
+            return data.verified_time_start
+
+    @property
     def date_time_assessment(self):
         data = TransactionStatus1.objects.filter(transaction_id=self.id).first()
-        return data.swo_time_end if data.swo_time_end else "N/a"
+        if data:
+            return data.swo_time_end
 
     @property
     def finance_dv(self):
