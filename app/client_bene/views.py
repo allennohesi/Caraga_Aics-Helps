@@ -171,13 +171,13 @@ def view_client_bene_info(request, pk):
 
 @login_required
 def registration(request):
-    data = ClientBeneficiary.objects.all()
-    for row in data:
-        today = date.today()
-        current_age = today.year - row.birthdate.year - ((today.month, today.day) < (row.birthdate.month, row.birthdate.day))
-        ClientBeneficiary.objects.filter(id=row.id).update(
-            age=current_age
-        )
+    # data = ClientBeneficiary.objects.all()
+    # for row in data:
+    #     today = date.today()
+    #     current_age = today.year - row.birthdate.year - ((today.month, today.day) < (row.birthdate.month, row.birthdate.day))
+    #     ClientBeneficiary.objects.filter(id=row.id).update(
+    #         age=current_age
+    #     )
 
     if request.method == "POST":
         with transaction.atomic():
