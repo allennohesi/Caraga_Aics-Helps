@@ -133,8 +133,10 @@ def sync_csv(request):
 					existing_record.source_of_fund = row.fund_source.name
 				if existing_record.date_interview and existing_record.date_interview != row.date_time_assessment:
 					existing_record.date_interview = row.date_time_assessment
-				if existing_record.date_transaction and existing_record.date_transaction != row.date_time_transaction:
-					existing_record.date_transaction = row.date_time_transaction
+				if existing_record.status_of_transaction and existing_record.status_of_transaction != row.get_finance_status:
+					existing_record.status_of_transaction = row.get_finance_status
+				# if existing_record.date_transaction and existing_record.date_transaction != row.date_time_transaction:
+				# 	existing_record.date_transaction = row.date_time_transaction
 				existing_record.save()
 			else:
 				# If no existing record, create a new one
@@ -178,8 +180,8 @@ def sync_csv(request):
 						source_of_referral = "Referral" if row.is_referral else "Walk-in",
 						source_of_fund = row.fund_source.name if row.fund_source else "",
 						purpose = row.purpose,
-						date_transaction = row.date_time_transaction,
-						date_interview = row.date_time_assessment,
+						date_transaction = row.date_entried,
+						date_interview = row.date_entried,
 						swo_name = row.swo.get_fullname,
 						service_provider = row.service_provider.name if row.service_provider else "",
 						gl_number = "",
