@@ -131,8 +131,8 @@ def sync_csv(request):
 					existing_record.service_provider = row.service_provider.name
 				if existing_record.source_of_fund and existing_record.source_of_fund != row.fund_source:
 					existing_record.source_of_fund = row.fund_source.name
-				if existing_record.status_of_transaction and existing_record.status_of_transaction != row.get_finance_status:
-					existing_record.status_of_transaction = row.get_finance_status
+				if existing_record.status_of_transaction and existing_record.status_of_transaction != row.status:
+					existing_record.status_of_transaction = row.status
 				existing_record.save()
 			else:
 				# If no existing record, create a new one
@@ -169,28 +169,28 @@ def sync_csv(request):
 						bene_province = row.bene.barangay.city_code.prov_code.prov_name,
 						bene_region = row.bene.barangay.city_code.prov_code.region_code.region_name,
 
-						# relation = row.relation.name,
-						# assistance_category = row.lib_assistance_category.name,
-						# amount_of_assistance=row.total_amount if row.total_amount else 0,
-						# mode_of_release = "GL" if row.is_gl else "N/a",
-						# source_of_referral = "Referral" if row.is_referral else "Walk-in",
-						# source_of_fund = row.fund_source.name if row.fund_source else "",
-						# purpose = row.purpose,
-						# date_transaction = row.date_entried,
-						# swo_name = row.swo.get_fullname,
-						# service_provider = row.service_provider.name if row.service_provider else "",
-						# gl_number = "",
-						# dv_date = row.finance_dv,
-						# dv_number = row.finance_dv_date,
-						# status_of_transaction = row.get_finance_status,
-						# status = 1,
+						relation = row.relation.name,
+						assistance_category = row.lib_assistance_category.name,
+						amount_of_assistance=row.total_amount if row.total_amount else 0,
+						mode_of_release = "GL" if row.is_gl else "N/a",
+						source_of_referral = "Referral" if row.is_referral else "Walk-in",
+						source_of_fund = row.fund_source.name if row.fund_source else "",
+						purpose = row.purpose,
+						date_transaction = row.date_entried,
+						swo_name = row.swo.get_fullname,
+						service_provider = row.service_provider.name if row.service_provider else "",
+						gl_number = "",
+						dv_date = row.dv_date,
+						dv_number = row.dv_number,
+						status_of_transaction = row.status,
+						status = 1,
 					)
 				)
 		exporting_csv.objects.bulk_create(exporting_csv_objects)
 		return redirect('financial_transaction')
 
 def export_report_csv(request):
-	data = exporting_csv.objects.all()
+	data = Transaction.objects.all()
 
 	response = HttpResponse(
 		content_type="text/csv",
@@ -209,100 +209,277 @@ def export_report_csv(request):
 
 def export_fund_summary(request):
 	if request.method == "GET":
-		if request.GET.get('fund_source') == "all":
-			data = exporting_csv.objects.filter()
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		# filter(swo_date_time_end__range=(start_date_str, end_date_str))
+		if request.GET.get("fund_source") == "all":
+			queryset = Transaction.objects.filter(
+				swo_date_time_end__range=(start_date_str, end_date_str)
+			).order_by("tracking_number").select_related(
+				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+			).only(
+				"tracking_number",
+				"client__last_name",
+				"client__first_name",
+				"client__middle_name",
+				"client__suffix__name",
+				"client__birthdate",
+				"client__age",
+				"client__civil_status__name",
+				"client__sex__name",
+				"client__street",
+				"client__barangay__brgy_name",
+				"client__barangay__city_code__city_name",
+				"client__street",
+				"client__barangay__city_code__prov_code__prov_name",
+				"client__barangay__city_code__prov_code__region_code__region_name",	
+				"bene__last_name",
+				"bene__first_name",
+				"bene__middle_name",
+				"bene__suffix__name",
+				"bene__age",
+				"bene__civil_status__name",
+				"bene__birthdate",
+				"bene__sex__name",
+				"bene__barangay__brgy_name",
+				"bene__barangay__city_code__city_name",
+				"bene__street",
+				"bene__barangay__city_code__prov_code__prov_name",
+				"bene__barangay__city_code__prov_code__region_code__region_name",
+				"relation__name",
+				"lib_assistance_category__name",
+				"is_gl",
+				"is_walkin",
+				"fund_source__name",
+				"service_provider__name",
+				"total_amount",
+				"is_referral",
+				"swo_date_time_end",
+				"swo__last_name",
+				"swo__middle_name",
+				"swo__first_name",
+				"dv_number",
+				"dv_date",
+				"status"
 
-			response = HttpResponse(
-				content_type="text/csv",
-				headers={"Content-Disposition": 'attachment; filename="financial_file.csv"'},
 			)
 
-			# Create a CSV writer and write the header
-			writer = csv.writer(response)
-			writer.writerow([field.name for field in exporting_csv._meta.fields])
-
-			# Write data rows
-			for row in data:
-				writer.writerow([getattr(row, field.name) for field in exporting_csv._meta.fields])
-
-			return response
-		else:
-			start_date_str = request.GET.get("start_date")
-			end_date_str = request.GET.get("end_date")
-
-			# Convert the date strings to datetime objects
-			start_date = datetime.strptime(start_date_str, "%Y-%m-%d") if start_date_str else None
-			end_date = datetime.strptime(end_date_str, "%Y-%m-%d") if end_date_str else None
-			queryset = Transaction.objects.filter(fund_source_id=request.GET.get('fund_source'),date_of_transaction__range=(start_date, end_date))
 			# Create the HttpResponse object with CSV header.
 			response = HttpResponse(content_type="text/csv")
 			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
-			csv_writer = csv.writer(response)
 
 			# Write the header
-			header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle Name", "Client Ext. name", "Client age",
+			header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle name", "Client suffix name", "Client age",
 					"Civil Status", "Birthday", "Client Sex", "Street", "Barangay", "Municipality", "Client District",
-					"Province", "Region", "Bene Surname", "Bene First name", "Bene Middle Name", "Bene Ext. name", "Bene age",
+					"Province", "Region",
+					"Bene Surname", "Bene First name", "Bene Middle name", "Bene suffix name", "Bene age",
 					"Civil Status", "Birthday", "Bene Sex", "Street", "Barangay", "Municipality", "Bene District", "Bene Province",
-					"Region", "Relation", "Type of assistance", "Assistance Category","Amount of assistance", "Mode of release", "Source of referral", #DONE
-					"Source of fund", "Purpose", "Date Interview", "Interviewer/SWO", "Service provider", "GL Number",
-					"DV Date", "DV Number", "Cancellation"]
-			csv_writer.writerow(header)
+					"Bene Region",
+					"Relation", "Assistance Category", "Amount of assistance", "Mode of release", "Source of referral",
+					"Source of fund", "Date Interview", "Interviewer/SWO", "Service provider", "DV Date", "DV Number", "STATUS"]
+
+			csv_writer = csv.DictWriter(response, fieldnames=header)
+			csv_writer.writeheader()
+
+			# Write rows as dictionaries
 			rows = [
-				[
-					smart_str(data.tracking_number),
-					smart_str(data.client.last_name),
-					smart_str(data.client.first_name),
-					smart_str(data.client.middle_name),
-					smart_str(data.client.suffix.name) if data.client.suffix and data.client.suffix.name else "N/a",
-					smart_str(data.client.get_age),
-					smart_str(data.client.civil_status.name),
-					smart_str(data.client.birthdate),
-					smart_str(data.client.sex.name),
-					smart_str(data.client.street),
-					smart_str(data.client.barangay.brgy_name),
-					smart_str(data.client.barangay.city_code.city_name),
-					smart_str(data.client.street),
-					smart_str(data.client.barangay.city_code.prov_code.prov_name),
-					smart_str(data.client.barangay.city_code.prov_code.region_code.region_name),
-					smart_str(data.bene.last_name),
-					smart_str(data.bene.first_name),
-					smart_str(data.bene.middle_name),
-					smart_str(data.bene.suffix.name) if data.bene.suffix and data.bene.suffix.name else "N/a",
-					smart_str(data.bene.get_age),
-					smart_str(data.bene.civil_status.name),
-					smart_str(data.bene.birthdate),
-					smart_str(data.bene.sex.name),
-					smart_str(data.bene.street),
-					smart_str(data.bene.barangay.brgy_name),
-					smart_str(data.bene.barangay.city_code.city_name),
-					smart_str(data.bene.street),
-					smart_str(data.bene.barangay.city_code.prov_code.prov_name),
-					smart_str(data.bene.barangay.city_code.prov_code.region_code.region_name),
-					smart_str(data.relation.name) if data.relation and data.relation.name else "",
-					smart_str(data.lib_type_of_assistance.type_name),
-					smart_str(data.lib_assistance_category.name),
-					smart_str(data.get_finance_total),
-					smart_str("GL") if data.is_gl== 1 else smart_str("Cash"),
-					smart_str("Walk-in") if data.is_walkin== 1 else smart_str("Referral"),
-					smart_str(data.fund_source.name) if data.fund_source and data.fund_source.name else "N/a",
-					smart_str(data.purpose),
-					smart_str(data.date_time_assessment),
-					smart_str(data.swo.get_fullname),
-					smart_str(data.service_provider.name) if data.service_provider and data.service_provider.name else "N/a",
-					smart_str("GL") if data.is_gl== 1 else smart_str("N/a"),
-					smart_str(data.finance_dv) if data.finance_dv else smart_str("N/a"),
-					smart_str(data.finance_dv_date) if data.finance_dv else smart_str("N/a"),
-					smart_str(data.get_finance_status),
-					# Add more fields as needed
-				]
-				for data in queryset
+				{
+					"Tracking_number": transaction.tracking_number,
+					"Client Surname": smart_str(transaction.client.last_name),
+					"Client First name": smart_str(transaction.client.first_name),
+					"Client Middle name": smart_str(transaction.client.middle_name),
+					"Client suffix name": smart_str(transaction.client.suffix.name) if transaction.client.suffix and transaction.client.suffix.name else "N/a",
+					"Client age": smart_str(transaction.client.age),
+					"Civil Status": smart_str(transaction.client.civil_status.name),
+					"Birthday": smart_str(transaction.client.birthdate),
+					"Client Sex": smart_str(transaction.client.suffix.name) if transaction.client.suffix and transaction.client.suffix.name else "N/a",
+					"Street": smart_str(transaction.client.street),
+					"Barangay": smart_str(transaction.client.barangay.brgy_name),
+					"Municipality": smart_str(transaction.client.barangay.city_code.city_name),
+					"Client District": smart_str(transaction.client.street),
+					"Province": smart_str(transaction.client.barangay.city_code.prov_code.prov_name),
+					"Region": smart_str(transaction.client.barangay.city_code.prov_code.region_code.region_name),
+
+					"Bene Surname": smart_str(transaction.bene.last_name),
+					"Bene First name": smart_str(transaction.bene.first_name),
+					"Bene Middle name": smart_str(transaction.client.middle_name),
+					"Bene suffix name": smart_str(transaction.bene.suffix.name) if transaction.bene.suffix and transaction.bene.suffix.name else "N/a",
+					"Bene age": smart_str(transaction.bene.age),
+					"Civil Status": smart_str(transaction.bene.civil_status.name),
+					"Birthday": smart_str(transaction.bene.birthdate),
+					"Bene Sex": smart_str(transaction.bene.suffix.name) if transaction.bene.suffix and transaction.bene.suffix.name else "N/a",
+					"Street": smart_str(transaction.bene.street),
+					"Barangay": smart_str(transaction.bene.barangay.brgy_name),
+					"Municipality": smart_str(transaction.bene.barangay.city_code.city_name),
+					"Bene District": smart_str(transaction.bene.street),
+					"Bene Province": smart_str(transaction.bene.barangay.city_code.prov_code.prov_name),
+					"Bene Region": smart_str(transaction.bene.barangay.city_code.prov_code.region_code.region_name),
+
+					"Relation": smart_str(transaction.relation.name),
+					"Assistance Category": smart_str(transaction.lib_assistance_category.name),
+					"Amount of assistance": smart_str(transaction.total_amount),
+					"Mode of release": smart_str("GL") if transaction.is_gl == 1 else "CASH",
+					"Source of referral": smart_str("Referral") if transaction.is_referral == 1 else "Walk-in",
+					"Source of fund": smart_str(transaction.fund_source.name) if transaction.fund_source and transaction.fund_source.name else "N/a",
+					"Date Interview": smart_str(transaction.swo_date_time_end),
+					"Interviewer/SWO": f"{smart_str(transaction.swo.first_name)} {smart_str(transaction.swo.last_name)}",
+					"Service provider": smart_str(transaction.service_provider.name) if transaction.service_provider and transaction.service_provider.name else "N/a",
+					"DV Date": smart_str(transaction.dv_number),
+					"DV Number": smart_str(transaction.dv_date),
+					"STATUS": (
+						smart_str("Completed") if transaction.status == 6 else
+						smart_str("Cancelled") if transaction.status == 5 else
+						smart_str("Ongoing") if transaction.status == 2 else
+						smart_str("Completed") if transaction.status == 3 else
+						"N/a"
+					),
+				# "client__barangay__brgy_name",
+				# "client__barangay__city_code__city_name",
+				# "client__street",
+				# "client__barangay__city_code__prov_code__prov_name",
+				# "client__barangay__city_code__prov_code__region_code__region_name",
+					# ... Add other fields ...
+				}
+				for transaction in queryset
 			]
+
 			# Write all rows at once
 			csv_writer.writerows(rows)
 			return response
-			
+		else:
+			queryset = Transaction.objects.filter(
+				swo_date_time_end__range=(start_date_str, end_date_str),fund_source_id=request.GET.get('fund_source')
+			).order_by("tracking_number").select_related(
+				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+			).only(
+				"tracking_number",
+				"client__last_name",
+				"client__first_name",
+				"client__middle_name",
+				"client__suffix__name",
+				"client__birthdate",
+				"client__age",
+				"client__civil_status__name",
+				"client__sex__name",
+				"client__street",
+				"client__barangay__brgy_name",
+				"client__barangay__city_code__city_name",
+				"client__street",
+				"client__barangay__city_code__prov_code__prov_name",
+				"client__barangay__city_code__prov_code__region_code__region_name",	
+				"bene__last_name",
+				"bene__first_name",
+				"bene__middle_name",
+				"bene__suffix__name",
+				"bene__age",
+				"bene__civil_status__name",
+				"bene__birthdate",
+				"bene__sex__name",
+				"bene__barangay__brgy_name",
+				"bene__barangay__city_code__city_name",
+				"bene__street",
+				"bene__barangay__city_code__prov_code__prov_name",
+				"bene__barangay__city_code__prov_code__region_code__region_name",
+				"relation__name",
+				"lib_assistance_category__name",
+				"is_gl",
+				"is_walkin",
+				"fund_source__name",
+				"service_provider__name",
+				"total_amount",
+				"is_referral",
+				"swo_date_time_end",
+				"swo__last_name",
+				"swo__middle_name",
+				"swo__first_name",
+				"dv_number",
+				"dv_date",
+				"status"
 
+			)
+
+			# Create the HttpResponse object with CSV header.
+			response = HttpResponse(content_type="text/csv")
+			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
+
+			# Write the header
+			header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle name", "Client suffix name", "Client age",
+					"Civil Status", "Birthday", "Client Sex", "Street", "Barangay", "Municipality", "Client District",
+					"Province", "Region",
+					"Bene Surname", "Bene First name", "Bene Middle name", "Bene suffix name", "Bene age",
+					"Civil Status", "Birthday", "Bene Sex", "Street", "Barangay", "Municipality", "Bene District", "Bene Province",
+					"Bene Region",
+					"Relation", "Assistance Category", "Amount of assistance", "Mode of release", "Source of referral",
+					"Source of fund", "Date Interview", "Interviewer/SWO", "Service provider", "DV Date", "DV Number", "STATUS"]
+
+			csv_writer = csv.DictWriter(response, fieldnames=header)
+			csv_writer.writeheader()
+
+			# Write rows as dictionaries
+			rows = [
+				{
+					"Tracking_number": transaction.tracking_number,
+					"Client Surname": smart_str(transaction.client.last_name),
+					"Client First name": smart_str(transaction.client.first_name),
+					"Client Middle name": smart_str(transaction.client.middle_name),
+					"Client suffix name": smart_str(transaction.client.suffix.name) if transaction.client.suffix and transaction.client.suffix.name else "N/a",
+					"Client age": smart_str(transaction.client.age),
+					"Civil Status": smart_str(transaction.client.civil_status.name),
+					"Birthday": smart_str(transaction.client.birthdate),
+					"Client Sex": smart_str(transaction.client.suffix.name) if transaction.client.suffix and transaction.client.suffix.name else "N/a",
+					"Street": smart_str(transaction.client.street),
+					"Barangay": smart_str(transaction.client.barangay.brgy_name),
+					"Municipality": smart_str(transaction.client.barangay.city_code.city_name),
+					"Client District": smart_str(transaction.client.street),
+					"Province": smart_str(transaction.client.barangay.city_code.prov_code.prov_name),
+					"Region": smart_str(transaction.client.barangay.city_code.prov_code.region_code.region_name),
+
+					"Bene Surname": smart_str(transaction.bene.last_name),
+					"Bene First name": smart_str(transaction.bene.first_name),
+					"Bene Middle name": smart_str(transaction.client.middle_name),
+					"Bene suffix name": smart_str(transaction.bene.suffix.name) if transaction.bene.suffix and transaction.bene.suffix.name else "N/a",
+					"Bene age": smart_str(transaction.bene.age),
+					"Civil Status": smart_str(transaction.bene.civil_status.name),
+					"Birthday": smart_str(transaction.bene.birthdate),
+					"Bene Sex": smart_str(transaction.bene.suffix.name) if transaction.bene.suffix and transaction.bene.suffix.name else "N/a",
+					"Street": smart_str(transaction.bene.street),
+					"Barangay": smart_str(transaction.bene.barangay.brgy_name),
+					"Municipality": smart_str(transaction.bene.barangay.city_code.city_name),
+					"Bene District": smart_str(transaction.bene.street),
+					"Bene Province": smart_str(transaction.bene.barangay.city_code.prov_code.prov_name),
+					"Bene Region": smart_str(transaction.bene.barangay.city_code.prov_code.region_code.region_name),
+
+					"Relation": smart_str(transaction.relation.name),
+					"Assistance Category": smart_str(transaction.lib_assistance_category.name),
+					"Amount of assistance": smart_str(transaction.total_amount),
+					"Mode of release": smart_str("GL") if transaction.is_gl == 1 else "CASH",
+					"Source of referral": smart_str("Referral") if transaction.is_referral == 1 else "Walk-in",
+					"Source of fund": smart_str(transaction.fund_source.name) if transaction.fund_source and transaction.fund_source.name else "N/a",
+					"Date Interview": smart_str(transaction.swo_date_time_end),
+					"Interviewer/SWO": f"{smart_str(transaction.swo.first_name)} {smart_str(transaction.swo.last_name)}",
+					"Service provider": smart_str(transaction.service_provider.name) if transaction.service_provider and transaction.service_provider.name else "N/a",
+					"DV Date": smart_str(transaction.dv_number),
+					"DV Number": smart_str(transaction.dv_date),
+					"STATUS": (
+						smart_str("Completed") if transaction.status == 6 else
+						smart_str("Cancelled") if transaction.status == 5 else
+						smart_str("Ongoing") if transaction.status == 2 else
+						smart_str("Completed") if transaction.status == 3 else
+						"N/a"
+					),
+				# "client__barangay__brgy_name",
+				# "client__barangay__city_code__city_name",
+				# "client__street",
+				# "client__barangay__city_code__prov_code__prov_name",
+				# "client__barangay__city_code__prov_code__region_code__region_name",
+					# ... Add other fields ...
+				}
+				for transaction in queryset
+			]
+
+			# Write all rows at once
+			csv_writer.writerows(rows)
+			return response
 
 @login_required
 @groups_only('Super Administrator', 'Biller','Finance')
@@ -355,6 +532,10 @@ def remove_voucherData(request):
 		data = finance_voucherData.objects.filter(id=request.POST.get('id')).first()
 		TransactionStatus1.objects.filter(id=data.transactionStatus_id).update(
 			finance_status=None,
+		)
+		Transaction.objects.filter(id=data.transactionStatus_id).update(
+			dv_number=None,
+			dv_date=None
 		)
 		data = finance_voucherData.objects.filter(id=request.POST.get('id')).delete()
 	return JsonResponse({'data': 'success'})
@@ -428,14 +609,19 @@ def print_service_provider(request):
 	return render(request,'financial/print_sprovider.html', context)
 
 def view_dv_number(request,pk):
+	finance_data = finance_voucher.objects.filter(id=pk).first()
+	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	if request.method == "POST":
 		finance_voucherData.objects.create(
 			voucher_id=pk,
 			transactionStatus_id=request.POST.get('transaction_id'),
 		)
+		Transaction.objects.filter(id=request.POST.get('transaction_id')).update(
+			dv_number = finance_data.voucher_title,
+			dv_date = finance_data.date
+		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	finance_data = finance_voucher.objects.filter(id=pk).first()
-	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
+
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
