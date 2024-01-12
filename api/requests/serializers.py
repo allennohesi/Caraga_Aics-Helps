@@ -15,6 +15,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     action = serializers.CharField(source='transaction.get_action_action', read_only=True)
     remarks_action = serializers.CharField(source='transaction.get_remarks_action', read_only=True)
     case_study = serializers.CharField(source='transaction.is_case_study', read_only=True)
+    total_amount = serializers.CharField(source='transaction.total_amount', read_only=True)
     # is_verified = serializers.CharField(source='transaction.get_verified', read_only=True)
     # is_swo = serializers.CharField(source='transaction.get_swo', read_only=True)
 
