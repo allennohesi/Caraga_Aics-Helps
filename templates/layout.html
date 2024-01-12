@@ -250,8 +250,8 @@
                                         <ul class="sidebar-submenu">
                                             <li><a href="javascript:void(0);" class="submenu-title">XLS <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
-                                                    <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
-                                                    <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li>
+                                                    {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
+                                                    <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     <li><a href="{% url 'generateTransactions' %}" target="_blank">All transactions</a></li>
                                                     <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
                                                     <li><a href="{% url 'generateByUser' %}">Users choice</a></li>

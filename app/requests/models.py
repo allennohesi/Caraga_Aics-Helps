@@ -196,6 +196,8 @@ class Transaction(models.Model):
     status = models.IntegerField()
     swo_date_time_start = models.DateTimeField()
     swo_date_time_end = models.DateTimeField()
+    dv_number = models.CharField(max_length=255, blank=True, null=True)
+    dv_date = models.DateField()
 
     @property
     def get_action_action(self):
