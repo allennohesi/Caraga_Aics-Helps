@@ -35,7 +35,7 @@
                     </ul>
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
-                            <small>My ongoing/pending transaction</small>
+                            <small>All transaction</small>
                             <hr>
                             <div class="table-responsive text-nowrap table-scroll">
                                 <table class="table table-responsive" width="100%" id="assigned-to-me">
@@ -49,12 +49,12 @@
                                             <th class="text-center">Date of Transaction</th>
                                             <th class="text-center">Assigned to SWO</th>
                                             <th class="text-center">Case Study</th>
-                                            <th class="text-center">Priority</th>
+                                            {% comment %} <th class="text-center">Priority</th>
                                             <th class="text-center">Verified</th>
                                             <th class="text-center">Assessed</th>
                                             <th class="text-center">REMARKS</th>
                                             <th class="text-center">Print</th>
-                                            <th class="text-center">Signatories Status</th>
+                                            <th class="text-center">Signatories Status</th> {% endcomment %}
                                         </tr>
                                     </thead>
                                 </table>
@@ -140,66 +140,14 @@
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', },
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-                {'data': 'is_case_study', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                {'data': 'case_study', 'className': 'text-center', 'searchable':false, 'sortable': false, 
                         'render': function(data,type,row,meta){
-                            if(row['is_case_study'] == 1){
+                            if(row['case_study'] == '2'){
                                 return "<td>For Case Study</td>"
                             }else{
                                 return "<td>Not for case Study</td>"
                             }
                         }
-                },
-                {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
-                        'render': function(data,type,row,meta){
-                            if(row['priority_id'] == 1){
-                                return "<span class='badge badge-primary'>"+ NA +"</span>" 
-                            }else{
-                                return "<span class='badge badge-primary'>"+ row['priority'] +"</span>" 
-                            }
-                        }
-                },
-                {'data': 'is_verified', 'className': 'text-center', 'searchable': false, 'sortable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['is_verified']){
-                            return '<i class="fa fa-check-circle txt-success"></i>'
-                        }else{
-                            return '<i class="fa fa-times-circle txt-danger"></i>'
-                        }
-                    }            
-                },
-                {'data': 'is_swo', 'className': 'text-center', 'searchable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['is_swo']){
-                            return '<i class="fa fa-check-circle txt-success"></i>'
-                        }else{
-                            return '<i class="fa fa-times-circle txt-danger"></i>'
-                        }
-                    }            
-                },
-                {'data': 'remarks_action', 'className': 'text-center', 'searchable': false, 'sortable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['remarks_action'] == null){
-                            return "<td></td>"
-                        }else{
-                            return row['remarks_action']
-                        }
-                    }            
-                },
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='PrintingModal' data-id="+ row['id'] + ">Printing</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'signatories_approved', 'name':'get_action_action', 'className': 'text-center', 'sortable': false, 'searchable': false,
-                'render': function(data,type,row,meta){
-                        if(row['signatories_approved'] == 1){
-                            return "<span class='badge badge-success'>Approved</span>"
-                        }else{
-                            return "<span class='badge badge-warning'>N/a</span>"
-                        }
-                    }
                 },
             ]
         });
