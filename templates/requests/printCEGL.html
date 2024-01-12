@@ -371,7 +371,8 @@
               <label>Mode of Admission: </label>
             </td>
             <td width="500px" style="border-bottom: 1px solid black;font-weight: bold;">
-              {% if data.is_walkin == 1 %} On-site and Walk-in {% else %} On-site and Walk-in {% endif %}
+              {% if data.is_walkin == 1 %}  On-site and Walk-in  {% else %} On-site and Walk-in {% endif %}
+              {% if data.is_referral %} (REFERRAL) {% endif %}
             </td>
             <td></td>
           </tr>
