@@ -64,6 +64,7 @@
                                 <th class="text-center">Action</th>
                                 <th class="text-center">Tracking number</th>
                                 <th class="text-center">Client name</th>
+                                <th class="text-center">Service provider</th>
                                 <th class="text-center">Assistance category</th>
                                 <th class="text-center">Assistance type</th>
                                 <th class="text-center">Amount of assistance</th>
@@ -75,6 +76,7 @@
                                 <td class="text-center"><a href='#' data-role='remove' data-id='{{row.id}}'>Remove</a> | <a href='#' data-role="edit_amount" data-id='{{row.transactionStatus_id}}'>Edit</a></td>
                                 <td class="text-center">{{row.transactionStatus.tracking_number}}</td>
                                 <td class="text-center">{{row.transactionStatus.client.client_bene_fullname}}</td>
+                                <td class="text-center">{{row.transactionStatus.service_provider.name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_type_of_assistance.type_name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_assistance_category.name}}</td>
                                 <td class="text-center">{{row.transactionStatus.total_amount}}</td>
