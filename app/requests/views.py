@@ -265,14 +265,12 @@ def incoming(request):
 	# 		total_amount=formatted_total
 	# 	)
 
-	# data = Transaction.objects.all()
-	# for row in data:
-	# 	transaction_id = TransactionStatus1.objects.get(transaction_id=row.id)
-	# 	Transaction.objects.filter(id=transaction_id.transaction_id).update(
-	# 		status=transaction_id.status,
-	# 		swo_date_time_start=transaction_id.swo_time_start,
-	# 		swo_date_time_end=transaction_id.swo_time_end
-	# 	)
+	data = Transaction.objects.all()
+	for row in data:
+		transaction_id = TransactionStatus1.objects.get(transaction_id=row.id)
+		Transaction.objects.filter(id=transaction_id.transaction_id).update(
+			date_entried=transaction_id.verified_time_start,
+		)
 	context = {
 		'title': 'Incoming'
 	}
