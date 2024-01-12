@@ -368,7 +368,6 @@ def assessment(request):
 	return render(request, 'requests/assessment.html', context)
 
 @login_required
-@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
 def all_transactions(request):
 	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
 	context = {
