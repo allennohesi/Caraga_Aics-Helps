@@ -671,3 +671,45 @@ def finance_modal_provided(request,pk):
 	}
 	return render(request,"financial/provided_data.html",context)
 
+def update_amount(request,pk):
+	transaction_id = Transaction.objects.filter(id=pk).first()
+	if request.method == "POST":
+		with transaction.atomic():
+			check = Transaction.objects.filter(id=pk)
+			if request.POST.get('sid'):
+				transaction_description.objects.filter(id=request.POST.get('sid')).update(
+					provided_data=request.POST.get('provided'),
+					regular_price=request.POST.get('regprice'),
+					regular_quantity=request.POST.get('qty'),
+					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+					discount_quantity=request.POST.get('qty1'), #CHECKING
+					total=request.POST.get('tot'),	
+				)
+				return JsonResponse({'data': 'success',
+					'msg': 'The data provided to client, successfully updated'})
+			else:
+				transaction_description.objects.create(
+					tracking_number_id=transaction_id.tracking_number,
+					provided_data=request.POST.get('provided'),
+					regular_price=request.POST.get('regprice'),
+					regular_quantity=request.POST.get('qty'),
+					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+					discount_quantity=request.POST.get('qty1'), #CHECKING
+					total=request.POST.get('tot'),
+					user_id=request.user.id,
+				)
+				return JsonResponse({'data': 'success',
+									'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
+	context = {
+		'service_provider': ServiceProvider.objects.filter(status=1),
+		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number).first(),
+		'viewProvidedData': transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).order_by('-id'),
+		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
+		'transaction': transaction_id,
+		'calculate': total_amount,
+		'medicine': medicine.objects.filter(is_active=1),
+	}
+	return render(request,"financial/update_amount.html",context)
+
+
