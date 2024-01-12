@@ -546,14 +546,14 @@ def get_all_transaction(request):
 	search_term = request.GET.get('searchTerm', '')
 	if search_term:
 		transactions = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_id__client_bene_fullname__icontains=search_term) &
+			Q(transaction_id__tracking_number__icontains=search_term) &
 			Q(status__in=[3, 6]) &
 			Q(finance_status=None)
-		)[:10]
+		)[:8]
 
 		if transactions.exists():
-			json_data = list(transactions.values_list('id', 'transaction__client__client_bene_fullname', named=True))
-			json_data = [{'id': row.id, 'text': row.transaction__client__client_bene_fullname} for row in json_data]
+			json_data = list(transactions.values_list('id', 'transaction__tracking_number', named=True))
+			json_data = [{'id': row.id, 'text': row.transaction__tracking_number} for row in json_data]
 
 	return JsonResponse(json_data, safe=False)
 
