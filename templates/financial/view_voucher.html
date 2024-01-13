@@ -79,7 +79,7 @@
                                 <td class="text-center">{{row.transactionStatus.service_provider.name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_type_of_assistance.type_name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_assistance_category.name}}</td>
-                                <td class="text-center">{{row.transactionStatus.total_amount}}</td>
+                                <td class="text-center">{{row.transactionStatus.total_amount|intcomma}}</td>
                             </tbody>
                             {% endfor %}
                         </tbody>
