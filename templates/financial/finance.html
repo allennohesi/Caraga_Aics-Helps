@@ -34,24 +34,25 @@
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
                             <form id="submitVoucher">
+                            <input type="text" id="dv_id" name="dv_id" hidden>
                             {% csrf_token %}
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>DV Number</label>
-                                            <input type="text" class="form-control f-w-900 upper" name="voucher_title" oninput="this.value = this.value.toUpperCase()">
+                                            <label>DV Number / Temporary title</label> <span class="txt-danger" id="required">*</span>
+                                            <input type="text" class="form-control f-w-900 upper" id="voucher_title" name="voucher_title" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>DV Date</label>
-                                            <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()">
+                                            <label>DV Date / Temporary date</label> <span class="txt-danger" id="required">*</span>
+                                            <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>REMARKS</label>
-                                            <input type="text" class="form-control f-w-900 upper" name="remarks" id="village" oninput="this.value = this.value.toUpperCase()">
+                                            <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
                                     <div class="col-md-1">
@@ -66,11 +67,12 @@
                             <table class="table table-responsive table-sm table-bordered" id="voucher-title">
                                 <thead>
                                     <tr>
-                                        <th>Action </th>
+                                        <th>Details</th>
+                                        <th>Edit</th>
                                         <th>AICS-DV tracking</th>
                                         <th>Finance DV-number</th>
-                                        <th>Voucher Created By</th>
                                         <th>Date</th>
+                                        <th>Voucher Created By</th>
                                         <th>Remarks</th>
                                     </tr>
                                 </thead>
@@ -219,31 +221,6 @@
         var employee_name = $('#employee_name').val();
         check($('#provider').val());
     });
-    function check(provider){
-        console.log(provider)
-        $('#filter-provider').DataTable({
-            'serverSide': true,
-            'processing': true,
-            'order': [[ 1, 'desc' ]],
-            'lengthMenu': [5,10,15],
-            'ajax': {
-                'url': '/api/requests/finance/search/?format=datatables&provider' + provider,
-                'type': 'GET',
-            },
-            'fnCreatedRow': function (row, data, index) {
-                $(row).attr('id', data['id']);
-            },
-            'columns': [
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                            return " <a href='#' data-role='direct' data-id="+ data + ">Change Status</a> "
-                        }
-                },
-                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
-
-            ],
-        });
-    }
     $(document).ready(function(){
         $('#voucher-title').DataTable({
             'serverSide': true,
@@ -265,10 +242,17 @@
                         return " <a href='#' data-role='view_dv' data-id="+ data + ">Details</a>"
                     }
             },
+            {'data': 'id',
+                'render': function(data, type, row, meta) {
+                        return " <a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a>"
+                    },
+                'sortable': false, 
+                'searchable':false,
+            },
             {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
             {'data': 'voucher_title','className': 'text-start', 'sortable': false },
-            {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start', 'sortable': false },
             {'data': 'date', 'className': 'text-start', 'sortable': false },
+            {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
             ]
         });
@@ -282,11 +266,6 @@
             var id = $(this).data('id');
             $('#transaction_content').load('/financial-transaction/view_dv_number/' + id); //pass data, and stay still in the body
         });
-    });
-    $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
-        var id = $(this).data('id');
-        $('#empid').val(id)
-        $('#myModal').modal('show')
     });
     function validationForm(){
         var invalid = false;
@@ -306,7 +285,7 @@
         if (!validationForm()){
             Swal.fire({
                 title: "Are you sure",
-                text: "You want to update this new client / beneficiary?",
+                text: "You want to add this data?",
                 icon: "info",
                 showCancelButton: true,
                 confirmButtonText: "Yes",
@@ -338,51 +317,17 @@
             });
         }
     });
+    $(document).on('click','a[data-role=edit_data]', function(){ // For assessmentStatus
+        var id = $(this).data('id');
+        var dv_number = $('#'+id).children('td:eq(3)').text();
+        var remarks = $('#'+id).children('td:eq(6)').text();
 
-    $('#submitNewRequestForm').on('submit', function(e){
-        e.preventDefault();
-        var form = new FormData(this);
-        if (!validationForm()){
-            Swal.fire({
-                title: "Are you sure",
-                text: "You to change transaction status?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonText: "Yes",
-                allowOutsideClick: false,
-                showLoaderOnConfirm: true,
-                preConfirm: function (){
-                    return $.post({
-                        url: "",
-                        data: form,
-                        success : function (response){
-                            if(!response.error){
-                                Swal.fire({
-                                    title: "Good job!",
-                                    html:  "You change the status!",
-                                    icon: "success",
-                                    allowOutsideClick: false,
-                                }).then((result) => {
-                                    if (result.isConfirmed){
 
-                                        $('#assigned-to-me').DataTable().ajax.reload();
-                                        $('#completed-table').DataTable().ajax.reload();
-                                        $('#assessment-table').DataTable().ajax.reload();
-                                        $('#modal_view').load('/requests/provided/{{ transaction.id }}');
-                                    }
-                                });
-                            } else {
-                                Swal.fire("Oops...", "WRONG", "warning");
-                            }
-                        },
-                        cache       : false,
-                        contentType : false,
-                        processData : false,
-                    });
-                },
-            });
-        }
+        $('#dv_id').val(id)
+        $('#voucher_title').val(dv_number)
+        $('#remarks').val(remarks)
+
+
     });
-
 </script>
 {% endblock %}

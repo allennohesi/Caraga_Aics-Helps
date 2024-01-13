@@ -14,9 +14,9 @@ today = date.today()
 #     queryset = TransactionStatus1.objects.filter(is_swo=None).order_by('-id')
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 15
     page_size_query_param = 'page_size'
-    max_page_size = 10000
+    max_page_size = 30
 
 class TransactionPerSession(generics.ListAPIView):
     serializer_class = TransactionSerializer
