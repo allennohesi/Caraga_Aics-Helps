@@ -1,5 +1,5 @@
 
-{% if transaction.service_provider %}
+{% if transaction.total_amount %}
 <div class="row mb-3"id="modal_view">
     <a class="btn btn-outline-primary" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a>
     {% comment %} <a class="btn btn-outline-primary" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a> {% endcomment %}
@@ -9,8 +9,7 @@
     <a class="btn btn-outline-primary" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a>
     <a class="btn btn-outline-primary" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a>
     <a class="btn btn-outline-primary" href="{% url 'printPagPamatuod' transaction.id %}" target="_blank">Pag-Pamatuod</a>
-    
 </div>
 {% else %}
-<h5>No data available, kindly input what you provided to Client.</h5>
+<h6>No printable forms not available., please confirm the amount first.</h6>
 {% endif %}

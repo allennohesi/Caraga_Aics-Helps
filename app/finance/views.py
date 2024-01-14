@@ -629,6 +629,7 @@ def print_service_provider(request):
 	return render(request,'financial/print_sprovider.html', context)
 
 def view_dv_number(request,pk):
+	sum=0
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	if request.method == "POST":
@@ -636,15 +637,20 @@ def view_dv_number(request,pk):
 			voucher_id=pk,
 			transactionStatus_id=request.POST.get('transaction_id'),
 		)
-		Transaction.objects.filter(id=request.POST.get('transaction_id')).update(
+		Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
 			dv_number = finance_data.voucher_title,
 			dv_date = finance_data.date
 		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-
+	for row in voucher_data:
+		total_values = row.transactionStatus.total_amount.replace(',', '')
+		total_values = float(total_values)  # Convert the string to a float
+		sum += total_values
+	total_values = sum
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
+		'total_of_voucher': total_values,
 	}
 	return render(request, 'financial/view_voucher.html',context)
 
