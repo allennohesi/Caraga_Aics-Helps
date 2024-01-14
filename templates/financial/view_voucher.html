@@ -67,6 +67,7 @@
                                 <th class="text-center">Service provider</th>
                                 <th class="text-center">Assistance category</th>
                                 <th class="text-center">Assistance type</th>
+                                <th class="text-center">DV Details</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
@@ -79,9 +80,16 @@
                                 <td class="text-center">{{row.transactionStatus.service_provider.name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_type_of_assistance.type_name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_assistance_category.name}}</td>
+                                <td class="text-center">{{row.transactionStatus.dv_number}} | {{row.transactionStatus.dv_date}}</td>
                                 <td class="text-center">{{row.transactionStatus.total_amount|intcomma}}</td>
                             </tbody>
                             {% endfor %}
+                            <tfoot>
+                                <tr>
+                                  <th class="text-end" id="total" colspan="7">Total :</th>
+                                  <td class="text-center">{{total_of_voucher|floatformat:2|intcomma}}</td>
+                                </tr>
+                            </tfoot>
                         </tbody>
                     </table>
                 </div>

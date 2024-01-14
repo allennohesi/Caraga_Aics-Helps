@@ -323,7 +323,6 @@ def view_incoming(request, pk):
 		'TypeOfAssistance': TypeOfAssistance.objects.filter(status=1,type_assistance_id=data.lib_type_of_assistance_id).order_by('name'),
 		'SubModeofAssistance': SubModeofAssistance.objects.filter(status=1,category_id=data.lib_assistance_category_id).order_by('name'),
 		'region_name': region.objects.filter(is_active=1).order_by('region_name'),
-		'calculate':calculate,
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
 		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 
