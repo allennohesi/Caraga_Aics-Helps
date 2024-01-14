@@ -1,5 +1,6 @@
 {% load tags %}
 {% load static %}
+{% load humanize %}
 <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Back</a>
 <hr>
 <div class="col-sm-12">
@@ -385,7 +386,7 @@
                         </tr>
                         {% endfor %}
                     {% else %}
-                        <td colspan="5" class="text-center">No data available.</td>
+                        <td colspan="7" class="text-center">No data available.</td>
                     {% endif %}
                 </tbody>
             </table>
@@ -414,12 +415,12 @@
                     <label>Case Study <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="case_study" required>
                         <option></option>
-                        {% if transaction.is_case_study == "1" %}
-                        <option value="1" selected>No</option>
-                        <option value="2">Yes</option>
+                        {% if transaction.is_case_study == 1 %}
+                        <option value="1" selected>NO</option>
+                        <option value="2">YES</option>
                         {% else %}
-                        <option value="1">No</option>
-                        <option value="2"selected>Yes</option>
+                        <option value="1">NO</option>
+                        <option value="2"selected>YES</option>
                         {% endif %}
                     </select>
                 </div>
@@ -546,14 +547,14 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Amount of Assistance <span class="txt-danger">*</span></label>
-                    <input type="number" class="form-control" value="{{calculate.total_payment}}" name="amount_of_assistance" readonly>
+                    <input type="number" class="form-control" value="{{transaction.total_amount|floatformat:2}}" name="amount_of_assistance" readonly>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Fund Source <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="fund_source" id="sub_type_of_assistance" readonly>
-                        {% for row in fund_source %}>
+                        {% for row in fund_source %}
                         {% if row.id == transaction.fund_source_id %}
                         <option value="{{ row.id }}" selected>{{ row.name }}</option>
                         {% else %}

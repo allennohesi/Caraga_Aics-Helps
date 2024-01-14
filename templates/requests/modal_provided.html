@@ -1,7 +1,11 @@
+{% load humanize %}
 <style>
 .hidden {
     display: none;
     }
+.underline {
+    text-decoration: underline;
+}
 </style>
 <div class="row" id="modal_view">
     {% if transaction.signatories_id %}
@@ -46,7 +50,7 @@
                     <input type="text" class="form-control" name="provided" id="provided" required>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <div class="form-group">
                     <label id="reprice_label">Reg-Price</label> <span class="txt-danger" id="required">*</span>
                     <br>
@@ -60,7 +64,7 @@
                     <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
                 </div>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <div class="form-group">
                     <label>Discount %</label> <span class="txt-danger">*</span>
                     <br>
@@ -76,12 +80,12 @@
             </div>
             <div class="col-md-1">
                 <div class="form-group">
-                    <label>Quantity<span class="txt-danger">*</span></label>
+                    <label>Quantity</label> <span class="txt-danger">*</span>
                     <br>
                     <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required>
                 </div>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <div class="form-group">
                     <label>Final total</label>
                     <br>
@@ -96,32 +100,31 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-1">
+        {% comment %} <div class="col-md-1">
             <div class="form-group">
                 <label>Pre total</label>
                 <br>
                 <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
             </div>
-        </div>
+        </div> {% endcomment %}
         <br>
         <div class="table-responsive text-nowrap table-scroll">
             <table class="table table-responsive" width="100%" id="table">
                 <thead>
-                    <th class="text-center">Delete</th>
-                    <th class="text-center">Edit</th>
-                    <th class="text-center">Transaction Provided</th>
-                    <th class="text-center">Service Provider</th>
-                    <th class="text-center">Regular Price</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-center">Discounted Price</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-center">Total</th>
+                    <th class="text-left">Delete</th>
+                    <th class="text-left">Edit</th>
+                    <th class="text-left">Transaction Provided</th>
+                    <th class="text-left">Service Provider</th>
+                    <th class="text-left">Regular Price</th>
+                    <th class="text-left">Quantity</th>
+                    <th class="text-left">Discounted Price</th>
+                    <th class="text-left">Quantity</th>
+                    <th class="text-left">Total</th>
                 </thead>
             </table>
         </div>
         <br>
     </form>
-
     <form id="Confirmation">
         {% csrf_token %}
         <input type="text" class="form-control" name="tracking_number" id="" value="{{transaction.tracking_number}}" hidden>
@@ -131,8 +134,8 @@
             Please confirm the total amount, if you're all set.
         </div>
         <p class="text-end">
-
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            <b>Pre total: <span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></b> ||
+            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm"></b>
         </p>
     </form>
     <!-- Modal -->
@@ -160,7 +163,7 @@
             'serverSide': true,
             'processing': true,
             'deferRender': true,
-            'lengthMenu': [ 4, 8, 12, 20 ],
+            'lengthMenu': [ 5, 8, 12, 20 ],
             'order': [[0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
@@ -240,47 +243,62 @@
         placeholder: 'Choose',
         containerCssClass: 'select'
     });
+    $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
+        var reg_price = $("#reg_price").val()
+        var quantity = $("#qty").val()
+        var discount_price = $("#dsc").val() //DISCOUNT % FIELD
+        var discount_quantity = $("#tot").val()
+        var quantity1 = $('#qty1').val()
+        var final_total = $("#final_total").val()
 
-    function doCalc(){
-        $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
-            var reg_price = $("#reg_price").val()
-            var quantity = $("#qty").val()
-            var discount_price = $("#dsc").val()
-            var discount_quantity = $("#tot").val()
-            var quantity1 = $('#qty1').val()
-            var final_total = $("#final_total").val()
+        var main = reg_price * quantity;
 
-            var main = reg_price * quantity;
+        var dec = (discount_price / 100).toFixed(2);
+        var mult = main * dec;
+        var discount = main - mult
 
-            var dec = (discount_price / 100).toFixed(2);
-            var mult = main * dec;
-            var discount = main - mult
+        var result_percentage = reg_price * dec
 
-            var result_percentage = reg_price * dec
+        $('#result_of_percentage').val(result_percentage);
+        //$('#qty1').val(quantity);//
+        $('#tot').val(discount.toFixed(2));
 
-            $('#result_of_percentage').val(result_percentage);
-            //$('#qty1').val(quantity);//
-            $('#tot').val(discount);
+        var discounted_total = (reg_price * discount_price) / 100;
+        var reg_price_total = reg_price - discounted_total //THIS IS THE TOTAL DISCOUNTED PRICE
 
-            
-            var discounted_total = (reg_price * discount_price) / 100;
-            var reg_price_total = reg_price - discounted_total
-            console.log("TOTAL AMOUNT DISCOUNTED",reg_price_total)
+        
+        if(discount_price != 0){
+            console.log("NOT EQUALS 0")
+            $('#discounted_price').val(reg_price_total.toFixed(2))
+        }else if(discount_price == 0){
+            console.log("ZERO")
+            $('#discounted_price').val("0")
+            $('#qty1').val("0")
+        }else {
+            console.log("ELSE")
+            $('#discounted_price').val("0")
+            $('#qty1').val("0")
+        }
 
-            $('#discounted_price').val(reg_price_total)
+        var total2 = quantity1 * reg_price_total
+        var final_total_calculation = parseFloat(main) + parseFloat(total2)
+        
+        var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
+        var pre_total = $("#pre_total_label");
+        if(quantity){
+            pre_total.text(pre_total_result.toLocaleString('en-US', { maximumFractionDigits: 2 }));
+            pre_total.addClass("underline");
+        }else{
+            pre_total.text("0");
+            pre_total.addClass("underline");
+        }
+        $('#pre_total').val(pre_total_result.toFixed(2));
+        $('#tot').val(final_total_calculation.toFixed(2));
+        
+        //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
+        //$('#pre_total').val(pre_total);
+    });
 
-            var total2 = quantity1 * reg_price_total
-            var final_total_calculation = parseFloat(main) + parseFloat(total2)
-            
-            var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
-            $('#pre_total').val(pre_total_result);
-            $('#tot').val(final_total_calculation);
-            
-            //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
-            //$('#pre_total').val(pre_total);
-        });
-    }
-    doCalc()
     $(document).on('click','a[data-role=edit_meds]', function(){ // For assessmentStatus
         var id = $(this).data('id');
         var transaction_provided = $('#'+id).children('td:eq(2)').text();
@@ -296,7 +314,7 @@
         $('#qty').val(quantity)
         $('#discounted_price').val(discount)
         $('#qty1').val(quantity1)
-        $('#tot').val(tot)
+        //$('#tot').val(tot)
 
     });
     function validationForm(){
@@ -444,7 +462,7 @@
             $("#dsc").val(0)
         } else {
             //MEDS ASSISTANCE
-            document.getElementById('reprice_label').innerHTML = 'Regular Price';
+            document.getElementById('reprice_label').innerHTML = 'Reg-Price';
             $('#sid').val("")
             $('#provided').val("")
             $('#reg_price').val("")

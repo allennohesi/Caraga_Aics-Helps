@@ -73,7 +73,6 @@ def dashboard(request):
     hold = TransactionStatus1.objects.filter(status=4).count()
     cancelled = TransactionStatus1.objects.filter(status=5).count()
     
-    countingHotmeal = AuthUserGroups.objects.filter(group_id=2).order_by('id')
 
 
     context = {
@@ -94,7 +93,6 @@ def dashboard(request):
         'completed':completed,
         'hold':hold,
         'cancelled':cancelled,
-        'countingHotmeal':countingHotmeal,
 
     }
     return render(request, 'home.html', context)
