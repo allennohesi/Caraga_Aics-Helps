@@ -1,5 +1,6 @@
 {% load tags %}
 {% load static %}
+{% load humanize %}
 <style>
     .modal-xxl {
         max-width: 75%;
@@ -454,7 +455,7 @@
                                 <td class="text-center">{{ row.relation.name }}</td>
                                 <td class="text-center">{{ row.get_age }}</td>
                                 <td class="text-center">{{ row.occupation.occupation_name }}</td>
-                                <td class="text-center">{{ row.salary|floatformat:2 }}</td>
+                                <td class="text-center">{{ row.salary|intcomma }}</td>
                             </tr>
                             {% endfor %}
                         {% else %}
