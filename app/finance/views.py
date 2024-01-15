@@ -25,6 +25,7 @@ import csv
 from django.utils.encoding import smart_str
 from io import StringIO
 from django.http import HttpResponse
+from rest_framework.decorators import api_view
 today = date.today()
 
 class Echo:
@@ -227,6 +228,9 @@ def export_report_csv(request):
 
 	return response
 
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
 def export_fund_summary(request):
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
