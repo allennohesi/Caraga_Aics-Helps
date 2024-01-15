@@ -635,7 +635,7 @@
             <td>{{row.relation.name|upper}}</td>
             <td>{{row.get_age}}</td>
             <td>{{row.occupation.occupation_name|upper}}</td>
-            <td>{{row.salary}}</td>
+            <td>{{row.salary|intcomma}}</td>
             
           </tr>
           {% endfor %}
