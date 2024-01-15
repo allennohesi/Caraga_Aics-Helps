@@ -124,7 +124,7 @@ class ClientBeneficiaryFamilyComposition(models.Model):
     relation = models.ForeignKey(Relation,models.DO_NOTHING)
     birthdate = models.DateField(blank=True, null=True)
     occupation = models.ForeignKey('occupation_tbl', models.DO_NOTHING)
-    salary = models.DecimalField(max_digits=19, decimal_places=2)
+    salary = models.CharField(max_length=255, blank=True, null=True)
     clientbene = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING)
 
     @property
