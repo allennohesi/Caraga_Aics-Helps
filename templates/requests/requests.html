@@ -518,37 +518,26 @@
                             <hr>
                             <div class="row mb-3">
                                 <div class="table table-responsive">
-                                    <table class="table table-bordered table-hover" id="">
+                                    <table class="table table-responsive" width="100%"  id="active-swo">
                                         <thead>
                                             <th>ASSIGNED</th>
+                                            <th class="text-center">LAST NAME</th>
+                                            <th class="text-center">FIRST NAME</th>
+                                            <th class="text-center">MIDDLE NAME</th>
                                             <th class="text-center">PENDING ASSESSMENT</th>
                                             <th class="text-center">ONGOING ASSESSMENT</th>
                                             <th class="text-center">COMPLETE ASSESSMENT</th>
-                                            <th class="text-center">FOR CASE STUDY</th>
-                                            <th class="text-center">ACTIVE</th>
+                                            <th class="text-center">CASE STUDY</th>
                                         </thead>
-                                        {% for row in active_swo %}
-                                        <tbody>
-                                            
-                                            <td><input type="radio" name="user" value="{{row.user.id}}"> {{row.user.get_fullname|upper}}</td>
-                                            <td class="text-center">{{row.get_total}}</td>
-                                            <td class="text-center">{{row.get_ongoing}}</td>
-                                            <td class="text-center">{{row.get_complete}}</td>
-                                            <td class="text-center">{{row.case_study}}</td>
-                                            <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
-                                            
-                                        </tbody>
-                                        {% endfor %}
                                     </table>
                                 </div>
                             </div>
                             <br><br>
+                            <input type="text" id="swo_id" name="swo_id" required hidden>
                             <div class="row">
                                 <div class="form-group">
                                     <a class="btn btn-primary btn-lg" id="previous">Previous</a>
-                                    {% if active_swo %}
                                     <button type="submit" class="btn btn-primary btn-lg">Finished</button>
-                                    {% endif %}
                                 </div>
                             </div>
                             <br><br>
@@ -849,5 +838,46 @@
         });
     });
 </script>
-
+<script>
+    $('#active-swo').DataTable({ //ASSIGNED TO SELF
+        'serverSide': true,
+        'processing': true,
+        'deferRender': true,
+        'lengthMenu': [ 8, 30, 50, 100 ],
+        'order': [[ 1, 'desc' ]],
+        'bDestroy': true,
+        'ajax': {
+            'url': '/api/user/active/swo/?format=datatables',
+            'type': 'GET',
+        },
+        'fnCreatedRow': function (row, data, index) {
+            $(row).attr('id', data['id']);
+        },
+        'columns': [
+            {'data': 'user',
+                'render': function(data, type, row, meta) {
+                    return "<input type='radio' name='user' value='"+ row['user'] +"' onclick='handleRadioClick(this)'>"
+                    
+                },
+                'sortable': false,
+                'searchable': false
+            },
+            {'data': 'last_name','name':'user.last_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'first_name','name':'user.first_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'middle_name','name':'user.middle_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'pending','name':'get_total', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'ongoing','name':'get_ongoing', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'complete','name':'get_complete', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'datas','name':'case_study', 'className': 'text-center', 'sortable': false, 'searchable': false},
+        ]
+    });
+    function handleRadioClick(radio) {
+        selectedUserId = radio.value;
+        console.log(selectedUserId)
+        // Example: Update another field with the selected user ID
+        $('#swo_id').val(selectedUserId);
+        
+        // You can perform other actions with the selectedUserId as needed
+    }
+</script>
 {% endblock %}

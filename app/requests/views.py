@@ -24,6 +24,7 @@ from requests.exceptions import RequestException
 import uuid 
 import os
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 today = date.today()
 
 def generate_serial_string(oldstring, prefix=None):
@@ -73,7 +74,7 @@ def transaction_request(request):
 				lib_type_of_assistance_id=request.POST.get('assistance_type'),
 				lib_assistance_category_id=request.POST.get('assistance_category'),
 				date_entried=request.POST.get('date_entried'),
-				swo_id=request.POST.get('user'),
+				swo_id=request.POST.get('swo_id'),
 				is_case_study=request.POST.get('case_study'),
 				priority_id=request.POST.get('priority_name'),
 				is_return_new=request.POST.get('new_returning'), 
@@ -163,7 +164,7 @@ def requests(request):
 		handle_error(e, "EXCEPTION ERROR IN REQUEST PAGE")
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
-	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
+	# active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
 	
 	context = {
 		'title': 'New Requests',
@@ -176,7 +177,7 @@ def requests(request):
 		'sub_category_assistsance': SubModeofAssistance.objects.filter(status=1),
 		'assistance_type': LibAssistanceType.objects.filter(is_active=1).order_by('type_name'),
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
-		'active_swo':active_sw,
+		# 'active_swo':active_sw,
 	}
 	return render(request, 'requests/requests.html', context)
 
@@ -898,10 +899,13 @@ def approveTransactions(request):
 @login_required
 @groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
 def view_online_swo(request):
-	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
+	search = request.GET.get('search', '')
+	page = request.GET.get('page', 1)
+	rows = request.GET.get('rows', 10)
+	active_sw = Paginator(SocialWorker_Status.objects.filter(Q(user__last_name__icontains=search,status=2,date_transaction=today)), rows).page(page)
 	context = {
 		'title': 'Status View',
-		'active_sw': active_sw
+		'data': active_sw
 	}
 	return render(request, 'requests/status_swo.html', context)
 
