@@ -252,9 +252,9 @@
                                                 <ul class="nav-sub-childmenu submenu-content">
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
-                                                    <li><a href="{% url 'generateTransactions' %}" target="_blank">All transactions</a></li>
-                                                    <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
-                                                    <li><a href="{% url 'generateByUser' %}">Users choice</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
+                                                    {% comment %} <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
+                                                    <li><a href="{% url 'generateByUser' %}">Users choice</a></li> {% endcomment %}
                                                 </ul>
                                             </li>
                                             {% comment %} <li><a href="javascript:void(0);" class="submenu-title">General <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
@@ -273,6 +273,33 @@
                             </div>
                             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
                         </nav>
+                    </div>
+                </div>
+                <div class="modal fade" id="generate_transactions" aria-labelledby="fundsource" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="fundsource">Generate All</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'generateTransactions' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="start_date">Start Date:</label>
+                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
+                                    <label for="end_date">End Date:</label>
+                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
                     </div>
                 </div>
                 <div class="page-body">
