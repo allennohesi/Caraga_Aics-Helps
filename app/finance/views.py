@@ -646,15 +646,15 @@ def view_dv_number(request,pk):
 			dv_date = finance_data.date
 		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	for row in voucher_data:
-		total_values = row.transactionStatus.total_amount.replace(',', '')
-		total_values = float(total_values)  # Convert the string to a float
-		sum += total_values
-	total_values = sum
+	# for row in voucher_data:
+	# 	total_values = row.transactionStatus.total_amount.replace(',', '')
+	# 	total_values = float(total_values)  # Convert the string to a float
+	# 	sum += total_values
+	# total_values = sum
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
-		'total_of_voucher': total_values,
+		# 'total_of_voucher': total_values,
 	}
 	return render(request, 'financial/view_voucher.html',context)
 
