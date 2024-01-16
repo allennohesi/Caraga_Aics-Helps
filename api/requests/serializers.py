@@ -41,10 +41,14 @@ class FinanceVoucherSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class financeVoucherDataSerializer(serializers.ModelSerializer):
-    TransactionTracking = serializers.CharField(source='transactionStatus.transaction.tracking_number', read_only=True, default=None)
-    Assistance_type = serializers.CharField(source='transactionStatus.transaction.lib_type_of_assistance.type_name', read_only=True, default=None)
-    Assistance_category = serializers.CharField(source='transactionStatus.transaction.lib_assistance_category.name', read_only=True, default=None)
-    total = serializers.CharField(source='transactionStatus.transaction.get_total', read_only=True, default=None)
+    transaction_code = serializers.CharField(source='transactionStatus.tracking_number', read_only=True, default=None)
+    client_fullname = serializers.CharField(source='transactionStatus.client.client_bene_fullname', read_only=True, default=None)
+    service_provider = serializers.CharField(source='transactionStatus.service_provider.name', read_only=True, default=None)
+    Assistance_type = serializers.CharField(source='transactionStatus.lib_type_of_assistance.type_name', read_only=True, default=None)
+    Assistance_category = serializers.CharField(source='transactionStatus.lib_assistance_category.name', read_only=True, default=None)
+    dv_number = serializers.CharField(source='transactionStatus.dv_number', read_only=True, default=None)
+    dv_date = serializers.DateField(source='transactionStatus.dv_date', format="%b %d, %Y", read_only=True)
+    total = serializers.CharField(source='transactionStatus.total_amount', read_only=True, default=None)
     class Meta:
         model = finance_voucherData
         fields = '__all__'

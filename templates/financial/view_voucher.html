@@ -61,17 +61,19 @@
                     <table class="table table-responsive table-sm table-bordered" id="voucher-data">
                         <thead>
                             <tr>
-                                <th class="text-center">Action</th>
+                                <th>Remove</th>
+                                <th>Edit</th>
                                 <th class="text-center">Tracking number</th>
                                 <th class="text-center">Client name</th>
                                 <th class="text-center">Service provider</th>
                                 <th class="text-center">Assistance category</th>
                                 <th class="text-center">Assistance type</th>
-                                <th class="text-center">DV Details</th>
+                                <th class="text-center">DV-Name</th>
+                                <th class="text-center">DV-Date</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        {% comment %} <tbody>
                             {% for row in voucher_data %}
                             <tbody>
                                 <td class="text-center"><a href='#' data-role='remove' data-id='{{row.id}}'>Remove</a> | <a href='#' data-role="edit_amount" data-id='{{row.transactionStatus_id}}'>Edit</a></td>
@@ -80,17 +82,10 @@
                                 <td class="text-center">{{row.transactionStatus.service_provider.name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_type_of_assistance.type_name}}</td>
                                 <td class="text-center">{{row.transactionStatus.lib_assistance_category.name}}</td>
-                                <td class="text-center">{{row.transactionStatus.dv_number}} | {{row.transactionStatus.dv_date}}</td>
-                                <td class="text-center">{{row.transactionStatus.total_amount|intcomma}}</td>
+                                <td class="text-center">{{row.transactionStatus.total_amount}}</td>
                             </tbody>
                             {% endfor %}
-                            <tfoot>
-                                <tr>
-                                  <th class="text-end" id="total" colspan="7">Total :</th>
-                                  <td class="text-center">{{total_of_voucher|floatformat:2|intcomma}}</td>
-                                </tr>
-                            </tfoot>
-                        </tbody>
+                        </tbody> {% endcomment %}
                     </table>
                 </div>
             </div>
@@ -110,7 +105,48 @@
 </div>
 {% block script %}
 <script>
-
+    $(document).ready(function(){
+        $('#voucher-data').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 5, 8, 12, 20 ],
+            'order': [[0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/finance/voucher/data/?format=datatables&data={{ finance_datas.id }}',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='remove', 'className': 'text-start', data-id="+ row['id'] + ">Remove</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'transactionStatus',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='edit_amount' data-id="+ row['transactionStatus'] + ">EDIT</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'transaction_code','name':'transactionStatus.tracking_number', 'className': 'text-center', 'sortable': false },
+                {'data': 'client_fullname','name':'transactionStatus.client.client_bene_fullname', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'service_provider','name':'transactionStatus.service_provider.name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'Assistance_type','name':'transactionStatus.lib_type_of_assistance.type_name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'Assistance_category','name':'transactionStatus.lib_assistance_category.name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'dv_number','name':'transactionStatus.dv_number', 'className': 'text-center', 'sortable': false },
+                {'data': 'dv_date', 'className': 'text-center', 'sortable': false },
+                {'data': 'total','name':'transactionStatus.total_amount', 'className': 'text-center', 'sortable': false },
+                
+            ]
+        });
+    });
     $(document).ready(function(){
         $('.select').select2({
             width: '100%',
