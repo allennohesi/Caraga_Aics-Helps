@@ -34,7 +34,7 @@
                             <input type="text" class="form-control" id="type_of_assistance" readonly>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label>Service provider <span class="txt-danger">*</span></label>
                             <input type="text" class="form-control" id="service_provider" readonly>
@@ -50,6 +50,12 @@
                         <div class="form-group">
                             <label>SAVE</label>
                             <input type="submit" class="form-control f-w-900">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>OUTSIDE FO</label>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#outsidefo">Open</button>
                         </div>
                     </div>
                 </div>
@@ -89,6 +95,54 @@
                     </table>
                 </div>
             </div>
+            <div class="modal fade bd-example-modal-xl" id="outsidefo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Save data - Outside FO</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="submit_data">
+                            {% csrf_token %}
+                            <input type="text" class="form-control" name="outside_fo" value="outside_fo" required hidden>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>GL Number <span class="txt-danger">*</span></label>
+                                        <input type="text" class="form-control" name="glnumber" id="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Client name <span class="txt-danger">*</span></label>
+                                        <input type="text" class="form-control" name="client_name" id="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Assistance Type <span class="txt-danger">*</span></label>
+                                        <input type="text" class="form-control" name="assistance_type" id="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Amount</label>
+                                        <input type="text" class="form-control" amount="amount" id="" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>SAVE</label>
+                                        <input type="submit" class="form-control f-w-900">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
             <div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -110,7 +164,7 @@
             'serverSide': true,
             'processing': true,
             'deferRender': true,
-            'lengthMenu': [ 15, 30, 45, 50 ],
+            'lengthMenu': [ 8, 30, 45, 50 ],
             'order': [[0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
@@ -316,7 +370,6 @@
                 });
             }
         });
-
         $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
             $('#empid').val(id)
