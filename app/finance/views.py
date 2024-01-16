@@ -238,7 +238,7 @@ def export_fund_summary(request):
 		# filter(swo_date_time_end__range=(start_date_str, end_date_str))
 		if request.GET.get("fund_source") == "all":
 			queryset = Transaction.objects.filter(
-				swo_date_time_end__range=(start_date_str, end_date_str)
+				date_of_transaction__range=(start_date_str, end_date_str)
 			).order_by("tracking_number").select_related(
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
