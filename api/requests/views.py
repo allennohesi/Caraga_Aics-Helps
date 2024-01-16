@@ -66,6 +66,19 @@ class TransactionDescriptionViews(generics.ListAPIView):
             queryset = Transaction.objects.all()
             return queryset
 
+#SIGNATORIES
+class SignatoriesTransactionsViews(generics.ListAPIView):
+    serializer_class = TransactionsSignatoriesSerializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        if self.request.query_params.get('user'):
+            queryset = TransactionStatus1.objects.filter(transaction_id__signatories_id=self.request.query_params.get('user'),transaction_id__is_gl=1).order_by('-id')
+            return queryset
+        else:
+            queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=1).order_by('-id')
+            return queryset
+
+
 #FOR THE FINANCE
 class AdvanceFinanceFilterViews(generics.ListAPIView):
     serializer_class = TransactionSerializer
@@ -91,15 +104,4 @@ class VoucherDataViews(generics.ListAPIView):
     def get_queryset(self):
         if self.request.query_params.get('data'):
             queryset = finance_voucherData.objects.filter(voucher_id=self.request.query_params.get('data')).order_by('-id')
-            return queryset
-
-class SignatoriesTransactionsViews(generics.ListAPIView):
-    serializer_class = TransactionsSignatoriesSerializer
-    permission_classes = [IsAuthenticated]
-    def get_queryset(self):
-        if self.request.query_params.get('user'):
-            queryset = TransactionStatus1.objects.filter(transaction_id__signatories_id=self.request.query_params.get('user'),transaction_id__is_gl=1).order_by('-id')
-            return queryset
-        else:
-            queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=1).order_by('-id')
             return queryset
