@@ -605,12 +605,15 @@ def print_service_provider(request):
 	}
 	return render(request,'financial/print_sprovider.html', context)
 
+
 def view_dv_number(request,pk):
-	sum=0
-	outside_sum=0
+	# sum=0
+	# outside_sum=0
 
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
+	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
+
 	if request.method == "POST":
 		finance_voucherData.objects.create(
 			voucher_id=pk,
@@ -621,22 +624,16 @@ def view_dv_number(request,pk):
 			dv_date = finance_data.date
 		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	for row in voucher_data:
-		total_values = row.transactionStatus.total_amount.replace(',', '')
-		total_values = float(total_values)  # Convert the string to a float
-		sum += total_values
-	total_values = sum #TOTAL WITHIN THE REGION TRANSACTION
 	
-	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
-	if outside_fo:
-		for datas in outside_fo:
-			outside_values = datas.amount.replace(',', '')
-			outside_values = float(outside_values)  # Convert the string to a float
-			outside_sum += outside_values
-		total_amount = outside_sum #TOTAL OUTSIDE THE REGION TRANSACTION
-	else:
-		total_amount = 0 #TOTAL OUTSIDE THE REGION TRANSACTION
-		
+
+	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
+	outside_fo_data = outside_fo.values_list('amount', flat=True)
+
+	# Convert to numeric in Python and calculate sum
+	total_values = sum(float(value.replace(',', '')) for value in total_values_data)
+	total_amount = sum(float(value.replace(',', '')) for value in outside_fo_data)
+
+	# Calculate total sum
 	total_sum = total_values + total_amount
 
 	context = {
