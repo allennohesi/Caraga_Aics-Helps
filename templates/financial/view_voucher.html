@@ -17,7 +17,7 @@
                 <div class="col-md-1">
                     <div class="form-group">
                         <label>Total Amount <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="" value="{{total_sum|floatformat:2|intcomma}}" readonly>
+                        <input type="text" class="form-control" id="" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" readonly>
                     </div>
                 </div>
             </div>
