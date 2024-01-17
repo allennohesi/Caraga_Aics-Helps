@@ -7,9 +7,17 @@
         <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel" readonly>
             <br><br>
             <div class="row mb-3">
-                <div class="col-md-2">
+                <div class="col-md-8">
                     <div class="form-group">
-                        <label>DV name: <u>{{finance_datas.voucher_title}}</u> <br> DV date:<u>{{finance_datas.date}}</u></label>
+                        <label>DV name: <u>{{finance_datas.voucher_title}} </u> <br> DV date: <u>{{finance_datas.date}}</u></label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Total Amount <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="" value="{{total_sum|floatformat:2|intcomma}}" readonly>
                     </div>
                 </div>
             </div>
@@ -55,7 +63,7 @@
                     <div class="col-md-1">
                         <div class="form-group">
                             <label>OUTSIDE FO</label>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#outsidefo">Open</button>
+                            <a type="button" class="btn btn-primary" data-role='outsidefo' data-id="{{finance_datas.id}}">Open</a>
                         </div>
                     </div>
                 </div>
@@ -79,66 +87,48 @@
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
-                        {% comment %} <tbody>
-                            {% for row in voucher_data %}
-                            <tbody>
-                                <td class="text-center"><a href='#' data-role='remove' data-id='{{row.id}}'>Remove</a> | <a href='#' data-role="edit_amount" data-id='{{row.transactionStatus_id}}'>Edit</a></td>
-                                <td class="text-center">{{row.transactionStatus.tracking_number}}</td>
-                                <td class="text-center">{{row.transactionStatus.client.client_bene_fullname}}</td>
-                                <td class="text-center">{{row.transactionStatus.service_provider.name}}</td>
-                                <td class="text-center">{{row.transactionStatus.lib_type_of_assistance.type_name}}</td>
-                                <td class="text-center">{{row.transactionStatus.lib_assistance_category.name}}</td>
-                                <td class="text-center">{{row.transactionStatus.total_amount}}</td>
-                            </tbody>
-                            {% endfor %}
-                        </tbody> {% endcomment %}
                     </table>
                 </div>
             </div>
-            <div class="modal fade bd-example-modal-xl" id="outsidefo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            {% if outside_fo %}
+            <hr>
+            <div class="alert alert-dark" role="alert">
+                Data below are outside the FO transactions that are billed here in the office.
+            </div>
+            <div class="row mb-3">
+                <div class="table-responsive">
+                    <table class="table table-responsive table-sm table-bordered" id="voucher-data">
+                        <thead>
+                            <tr>
+                                <th>Remove</th>
+                                <th class="text-center">GL Number</th>
+                                <th class="text-center">Client name</th>
+                                <th class="text-center">Assistance Category</th>
+                                <th class="text-center">Amount of assistance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in outside_fo %}
+                            <tbody>
+                                <td><a href='#' data-role='delete' data-id='{{row.id}}'>Remove</a></td>
+                                <td class="text-center">{{row.glnumber}}</td>
+                                <td class="text-center">{{row.client_name}}</td>
+                                <td class="text-center">{{row.assistance_type}}</td>
+                                <td class="text-center">{{row.amount|floatformat:2|intcomma}}</td>
+                            </tbody>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            <div class="modal fade bd-example-modal-xl" id="modal_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Save data - Outside FO</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-content">
+                    <div class="modal-header text-end">
+                        <a href="javascript:void(0);" id="close"><i class="fa fa-angle-double-left"></i>exit</a>
                     </div>
-                    <div class="modal-body">
-                        <form id="submit_data">
-                            {% csrf_token %}
-                            <input type="text" class="form-control" name="outside_fo" value="outside_fo" required hidden>
-                            <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>GL Number <span class="txt-danger">*</span></label>
-                                        <input type="text" class="form-control" name="glnumber" id="" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Client name <span class="txt-danger">*</span></label>
-                                        <input type="text" class="form-control" name="client_name" id="" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Assistance Type <span class="txt-danger">*</span></label>
-                                        <input type="text" class="form-control" name="assistance_type" id="" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Amount</label>
-                                        <input type="text" class="form-control" amount="amount" id="" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>SAVE</label>
-                                        <input type="submit" class="form-control f-w-900">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="modal-body" id="load_data">
                     </div>
                   </div>
                 </div>
@@ -219,7 +209,7 @@
             placeholder: 'CHOOSE',
             containerCssClass: 'select'
         });
-        $('#exit, #close_modal').on('click', function(){
+        $('#exit, #close, #close_modal').on('click', function(){
             $('#modalProvided').modal('hide');
             $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
         });
@@ -344,6 +334,44 @@
                 }
             });
         });
+        $(document).on('click', 'a[data-role=delete]', function(){ //OUTSIDE THE REGION DELETE 
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to data from this voucher?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'remove_data_outside_fo' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Data removed in voucher",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
+        });
         $('#submitVoucherData').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
@@ -386,6 +414,11 @@
             var id = $(this).data('id');
             $('#empid').val(id)
             $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/finance_modal_provided/' +id);
+        });
+        $(document).on('click','a[data-role=outsidefo]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/outside/fo/voucher/' +id);
         });
 
     });

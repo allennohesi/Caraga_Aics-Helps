@@ -2,7 +2,7 @@ from django.urls import path
 
 from app.finance.views import financial_transaction, finance_assessment, voucher_modal, get_all_transaction, get_data_transaction, \
     remove_voucherData, print_voucher, print_service_provider,view_dv_number, finance_modal_provided, sync_csv, export_fund_summary, \
-    export_report_csv, update_amount
+    export_report_csv, update_amount, voucher_outside_fo, remove_data_outside_fo
 
 urlpatterns = [
     path('transaction/', financial_transaction, name='financial_transaction'),
@@ -14,6 +14,9 @@ urlpatterns = [
     path('print_voucher/<int:pk>', print_voucher,name='print_voucher'),
     path('print/service-provider/', print_service_provider, name='print_service_provider'),
 
+    path('remove_data_outside_fo/', remove_data_outside_fo, name='remove_data_outside_fo'),
+    path('outside/fo/voucher/<int:pk>',voucher_outside_fo, name='voucher_outside_fo'),
+    
     path('view_dv_number/<int:pk>', view_dv_number,name='view_dv_number'),
     path('finance_modal_provided/<int:pk>',finance_modal_provided,name='finance_modal_provided'),
     path('update_amount/<int:pk>', update_amount, name='update_amount'),

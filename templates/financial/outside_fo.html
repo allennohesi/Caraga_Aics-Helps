@@ -1,0 +1,109 @@
+{% load humanize %}
+<style>
+    .hidden {
+        display: none;
+        }
+</style>
+<div class="row" id="modal_view">
+    <form id="submitoutsidedata">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>GL Number <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" id="" name="glnumber" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Client Name <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" id="" name="clientname" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Assistance Type <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" id="" name="assistance_type"  required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="text" class="form-control" id="" name="amount" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>SAVE</label>
+                    <input type="submit" class="form-control f-w-900">
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Modal -->
+</div>
+
+<script>
+    $('.select1').select2({
+        width: '100%',
+        placeholder: 'Choose',
+        containerCssClass: 'select'
+    });
+</script>
+<script>
+    function validate(evt) {
+        var theEvent = evt || window.event;
+        // Handle paste
+        if (theEvent.type === 'paste') {
+            key = event.clipboardData.getData('text/plain');
+        } else {
+        // Handle key press
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+        }
+        var regex = /[0-9]|\./;
+        if( !regex.test(key) ) {
+            theEvent.returnValue = false;
+            if(theEvent.preventDefault) theEvent.preventDefault();
+        }
+    }
+    $('#submitoutsidedata').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to add this data",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'voucher_outside_fo' data.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#modal_view').load('/financial-transaction/outside/fo/voucher/{{ data.id }}');
+                                        $('#table').DataTable().ajax.reload();
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+</script>
