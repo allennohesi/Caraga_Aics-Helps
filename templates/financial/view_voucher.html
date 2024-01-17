@@ -196,8 +196,20 @@
                 {'data': 'Assistance_category','name':'transactionStatus.lib_assistance_category.name', 'className': 'text-center','searchable':false, 'sortable': false},
                 {'data': 'dv_number','name':'transactionStatus.dv_number', 'className': 'text-center', 'sortable': false },
                 {'data': 'dv_date', 'className': 'text-center', 'sortable': false },
-                {'data': 'total','name':'transactionStatus.total_amount', 'className': 'text-center', 'sortable': false },
-                
+                {'data': 'total', 'name': 'transactionStatus.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            return data;
+                        }
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                },
             ]
         });
     });
