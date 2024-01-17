@@ -93,7 +93,7 @@
         </div>
         <p class="text-end">
 
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
         </p>
     </form>
     <!-- Modal -->
