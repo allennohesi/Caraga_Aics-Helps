@@ -18,6 +18,21 @@
     }
     input {border:0;outline:0;}
     input:focus {outline:none!important;}
+
+    @media print {
+      ::-webkit-input-placeholder { /* WebKit browsers */
+          color: transparent;
+      }
+      :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+          color: transparent;
+      }
+      ::-moz-placeholder { /* Mozilla Firefox 19+ */
+          color: transparent;
+      }
+      :-ms-input-placeholder { /* Internet Explorer 10+ */
+          color: transparent;
+      }
+    }
   </style>
 </head>
 <body class="legal portrait">
@@ -243,7 +258,7 @@
                   <input type="checkbox" name="sector"> Referral Letter <br>
                   <input type="checkbox" name="sector"> Social Case Study Report <br>
                   <input type="checkbox" name="sector"> Others<br><br>
-                  <label>_______________________</label>
+                  <input type="text" placeholder="Input here if others.. ">
               </td>
             </tr>
           </table>
@@ -327,7 +342,7 @@
           <tr style="font-size: 13px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-              <label>{{data.client.get_client_fullname|upper}}</label>
+              <label style="background-color:#FFC5C5;">{{data.client.get_client_fullname|upper}}</label>
             </td>
             <td></td>
             <td colspan="3" width="130px" style="border-bottom:1px solid black;">
@@ -486,7 +501,7 @@
           <tr style="font-size: 13px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-              <label>{{data.client.get_client_fullname|upper}}</label>
+              <label style="background-color:#FFC5C5;">{{data.client.get_client_fullname|upper}}</label>
             </td>
             <td></td>
             <td colspan="3" width="130px" style="border-bottom:1px solid black;">
