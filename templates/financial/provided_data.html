@@ -31,9 +31,9 @@
                     <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <div class="form-group">
-                    <label>Discount %</label> <span class="txt-danger">*</span>
+                    <label>Disc %</label> <span class="txt-danger">*</span>
                     <br>
                     <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
                 </div>
@@ -52,7 +52,7 @@
                     <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required>
                 </div>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <div class="form-group">
                     <label>Total</label>
                     <br>
@@ -143,7 +143,23 @@
                 {'data': 'regular_quantity',  'searchable':false, 'sortable': false},
                 {'data': 'discount_price',  'searchable':false, 'sortable': false},
                 {'data': 'discount_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'total',  'searchable':false, 'sortable': false},
+                {'data': 'total', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            // Retain the original formatting if already contains commas
+                            return data;
+                        }
+
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                }, 
                 
             ]
         });
@@ -232,52 +248,58 @@
         containerCssClass: 'select'
     });
 
-    function doCalc(){
-        $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total,#discounted_price").on("change keyup", function(e) {
-            var reg_price = $("#reg_price").val()
-            var quantity = $("#qty").val()
-            var discount_price = $("#dsc").val()
-            var discount_quantity = $("#tot").val()
-            var quantity1 = $('#qty1').val()
-            var final_total = $("#final_total").val()
-            var disc_price = $("#discounted_price").val()
+    $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
+        var reg_price = $("#reg_price").val()
+        var quantity = $("#qty").val()
+        var discount_price = $("#dsc").val() //DISCOUNT % FIELD
+        var discount_quantity = $("#tot").val()
+        var quantity1 = $('#qty1').val()
+        var final_total = $("#final_total").val()
 
-            var main = reg_price * quantity;
+        var main = reg_price * quantity;
 
-            var dec = (discount_price / 100).toFixed(2);
-            var mult = main * dec;
-            var discount = main - mult
+        var dec = (discount_price / 100).toFixed(2);
+        var mult = main * dec;
+        var discount = main - mult
 
-            var result_percentage = reg_price * dec
+        var result_percentage = reg_price * dec
 
-            $('#result_of_percentage').val(result_percentage);
-            //$('#qty1').val(quantity);//
-            $('#tot').val(discount);
+        $('#result_of_percentage').val(result_percentage);
+        //$('#qty1').val(quantity);//
+        $('#tot').val(discount.toFixed(2));
 
-            
-            var discounted_total = (reg_price * discount_price) / 100;
-            var reg_price_total = reg_price - discounted_total
+        var discounted_total = (reg_price * discount_price) / 100;
+        var reg_price_total = reg_price - discounted_total //THIS IS THE TOTAL DISCOUNTED PRICE
 
-            //console.log("TOTAL AMOUNT", reg_price)
-            //console.log("DISCOUNTED PRICE",discounted_total)
-            if(reg_price==reg_price_total){
-                $('#discounted_price').val(0)
-            }else{
-                $('#discounted_price').val(reg_price_total)
-            }
+        
+        if(discount_price != 0){
+            $('#discounted_price').val(reg_price_total.toFixed(2))
+        }else if(discount_price == 0){
+            $('#discounted_price').val("0")
+            $('#qty1').val("0")
+        }else {
+            $('#discounted_price').val("0")
+            $('#qty1').val("0")
+        }
 
-            var total2 = quantity1 * reg_price_total
-            var final_total_calculation = parseFloat(main) + parseFloat(total2)
-            
-            var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
-            $('#pre_total').val(pre_total_result);
-            $('#tot').val(final_total_calculation);
-            
-            //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
-            //$('#pre_total').val(pre_total);
-        });
-    }
-    doCalc()
+        var total2 = quantity1 * reg_price_total
+        var final_total_calculation = parseFloat(main) + parseFloat(total2)
+        
+        var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
+        var pre_total = $("#pre_total_label");
+        if(quantity){
+            pre_total.text(pre_total_result.toLocaleString('en-US', { maximumFractionDigits: 2 }));
+            pre_total.addClass("underline");
+        }else{
+            pre_total.text("0");
+            pre_total.addClass("underline");
+        }
+        $('#pre_total').val(pre_total_result.toFixed(2));
+        $('#tot').val(final_total_calculation.toFixed(2));
+        
+        //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
+        //$('#pre_total').val(pre_total);
+    });
     $(document).on('click','a[data-role=edit_meds]', function(){ // For assessmentStatus
         var id = $(this).data('id');
         var transaction_provided = $('#'+id).children('td:eq(2)').text();
