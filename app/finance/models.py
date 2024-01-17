@@ -34,6 +34,17 @@ class finance_voucherData(models.Model):
         managed = False
         db_table = 'finance_voucherdata_tbl'
 
+class finance_outsideFo(models.Model):
+    voucher = models.ForeignKey('finance_voucher', models.DO_NOTHING, blank=True, null=True)
+    glnumber = models.CharField(max_length=255, blank=True, null=True)
+    client_name = models.CharField(max_length=255, blank=True, null=True)
+    assistance_type = models.CharField(max_length=255, blank=True, null=True)
+    amount = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'finance_outsidefo_tbl'
+
 class exporting_csv(models.Model):
     tracking_number = models.CharField(max_length=255, blank=True, null=True)
     client_surname = models.CharField(max_length=255, blank=True, null=True)
