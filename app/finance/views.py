@@ -19,7 +19,7 @@ from django.db.models import Value, Sum, Count
 from datetime import datetime, timedelta, time, date
 from django.utils import timezone
 from django.contrib.auth.models import User
-from app.finance.models import finance_voucher, finance_voucherData, exporting_csv
+from app.finance.models import finance_voucher, finance_voucherData, exporting_csv, finance_outsideFo
 from django.db.models import Q
 import csv
 from django.utils.encoding import smart_str
@@ -507,35 +507,6 @@ def export_fund_summary(request):
 			csv_writer.writerows(rows)
 			return response
 
-# @login_required
-# @groups_only('Super Administrator', 'Biller','Finance')
-# def financial_transaction(request):
-# 	if request.method == "POST":
-# 		with transaction.atomic():
-# 			voucher=request.POST.get('voucher_title')
-# 			date=request.POST.get('date')
-# 			remarks=request.POST.get('remarks')
-			
-# 			lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
-# 			track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
-# 				generate_serial_string(None, 'CODE')
-
-# 			finance_voucher.objects.create(
-# 				voucher_code=track_num,
-# 				voucher_title=voucher,
-# 				date=date,
-# 				remarks=remarks,
-# 				user_id=request.user.id,
-# 				status=1,
-# 			)
-# 			return JsonResponse({'data': 'success', 'msg': 'Data Saved.'})
-# 	context = {
-# 		'service_provider': ServiceProvider.objects.filter(status=1),
-# 		'fund_source': FundSource.objects.filter(status=1)
-# 	}
-# 	return render(request,'financial/finance.html', context)
-
-
 @login_required 
 def voucher_modal(request, pk):
 	if request.method == "POST":
@@ -636,6 +607,8 @@ def print_service_provider(request):
 
 def view_dv_number(request,pk):
 	sum=0
+	outside_sum=0
+
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	if request.method == "POST":
@@ -648,17 +621,52 @@ def view_dv_number(request,pk):
 			dv_date = finance_data.date
 		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	# for row in voucher_data:
-	# 	total_values = row.transactionStatus.total_amount.replace(',', '')
-	# 	total_values = float(total_values)  # Convert the string to a float
-	# 	sum += total_values
-	# total_values = sum
+	for row in voucher_data:
+		total_values = row.transactionStatus.total_amount.replace(',', '')
+		total_values = float(total_values)  # Convert the string to a float
+		sum += total_values
+	total_values = sum #TOTAL WITHIN THE REGION TRANSACTION
+	
+	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
+	if outside_fo:
+		for datas in outside_fo:
+			outside_values = datas.amount.replace(',', '')
+			outside_values = float(outside_values)  # Convert the string to a float
+			outside_sum += outside_values
+		total_amount = outside_sum #TOTAL OUTSIDE THE REGION TRANSACTION
+	else:
+		total_amount = 0 #TOTAL OUTSIDE THE REGION TRANSACTION
+		
+	total_sum = total_values + total_amount
+
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
-		# 'total_of_voucher': total_values,
+		'outside_fo':outside_fo,
+		'total_sum':total_sum,
 	}
 	return render(request, 'financial/view_voucher.html',context)
+
+@csrf_exempt
+def remove_data_outside_fo(request):
+	if request.method == "POST":
+		finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
+	return JsonResponse({'data': 'success'})
+
+def voucher_outside_fo(request,pk):
+	if request.method == "POST":
+		finance_outsideFo.objects.create(
+			voucher_id=pk,
+			glnumber=request.POST.get('glnumber'),
+			client_name=request.POST.get('clientname'),
+			assistance_type=request.POST.get('assistance_type'),
+			amount=request.POST.get('amount'),
+		)
+		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+	context = {
+		'data':finance_voucher.objects.filter(id=pk).first()
+	}
+	return render(request,'financial/outside_fo.html',context)
 
 def finance_modal_provided(request,pk):
 	voucher_data = finance_voucherData.objects.filter(transactionStatus_id=pk).first()
