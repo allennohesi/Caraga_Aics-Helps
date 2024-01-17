@@ -75,6 +75,9 @@ def number_to_words(value):
     # Check if there is a decimal part
     if decimal_part and decimal_part != '00':
         # Append a space and the decimal part as a fraction
-        words += f" {decimal_part} / 100"
+        words += f" Pesos {decimal_part} / 100"
+    else:
+        # If no decimal part, append 'Pesos' directly
+        words += " Pesos"
 
     return words
