@@ -194,8 +194,23 @@
                 {'data': 'regular_quantity',  'searchable':false, 'sortable': false},
                 {'data': 'discount_price',  'searchable':false, 'sortable': false},
                 {'data': 'discount_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'total',  'searchable':false, 'sortable': false},
-                
+                {'data': 'total', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            // Retain the original formatting if already contains commas
+                            return data;
+                        }
+
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                },  
             ]
         });
     });
