@@ -633,7 +633,7 @@
           <tr style="border-color: black; font-size:9.5px">
             <td>{{row.get_family_fullname_formatted|upper}}</td>
             <td>{{row.relation.name|upper}}</td>
-            <td>{{row.get_age}}</td>
+            <td>{% if row.age %}{{row.age}}{% else %}{{row.get_age}}{% endif %}</td>
             <td>{{row.occupation.occupation_name|upper}}</td>
             <td>{{row.salary|intcomma}}</td>
             

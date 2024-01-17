@@ -411,7 +411,7 @@ def view_assessment(request, pk):
 			last_name=request.POST.get('last_name'),
 			suffix_id=request.POST.get('suffix'),
 			sex_id=request.POST.get('rosterSex'),
-			birthdate=request.POST.get('birthdate'),
+			age=request.POST.get('age'),
 			relation_id=request.POST.get('relation'),
 			occupation_id=request.POST.get('occupation'),
 			salary=request.POST.get('salary'),
