@@ -67,6 +67,7 @@ def financial_transaction(request):
 					date=date,
 					remarks=remarks,
 					user_id=request.user.id,
+					with_without_dv=request.POST.get('with_without_dv'),
 					status=1,
 				)
 				
@@ -88,6 +89,7 @@ def financial_transaction(request):
 					date=date,
 					remarks=remarks,
 					user_id=request.user.id,
+					with_without_dv=request.POST.get('with_without_dv'),
 					status=1,
 				)
 				return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})

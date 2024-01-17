@@ -18,6 +18,7 @@ class finance_voucher(models.Model):
     voucher_title = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
+    with_without_dv = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
     status = models.IntegerField()
 
