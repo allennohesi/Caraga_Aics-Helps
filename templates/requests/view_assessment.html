@@ -369,8 +369,8 @@
                             <table class="table table-bordered w-100 table-sm" id="family-composition-table">
                                 <thead>
                                     <th width="30%">Full Name</th>
-                                    <th class="text-center">Sex and birthdate</th>
-                                    <th class="text-center">Birthdate</th>
+                                    <th class="text-center">Sex</th>
+                                    <th class="text-center">Age</th>
                                     <th class="text-center">Relationship</th>
                                     <th class="text-center">Occupation</th>
                                     <th class="text-center">Salary per month</th>
@@ -398,7 +398,7 @@
                                         </select><br>
                                     </td>
                                     <td valign="middle">
-                                        <input type="date" class="form-control" name="birthdate" min="1900-05-11" required>
+                                        <input type="text" class="form-control" name="age" required>
                                     </td>       
                                     <td valign="middle">
                                         <select class="form-control select" name="relation" required>
@@ -421,9 +421,7 @@
                                         <div class="invalid-feedback"></div>
                                     </td>
                                     <td valign="middle">
-                                        <center>
-                                            <button type="submit" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
-                                        </center>
+                                        <button type="submit" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
                                     </td>
                                 </tr>
                         </table>
@@ -438,7 +436,7 @@
                         <th>Action</th>
                         <th>Full Name</th>
                         <th class="text-center">Sex</th>
-                        <th class="text-center">Birthdate</th>
+                        {% comment %} <th class="text-center">Birthdate</th> {% endcomment %}
                         <th class="text-center">Relation</th>
                         <th class="text-center">Age</th>
                         <th class="text-center">Occupation</th>
@@ -451,9 +449,9 @@
                                 <td><a href='#' data-role='delete_fam_composition' data-id="{{row.id}}">Delete</a></td>
                                 <td>{{ row.get_family_fullname_formatted }}</td>
                                 <td class="text-center">{{ row.sex.name }}</td>
-                                <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td>
+                                {% comment %} <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td> {% endcomment %}
                                 <td class="text-center">{{ row.relation.name }}</td>
-                                <td class="text-center">{{ row.get_age }}</td>
+                                <td class="text-center">{% if row.age %}{{ row.age }}{% else %}{{ row.get_age }}{% endif %}</td>
                                 <td class="text-center">{{ row.occupation.occupation_name }}</td>
                                 <td class="text-center">{{ row.salary|intcomma }}</td>
                             </tr>

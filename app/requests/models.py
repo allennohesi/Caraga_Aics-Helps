@@ -122,10 +122,11 @@ class ClientBeneficiaryFamilyComposition(models.Model):
     suffix = models.ForeignKey(Suffix, models.DO_NOTHING)
     sex = models.ForeignKey(Sex, models.DO_NOTHING)
     relation = models.ForeignKey(Relation,models.DO_NOTHING)
-    birthdate = models.DateField(blank=True, null=True)
+    birthdate = models.DateField(default=timezone.now)
     occupation = models.ForeignKey('occupation_tbl', models.DO_NOTHING)
     salary = models.CharField(max_length=255, blank=True, null=True)
     clientbene = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING)
+    age = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_family_fullname_formatted(self):
