@@ -456,18 +456,37 @@ def print_service_provider(request):
 	if request.method == "GET":
 		data = Transaction.objects.filter(
 			Q(service_provider=request.GET.get("service_provider")) &
+			Q(status__in=[3, 6]) &
 			Q(date_entried__range=(start_date, end_date)) &
-			Q(dv_number__isnull=False)).order_by('-tracking_number').order_by('dv_date')
+			Q(dv_number__isnull=False)
+		).order_by('-tracking_number', 'dv_date')
 		
+		unbilled = Transaction.objects.filter(
+			Q(service_provider=request.GET.get("service_provider")) &
+			Q(status__in=[3, 6]) &
+			Q(date_entried__range=(start_date, end_date)) &
+			Q(dv_number__isnull=True)
+		).order_by('-tracking_number', 'dv_date')
+			
 		total_values_data = data.values_list('total_amount', flat=True)
 		total_values = sum(float(value.replace(',', '')) for value in total_values_data)
+
+		unbilled_total_values = unbilled.values_list('total_amount', flat=True)
+		unbilled_final_values = sum(float(value.replace(',', '')) for value in unbilled_total_values)
 		# total_amount = data.aggregate(Sum('amount'))['amount']
 		# print(total_amount)
 	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider")).first()
-	context={
+
+	formatted_start_date = start_date.strftime('%B %d, %Y') if start_date else None
+	formatted_end_date = end_date.strftime('%B %d, %Y') if start_date else None
+	context={	
 		'datas': data,
 		'total':total_values,
 		'service_provider':Service_provider,
+		'unbilled':unbilled,
+		'unbilled_final_values': unbilled_final_values,
+		'date_filtered':formatted_start_date,
+		'date_end_filtered':formatted_end_date,
 	}
 	return render(request,'financial/print_sprovider.html', context)
 
