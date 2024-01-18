@@ -87,6 +87,7 @@ def transaction_request(request):
 				is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
 				is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
 				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
+				transaction_status=1,
 			)
 			data.save()
 			AssessmentProblemPresented.objects.create(
@@ -100,7 +101,8 @@ def transaction_request(request):
 				is_verified = "1",
 				verifier_id=request.user.id,
 				verified_time_end=data.date_entried,
-				status="1"
+				status="1",
+				transaction_status=1,
 			)
 
 		return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
@@ -255,6 +257,16 @@ def get_bene_info(request, pk):
 @login_required
 @groups_only('Verifier', 'Super Administrator', 'Surveyor')
 def incoming(request):
+	data = Transaction.objects.all()
+	for row in data:
+		Transaction.objects.filter(id=row.id).update(
+			transaction_status=1
+		)
+	transactionstatus = TransactionStatus1.objects.all()
+	for status in transactionstatus:
+		TransactionStatus1.objects.filter(id=status.id).update(
+			transaction_status=1
+		)
 	# data = Transaction.objects.all()
 	# for row in data:
 	# 	data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
