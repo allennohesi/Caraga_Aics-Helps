@@ -448,20 +448,22 @@ def print_voucher(request, pk):
 	return render(request,'financial/Print_voucher.html', context)
 
 def print_service_provider(request):
-	sum=0
 	start_date_str = request.GET.get("start_date")
 	end_date_str = request.GET.get("end_date")
 
-	# Convert the date strings to datetime objects
 	start_date = datetime.strptime(start_date_str, "%Y-%m-%d") if start_date_str else None
 	end_date = datetime.strptime(end_date_str, "%Y-%m-%d") if end_date_str else None
 	if request.method == "GET":
-		data = TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider"),status=6,transaction_id__date_of_transaction__range=(start_date, end_date)).all()
-		for row in data:
-			totalValues = row.transaction.get_total['total']
-			sum=sum+totalValues
-	total_values = sum
-	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider"),status=6).first()
+		data = Transaction.objects.filter(
+			Q(service_provider=request.GET.get("service_provider")) &
+			Q(date_entried__range=(start_date, end_date)) &
+			Q(dv_number__isnull=False)).order_by('-tracking_number').order_by('dv_date')
+		
+		total_values_data = data.values_list('total_amount', flat=True)
+		total_values = sum(float(value.replace(',', '')) for value in total_values_data)
+		# total_amount = data.aggregate(Sum('amount'))['amount']
+		# print(total_amount)
+	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider")).first()
 	context={
 		'datas': data,
 		'total':total_values,
