@@ -470,6 +470,11 @@
                 {% csrf_token %}
                 <div class="row mb-3">
                     <div class="col-md-3">
+                        <input class="form-check-input" id="is_referral" name="is_referral" value="1" type="checkbox" {% if transaction.is_referral %} checked {% else %} {% endif %}> REFERRAL <br>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>New / Returning <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="new_returning" required>

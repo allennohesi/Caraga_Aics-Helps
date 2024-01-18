@@ -544,7 +544,8 @@ def save_assessment(request, pk):
 				is_return_new=request.POST.get('new_returning'),
 				service_provider=request.POST.get('service_provider'),
 				status=3,
-				swo_date_time_end=datetime.now()
+				swo_date_time_end=datetime.now(),
+				is_referral=1 if request.POST.get('is_referral') else None,
 			)
 			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 				sw_assessment=request.POST.get('sw_asessment'),
