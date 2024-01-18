@@ -257,16 +257,17 @@ def get_bene_info(request, pk):
 @login_required
 @groups_only('Verifier', 'Super Administrator', 'Surveyor')
 def incoming(request):
-	data = Transaction.objects.all()
-	for row in data:
-		Transaction.objects.filter(id=row.id).update(
-			transaction_status=1
-		)
-	transactionstatus = TransactionStatus1.objects.all()
-	for status in transactionstatus:
-		TransactionStatus1.objects.filter(id=status.id).update(
-			transaction_status=1
-		)
+	# data = Transaction.objects.all()
+	# for row in data:
+	# 	Transaction.objects.filter(id=row.id).update(
+	# 		transaction_status=1
+	# 	)
+	# transactionstatus = TransactionStatus1.objects.all()
+	# for status in transactionstatus:
+	# 	TransactionStatus1.objects.filter(id=status.id).update(
+	# 		transaction_status=1
+	# 	)
+	
 	# data = Transaction.objects.all()
 	# for row in data:
 	# 	data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
