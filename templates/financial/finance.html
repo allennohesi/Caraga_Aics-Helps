@@ -136,32 +136,32 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="{% url 'print_service_provider' %}" target="_blank" method="GET">
-        <div class="modal-body">
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label for="start_date">Start Date:</label>
-                    <input class="form-control" type="date" name="start_date" id="start_date">
-                    <label for="end_date">End Date:</label>
-                    <input class="form-control" type="date" name="end_date" id="end_date">
-                </div>
-                <br>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Service Provider <span class="txt-danger">*</span></label>
-                        <select class="form-control select1 hidden" name="service_provider" id="service_pr" required>
-                            <option></option>
-                            {% for row in service_provider  %}
-                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
-                            {% endfor %}
-                        </select>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="start_date">Start Date:</label>
+                        <input class="form-control" type="date" name="start_date" id="start_date">
+                        <label for="end_date">End Date:</label>
+                        <input class="form-control" type="date" name="end_date" id="end_date">
+                    </div>
+                    <br>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Service Provider <span class="txt-danger">*</span></label>
+                            <select class="form-control select1 hidden" name="service_provider" id="service_pr" required>
+                                <option></option>
+                                {% for row in service_provider  %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Print</button>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Print</button>
+            </div>
         </form>
       </div>
     </div>
