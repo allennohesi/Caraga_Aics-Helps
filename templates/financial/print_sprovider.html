@@ -16,7 +16,7 @@
         <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height:15px;">
             <th>
-              <img src="{% static 'lp_assets/images/insignia2.png' %}" style="margin-top: 0px;" width="250px" height="50px">
+              <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
             </th>
             <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
               <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
@@ -30,7 +30,8 @@
           <thead style="line-height: 20px;">
               <td colspan="2" style="text-align: center;font-family: Arial, sans-serif">
                 <label style="font-size: 18px;">SERVICE PROVIDER <br><b>{{service_provider.transaction.service_provider.name}}</b></label><br>
-                <label style="font-size: 19px;">Summary report list<u></u></label>
+                <label style="font-size: 19px;">Summary report list<u></u></label><br>
+                <label style="font-size: 19px;">This date is as of: Start <u>{{date_filtered}}</u> - <u>{{date_end_filtered}}</u></label>
               </td>
           </thead>  
         </table>
@@ -80,6 +81,48 @@
           {% endfor %}
           <td colspan="8" class="table-active text-right">TOTAL DATA</td>
           <td colspan="1" class="table-active">{{total|floatformat:2|intcomma}}</td>
+        </table>
+        <div class="alert alert-warning" role="alert">
+          Data below are the unbilled transactions
+        </div>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: black;text-align: center;border: 2px solid;">
+          <tr style="font-weight:bold;">
+            <td>
+              Tracking Number<br>
+              <label style="color: gray;">(AICS-Transaction)</label>
+            </td>
+            <td>
+              Service Provider
+            </td>
+            <td>
+              Social worker officer
+            </td>
+            <td>
+              Client Name
+            </td>
+            <td>
+              Bene Name
+            </td>
+            <td>
+              Type of Assistance
+            </td>
+            <td>
+              Total
+            </td>
+          </tr>
+          {% for row in unbilled %}
+          <tr style="font-size:12px;">
+            <td>{{row.tracking_number}}</td>
+            <td>{{row.service_provider.name}}</td>
+            <td>{{row.swo.get_client_fullname}}</td>
+            <td>{{row.client.get_client_fullname}}</td>
+            <td>{{row.bene.get_client_fullname}}</td>
+            <td>{{row.lib_assistance_category.name}}</td>
+            <td>{{row.total_amount|intcomma}}</td>
+          </tr>
+          {% endfor %}
+          <td colspan="6" class="table-active text-right">TOTAL DATA</td>
+          <td colspan="1" class="table-active">{{unbilled_final_values|floatformat:2|intcomma}}</td>
         </table>
         </div>
       </div>
