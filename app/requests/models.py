@@ -199,6 +199,7 @@ class Transaction(models.Model):
     swo_date_time_end = models.DateTimeField()
     dv_number = models.CharField(max_length=255, blank=True, null=True)
     dv_date = models.DateField()
+    transaction_status = models.IntegerField(blank=True, null=True)
 
     @property
     def get_action_action(self):
@@ -335,6 +336,7 @@ class TransactionStatus1(models.Model):
     status = models.IntegerField()
     status_remarks = models.CharField(max_length=255, blank=True, null=True)
     signatories_approved = models.SmallIntegerField(blank=True, null=True)
+    transaction_status = models.IntegerField(blank=True, null=True)
 
     @property
     def get_total(self):
