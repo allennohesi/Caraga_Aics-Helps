@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Material Assistance Distribution Sheet (MDS)</title>
+  <title>Summary report</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Load paper.css for happy printing -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
@@ -29,9 +29,11 @@
         <table class="title table table-bordered" style="margin-top: 0px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height: 20px;">
               <td colspan="2" style="text-align: center;font-family: Arial, sans-serif">
-                <label style="font-size: 18px;">SERVICE PROVIDER <br><b>{{service_provider.transaction.service_provider.name}}</b></label><br>
+                <label style="font-size: 18px;">SERVICE PROVIDER <br><b style="color:blue;">{{service_provider.transaction.service_provider.name}}</b></label><br>
                 <label style="font-size: 19px;">Summary report list<u></u></label><br>
-                <label style="font-size: 19px;">This date is as of: Start <u>{{date_filtered}}</u> - <u>{{date_end_filtered}}</u></label>
+                <label style="font-size: 19px;">This date is as of: <u>{{date_filtered}}</u> - <u>{{date_end_filtered}}</u></label>
+                <br>
+                <small style="color:red;">Caraga-AICSHelpSystem generated report</small>
               </td>
           </thead>  
         </table>
