@@ -5,6 +5,34 @@
         }
 </style>
 <div class="row" id="modal_view">
+    <form id="updateStatus">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Change Status <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" name="status_update" value="status" hidden>
+                    <select class="form-control select" id="change_status" name="change_status" required>
+                        <option></option>
+                        {% comment %} <option value="2">ASSESSED</option>
+                        <option value="3">FOR UPLOADING</option>
+                        <option value="4">HOLD</option> {% endcomment %}
+                        <option value="5">CANCELLED</option>
+                        <option value="6">COMPLETED</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="submit" class="btn btn-primary" name="regprice" value="update">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
     <form id="submitformProvided">
         {% csrf_token %}
         <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment|floatformat:2}}" hidden>
@@ -239,7 +267,11 @@
         placeholder: 'Choose',
         containerCssClass: 'select'
     });
-
+    $('.select').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select'
+    });
     $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
         var reg_price = $("#reg_price").val()
         var quantity = $("#qty").val()
@@ -348,6 +380,45 @@
                                     if (result.isConfirmed){
                                         $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
                                         $('#table').DataTable().ajax.reload();
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+    $('#updateStatus').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to update status?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'update_amount' transaction.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
+                                        $('#all-transaction').DataTable().ajax.reload();
                                     }
                                 });
                             }
