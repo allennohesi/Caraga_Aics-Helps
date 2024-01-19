@@ -460,9 +460,6 @@ def print_service_provider(request):
 			Q(date_of_transaction__range=(start_date_str, end_date_str)) &
 			Q(dv_number__isnull=False)
 		).order_by('-tracking_number', 'dv_date')
-
-		print(data)
-		
 		unbilled = Transaction.objects.filter(
 			Q(service_provider=request.GET.get("service_provider")) &
 			Q(status__in=[3, 6]) &

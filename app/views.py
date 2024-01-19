@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.requests.models import SocialWorker_Status, TransactionStatus1
 from app.models import AuthUser, AuthUserGroups, AuthGroup
-from django.db.models import Value, Sum, Count
+from django.db.models import Value, Sum, Count, Q
 from datetime import date
 from app.libraries.models import Category
 from django.utils.encoding import smart_str
@@ -151,9 +151,11 @@ def generateTransactions(request):
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
 		data = Transaction.objects.filter(
-				swo_date_time_end__range=(start_date_str, end_date_str)
+					swo_date_time_end__range=(start_date_str, end_date_str)
 				).select_related(
 					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+				).filter(
+					Q(status=3) | Q(status=6)
 				)
 		# Create a CSV response
 		response = HttpResponse(content_type='text/csv')
