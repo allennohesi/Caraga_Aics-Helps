@@ -602,30 +602,40 @@ def update_amount(request,pk):
 	if request.method == "POST":
 		with transaction.atomic():
 			check = Transaction.objects.filter(id=pk)
-			if request.POST.get('sid'):
-				transaction_description.objects.filter(id=request.POST.get('sid')).update(
-					provided_data=request.POST.get('provided'),
-					regular_price=request.POST.get('regprice'),
-					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-					discount_quantity=request.POST.get('qty1'), #CHECKING
-					total=request.POST.get('tot'),	
+			if request.POST.get('status_update') == "status":
+				data = TransactionStatus1.objects.filter(transaction_id=pk).update(
+					status=request.POST.get("change_status"),
 				)
-				return JsonResponse({'data': 'success',
-					'msg': 'The data provided to client, successfully updated'})
+				data = Transaction.objects.filter(id=pk).update(
+					status=request.POST.get("change_status")
+				)
+				print("UPDATED")
+				return JsonResponse({'data': 'success', 'msg': 'The status has been updated'})
 			else:
-				transaction_description.objects.create(
-					tracking_number_id=transaction_id.tracking_number,
-					provided_data=request.POST.get('provided'),
-					regular_price=request.POST.get('regprice'),
-					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-					discount_quantity=request.POST.get('qty1'), #CHECKING
-					total=request.POST.get('tot'),
-					user_id=request.user.id,
-				)
-				return JsonResponse({'data': 'success',
-									'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+				if request.POST.get('sid'):
+					transaction_description.objects.filter(id=request.POST.get('sid')).update(
+						provided_data=request.POST.get('provided'),
+						regular_price=request.POST.get('regprice'),
+						regular_quantity=request.POST.get('qty'),
+						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+						discount_quantity=request.POST.get('qty1'), #CHECKING
+						total=request.POST.get('tot'),	
+					)
+					return JsonResponse({'data': 'success',
+						'msg': 'The data provided to client, successfully updated'})
+				else:
+					transaction_description.objects.create(
+						tracking_number_id=transaction_id.tracking_number,
+						provided_data=request.POST.get('provided'),
+						regular_price=request.POST.get('regprice'),
+						regular_quantity=request.POST.get('qty'),
+						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+						discount_quantity=request.POST.get('qty1'), #CHECKING
+						total=request.POST.get('tot'),
+						user_id=request.user.id,
+					)
+					return JsonResponse({'data': 'success',
+										'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
