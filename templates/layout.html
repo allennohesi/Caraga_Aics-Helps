@@ -53,10 +53,10 @@
                             {% comment %} {% else %}
                             {% endif %} {% endcomment %}
                             {% endif %}
-                            <li><div class="notification-box"><i data-feather="chevrons-up"></i><span class="badge rounded-pill badge-secondary">{% count_ongoing %}</span></li>
+                            <li><div class="notification-box"><i data-feather="chevrons-up"></i><span class="badge rounded-pill badge-secondary"></span></li>
                             <li>
                                 <a href="{% url 'mail' %}">
-                                    <div class="notification-box"><i data-feather="bell"></i><span class="badge rounded-pill badge-secondary">{% get_count_mail %}</span></div>
+                                    <div class="notification-box"><i data-feather="bell"></i><span class="badge rounded-pill badge-secondary"></span></div>
                                 </a>
                             </li>
                             <li class="profile-nav onhover-dropdown p-0 me-0">
@@ -146,7 +146,8 @@
                                     {% endif %}
                                     {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
-                                        <label class="badge badge-success">{% count_assessment_all %}</label>
+                                        {% comment %} <label class="badge badge-success">{% count_assessment_all %}</label> {% endcomment %}
+                                        <label class="badge badge-info">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
                                     </li>
                                     {% endif %}
