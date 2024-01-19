@@ -94,8 +94,8 @@ def financial_transaction(request):
 				)
 				return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 	context = {
-		'service_provider': ServiceProvider.objects.filter(status=1),
-		'fund_source': FundSource.objects.filter(status=1)
+		'service_provider': ServiceProvider.objects.all(),
+		'fund_source': FundSource.objects.all()
 	}
 	return render(request,'financial/finance.html', context)
 
