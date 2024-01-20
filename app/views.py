@@ -68,16 +68,39 @@ def dashboard(request):
 
 	active_emp = AuthUser.objects.filter(is_active=1).count()
 
-	fa = TransactionStatus1.objects.filter(transaction_id__lib_type_of_assistance_id__type_name="Financial Assistance").count()
-	ma = TransactionStatus1.objects.filter(transaction_id__lib_type_of_assistance_id__type_name="Material Assistance").count()
-	psych = TransactionStatus1.objects.filter(transaction_id__lib_type_of_assistance_id__type_name="Psychosocial").count()
+	fa = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Financial Assistance") &
+		(Q(status=3) | Q(status=6))
+		).count()
+	ma = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Material Assistance") &
+		(Q(status=3) | Q(status=6))
+		).count()
+	psych = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Psychosocial") &
+		(Q(status=3) | Q(status=6))
+		).count()
 
 	pending = TransactionStatus1.objects.filter(status=1).count()
 	ongoing = TransactionStatus1.objects.filter(status=2).count()
-	completed = TransactionStatus1.objects.filter(status=6).count()
+	completed = TransactionStatus1.objects.filter(
+				Q(status=3) | Q(status=6)
+				).count()
 	hold = TransactionStatus1.objects.filter(status=4).count()
 	cancelled = TransactionStatus1.objects.filter(status=5).count()
 	
+	transactions_per_swo = (
+		Transaction.objects
+		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
+		.values('swo__first_name', 'swo__last_name')
+		.annotate(transaction_count=Count('swo'))
+		.order_by('-transaction_count')  # Order by transaction count in descending order
+	)[:3]
+
+	# for entry in transactions_per_swo:
+	# 	swo_username = entry['swo__first_name'] + " " + entry['swo__last_name']
+	# 	transaction_count = entry['transaction_count']
+	# 	print(f"Social Worker {swo_username} has {transaction_count} transactions.")
 
 
 	context = {
@@ -98,6 +121,8 @@ def dashboard(request):
 		'completed':completed,
 		'hold':hold,
 		'cancelled':cancelled,
+
+		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 3 SERVING CLIENTS
 
 	}
 	return render(request, 'home.html', context)

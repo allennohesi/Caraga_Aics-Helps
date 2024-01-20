@@ -61,38 +61,43 @@ def financial_transaction(request):
 			lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
 			track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
 				generate_serial_string(None, 'CODE')
-			if request.POST.get('dv_id'):
-				finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
-					voucher_title=voucher,
-					date=date,
-					remarks=remarks,
-					user_id=request.user.id,
-					with_without_dv=request.POST.get('with_without_dv'),
-					status=1,
-				)
-				
-
-				data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
-				voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
-				for row in voucher_data:
-					print(row.id)
-					Transaction.objects.filter(id=row.transactionStatus_id).update(
-						dv_number=voucher,
-						dv_date=date
+			check_if_exists = finance_voucher.objects.filter(
+				Q(voucher_title__icontains=request.POST.get('voucher_title'))
+			).first()
+			if not check_if_exists:
+				if request.POST.get('dv_id'):
+					finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+						voucher_title=voucher,
+						date=date,
+						remarks=remarks,
+						user_id=request.user.id,
+						with_without_dv=request.POST.get('with_without_dv'),
+						status=1,
 					)
+					data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
+					voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
+					for row in voucher_data:
+						print(row.id)
+						Transaction.objects.filter(id=row.transactionStatus_id).update(
+							dv_number=voucher,
+							dv_date=date
+						)
 
-				return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
+					return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
+				else:
+					finance_voucher.objects.create(
+						voucher_code=track_num,
+						voucher_title=voucher,
+						date=date,
+						remarks=remarks,
+						user_id=request.user.id,
+						with_without_dv=request.POST.get('with_without_dv'),
+						status=1,
+					)
+					return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 			else:
-				finance_voucher.objects.create(
-					voucher_code=track_num,
-					voucher_title=voucher,
-					date=date,
-					remarks=remarks,
-					user_id=request.user.id,
-					with_without_dv=request.POST.get('with_without_dv'),
-					status=1,
-				)
-				return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
+				print("ELSE")
+				return JsonResponse({'error': True, 'msg': 'This Title/DV already exists, please try different Title/DV for the better tracking.'})
 	context = {
 		'service_provider': ServiceProvider.objects.all(),
 		'fund_source': FundSource.objects.all()
@@ -422,7 +427,6 @@ def get_all_transaction(request):
 @login_required
 def get_data_transaction(request, pk):
 	data = TransactionStatus1.objects.filter(id=pk).first()
-
 	fullname = data.transaction.client.get_client_fullname
 	toa = data.transaction.lib_type_of_assistance.type_name
 	ta = data.transaction.lib_assistance_category.name
@@ -430,7 +434,6 @@ def get_data_transaction(request, pk):
 	csc = data.transaction.client_sub_category.acronym
 	service_provider = data.transaction.service_provider.name
 	fund_source = data.transaction.fund_source.name
-
 	return JsonResponse({'fullname': fullname, 'toa': toa, 'ta': ta, 'ct': ct,'csc':csc,'service_provider': service_provider, 'fund_source': fund_source})
 
 def print_voucher(request, pk):
@@ -472,8 +475,6 @@ def print_service_provider(request):
 
 		unbilled_total_values = unbilled.values_list('total_amount', flat=True)
 		unbilled_final_values = sum(float(value.replace(',', '')) for value in unbilled_total_values)
-		# total_amount = data.aggregate(Sum('amount'))['amount']
-		# print(total_amount)
 	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider")).first()
 
 	formatted_start_date = start_date.strftime('%B %d, %Y') if start_date else None
@@ -491,23 +492,21 @@ def print_service_provider(request):
 
 
 def view_dv_number(request,pk):
-	# sum=0
-	# outside_sum=0
-
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
 
 	if request.method == "POST":
-		finance_voucherData.objects.create(
-			voucher_id=pk,
-			transactionStatus_id=request.POST.get('transaction_id'),
-		)
-		Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
-			dv_number = finance_data.voucher_title,
-			dv_date = finance_data.date
-		)
-		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+		with transaction.atomic():
+			finance_voucherData.objects.create(
+				voucher_id=pk,
+				transactionStatus_id=request.POST.get('transaction_id'),
+			)
+			Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
+				dv_number = finance_data.voucher_title,
+				dv_date = finance_data.date
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 	
 
 	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
@@ -539,13 +538,16 @@ def voucher_outside_fo(request,pk):
 		finance_outsideFo.objects.create(
 			voucher_id=pk,
 			glnumber=request.POST.get('glnumber'),
+			service_provider_id=request.POST.get('service_provider'),
+    		date_soa=request.POST.get('date'),
 			client_name=request.POST.get('clientname'),
 			assistance_type=request.POST.get('assistance_type'),
 			amount=request.POST.get('amount'),
 		)
 		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 	context = {
-		'data':finance_voucher.objects.filter(id=pk).first()
+		'data':finance_voucher.objects.filter(id=pk).first(),
+		'service_provider': ServiceProvider.objects.filter(status=1)
 	}
 	return render(request,'financial/outside_fo.html',context)
 

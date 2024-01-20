@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 {% load tags %}
+{% load static %}
 <style>
 #assessment-table {
     text-transform: uppercase;
@@ -29,71 +30,66 @@
     </div>
 </div>
 <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-6">
-          <div class="card">
-              <div class="card-body" id="">
-                <canvas id="myChart2" style="width:100%"></canvas>
-              </div>
-          </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <img src="{% static 'images/knowledgebase/bg_1.jpg' %}" class="card-img-top" height="325px" width="100px;">
+        <div class="card-body">
+          <p class="card-text">You can submit feedback here!</p>
+          <a href="#" class="btn btn-primary">Feedback</a>
+        </div>
       </div>
-      <div class="col-sm-6">
-          <div class="card">
-              <div class="card-body" id="">
-                  <canvas id="myChart1" style="width:100%"></canvas>
-              </div>
-          </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="card">
-            <div class="card-body" id="">
-              <canvas id="counttransaction" style="width:100%"></canvas>
+    </div>
+    {% for row in transaction_per_swo %}
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-header">
+          Top 3 most served clients
+        </div>
+        <img src="{% static 'images/login/icon.png' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <div class="alert alert-primary" role="alert">
+              <p class="card-text" style="font-weight: bold;">{{ row.swo__first_name }} {{ row.swo__last_name }} <br>
+                Total: <u>{{ row.transaction_count }}</u></p>
             </div>
         </div>
       </div>
-      <div class="col-sm-6">
-          <div class="card">
-              <div class="card-body" id="">
-                  <canvas id="countstaff" style="width:100%"></canvas>
-              </div>
-          </div>
-      </div>
-      <div class="col-sm-12">
+    </div>
+    {% endfor %}
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
         <div class="card">
             <div class="card-body" id="">
-              <div class="d-flex flex-row-reverse bd-highlight">
-                <div class="p-2 bd-highlight"><a href="{% url 'print_ProvidedBYSWO' %}" target="_blank">Print</a></div>
-              </div>
-              <div class="table table-responsive">
-                <table class="table table-bordered table-hover" id="">
-                    <thead>
-                        <th>Social Workers</th>
-                        <th class="text-center">Provided with Hotmeals</th>
-                        <th class="text-center">Provided with Foodpack</th>
-                        <th class="text-center">Provided with Hygienekit</th>
-                        <th class="text-center">ACTIVE</th>
-                    </thead>
-                    {% for row in countingHotmeal%}
-                    <tbody>
-                        
-                        <td>{{row.user.get_fullname|upper}}</td>
-                        <td class="text-center">{{row.count_hmeals}}</td>
-                        <td class="text-center">{{row.food_pack}}</td>
-                        <td class="text-center">{{row.hygienekit}}</td>
-                        <td class="text-center"><i class="fa fa-check-circle txt-success"></i></td>
-                        
-                    </tbody>
-                    {% endfor %}
-                </table>
-            </div>
+              <canvas id="myChart2" style="width:100%"></canvas>
             </div>
         </div>
     </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body" id="">
+                <canvas id="myChart1" style="width:100%"></canvas>
+            </div>
+        </div>
     </div>
+    <div class="col-sm-6">
+      <div class="card">
+          <div class="card-body" id="">
+            <canvas id="counttransaction" style="width:100%"></canvas>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body" id="">
+                <canvas id="countstaff" style="width:100%"></canvas>
+            </div>
+        </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block script %}
-
 <script>
   var xValues = ["ONHOLD TRANSACTION", "CANCELLED TRANSACTION", "COMPLETE TRANSACTION", "PENDING TRANSACTION", "ONGOING TRANSACTIONS"];
   var yValues = [{{hold}},{{cancelled}}, {{completed}}, {{pending}}, {{ongoing}}];

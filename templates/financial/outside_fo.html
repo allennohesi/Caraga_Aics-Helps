@@ -8,22 +8,45 @@
     <form id="submitoutsidedata">
         {% csrf_token %}
         <div class="row mb-3">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label>GL Number <span class="txt-danger">*</span></label>
                     <input type="text" class="form-control" id="" name="glnumber" required>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label>Beneficiary name <span class="txt-danger">*</span></label>
                     <input type="text" class="form-control" id="" name="clientname" required>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Service Provider <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="service_provider" id="service_pr" required>
+                        <option></option>
+                        {% for row in service_provider  %}
+                        {% if row.id == transaction.service_provider_id %}
+                        <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                        {% else %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>Assistance type <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" name="assistance_type"  required>
+                    <input type="text" class="form-control" id="" name="assistance_type" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Date of transaction</label> <span class="txt-danger" id="required">*</span>
+                    <input type="date" class="form-control f-w-900 upper" name="date" required>
                 </div>
             </div>
             <div class="col-md-2">
@@ -32,7 +55,7 @@
                     <input type="text" class="form-control" id="" name="amount" required>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>SAVE</label>
                     <input type="submit" class="form-control f-w-900">
@@ -47,6 +70,11 @@
     $('.select1').select2({
         width: '100%',
         placeholder: 'Choose',
+        containerCssClass: 'select'
+    });
+    $('.select').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
         containerCssClass: 'select'
     });
 </script>

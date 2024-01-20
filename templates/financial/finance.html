@@ -237,7 +237,7 @@
             'serverSide': true,
             'processing': true,
             'deferRender': true,
-            'lengthMenu': [ 25, 50, 100 ],
+            'lengthMenu': [ 12, 25, 50, 100 ],
             'order': [[ 1, 'asc' ]],
             'bDestroy': true,
             'ajax': {
@@ -319,6 +319,8 @@
                                         location.reload()
                                     }
                                 });
+                            } else {
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
