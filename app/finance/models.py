@@ -37,6 +37,8 @@ class finance_voucherData(models.Model):
 class finance_outsideFo(models.Model):
     voucher = models.ForeignKey('finance_voucher', models.DO_NOTHING, blank=True, null=True)
     glnumber = models.CharField(max_length=255, blank=True, null=True)
+    service_provider = models.ForeignKey(ServiceProvider, models.DO_NOTHING, blank=True, null=True)
+    date_soa = models.DateField(blank=True, null=True)
     client_name = models.CharField(max_length=255, blank=True, null=True)
     assistance_type = models.CharField(max_length=255, blank=True, null=True)
     amount = models.CharField(max_length=255, blank=True, null=True)

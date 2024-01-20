@@ -9,15 +9,7 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>DV name: <u>{{finance_datas.voucher_title}} </u> <br> DV date: <u>{{finance_datas.date}}</u></label>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>Total Amount <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" readonly>
+                        <label>DV name/Temporary name: <u>{{finance_datas.voucher_title}} </u> <br> DV date/Temporary date: <u>{{finance_datas.date}}</u></label>
                     </div>
                 </div>
             </div>
@@ -100,10 +92,15 @@
                     <table class="table table-responsive table-sm table-bordered" id="voucher-data">
                         <thead>
                             <tr>
-                                <th>Remove</th>
+                                <th>Action</th>
                                 <th class="text-center">GL Number</th>
                                 <th class="text-center">Client name</th>
                                 <th class="text-center">Assistance Category</th>
+                                <th class="text-center">Service provider</th>
+                                <th class="text-center">Client name</th>
+                                <th class="text-center">Date of transaction</th>
+                                <th class="text-center">DV-Name</th>
+                                <th class="text-center">DV-Date</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
@@ -114,6 +111,11 @@
                                 <td class="text-center">{{row.glnumber}}</td>
                                 <td class="text-center">{{row.client_name}}</td>
                                 <td class="text-center">{{row.assistance_type}}</td>
+                                <td class="text-center">{{row.service_provider.name}}</td>
+                                <td class="text-center">{{row.client_name}}</td>
+                                <td class="text-center">{{row.date_soa}}</td>
+                                <td class="text-center">{{row.voucher.voucher_title}}</td>
+                                <td class="text-center">{{row.voucher.date}}</td>
                                 <td class="text-center">{{row.amount|intcomma}}</td>
                             </tbody>
                             {% endfor %}
@@ -122,6 +124,18 @@
                 </div>
             </div>
             {% endif %}
+            <br>
+            <p class="text-end">
+                Final total: <u><b style="color:red;">{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}</b></u>
+            </p>
+            {% comment %} <div class="row mb-3">
+                <div class="col-md-1">
+                    <div class="form-group text-right">
+                        <label>Total Amount <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" readonly>
+                    </div>
+                </div>
+            </div> {% endcomment %}
             <div class="modal fade bd-example-modal-xl" id="modal_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
