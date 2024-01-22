@@ -91,18 +91,18 @@ def view_client_bene_info(request, pk):
         last_name = request.POST.getlist('last_name[]')
         suffix = request.POST.getlist('suffix[]')
         rosterSex = request.POST.getlist('rosterSex[]')
-        birthdate = request.POST.getlist('birthdate[]')
+        age = request.POST.getlist('age[]')
         relation = request.POST.getlist('relation[]')
         occupation = request.POST.getlist('occupation[]')
         salary = request.POST.getlist('salary[]')
 
-        if not first_name == [''] and not last_name == [''] and not birthdate == [''] and not occupation == [
+        if not first_name == [''] and not last_name == [''] and not age == [''] and not occupation == [
             ''] and not salary == [''] and not rosterSex == ['']:
             data = [
-                {'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'birthdate': b, 'occupation': o,
+                {'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'age': b, 'occupation': o,
                  'salary': s, 'relation': rl, 'rosterSex': rs}
                 for fn, mn, ln, sx, b, o, s, rl, rs in
-                zip(first_name, middle_name, last_name, suffix, birthdate, occupation, salary, relation, rosterSex)
+                zip(first_name, middle_name, last_name, suffix, age, occupation, salary, relation, rosterSex)
             ]
             family_composition = ClientBeneficiaryFamilyComposition.objects.filter(clientbene__unique_id_number=pk)
             store = [row.id for row in family_composition]
@@ -117,7 +117,7 @@ def view_client_bene_info(request, pk):
                             last_name=row['last_name'],
                             suffix_id=row['suffix'],
                             sex_id=row['rosterSex'],
-                            birthdate=row['birthdate'],
+                            age=row['age'],
                             relation_id=row['relation'],
                             occupation_id=row['occupation'],
                             salary=row['salary'],
@@ -130,7 +130,7 @@ def view_client_bene_info(request, pk):
                             last_name=row['last_name'],
                             suffix_id=row['suffix'],
                             sex_id=row['rosterSex'],
-                            birthdate=row['birthdate'],
+                            age=row['age'],
                             relation_id=row['relation'],
                             occupation_id=row['occupation'],
                             salary=row['salary'],
@@ -145,7 +145,7 @@ def view_client_bene_info(request, pk):
                         last_name=row['last_name'],
                         suffix_id=row['suffix'],
                         sex_id=row['rosterSex'],
-                        birthdate=row['birthdate'],
+                        age=row['age'],
                         relation_id=row['relation'],
                         occupation_id=row['occupation'],
                         salary=row['salary'],
