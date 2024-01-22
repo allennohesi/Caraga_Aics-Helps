@@ -77,7 +77,6 @@ def financial_transaction(request):
 					data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
 					voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
 					for row in voucher_data:
-						print(row.id)
 						Transaction.objects.filter(id=row.transactionStatus_id).update(
 							dv_number=voucher,
 							dv_date=date
@@ -96,7 +95,6 @@ def financial_transaction(request):
 					)
 					return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 			else:
-				print("ELSE")
 				return JsonResponse({'error': True, 'msg': 'This Title/DV already exists, please try different Title/DV for the better tracking.'})
 	context = {
 		'service_provider': ServiceProvider.objects.all(),
@@ -463,6 +461,12 @@ def print_service_provider(request):
 			Q(date_of_transaction__range=(start_date_str, end_date_str)) &
 			Q(dv_number__isnull=False)
 		).order_by('-tracking_number', 'dv_date')
+
+		outside_fo = finance_outsideFo.objects.filter(
+			Q(service_provider=request.GET.get("service_provider")) &
+			Q(date_soa__range=(start_date_str, end_date_str))
+		).order_by('-id')
+
 		unbilled = Transaction.objects.filter(
 			Q(service_provider=request.GET.get("service_provider")) &
 			Q(status__in=[3, 6]) &
@@ -473,6 +477,9 @@ def print_service_provider(request):
 		total_values_data = data.values_list('total_amount', flat=True)
 		total_values = sum(float(value.replace(',', '')) for value in total_values_data)
 
+		outside_fo_data = outside_fo.values_list('amount', flat=True)
+		outside_fo_total_values = sum(float(value.replace(',', '')) for value in outside_fo_data)
+
 		unbilled_total_values = unbilled.values_list('total_amount', flat=True)
 		unbilled_final_values = sum(float(value.replace(',', '')) for value in unbilled_total_values)
 	Service_provider=TransactionStatus1.objects.filter(transaction_id__service_provider=request.GET.get("service_provider")).first()
@@ -480,11 +487,13 @@ def print_service_provider(request):
 	formatted_start_date = start_date.strftime('%B %d, %Y') if start_date else None
 	formatted_end_date = end_date.strftime('%B %d, %Y') if start_date else None
 	context={	
-		'datas': data,
-		'total':total_values,
-		'service_provider':Service_provider,
-		'unbilled':unbilled,
-		'unbilled_final_values': unbilled_final_values,
+		'datas': data, #TRANSACTION THAT ARE BILLED INSIDE OFFICE
+		'total':total_values, #TOTAL AMOUNT
+		'service_provider':Service_provider, 
+		'unbilled':unbilled, #UNBILLED TRANSACTION
+		'unbilled_final_values': unbilled_final_values, #TOTAL AMOUNT OF UNBILLED
+		'outside_fo': outside_fo, #OUTSIDE FO
+		'outside_fo_total_values': outside_fo_total_values, #TOTAL AMOUNT OF OUTSIDE THE REGION
 		'date_filtered':formatted_start_date,
 		'date_end_filtered':formatted_end_date,
 	}
@@ -611,7 +620,6 @@ def update_amount(request,pk):
 				data = Transaction.objects.filter(id=pk).update(
 					status=request.POST.get("change_status")
 				)
-				print("UPDATED")
 				return JsonResponse({'data': 'success', 'msg': 'The status has been updated'})
 			else:
 				if request.POST.get('sid'):
