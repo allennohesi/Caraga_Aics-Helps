@@ -247,7 +247,7 @@
             <thead>
                 <th width="30%">Full Name</th>
                 <th class="text-center">Sex</th>
-                <th class="text-center">Birth Date</th>
+                <th class="text-center">Age</th>
                 <th class="text-center">Relationship</th>
                 <th class="text-center">Occupation</th>
                 <th class="text-center">Salary per month</th>
@@ -277,7 +277,6 @@
                         <div class="invalid-feedback"></div>
                     </td>
                     <td valign="middle">
-                        <label>Sex <span class="txt-danger">*</span></label>
                         <select class="form-control select" name="rosterSex[]" required>
                             <option></option>
                             {% for row in sex %}
@@ -290,7 +289,7 @@
                         </select>
                     </td>
                     <td valign="middle">
-                        <input type="date" class="form-control" name="birthdate[]" value="{{ family.birthdate|date:'Y-m-d' }}">
+                        <input type="text" class="form-control" name="age[]" value="{{ family.age }}">
                     </td>
                     <td valign="middle">
                         <select class="form-control select" name="relation[]">
@@ -405,7 +404,7 @@
                     </select>
                 </td>   
                 <td valign="middle">
-                    <input type="date" class="form-control" name="birthdate[]">
+                    <input type="text" class="form-control" name="age[]">
                 </td>
                 <td valign="middle">
                     <select class="form-control relation-select" name="relation[]">
