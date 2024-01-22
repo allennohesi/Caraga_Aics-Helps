@@ -366,7 +366,7 @@
                 <thead>
                     <th>Full Name</th>
                     <th class="text-center">Sex</th>
-                    <th class="text-center">Birthdate</th>
+                    {% comment %} <th class="text-center">Birthdate</th> {% endcomment %}
                     <th class="text-center">Relation</th>
                     <th class="text-center">Age</th>
                     <th class="text-center">Occupation</th>
@@ -378,15 +378,15 @@
                         <tr>
                             <td>{{ row.get_family_fullname_formatted }}</td>
                             <td class="text-center">{{ row.sex.name }}</td>
-                            <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td>
+                            {% comment %} <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td> {% endcomment %}
                             <td class="text-center">{{ row.relation.name }}</td>
-                            <td class="text-center">{{ row.get_age }}</td>
+                            <td class="text-center">{% if row.age %}{{ row.age }}{% else %}{{ row.get_age }}{% endif %}</td>
                             <td class="text-center">{{ row.occupation.occupation_name }}</td>
                             <td class="text-center">{{ row.salary }}</td>
                         </tr>
                         {% endfor %}
                     {% else %}
-                        <td colspan="7" class="text-center">No data available.</td>
+                        <td colspan="6" class="text-center">No data available.</td>
                     {% endif %}
                 </tbody>
             </table>
