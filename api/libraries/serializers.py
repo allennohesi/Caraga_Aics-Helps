@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
-    TypeOfAssistance, Relation, Sex, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource
+    TypeOfAssistance, Relation, Sex, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource, occupation_tbl
 
 
 class FundSourceSerializer(serializers.ModelSerializer):
@@ -135,4 +135,11 @@ class BarangaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Barangay
+        fields = '__all__'
+
+class OccupationSerializer(serializers.ModelSerializer):
+    updated_by = serializers.CharField(source='user.get_fullname', read_only=True, default=None)
+
+    class Meta:
+        model = occupation_tbl
         fields = '__all__'
