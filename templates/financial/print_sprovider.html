@@ -84,6 +84,46 @@
           <td colspan="8" class="table-active text-right">TOTAL DATA</td>
           <td colspan="1" class="table-active">{{total|floatformat:2|intcomma}}</td>
         </table>
+        {% if outside_fo%}
+        <div class="alert alert-warning" role="alert">
+          Data below are billed here but outside the FO Transactions
+        </div>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: black;text-align: center;border: 2px solid;">
+          <tr style="font-weight:bold;">
+            <td>
+              GL Number<br>
+              <label style="color: gray;">(AICS-Transaction)</label>
+            </td>
+            <td>
+              Service Provider
+            </td>
+            <td>
+              Client/Bene Name
+            </td>
+            <td>
+              Type of Assistance
+            </td>
+            <td>
+              Dv - Date
+            </td>
+            <td>
+              Total
+            </td>
+          </tr>
+          {% for row in outside_fo %}
+          <tr style="font-size:12px;">
+            <td>{{row.glnumber}}</td>
+            <td>{{row.service_provider.name}}</td>
+            <td>{{row.client_name}}</td>
+            <td>{{row.assistance_type}}</td>
+            <td>{{row.date_soa}}</td>
+            <td>{{row.amount|floatformat:2|intcomma}}</td>
+          </tr>
+          {% endfor %}
+          <td colspan="5" class="table-active text-right">TOTAL DATA</td>
+          <td colspan="1" class="table-active">{{outside_fo_total_values|floatformat:2|intcomma}}</td>
+        </table>
+        {% endif %}
         <div class="alert alert-warning" role="alert">
           Data below are the unbilled transactions
         </div>
