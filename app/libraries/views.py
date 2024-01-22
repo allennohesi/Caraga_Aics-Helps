@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from app.global_variable import groups_only
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
     TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, FocalServiceProvider, Tribe, region, FundSource, \
-    SignatoriesTbl
+    SignatoriesTbl, occupation_tbl
 from app.requests.models import ClientBeneficiary
 from app.models import AuthUser, AuthUserGroups
 
@@ -948,3 +948,25 @@ def get_barangay_name(request, pk):
     for row in barangay:
         json.append({row['brgy_code']: row['brgy_name'].title()})
     return JsonResponse(json, safe=False)
+
+@login_required
+@groups_only('Super Administrator')
+def occupation(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+
+        check = occupation_tbl.objects.filter(occupation_name=name)
+        if not check:
+            occupation_tbl.objects.create(
+                occupation_name=name,
+                user_id=request.user.id,
+                is_active=1
+            )
+
+            return JsonResponse({'error': False, 'msg': "New Occupation '{}' has been added successfully.".format(name)})
+        else:
+            return JsonResponse({'error': True, 'msg': "Occupation '{}' is already existed.".format(name)})
+    context = {
+        'title': 'Occupation'
+    }
+    return render(request, 'libraries/occupation.html', context)
