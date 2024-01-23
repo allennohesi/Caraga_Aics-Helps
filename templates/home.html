@@ -33,29 +33,118 @@
   <div class="row">
     <div class="col-sm-6">
       <div class="card">
-        <img src="{% static 'images/knowledgebase/bg_1.jpg' %}" class="card-img-top" height="325px" width="100px;">
+        <div class="card-header">
+          <h5>Summary of Transactions</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
         <div class="card-body">
-          <p class="card-text">You can submit feedback here!</p>
-          <a href="#" class="btn btn-primary">Feedback</a>
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Details</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in summary_transactions %}
+                <tr>
+                  <td class="f-w-600">
+                    {% if row.status == 6 %}
+                      Completed Transactions
+                    {% elif row.status == 5 %}
+                      Cancelled Transactions
+                    {% elif row.status == 4 %}
+                      Hold Transactions
+                    {% elif row.status == 3 %}
+                      For uploading Transactions
+                    {% elif row.status == 2 %}
+                      Ongoing Transactions
+                    {% elif row.status == 1 %}
+                      Pending Transactions
+                    {% endif %}
+                  </td>
+                  <td class="font-primary">
+                    {% if row.status == 6 %}
+                      Completed
+                    {% elif row.status == 5 %}
+                      Cancelled
+                    {% elif row.status == 4 %}
+                      Hold
+                    {% elif row.status == 3 %}
+                      Uploading of picture
+                    {% elif row.status == 2 %}
+                      Ongoing
+                    {% elif row.status == 1 %}
+                      Pending
+                    {% endif %}              
+                  </td>
+                  <td>
+                    <div class="span badge rounded-pill pill-badge-secondary">{{row.transaction_count}}</div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-    {% for row in transaction_per_swo %}
-    <div class="col-sm-2">
+    <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
         <div class="card-header">
-          <center>Top 3 most completed transactions</center>
+          <h5>Most completed transactions</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
         </div>
-        <img src="{% static 'images/login/icon.png' %}" class="card-img-top" alt="...">
         <div class="card-body">
-            <div class="alert alert-primary" role="alert">
-              <p class="card-text" style="font-weight: bold;">{{ row.swo__first_name }} {{ row.swo__last_name }} <br>
-                Total: <u>{{ row.transaction_count }}</u></p>
-            </div>
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in transaction_per_swo %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                    <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                      <div class="d-inline-block">
+                        <h6>{{ row.swo__first_name }} {{ row.swo__last_name }}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>SOCIAL WORKER OFFICER</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-    {% endfor %}
   </div>
   <div class="row">
     <div class="col-sm-6">
