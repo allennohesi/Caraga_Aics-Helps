@@ -22,6 +22,7 @@ from openpyxl.styles import Font, PatternFill
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
 	uploadfile, TransactionStatus1, SocialWorker_Status
+from django.core.paginator import Paginator
 
 today = date.today()
 month = today.strftime("%m")
@@ -58,15 +59,19 @@ def media_access(request, path):
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
+	search = request.GET.get('search', '')
+	page = request.GET.get('page', 1)
+	rows = request.GET.get('rows', 3)
+
 	am = AuthUserGroups.objects.all().filter(group_id=3).count() #adminCount
 	swo = AuthUserGroups.objects.all().filter(group_id=2).count() #SwoCount
 	sp = AuthUserGroups.objects.all().filter(group_id=4).count() #ServiceProvider
 	vr = AuthUserGroups.objects.all().filter(group_id=1).count() #verifier
 
-	active_emp = AuthUser.objects.filter(is_active=1).count()
-	inactive_emp = AuthUser.objects.filter(is_active=0).count()
+	# active_emp = AuthUser.objects.filter(is_active=1).count()
+	# inactive_emp = AuthUser.objects.filter(is_active=0).count()
 
-	active_emp = AuthUser.objects.filter(is_active=1).count()
+	# active_emp = AuthUser.objects.filter(is_active=1).count()
 
 	fa = TransactionStatus1.objects.filter(
 		Q(transaction_id__lib_type_of_assistance_id__type_name="Financial Assistance") &
@@ -104,15 +109,32 @@ def dashboard(request):
 		.annotate(transaction_count=Count('status'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
+	transaction_status_summary = (
+		TransactionStatus1.objects
+		.filter(status__in=[1, 2, 3, 4, 5, 6])  # Filter transactions with status 3 or 6
+		.values('status')
+		.annotate(transaction_count=Count('status'))
+		.order_by('-transaction_count')  # Order by transaction count in descending order
+	)
 	total_count = transaction_status_summary.aggregate(total_count=Sum('transaction_count'))['total_count']
+
+	fund_source_summary = Paginator(
+		Transaction.objects
+		.filter(fund_source__name__icontains=search,status__in=[3, 6]) 
+		.values('fund_source__name')
+		.annotate(fund_source_sum=Sum('total_amount')) 
+		.order_by('-fund_source_sum'), rows).page(page)
+
+
+
 	context = {
 		'title': 'Home',
 		'am':am,
 		'swo':swo,
 		'sp':sp,
 		'vr':vr,
-		'active_emp':active_emp,
-		'inactive_emp':inactive_emp,
+		# 'active_emp':active_emp,
+		# 'inactive_emp':inactive_emp,
 
 		'financial': fa,
 		'material': ma,
@@ -126,7 +148,8 @@ def dashboard(request):
 
 		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
-		'total_transactions': total_count
+		'total_transactions': total_count,
+		'data': fund_source_summary
 
 	}
 	return render(request, 'home.html', context)
