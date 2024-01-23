@@ -104,8 +104,7 @@ def dashboard(request):
 		.annotate(transaction_count=Count('status'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
-
-
+	total_count = transaction_status_summary.aggregate(total_count=Sum('transaction_count'))['total_count']
 	context = {
 		'title': 'Home',
 		'am':am,
@@ -125,8 +124,9 @@ def dashboard(request):
 		'hold':hold,
 		'cancelled':cancelled,
 
-		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 3 SERVING CLIENTS
-		'summary_transactions':transaction_status_summary,
+		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 5 SERVING CLIENTS
+		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
+		'total_transactions': total_count
 
 	}
 	return render(request, 'home.html', context)
