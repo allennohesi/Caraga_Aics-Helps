@@ -296,6 +296,63 @@ def export_fund_summary(request):
 			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
 
 			return response
+		else:
+			queryset = Transaction.objects.filter(fund_source_id=request.GET.get("fund_source"),
+				date_of_transaction__range=(start_date_str, end_date_str)
+			).order_by("tracking_number").select_related(
+				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+			).only(
+				"tracking_number",
+				"client__last_name",
+				"client__first_name",
+				"client__middle_name",
+				"client__suffix__name",
+				"client__birthdate",
+				"client__age",
+				"client__civil_status__name",
+				"client__sex__name",
+				"client__street",
+				"client__barangay__brgy_name",
+				"client__barangay__city_code__city_name",
+				"client__street",
+				"client__barangay__city_code__prov_code__prov_name",
+				"client__barangay__city_code__prov_code__region_code__region_name",	
+				"bene__last_name",
+				"bene__first_name",
+				"bene__middle_name",
+				"bene__suffix__name",
+				"bene__age",
+				"bene__civil_status__name",
+				"bene__birthdate",
+				"bene__sex__name",
+				"bene__barangay__brgy_name",
+				"bene__barangay__city_code__city_name",
+				"bene__street",
+				"bene__barangay__city_code__prov_code__prov_name",
+				"bene__barangay__city_code__prov_code__region_code__region_name",
+				"relation__name",
+				"lib_assistance_category__name",
+				"is_gl",
+				"is_walkin",
+				"fund_source__name",
+				"service_provider__name",
+				"total_amount",
+				"is_referral",
+				"swo_date_time_end",
+				"swo__last_name",
+				"swo__middle_name",
+				"swo__first_name",
+				"dv_number",
+				"dv_date",
+				"status"
+
+			)
+
+			# Create the StreamingHttpResponse object with CSV header.
+			response = StreamingHttpResponse(streaming_content=generate_csv_data(queryset), content_type='text/csv')
+			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
+
+			return response
 
 def generate_csv_data(queryset):
 	# Write the header
