@@ -68,8 +68,8 @@ def dashboard(request):
 	sp = AuthUserGroups.objects.all().filter(group_id=4).count() #ServiceProvider
 	vr = AuthUserGroups.objects.all().filter(group_id=1).count() #verifier
 
-	# active_emp = AuthUser.objects.filter(is_active=1).count()
-	# inactive_emp = AuthUser.objects.filter(is_active=0).count()
+	active_emp = AuthUser.objects.filter(is_active=1).count()
+	inactive_emp = AuthUser.objects.filter(is_active=0).count()
 
 	# active_emp = AuthUser.objects.filter(is_active=1).count()
 
@@ -118,12 +118,6 @@ def dashboard(request):
 	)
 	total_count = transaction_status_summary.aggregate(total_count=Sum('transaction_count'))['total_count']
 
-	fund_source_summary = Paginator(
-		Transaction.objects
-		.filter(fund_source__name__icontains=search,status__in=[3, 6]) 
-		.values('fund_source__name')
-		.annotate(fund_source_sum=Sum('total_amount')) 
-		.order_by('-fund_source_sum'), rows).page(page)
 
 
 
@@ -133,8 +127,8 @@ def dashboard(request):
 		'swo':swo,
 		'sp':sp,
 		'vr':vr,
-		# 'active_emp':active_emp,
-		# 'inactive_emp':inactive_emp,
+		'active_emp':active_emp,
+		'inactive_emp':inactive_emp,
 
 		'financial': fa,
 		'material': ma,
@@ -149,7 +143,6 @@ def dashboard(request):
 		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
 		'total_transactions': total_count,
-		'data': fund_source_summary
 
 	}
 	return render(request, 'home.html', context)
