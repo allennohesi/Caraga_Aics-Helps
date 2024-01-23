@@ -95,12 +95,15 @@ def dashboard(request):
 		.values('swo__first_name', 'swo__last_name')
 		.annotate(transaction_count=Count('swo'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
-	)[:3]
+	)[:5]
 
-	# for entry in transactions_per_swo:
-	# 	swo_username = entry['swo__first_name'] + " " + entry['swo__last_name']
-	# 	transaction_count = entry['transaction_count']
-	# 	print(f"Social Worker {swo_username} has {transaction_count} transactions.")
+	transaction_status_summary = (
+		TransactionStatus1.objects
+		.filter(status__in=[1, 2, 3, 4, 5, 6])  # Filter transactions with status 3 or 6
+		.values('status')
+		.annotate(transaction_count=Count('status'))
+		.order_by('-transaction_count')  # Order by transaction count in descending order
+	)
 
 
 	context = {
@@ -123,6 +126,7 @@ def dashboard(request):
 		'cancelled':cancelled,
 
 		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 3 SERVING CLIENTS
+		'summary_transactions':transaction_status_summary,
 
 	}
 	return render(request, 'home.html', context)
