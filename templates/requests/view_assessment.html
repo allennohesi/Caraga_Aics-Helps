@@ -360,109 +360,101 @@
             <hr>
             <small>Beneficiary Family Composistion</small>
             <br>
-            <div class="row mb-3">
-                <div class="table-responsive">
-                    <form id="submitFamilyComposition">
-                        {% csrf_token %}
-                        <input type="text" name="bene_id" value="{% if transaction.client_id != transaction.bene_id %}{{ transaction.bene.id }}{% else %}{{ transaction.client.id }}{% endif %}" hidden>
+            <form id="submitFamilyComposition">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="table-responsive">
                         <table class="table table-bordered w-100 table-sm" id="family-composition-table">
-                            <table class="table table-bordered w-100 table-sm" id="family-composition-table">
-                                <thead>
-                                    <th width="30%">Full Name</th>
-                                    <th class="text-center">Sex</th>
-                                    <th class="text-center">Birthday/Age</th>
-                                    <th class="text-center">Relationship</th>
-                                    <th class="text-center">Occupation</th>
-                                    <th class="text-center">Salary per month</th>
-                                    <th class="text-center">Action</th>
-                                </thead>
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" name="first_name" placeholder="First Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()" required><br>
-                                        <input type="text" class="form-control" name="middle_name" placeholder="Middle Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()"><br>
-                                        <input type="text" class="form-control" name="last_name" placeholder="Last Name" autocomplete="off" oninput="this.value = this.value.toUpperCase()" required><br>
-                                        <select class="form-control select" name="suffix">
-                                            <option></option>
-                                            {% for row in suffix %}
-                                            <option value="{{ row.id }}">{{ row.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback"></div>
-                                    </td>
-                                    <td valign="middle">
-                                        <select class="form-control select" name="rosterSex" required>
-                                            <option></option>
-                                            {% for row in sex %}
-                                            <option value="{{ row.id }}">{{ row.name }}</option>
-                                            {% endfor %}
-                                        </select><br>
-                                    </td>
-                                    <td valign="middle">
-                                        <input type="text" class="form-control" name="age" maxlength="2" required>
-                                    </td>       
-                                    <td valign="middle">
-                                        <select class="form-control select" name="relation" required>
-                                            <option></option>
-                                            {% for row in relation %}
-                                            <option value="{{ row.id }}">{{ row.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                                    <td valign="middle">
-                                        <select class="form-control select" name="occupation" required>
-                                            <option></option>
-                                            {% for row in occupation %}
-                                            <option value="{{ row.id }}">{{ row.occupation_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                                    <td valign="middle">
-                                        <input type="text" class="form-control" name="salary" autocomplete="off" required>
-                                        <div class="invalid-feedback"></div>
-                                    </td>
-                                    <td valign="middle">
-                                        <button type="submit" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
-                                    </td>
-                                </tr>
+                            <thead>
+                                <th width="30%">Full Name</th>
+                                <th class="text-center">Sex</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Relationship</th>
+                                <th class="text-center">Occupation</th>
+                                <th class="text-center">Salary per month</th>
+                                <th>
+                                    <center>
+                                        <button type="button" class="btn btn-primary btn-xs" id="add-family"><i class="fa fa-plus"></i></button>
+                                    </center>
+                                </th>
+                            </thead>           
+                            <tbody>
+                                {% if family_composistion%}
+                                    {% for family in family_composistion %}
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control" value="{{ family.first_name }}" name="first_name[]" placeholder="First Name" autocomplete="off"><br>
+                                            <input type="text" class="form-control" value="{{ family.middle_name }}" name="middle_name[]" placeholder="Middle Name" autocomplete="off"><br>
+                                            <input type="text" class="form-control" value="{{ family.last_name }}" name="last_name[]" placeholder="Last Name" autocomplete="off"><br>
+                                            <select class="form-control select" name="suffix[]">
+                                                <option></option>
+                                                {% for row in suffix %}
+                                                {% if row.id == family.suffix_id %}
+                                                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                                                {% else %}
+                                                <option value="{{ row.id }}">{{ row.name }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback"></div>
+                                        </td>
+                                        <td valign="middle">
+                                            <select class="form-control select" name="rosterSex[]" required>
+                                                <option></option>
+                                                {% for row in sex %}
+                                                {% if row.id == family.sex_id %}
+                                                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                                                {% else %}
+                                                <option value="{{ row.id }}">{{ row.name }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td valign="middle">
+                                            <input type="text" class="form-control" name="age[]" value="{{ family.age }}">
+                                        </td>
+                                        <td valign="middle">
+                                            <select class="form-control select" name="relation[]">
+                                                <option></option>
+                                                {% for row in relation %}
+                                                {% if row.id == family.relation_id %}
+                                                <option value="{{ row.id }}" selected>{{ row.name }}</option>
+                                                {% else %}
+                                                <option value="{{ row.id }}">{{ row.name }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td valign="middle">
+                                            <select class="form-control select" name="occupation[]">
+                                                <option></option>
+                                                {% for row in occupation %}
+                                                {% if row.id == family.occupation_id %}
+                                                <option value="{{ row.id }}" selected>{{ row.occupation_name }}</option>
+                                                {% else %}
+                                                <option value="{{ row.id }}">{{ row.occupation_name }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td valign="middle">
+                                            <input type="text" class="form-control" name="salary[]" value="{{ family.salary }}" autocomplete="off">
+                                            <div class="invalid-feedback"></div>
+                                        </td>
+                                        <td valign="middle">
+                                            <center>
+                                                <a href='#' data-role='delete_fam_composition' data-id="{{family.id}}"><i class="fa fa-minus"></i></a>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
                         </table>
-                    </form>
+                    </div>
                 </div>
-            </div>
-            <br><br>
-            <div class="row mb-3">
-                <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="family_composistion_table">
-                    <thead>
-                        <th>Action</th>
-                        <th>Full Name</th>
-                        <th class="text-center">Sex</th>
-                        {% comment %} <th class="text-center">Birthdate</th> {% endcomment %}
-                        <th class="text-center">Relation</th>
-                        <th class="text-center">Age</th>
-                        <th class="text-center">Occupation</th>
-                        <th class="text-center">Salary per month</th>
-                    </thead>
-                    <tbody>
-                        {% if family_composistion %}
-                            {% for row in family_composistion %}
-                             <tr>
-                                <td><a href='#' data-role='delete_fam_composition' data-id="{{row.id}}">Delete</a></td>
-                                <td>{{ row.get_family_fullname_formatted }}</td>
-                                <td class="text-center">{{ row.sex.name }}</td>
-                                {% comment %} <td class="text-center">{{ row.birthdate|date:'Y-m-d' }}</td> {% endcomment %}
-                                <td class="text-center">{{ row.relation.name }}</td>
-                                <td class="text-center">{% if row.age %}{{ row.age }}{% else %}{{ row.get_age }}{% endif %}</td>
-                                <td class="text-center">{{ row.occupation.occupation_name }}</td>
-                                <td class="text-center">{{ row.salary|intcomma }}</td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <td colspan="8" class="text-center">No data available.</td>
-                        {% endif %}
-                    </tbody>
-                </table>
-                </div>
-            </div>
+                <center><button type="submit" class="btn btn-primary btn-lg">Save Family Composition</button></center>
+            </form>
         </div>
         <div class="tab-pane fade m-t-30" id="assessment" role="tabpanel">
             <form id="submitAssessmentForm">
@@ -1143,5 +1135,88 @@
         });
 
     });
+</script>
+<script>
+    var template = `
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="first_name[]" placeholder="First Name" autocomplete="off"><br>
+            <input type="text" class="form-control" name="middle_name[]" placeholder="Middle Name" autocomplete="off"><br>
+            <input type="text" class="form-control" name="last_name[]" placeholder="Last Name" autocomplete="off"><br>
+            <select class="form-control suffix-select" name="suffix[]">
+                <option></option>
+                {% for row in suffix %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback"></div>
+        </td>
+        <td valign="middle">
+            <select class="form-control compo-select" name="rosterSex[]">
+                <option></option>
+                {% for row in sex %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endfor %}
+            </select>
+        </td>   
+        <td valign="middle">
+            <input type="text" class="form-control" name="age[]">
+        </td>
+        <td valign="middle">
+            <select class="form-control relation-select" name="relation[]">
+                <option></option>
+                {% for row in relation %}
+                <option value="{{ row.id }}">{{ row.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td valign="middle">
+            <select class="form-control occupation-select" name="occupation[]">
+                <option></option>
+                {% for row in occupation %}
+                <option value="{{ row.id }}">{{ row.occupation_name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="salary[]" autocomplete="off">
+            <div class="invalid-feedback"></div>
+        </td>
+        <td valign="middle">
+            <center>
+                <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+            </center>
+        </td>
+    </tr>
+`;
+
+$('#add-family').on('click', function(){
+    $('#family-composition-table tbody').prepend(template);
+    $('.suffix-select').select2({
+        width: "100%",
+        containerCssClass: 'select',
+
+        placeholder: 'Choose Suffix',
+    });
+    $('.compo-select').select2({
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose Sex',
+    });
+    $('.relation-select').select2({
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose Relationship',
+    });
+    $('.occupation-select').select2({
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose Occupation',
+    });
+});
+
+$(document).on('click', 'button[data-role=remove]', function(){
+    $(this).closest('tr').remove();
+});
 </script>
 {% endblock %}
