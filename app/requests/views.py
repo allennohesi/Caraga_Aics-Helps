@@ -417,22 +417,80 @@ def remove_family_composition(request):
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
 def view_assessment(request, pk):
-	if request.method == "POST":
-		ClientBeneficiaryFamilyComposition.objects.create(
-			first_name=request.POST.get('first_name'),
-			middle_name=request.POST.get('middle_name'),
-			last_name=request.POST.get('last_name'),
-			suffix_id=request.POST.get('suffix'),
-			sex_id=request.POST.get('rosterSex'),
-			age=request.POST.get('age'),
-			relation_id=request.POST.get('relation'),
-			occupation_id=request.POST.get('occupation'),
-			salary=request.POST.get('salary'),
-			clientbene_id=request.POST.get('bene_id')
-		)
-		return JsonResponse({'data': 'success', 'msg': 'You submitted your data'})
-	
 	data = Transaction.objects.filter(id=pk).first()
+	if request.method == "POST":
+		uuid = data.bene.unique_id_number
+		bene_id = data.bene.id
+		get_bene_fullname = data.bene.client_bene_fullname
+		first_name = request.POST.getlist('first_name[]')
+		middle_name = request.POST.getlist('middle_name[]')
+		last_name = request.POST.getlist('last_name[]')
+		suffix = request.POST.getlist('suffix[]')
+		rosterSex = request.POST.getlist('rosterSex[]')
+		age = request.POST.getlist('age[]')
+		relation = request.POST.getlist('relation[]')
+		occupation = request.POST.getlist('occupation[]')
+		salary = request.POST.getlist('salary[]')
+		if not first_name == [''] and not last_name == [''] and not age == [''] and not occupation == [
+			''] and not salary == [''] and not rosterSex == ['']:
+			data = [
+				{'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'age': b, 'occupation': o,
+				 'salary': s, 'relation': rl, 'rosterSex': rs}
+				for fn, mn, ln, sx, b, o, s, rl, rs in
+				zip(first_name, middle_name, last_name, suffix, age, occupation, salary, relation, rosterSex)
+			]
+			family_composition = ClientBeneficiaryFamilyComposition.objects.filter(clientbene__unique_id_number=uuid)
+			store = [row.id for row in family_composition]
+			if family_composition:
+				y = 1
+				x = 0
+				for row in data:
+					if y > len(family_composition):
+						ClientBeneficiaryFamilyComposition.objects.create(
+							first_name=row['first_name'],
+							middle_name=row['middle_name'],
+							last_name=row['last_name'],
+							suffix_id=row['suffix'],
+							sex_id=row['rosterSex'],
+							age=row['age'],
+							relation_id=row['relation'],
+							occupation_id=row['occupation'],
+							salary=row['salary'],
+							clientbene_id=bene_id
+						)
+					else:
+						ClientBeneficiaryFamilyComposition.objects.filter(id=store[x]).update(
+							first_name=row['first_name'],
+							middle_name=row['middle_name'],
+							last_name=row['last_name'],
+							suffix_id=row['suffix'],
+							sex_id=row['rosterSex'],
+							age=row['age'],
+							relation_id=row['relation'],
+							occupation_id=row['occupation'],
+							salary=row['salary'],
+						)
+						y += 1
+						x += 1
+			else:
+				for row in data:
+					ClientBeneficiaryFamilyComposition.objects.create(
+						first_name=row['first_name'],
+						middle_name=row['middle_name'],
+						last_name=row['last_name'],
+						suffix_id=row['suffix'],
+						sex_id=row['rosterSex'],
+						age=row['age'],
+						relation_id=row['relation'],
+						occupation_id=row['occupation'],
+						salary=row['salary'],
+						clientbene_id=bene_id
+					)
+		else:
+			return JsonResponse({'error': True, 'msg': 'You have provided information in Family Composistion. Please fill in or leave the form blank if not applicable. Thank you!'})
+		return JsonResponse({'data': 'success','msg': 'Beneficiary family composition with the name: {} has been updated successfully.'.format(get_bene_fullname)})
+
+	
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
 	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
 	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
