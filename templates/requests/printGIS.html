@@ -690,7 +690,8 @@
 
             <tr style="font-size:12px;text-align: center;line-height: 0px;">
                 <td colspan="3">
-                  <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label>
+                  <label>&nbsp;{{ data.lib_assistance_category.name|upper}}</label>
+                  {% comment %} <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label> {% endcomment %}
                 </td>
                 <td>{{calculate.total_payment|floatformat:2|intcomma}}</td>
                 <td style="width: 150px;">{{data.fund_source.name|upper}}</td>
