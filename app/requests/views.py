@@ -180,6 +180,7 @@ def requests(request):
 		'assistance_type': LibAssistanceType.objects.filter(is_active=1).order_by('type_name'),
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
 		'today':today,
+		'Purpose': Purpose.objects.filter(status=1)
 		# 'active_swo':active_sw,
 	}
 	return render(request, 'requests/requests.html', context)
@@ -506,7 +507,7 @@ def view_assessment(request, pk):
 		'sub_category': SubCategory.objects.filter(status=1).order_by('name'),
 		'service_assistance': ServiceAssistance.objects.filter(status=1).order_by('name'),
 		'type_of_assistance': TypeOfAssistance.objects.filter(status=1).order_by('name'),
-		'purpose': Purpose.objects.filter(status=1).order_by('name'),
+		'purpose': Purpose.objects.filter(status=1),
 		'moass': ModeOfAssistance.objects.filter(status=1).order_by('name'),
 		'moadm': ModeOfAdmission.objects.filter(status=1).order_by('name'),
 		'fund_source': FundSource.objects.filter(status=1).order_by('name'),

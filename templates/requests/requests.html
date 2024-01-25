@@ -443,12 +443,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="form-group">
-                                    <label>Purpose <span class="txt-danger">*</span></label>
-                                    <textarea class="form-control f-w-900" rows="10" name="problem" required></textarea>
-                                </div>
-                            </div>
                             <small>Recommended Services and Assistance</small>
                             <hr>
                             <br>
@@ -486,25 +480,36 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Purpose <span class="txt-danger">*</span></label>
+                                        <select class="form-control select" name="problem" required>
+                                            <option></option>
+                                            {% for row in Purpose %}
+                                            <option value="{{ row.name }}">{{ row.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Assistance Type <span class="txt-danger">*</span></label>
                                         <select class="form-control select" name="assistance_type" id="assistance_type" required>
-                                            <option value="">Choose</option>
+                                            <option></option>
                                             {% for row in assistance_type %}
                                             <option value="{{ row.id }}">{{ row.type_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Assistance Category <span class="txt-danger">*</span></label>
                                         <select class="form-control select" name="assistance_category" id="assistance_category" required>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Date Entried <span class="txt-danger">*</span></label>
                                         <input type="datetime-local" class="form-control f-w-900 upper" name="date_entried" required min="1900-05-11T00:00" max="{{today|date:'Y-m-d'}}T23:59">
