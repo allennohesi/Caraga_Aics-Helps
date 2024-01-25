@@ -654,7 +654,7 @@
                 <br>
                 <input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 5 %} checked {% else %} {% endif %}> Food Assistance<br>
                 <input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 13 %} checked {% else %} {% endif %}> Cash Assistance
-                &nbsp;&nbsp; Cash Assistance for 
+                &nbsp;&nbsp;
                 <input type="checkbox" name="sub-financial-assistance" {% if data.lib_assistance_category_id == 6 %} checked {% else %} {% endif %}> Other Support Services <br>
               </td>
               <td colspan="2" width="100px">
@@ -690,7 +690,7 @@
 
             <tr style="font-size:12px;text-align: center;line-height: 0px;">
                 <td colspan="3">
-                  <label>&nbsp;{{ data.lib_assistance_category.name|upper}}</label>
+                  <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label>
                   {% comment %} <label>&nbsp;{{purpose_assessment.problem_presented|upper}}</label> {% endcomment %}
                 </td>
                 <td>{{calculate.total_payment|floatformat:2|intcomma}}</td>
