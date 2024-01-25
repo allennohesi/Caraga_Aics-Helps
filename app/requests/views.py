@@ -179,6 +179,7 @@ def requests(request):
 		'sub_category_assistsance': SubModeofAssistance.objects.filter(status=1),
 		'assistance_type': LibAssistanceType.objects.filter(is_active=1).order_by('type_name'),
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
+		'today':today,
 		# 'active_swo':active_sw,
 	}
 	return render(request, 'requests/requests.html', context)
