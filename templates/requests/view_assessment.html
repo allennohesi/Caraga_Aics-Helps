@@ -585,12 +585,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Purpose <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="sw_purpose" required>
+                            {% for row in purpose %}
+                            {% if row.name == Problem_Assessment.problem_presented %}
+                            <option value="{{ row.name }}" selected>{{ row.name|upper }}</option>
+                            {% else %}
+                            <option value="{{ row.name }}">{{ row.name|upper }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% comment %} <div class="row mb-3">
                     <div class="form-group">
                         <label>Purpose</label>
                         <textarea class="form-control" name="sw_purpose" rows="6" cols="40"> {% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
                     </div>
-                </div>
+                </div> {% endcomment %}
                 <div class="row mb-3">
                     <div class="form-group">
                         <label>Social Worker's Assessment</label>
