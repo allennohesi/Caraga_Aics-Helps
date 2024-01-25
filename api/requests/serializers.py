@@ -17,6 +17,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     case_study = serializers.CharField(source='transaction.is_case_study', read_only=True)
     total_amount = serializers.CharField(source='transaction.total_amount', read_only=True)
     dv_number = serializers.CharField(source='transaction.dv_number', read_only=True)
+    service_provider = serializers.CharField(source='transaction.service_provider.name', read_only=True, default=None)
     # is_verified = serializers.CharField(source='transaction.get_verified', read_only=True)
     # is_swo = serializers.CharField(source='transaction.get_swo', read_only=True)
 
