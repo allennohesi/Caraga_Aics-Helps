@@ -487,15 +487,25 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="form-group">
-                <label>Purpose</label>
-                <textarea class="form-control" name="" rows="6" cols="40" readonly>{% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Purpose <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="sw_purpose" required>
+                        {% for row in purpose %}
+                        {% if row.name == Problem_Assessment.problem_presented %}
+                        <option value="{{ row.name }}" selected>{{ row.name|upper }}</option>
+                        {% else %}
+                        <option value="{{ row.name }}">{{ row.name|upper }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <div class="form-group">
-                <label>Social Worker's Assessment</label>
-                <textarea class="form-control" name="sw_asessment" rows="10" cols="40" readonly>{% if Problem_Assessment.sw_assessment == None %}{% else %}{{ Problem_Assessment.sw_assessment }}{% endif %}</textarea>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Social Worker's Assessment</label>
+                    <textarea class="form-control" name="sw_asessment" rows="10" cols="40" readonly>{% if Problem_Assessment.sw_assessment == None %}{% else %}{{ Problem_Assessment.sw_assessment }}{% endif %}</textarea>
+                </div>
             </div>
         </div>
         <small>Recommended Services and Assistance</small>
@@ -513,7 +523,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label>Assistance Type <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="assistance_type" id="assistance_type" readonly>
@@ -528,7 +538,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label>Assistance Category <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="assistance_category" id="assistance_category" readonly>
@@ -542,12 +552,27 @@
                     </select>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Service Provider <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="service_provider" id="service_pr" required>
+                        <option></option>
+                        {% for row in service_provider  %}
+                        {% if row.id == transaction.service_provider_id %}
+                        <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                        {% else %}
+                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Amount of Assistance <span class="txt-danger">*</span></label>
-                    <input type="number" class="form-control" value="{{transaction.total_amount|floatformat:2}}" name="amount_of_assistance" readonly>
+                    <input type="text" class="form-control" value="{{ transaction.total_amount|floatformat:2|intcomma }}" name="amount_of_assistance" readonly>
                 </div>
             </div>
             <div class="col-md-6">

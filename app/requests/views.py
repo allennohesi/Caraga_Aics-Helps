@@ -340,7 +340,8 @@ def view_incoming(request, pk):
 		'SubModeofAssistance': SubModeofAssistance.objects.filter(status=1,category_id=data.lib_assistance_category_id).order_by('name'),
 		'region_name': region.objects.filter(is_active=1).order_by('region_name'),
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
-		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
+		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first(),
+		'service_provider': ServiceProvider.objects.filter(status=1),
 
 	}
 	return render(request, 'requests/view_incoming.html', context)
