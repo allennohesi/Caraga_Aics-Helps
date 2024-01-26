@@ -154,12 +154,11 @@ def requests(request):
 				
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		print(ce)
-		handle_error(e, "CONNECTION ERROR IN REQUEST PAGE")
+		handle_error(ce, "CONNECTION ERROR IN REQUEST PAGE")
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(e, "NETWORK RELATED ISSUE IN REQUEST PAGE")
+		handle_error(re, "NETWORK RELATED ISSUE IN REQUEST PAGE")
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
