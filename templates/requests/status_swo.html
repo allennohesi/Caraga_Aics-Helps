@@ -79,7 +79,7 @@
                             <div class="" style="text-align:center;">
                                 <img src="" class="img-responsive" style="margin: 0 auto; object-fit: cover;">
                             </div>
-                                <a href="{% url 'createIECMaterial' %}" id="btn-back"></i> REFRESH</a>
+                                <a href="{% url 'view_online_swo' %}" id="btn-back"></i> REFRESH</a>
                                 <p>
                                     Sorry. We have not found any results matching the search keyword <i>'{% if request.GET.status and request.GET.search %}{{ request.GET.search }}{% else %}{% if request.GET.status %}{{ request.GET.status }}{% endif %}{% if request.GET.search %}{{ request.GET.search }}{% endif %}{% endif %}'</i>. Please try another keyword.
                                 </p>
