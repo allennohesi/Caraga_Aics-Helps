@@ -25,6 +25,8 @@ import uuid
 import os
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from decimal import Decimal
+
 today = date.today()
 
 def generate_serial_string(oldstring, prefix=None):
@@ -578,88 +580,115 @@ def show_sub_category(request): #DYNAMIC DISPLAY IN SELECT2
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
 def save_assessment(request, pk):
-	if request.method == "POST":
-		with transaction.atomic():
-			check = Transaction.objects.filter(id=pk)
-			check.update(
-				swo_id=request.user.id,
-				relation_id=request.POST.get('relationship'),
-				priority=request.POST.get('priority_name'),
-				is_case_study=request.POST.get('case_study'),
-				client_category_id=request.POST.get('client_category'),
-				client_sub_category_id=request.POST.get('client_subcategory'),
-				bene_category_id=request.POST.get('beneficiary_category'),
-				bene_sub_category_id=request.POST.get('bene_subcategory'),
-				lib_type_of_assistance_id=request.POST.get('assistance_type'),
-				lib_assistance_category_id=request.POST.get('assistance_category'),
-				fund_source_id=request.POST.get('fund_source'),
-				is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
-				is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
-				is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
-				is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
-				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
-				provided_hotmeal=request.POST.get('hot_meals') if request.POST.get('hot_meals') else 0,
-				provided_foodpack=request.POST.get('food_packs') if request.POST.get('food_packs') else 0,
-				provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
-				is_return_new=request.POST.get('new_returning'),
-				service_provider=request.POST.get('service_provider'),
-				status=3,
-				swo_date_time_end=datetime.now(),
-				is_referral=1 if request.POST.get('is_referral') else None,
-			)
-			AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
-				sw_assessment=request.POST.get('sw_asessment'),
-				problem_presented=request.POST.get('sw_purpose'),
-			)
-			Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
-			if Check_exists.swo_time_end == None:
-				TransactionStatus1.objects.filter(transaction_id=pk).update(
-					is_swo="1",
-					swo_time_end=datetime.now(),
-					status="3",
-					end_assessment=today
+	try:
+		if request.method == "POST":
+			with transaction.atomic():
+				check = Transaction.objects.filter(id=pk)
+				check.update(
+					swo_id=request.user.id,
+					relation_id=request.POST.get('relationship'),
+					priority=request.POST.get('priority_name'),
+					is_case_study=request.POST.get('case_study'),
+					client_category_id=request.POST.get('client_category'),
+					client_sub_category_id=request.POST.get('client_subcategory'),
+					bene_category_id=request.POST.get('beneficiary_category'),
+					bene_sub_category_id=request.POST.get('bene_subcategory'),
+					lib_type_of_assistance_id=request.POST.get('assistance_type'),
+					lib_assistance_category_id=request.POST.get('assistance_category'),
+					fund_source_id=request.POST.get('fund_source'),
+					is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
+					is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
+					is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
+					is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
+					is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
+					provided_hotmeal=request.POST.get('hot_meals') if request.POST.get('hot_meals') else 0,
+					provided_foodpack=request.POST.get('food_packs') if request.POST.get('food_packs') else 0,
+					provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
+					is_return_new=request.POST.get('new_returning'),
+					service_provider=request.POST.get('service_provider'),
+					status=3,
+					swo_date_time_end=datetime.now(),
+					is_referral=1 if request.POST.get('is_referral') else None,
 				)
-			else:
-				TransactionStatus1.objects.filter(transaction_id=pk).update(
-					is_swo="1",
-					end_assessment=today,
-					#status="3",
+				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
+					sw_assessment=request.POST.get('sw_asessment'),
+					problem_presented=request.POST.get('sw_purpose'),
 				)
-			return JsonResponse({'data': 'success',
-								 'msg': 'You have successfully submitted the assessment for tracking number {}.'.format(check.first().tracking_number)})
-		return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
-
+				Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
+				if Check_exists.swo_time_end == None:
+					TransactionStatus1.objects.filter(transaction_id=pk).update(
+						is_swo="1",
+						swo_time_end=datetime.now(),
+						status="3",
+						end_assessment=today
+					)
+				else:
+					TransactionStatus1.objects.filter(transaction_id=pk).update(
+						is_swo="1",
+						end_assessment=today,
+						#status="3",
+					)
+				return JsonResponse({'data': 'success',
+									'msg': 'You have successfully submitted the assessment for tracking number {}.'.format(check.first().tracking_number)})
+			return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
+		
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		handle_error(ce, "CONNECTION ERROR IN SAVE ASSESSMENT")
+		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		handle_error(re, "NETWORK RELATED ISSUE IN SAVE ASSESSMENT")
+		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		handle_error(e, "EXCEPTION ERROR IN SAVE ASSESSMENT")
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 def modal_provided(request,pk):
-	from decimal import Decimal
 	transaction_id = Transaction.objects.filter(id=pk).first()
-	if request.method == "POST":
-		with transaction.atomic():
-			if request.POST.get('sid'):
-				transaction_description.objects.filter(id=request.POST.get('sid')).update(
-					provided_data=request.POST.get('provided'),
-					regular_price=request.POST.get('regprice'),
-					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-					discount_quantity=request.POST.get('qty1'), #CHECKING
-					total=request.POST.get('tot'),
-				)
-				return JsonResponse({'data': 'success',
-					'msg': 'The data provided to client, successfully updated'})
-			else:
-				check = Transaction.objects.filter(id=pk)
-				transaction_description.objects.create(
-					tracking_number_id=transaction_id.tracking_number,
-					provided_data=request.POST.get('provided'),
-					regular_price=request.POST.get('regprice'),
-					regular_quantity=request.POST.get('qty'),
-					discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-					discount_quantity=request.POST.get('qty1'), #CHECKING
-					total=request.POST.get('tot'),
-					user_id=request.user.id,
-				)
-				return JsonResponse({'data': 'success',
-									'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+	try:
+		if request.method == "POST":
+			with transaction.atomic():
+				if request.POST.get('sid'):
+					transaction_description.objects.filter(id=request.POST.get('sid')).update(
+						provided_data=request.POST.get('provided'),
+						regular_price=request.POST.get('regprice'),
+						regular_quantity=request.POST.get('qty'),
+						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+						discount_quantity=request.POST.get('qty1'), #CHECKING
+						total=request.POST.get('tot'),
+					)
+					return JsonResponse({'data': 'success',
+						'msg': 'The data provided to client, successfully updated'})
+				else:
+					check = Transaction.objects.filter(id=pk)
+					transaction_description.objects.create(
+						tracking_number_id=transaction_id.tracking_number,
+						provided_data=request.POST.get('provided'),
+						regular_price=request.POST.get('regprice'),
+						regular_quantity=request.POST.get('qty'),
+						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+						discount_quantity=request.POST.get('qty1'), #CHECKING
+						total=request.POST.get('tot'),
+						user_id=request.user.id,
+					)
+					return JsonResponse({'data': 'success',
+										'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+				
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		handle_error(ce, "CONNECTION ERROR IN MODAL PROVIDED")
+		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		handle_error(re, "NETWORK RELATED ISSUE IN MODAL PROVIDED")
+		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		handle_error(e, "EXCEPTION ERROR IN MODAL PROVIDED")
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
@@ -674,38 +703,44 @@ def modal_provided(request,pk):
 
 def confirmAmount(request):
 	if request.method == "POST":
-		total = request.POST.get('final_total')
-		transaction_id = request.POST.get('transaction_id')
-		float_value = float(total)
-		integer_value = int(float_value)
+		with transaction.atomic():
+			total = request.POST.get('final_total')
+			transaction_id = request.POST.get('transaction_id')
+			float_value = float(total)
+			integer_value = int(float_value)
 
-		if integer_value <= 50000:
-			data = Transaction.objects.filter(id=transaction_id).update(
-				signatories_id = 17, #ANA T. SEMACIO
+			if integer_value <= 50000:
+				data = Transaction.objects.filter(id=transaction_id).update(
+					signatories_id = 17, #ANA T. SEMACIO
+				)
+			elif integer_value >= 50001 and integer_value <= 75000:
+				data = Transaction.objects.filter(id=transaction_id).update(
+					signatories_id = 18, #JESSIE CATHERINE B. ARANAS
+				)
+			elif integer_value >= 75001 and integer_value <= 100000:
+				data = Transaction.objects.filter(id=transaction_id).update(
+					signatories_id = 19, #ARDO
+				)
+			else:
+				data = Transaction.objects.filter(id=transaction_id).update(
+					signatories_id = 20, #RD
+				)
+			Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
+				total_amount=request.POST.get("final_total")
 			)
-		elif integer_value >= 50001 and integer_value <= 75000:
-			data = Transaction.objects.filter(id=transaction_id).update(
-				signatories_id = 18, #JESSIE CATHERINE B. ARANAS
-			)
-		elif integer_value >= 75001 and integer_value <= 100000:
-			data = Transaction.objects.filter(id=transaction_id).update(
-				signatories_id = 19, #ARDO
-			)
-		else:
-			data = Transaction.objects.filter(id=transaction_id).update(
-				signatories_id = 20, #RD
-			)
-		Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
-			total_amount=request.POST.get("final_total")
-		)
-		return JsonResponse({'data': 'success',
-						'msg': 'The total amount {} confirmed.'.format(total)})
+			return JsonResponse({'data': 'success',
+							'msg': 'The total amount {} confirmed.'.format(total)})
 
 
 @csrf_exempt
 def removeTransactionData(request):
 	if request.method == "POST":
-		transaction_description.objects.filter(id=request.POST.get('id')).delete()
+		with transaction.atomic():
+			transaction_id = transaction_description.objects.filter(id=request.POST.get('id')).first()
+			Transaction.objects.filter(tracking_number=transaction_id.tracking_number.tracking_number).update(
+				total_amount=None
+			)
+			transaction_description.objects.filter(id=transaction_id.id).delete()
 	return JsonResponse({'data': 'success'})
 
 @login_required
