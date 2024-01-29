@@ -16,6 +16,14 @@
       size: legal portrait;
 
     }
+    .print-clean {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid black;
+    }
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
     body {
       font-family: 'Arial', sans-serif;
     }
@@ -582,7 +590,7 @@
                 <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 5 %} checked {% else %} {% endif %}> Street Dwellers <br>
                 <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 6 %} checked {% else %} {% endif %}> Psychosocial/Mental/Learning Disability <br>
                 <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 7 %} checked {% else %} {% endif %}> Stateless Person/Asylum Seekers/Refugees <br>
-                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 8 %} checked {% else %} {% endif %}> Others:  <br>
+                <input type="checkbox" name="sector" {% if data.bene_sub_category_id == 8 %} checked {% else %} {% endif %}> Others: <input type="text" placeholder="Input here if others.. " size="33"><br>
               </span>
             </td>
             <td style="font-size: 11px; font-family: 'Calibri', sans-serif;">{{transaction_data.sw_assessment}}</td>

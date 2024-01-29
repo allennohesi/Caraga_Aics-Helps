@@ -168,6 +168,17 @@
                                         </ul>
                                     </li>
                                     {% endif %}
+                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Cash" %}
+                                    <li class="sidebar-main-title">
+                                        <div>
+                                            <h6>Cash Transactions</h6>
+                                            <p>Modules for Cash</p>
+                                        </div>
+                                        <li class="sidebar-list">
+                                            <a class="sidebar-link sidebar-title link-nav" href="{% url 'cash' %}"><i data-feather="box"></i><span>Transactions</span></a>
+                                        </li>
+                                    </li>
+                                    {% endif %}
                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
