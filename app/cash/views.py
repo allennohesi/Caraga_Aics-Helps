@@ -51,6 +51,7 @@ def view_transaction(request, pk):
 			check.update(
 				lib_type_of_assistance_id=request.POST.get('assistance_type'),
 				lib_assistance_category_id=request.POST.get('assistance_category'),
+				fund_source_id=request.POST.get('fund_source'),
 				is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
 				is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
 				is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
