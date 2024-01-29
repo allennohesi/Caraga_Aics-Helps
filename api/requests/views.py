@@ -105,3 +105,11 @@ class VoucherDataViews(generics.ListAPIView):
         if self.request.query_params.get('data'):
             queryset = finance_voucherData.objects.filter(voucher_id=self.request.query_params.get('data')).order_by('-id')
             return queryset
+
+
+#CASH TRANSACTION
+class CashTransactionViews(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
+    queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=0, status__in=[6, 3]).order_by('-id')

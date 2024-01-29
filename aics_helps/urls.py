@@ -24,6 +24,7 @@ urlpatterns = [
     path('media/cis/<str:path>', media_access, name='media'),
 
     #FOR MODULES
+    path('cash-transaction/', include('app.cash.urls')), 
     path('financial-transaction/', include('app.finance.urls')), 
     path('libraries/', include('app.libraries.urls')),
     path('client-beneficiary/', include('app.client_bene.urls')),
