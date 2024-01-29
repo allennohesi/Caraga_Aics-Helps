@@ -18,15 +18,15 @@
                     </button>
                     <ul class="dropdown-menu align-right-dropdown">
                         <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
-                        {% comment %} <li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li> {% endcomment %}
+                        {% if transaction.is_gl == 1 %}
                         <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
                         <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
                         <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
                         <li><a class="dropdown-item" href="{% url 'printPagPamatuod' transaction.id %}" target="_blank">Pag-Pamatuod</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        {% else %}
+                        <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
+                        <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -135,7 +135,7 @@
         </div>
         <p class="text-end">
             <b>Pre total: <span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></b> ||
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm"></b>
+            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}} <input type="submit" class="btn btn-primary" name="regprice" value="confirm">{% else %} 0 {% endif %}</b> </b>
         </p>
     </form>
     <!-- Modal -->

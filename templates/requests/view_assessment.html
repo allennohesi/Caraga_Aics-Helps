@@ -628,10 +628,10 @@
                     <div class="col-md-7">
                         <div class="form-group">
                             &nbsp; <input class="form-check-input" id="gl" name="guarantee_letter" value="1" type="checkbox" {% if transaction.is_gl == 1 %} checked {% else %} {% endif %}> Guarantee Letter
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_gl" value="1" type="checkbox" {% if transaction.is_ce_gl %} checked {% endif %}> CE Guaratantee Letter
                             &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="cash_voucher" value="1" type="checkbox" {% if transaction.is_cv == 1 %} checked {% else %} {% endif %}> Cash Voucher
                             &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="pcv" name="petty_cash" value="1" type="checkbox" {% if transaction.is_pcv == 1 %} checked {% else %} {% endif %}> Petty Cash Voucher
                             &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_cash" value="1" type="checkbox" {% if transaction.is_ce_cash %} checked {% endif %}> CE Cash
-                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="" name="ce_gl" value="1" type="checkbox" {% if transaction.is_ce_gl %} checked {% endif %}> CE Guaratantee Letter
                         </div>
                     </div>
                 </div>
