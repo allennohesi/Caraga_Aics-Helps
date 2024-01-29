@@ -14,6 +14,6 @@ class UserViews(generics.ListAPIView):
 
 
 class ActiveSwoView(generics.ListAPIView):
-    queryset = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
+    queryset = SocialWorker_Status.objects.filter(status=2,date_transaction=today).order_by('-id')
     serializer_class = ActiveSwoSerializer
     permission_classes = [IsAuthenticated]
