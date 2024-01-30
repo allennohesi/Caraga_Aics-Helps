@@ -109,6 +109,7 @@ class TribeSerializer(serializers.ModelSerializer):
 
 
 class ProvinceSerializer(serializers.ModelSerializer):
+    region = serializers.CharField(source='region_code.region_name', read_only=True)
     updated_by = serializers.CharField(source='updated_by.get_fullname', read_only=True, default=None)
     date_updated = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
 
@@ -119,7 +120,8 @@ class ProvinceSerializer(serializers.ModelSerializer):
 
 class CitySerializer(serializers.ModelSerializer):
     updated_by = serializers.CharField(source='updated_by.get_fullname', read_only=True, default=None)
-    province = serializers.CharField(source='prov_code.name', read_only=True)
+    province = serializers.CharField(source='prov_code.prov_name', read_only=True)
+    region = serializers.CharField(source='prov_code.region_code.region_name', read_only=True)
     date_updated = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
 
     class Meta:
