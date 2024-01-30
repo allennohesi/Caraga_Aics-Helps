@@ -114,7 +114,7 @@
                         <select class="form-control select" name="province" id="edit-province" required>
                             <option></option>
                             {% for row in province %}
-                            <option value="{{ row.id }}">{{ row.name }}</option>
+                            <option value="{{ row.prov_code }}">{{ row.prov_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -148,7 +148,7 @@
             'processing': true,
             'deferRender': true,
             'lengthMenu': [ 25, 50, 100 ],
-            'order': [[ 1, 'asc' ]],
+            'order': [[ 1, 'desc' ]],
             'bDestroy': true,
             'ajax': {
                 'url': '/api/libraries/barangay/?format=datatables',
@@ -189,7 +189,7 @@
             containerCssClass: 'select',
             placeholder: 'Choose',
         }
-
+        
         new Select2Cascade($('#region'), $('#province'), '/libraries/province/get/:parentId:', select2options);
         new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', select2options);
         new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', select2options);
