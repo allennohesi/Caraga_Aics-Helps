@@ -129,7 +129,7 @@
             {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="staticBackdropLabel">Start Transaction in this <br> Tracking Number: <small style="color:red;">{{ transaction.tracking_number|upper }}</small></h6>
+                    <h6 class="modal-title" id="staticBackdropLabel">Change password</small></h6>
                     <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -137,11 +137,11 @@
                     <div class="form-group">
                         <div class="row mb-3">
                             <div class="form-group">
-                                <label>Client for this Assessment:</label>
-                                <input type="text" id="empid" class="form-control" name="empid" readonly>
+                                <label hidden>Client for this Assessment:</label>
+                                <input type="text" id="empid" class="form-control" name="empid" readonly hidden>
                             </div>
                             <div class="form-group">
-                                <label>Benefiary for this Assessment:</label>
+                                <label>New password</label>
                                 <input type="password" name="password" class="form-control">
                             </div>
                         </div>
