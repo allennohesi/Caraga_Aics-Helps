@@ -258,36 +258,8 @@ def get_bene_info(request, pk):
 
 
 @login_required
-@groups_only('Verifier', 'Super Administrator', 'Surveyor')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance')
 def incoming(request):
-	# data = Transaction.objects.all()
-	# for row in data:
-	# 	Transaction.objects.filter(id=row.id).update(
-	# 		transaction_status=1
-	# 	)
-	# transactionstatus = TransactionStatus1.objects.all()
-	# for status in transactionstatus:
-	# 	TransactionStatus1.objects.filter(id=status.id).update(
-	# 		transaction_status=1
-	# 	)
-	
-	# data = Transaction.objects.all()
-	# for row in data:
-	# 	data = transaction_description.objects.filter(tracking_number_id=row.tracking_number).values('tracking_number').aggregate(total=Sum('total'))
-	# 	total = data['total'] if data['total'] is not None else 0.0  # Handle the case where total is None
-	# 	# Format the total with 2 decimal places and commas
-	# 	formatted_total = "{:,.2f}".format(total)
-
-	# 	Transaction.objects.filter(tracking_number=row.tracking_number).update(
-	# 		total_amount=formatted_total
-	# 	)
-
-	# data = Transaction.objects.all()
-	# for row in data:
-	# 	transaction_id = TransactionStatus1.objects.get(transaction_id=row.id)
-	# 	Transaction.objects.filter(id=transaction_id.transaction_id).update(
-	# 		date_entried=transaction_id.verified_time_start,
-	# 	)
 	context = {
 		'title': 'Incoming'
 	}
@@ -546,16 +518,29 @@ def view_assessment(request, pk):
 
 
 def StartTime(request,pk):
-	if request.method == "POST":
-		data = TransactionStatus1.objects.filter(transaction_id=pk).update(
-			swo_time_start=datetime.now(),
-			status=2
-		)
-		data = Transaction.objects.filter(id=pk).update(
-			swo_date_time_start=datetime.now(),
-			status=2
-		)
-		return JsonResponse({'data': 'success', 'msg': 'You successfully start the transaction'})
+	try:
+		if request.method == "POST":
+			data = TransactionStatus1.objects.filter(transaction_id=pk).update(
+				swo_time_start=datetime.now(),
+				status=2
+			)
+			data = Transaction.objects.filter(id=pk).update(
+				swo_date_time_start=datetime.now(),
+				status=2
+			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully start the transaction'})
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		handle_error(ce, "CONNECTION ERROR IN START TIME")
+		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		handle_error(re, "NETWORK RELATED ISSUE IN START TIME")
+		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		handle_error(e, "EXCEPTION ERROR IN START TIME")
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 @login_required
 def get_assistance_category(request, pk):
@@ -700,7 +685,7 @@ def modal_provided(request,pk):
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
 		handle_error(e, "EXCEPTION ERROR IN MODAL PROVIDED")
-		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error with your input, please review'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
