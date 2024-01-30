@@ -283,14 +283,14 @@
 
         
         if(discount_price != 0){
-            console.log("NOT EQUALS 0")
+            //console.log("NOT EQUALS 0")
             $('#discounted_price').val(reg_price_total.toFixed(2))
         }else if(discount_price == 0){
-            console.log("ZERO")
+            //console.log("ZERO")
             $('#discounted_price').val("0")
             $('#qty1').val("0")
         }else {
-            console.log("ELSE")
+            //console.log("ELSE")
             $('#discounted_price').val("0")
             $('#qty1').val("0")
         }
@@ -372,6 +372,8 @@
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
+                            }else{
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
@@ -411,6 +413,8 @@
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
+                            }else{
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
@@ -450,7 +454,7 @@
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
-                            } else {
+                            }else{
                                 Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
