@@ -26,12 +26,9 @@ class TransactionPerSession(generics.ListAPIView):
     def get_queryset(self):
         if self.request.query_params.get('user'):
             queryset = TransactionStatus1.objects.filter(
-                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=1) | 
-                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=2) | 
-                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=3) |
-                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=4) |
-                Q(transaction_id__swo_id=self.request.query_params.get('user'),status=7) 
-                ).order_by('-id')
+                transaction_id__swo_id=self.request.query_params.get('user'),
+                status__in=[1, 2, 3, 4, 7]
+            ).order_by('-id')
             return queryset
         else:
             queryset = TransactionStatus1.objects.all().order_by('-id')
@@ -43,7 +40,7 @@ class TransactionPerSessionAllViews(generics.ListAPIView):
     pagination_class = LargeResultsSetPagination
     def get_queryset(self):
         if self.request.query_params.get('user'):
-            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id')
+            queryset = TransactionStatus1.objects.filter(transaction_id__swo_id=self.request.query_params.get('user')).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE DONE
             return queryset
         else:
             queryset = TransactionStatus1.objects.all().order_by('-id')
