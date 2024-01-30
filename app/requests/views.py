@@ -269,7 +269,7 @@ def incoming(request):
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@groups_only('Verifier', 'Super Administrator', 'Surveyor')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance')
 def view_incoming(request, pk):
 	if request.method == "POST":
 		client_b_id = Transaction.objects.filter(id=pk).first()
