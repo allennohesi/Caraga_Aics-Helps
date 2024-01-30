@@ -749,20 +749,22 @@ def edit_tribe(request):
 def province(request):
     if request.method == "POST":
         name = request.POST.get('name')
-
-        check = Province.objects.filter(name=name)
+        prov_code = request.POST.get('prov_code')
+        check = Province.objects.filter(prov_code=prov_code,prov_name=name)
         if not check:
             Province.objects.create(
-                name=name,
-                updated_by_id=request.user.id,
-                status=True
+                prov_name=name,
+                prov_code=prov_code,
+                region_code_id=request.POST.get('Region'),
+                is_active=None
             )
 
             return JsonResponse({'error': False, 'msg': "New Province '{}' has been added successfully.".format(name)})
         else:
             return JsonResponse({'error': True, 'msg': "Province '{}' is already existed.".format(name)})
     context = {
-        'title': 'Province'
+        'title': 'Province',
+        'region': region.objects.all().order_by('-id')
     }
     return render(request, 'libraries/province.html', context)
 
@@ -805,14 +807,14 @@ def city(request):
         code = request.POST.get('code')
         province = request.POST.get('province')
 
-        check = City.objects.filter(city_name=name)
+        check = City.objects.filter(prov_code_id=code,city_name=name)
         if not check:
             City.objects.create(
-                name=name,
-                code=code,
+                city_name=name,
+                city_code=code,
                 prov_code_id=province,
-                updated_by_id=request.user.id,
-                is_active=True
+                is_urban=0,
+                is_active=0
             )
 
             return JsonResponse({'error': False, 'msg': "New City '{}' has been added successfully.".format(name)})
@@ -820,7 +822,7 @@ def city(request):
             return JsonResponse({'error': True, 'msg': "City '{}' is already existed.".format(name)})
     context = {
         'title': 'City',
-        'province': Province.objects.filter(is_active=1).order_by('prov_name')
+        'province': Province.objects.order_by('prov_name')
     }
     return render(request, 'libraries/city.html', context)
 
@@ -870,7 +872,7 @@ def barangay(request):
         psgc = request.POST.get('psgc')
         urb_rur = request.POST.get('urb_rur')
 
-        check = Barangay.objects.filter(brgy_name=name)
+        check = Barangay.objects.filter(brgy_code=psgc,brgy_name=name)
         if not check:
             Barangay.objects.create(
                 brgy_name=name,
@@ -886,6 +888,7 @@ def barangay(request):
     context = {
         'title': 'Barangay',
         'region': region.objects.filter(is_active=1).order_by('region_name'),
+        'province': Province.objects.all().order_by('prov_name')
     }
     return render(request, 'libraries/barangay.html', context)
 
@@ -898,25 +901,21 @@ def edit_barangay(request):
         name = request.POST.get('edit-name')
         city = request.POST.get('city')
 
-        check = Barangay.objects.filter(name=name, id=id)
+        check = Barangay.objects.filter(brgy_name=name, id=id)
         if check: # If no changes only status
             Barangay.objects.filter(id=id).update(
-                name=name,
+                brgy_name=name,
                 city_code_id=city,
-                updated_by_id=request.user.id,
-                date_updated=datetime.now(),
-                status=True if request.POST.get('edit-status') else False
+                is_active=True if request.POST.get('edit-status') else False
             )
             return JsonResponse({'error': False, 'msg': "Barangay '{}' has been updated successfully.".format(name)})
         else:
-            check = Barangay.objects.filter(name=name)
+            check = Barangay.objects.filter(brgy_name=name)
             if not check:
                 Barangay.objects.filter(id=id).update(
-                    name=name,
+                    brgy_name=name,
                     city_code_id=city,
-                    updated_by_id=request.user.id,
-                    date_updated=datetime.now(),
-                    status=True if request.POST.get('edit-status') else False
+                    is_active=True if request.POST.get('edit-status') else False
                 )
                 return JsonResponse({'error': False, 'msg': "New Barangay '{}' has been added successfully.".format(name)})
             else:

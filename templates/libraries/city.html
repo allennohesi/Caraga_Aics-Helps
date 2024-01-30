@@ -29,11 +29,8 @@
                         <thead>
                             <th>Action</th>
                             <th>City</th>
-                            <th class="display-none">City Code</th>
                             <th>Province</th>
-                            <th class="display-none">Province Code</th>
-                            <th>Updated By</th>
-                            <th>Updated At</th>
+                            <th>Region</th>
                             <th>Status</th>
                         </thead>
                     </table>
@@ -58,7 +55,7 @@
                         <select class="form-control select" name="province" id="province">
                             <option></option>
                             {% for row in province %}
-                            <option value="{{ row.id }}">{{ row.name }}</option>
+                            <option value="{{ row.prov_code }}">{{ row.prov_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -98,7 +95,7 @@
                         <select class="form-control select" name="province" id="edit-province">
                             <option></option>
                             {% for row in province %}
-                            <option value="{{ row.id }}">{{ row.name }}</option>
+                            <option value="{{ row.prov_code }}">{{ row.prov_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -149,28 +146,21 @@
                     },
                     'searchable': false,
                 },
-                {'data': 'name', 'className': 'text-start' },
-                {'data': 'code', 'className': 'display-none' },
-                {'data': 'province', 'className': 'text-start', 'name': 'prov_code.name' },
-                {'data': 'prov_code', 'className': 'display-none', 'searchable': false },
-                {'data': 'updated_by',
-                    'name': 'updated_by.last_name, updated_by.first_name',
-                    'className': 'text-center'
-                },
-                {'data': 'date_updated',
-                    'className': 'text-center',
-                },
-                {'data': 'status',
+                {'data': 'city_name', 'className': 'text-start' },
+                {'data': 'province', 'className': 'text-start', 'name': 'prov_code.prov_name' },
+                {'data': 'region', 'className': 'text-start', 'name': 'prov_code.region_code.region_name' },
+                {'data': 'is_active',
                     'render': function(data, type, row, meta) {
-                        if(data == 1) {
+                        if(data == 0) {
                             return '<i class="fa fa-circle txt-success"></i> Active'
-                        }else if (data == 0) {
+                        }else if (data == 1) {
                             return '<i class="fa fa-circle txt-danger"></i> Inactive'
                         }
                     },
                     'className': 'text-center',
                     'searchable': false,
                 },
+
             ]
         });
 
