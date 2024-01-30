@@ -368,7 +368,7 @@ def generate_csv_data(queryset):
 	yield ','.join(header) + '\n'
 
 	# Write rows as dictionaries
-	for transaction in queryset.iterator(chunk_size=1000):
+	for transaction in queryset.iterator(chunk_size=7000):
 		# Map status to corresponding string
 		status_str = (
 			smart_str("Completed") if transaction.status == 6 else
