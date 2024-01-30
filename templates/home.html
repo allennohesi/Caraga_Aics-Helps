@@ -32,7 +32,7 @@
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
         <div class="card-header">
           <h5>Summary of Transactions</h5>
@@ -150,17 +150,55 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
+        <div class="card-header">
+          <h5>Encoded by verifiers</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
         <div class="card-body">
-          <canvas id="myChart2" style="width:100%"></canvas>
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Encoded</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in transaction_per_verifier %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                    <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                      <div class="d-inline-block">
+                        <div class="span badge rounded-pill pill-badge-primary">{{ row.registered_by__first_name }} {{ row.registered_by__last_name }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Verifier</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
           <div class="card-body" id="">
-            <canvas id="myChart1" style="width:100%"></canvas>
+            <canvas id="myChart2" style="width:100%"></canvas>
           </div>
       </div>
     </div>

@@ -16,7 +16,6 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
-currentDateAndTime = datetime.now()
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl.styles import Font, PatternFill
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
@@ -24,6 +23,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
 
+currentDateAndTime = datetime.now()
 today = date.today()
 month = today.strftime("%m")
 year = today.strftime("%Y")
@@ -55,6 +55,7 @@ def log_out(request):
 
 def media_access(request, path):    
 	return render(request, '404.html')
+
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -118,7 +119,13 @@ def dashboard(request):
 	)
 	total_count = transaction_status_summary.aggregate(total_count=Sum('transaction_count'))['total_count']
 
-
+	transaction_per_verifier = (
+		ClientBeneficiary.objects
+		.filter(registered_by__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"))
+		.values('registered_by__first_name', 'registered_by__last_name')
+		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
+		.order_by('-transaction_count')
+	)[:10]
 
 
 	context = {
@@ -143,6 +150,8 @@ def dashboard(request):
 		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
 		'total_transactions': total_count,
+
+		'transaction_per_verifier': transaction_per_verifier,
 
 	}
 	return render(request, 'home.html', context)

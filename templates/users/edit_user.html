@@ -42,8 +42,11 @@
         <div class="form-group mb-3">
             <input type="checkbox" class="form-check-input" name="is_superuser" id="is_superuser" {% if user.is_superuser %}checked{% endif %}> Is Super User
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <input type="checkbox" class="form-check-input" name="is_staff" id="is_staff" {% if user.is_staff %}checked{% endif %}> Is Staff
+        </div>
+        <div class="form-group mb-3">
+            <input type="checkbox" class="form-check-input" name="is_active" id="is_active" {% if user.is_active %}checked{% endif %}> Is Active
         </div>
     </div>
     <div class="modal-footer">

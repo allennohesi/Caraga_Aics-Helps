@@ -64,45 +64,7 @@ def change_password(request):
             password = make_password(request.POST.get('password'))
         )
         return JsonResponse({'data': 'success','msg':'Password has been updated'})
-
-    # try:
-    #     target_user = AuthUser.objects.get(pk=request.POST.get('empid'))
-    # except AuthUser.DoesNotExist:
-    #     messages.error(request, 'User does not exist.')
-    #     return redirect('user_list')  # Redirect to your user list view
-
-    # if request.method == 'POST':
-    #         new_password = request.POST.get('password')
-
-    #         # Check if the new password is not empty
-    #         if new_password:
-    #             # Hash the new password manually
-    #             hashed_password = make_password(new_password)
-
-    #             # Set the hashed password for the user
-    #             target_user.password = hashed_password
-    #             target_user.save()
-
-    #             # If desired, update the user's session to prevent logout
-    #             update_session_auth_hash(request, target_user)
-
-    #             messages.success(request, f'Password for {target_user.username} was successfully updated!')
-    #             return redirect('user_list')  # Redirect to your user list view
-    #         else:
-    #             messages.error(request, 'New password cannot be empty.')
         
-    # return render(request, 'change_password_without_form.html', {'target_user': target_user})
-    # if request.method == 'POST':
-    #     # Create a PasswordChangeForm with the target user
-    #     print("ID", request.POST.get('empid'))
-    #     target_user = AuthUser.objects.filter(id=request.POST.get('empid')).update(
-    #         password = set_password(request.POST.get('password'))
-    #     )
-    #     print("END")
-    #     return JsonResponse({'data': 'success'})
-        
-        
-
 @login_required
 def edit_user(request, pk):
     if request.method == "POST":
@@ -118,7 +80,7 @@ def edit_user(request, pk):
                     username=request.POST.get('username'),
                     is_superuser=True if request.POST.get('is_superuser') else False,
                     is_staff=True if request.POST.get('is_staff') else False,
-                    is_active=1,
+                    is_active=True if request.POST.get('is_active') else False,
                     updated_by_id=request.user.id,
                     date_updated=datetime.now()
                 )
@@ -129,7 +91,6 @@ def edit_user(request, pk):
 
                 return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(
                     request.POST.get('username'))})
-            return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
         else:
             check_username = AuthUser.objects.filter(username=request.POST.get('username'))
             check_email = AuthUser.objects.filter(email=request.POST.get('email'))
@@ -147,7 +108,7 @@ def edit_user(request, pk):
                             username=request.POST.get('username'),
                             is_superuser=True if request.POST.get('is_superuser') else False,
                             is_staff=True if request.POST.get('is_staff') else False,
-                            is_active=1,
+                            is_active=True if request.POST.get('is_active') else False,
                             updated_by_id=request.user.id,
                             date_updated=datetime.now()
                         )
@@ -157,7 +118,6 @@ def edit_user(request, pk):
                         )
 
                         return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(request.POST.get('username'))})
-                    return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
                 return JsonResponse(
                     {'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
     context = {
