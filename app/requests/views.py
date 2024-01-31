@@ -378,6 +378,28 @@ def submitCaseStudy(request):
 		handle_error(e, "EXCEPTION ERROR IN submitCaseStudy")
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
+@csrf_exempt
+def removeCaseStudy(request):
+	try:
+		if request.method == "POST":
+			with transaction.atomic():
+				TransactionStatus1.objects.filter(transaction_id=request.POST.get('id')).update(
+					case_study_status=None
+				)
+		return JsonResponse({'data': 'success'})
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		handle_error(ce, "CONNECTION ERROR IN removeCaseStudy")
+		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		handle_error(re, "NETWORK RELATED ISSUE IN removeCaseStudy")
+		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		handle_error(e, "EXCEPTION ERROR IN removeCaseStudy")
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+
 @login_required
 def all_transactions(request):
 	active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
@@ -635,7 +657,7 @@ def save_assessment(request, pk):
 					problem_presented=request.POST.get('sw_purpose'),
 				)
 				Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
-				if Check_exists.swo_time_end == None:
+				if Check_exists.swo_time_end == None: # IF NO SWO TIME MAG BUTANG SYAG TIME END
 					TransactionStatus1.objects.filter(transaction_id=pk).update(
 						is_swo="1",
 						swo_time_end=datetime.now(),
