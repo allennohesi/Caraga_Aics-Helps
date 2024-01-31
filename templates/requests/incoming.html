@@ -45,7 +45,8 @@
                                             <th>Client Name</th>
                                             <th class="text-center">Date of Transaction</th>
                                             <th>Social Worker</th>
-                                            <th>Category</th>
+                                            <th class="display-none">Case Study</th>
+                                            <th>Case study</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -135,14 +136,23 @@
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', },
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-                {'data': 'case_study', 'className': 'text-center', 'searchable':false, 'sortable': false, 
-                        'render': function(data,type,row,meta){
-                            if(row['case_study'] == '2'){
-                                return "<td>For Case Study</td>"
+                {'data': 'case_study_status', 'className': 'display-none' }, //THIS IS FOR FILTERING IF CASE STUDY ALREADY SUBMITTED
+                {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
+                    'render': function(data,type,row,meta){
+                        if(row['case_study'] == '2'){
+                            if(row['status'] == 6){
+                                if(row['case_study_status'] == "1"){
+                                    return "<a href='#' data-role='remove_case_study', 'className': 'text-start', data-id="+ row['transaction'] + ">Remove</a>"+ " - " +"Case study submitted"
+                                }else{
+                                    return "<a href='#' data-role='submit_case_study', 'className': 'text-start', data-id="+ row['transaction'] + ">Submitted</a>"+ " - " +"Case study for submission"
+                                }
                             }else{
-                                return "<td>Not for case Study</td>"
+                                return "For Case Study"
                             }
+                        }else{
+                            return "Not Case Study"
                         }
+                    }
                 },
             ]
         });
@@ -155,6 +165,87 @@
         $(document).on('click','a[data-role=direct]', function(){ // FOR MODAL SUMMARY
             var id = $(this).data('id');
             $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
+        });
+
+        $(document).on('click', 'a[data-role=submit_case_study]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+                title: "Are you sure",
+                text: "You already submitted this case study?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3498DB",
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'submitCaseStudy' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "Case study submitted",
+                                icon: "success",
+                                confirmButtonColor: "#3498DB",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                    }
+                            });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on('click', 'a[data-role=remove_case_study]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to remove this as case study?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3498DB",
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'removeCaseStudy' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "Case study updated",
+                                icon: "success",
+                                confirmButtonColor: "#3498DB",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                    }
+                            });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
+                        }
+                    });
+                }
+            });
         });
     });
 </script>
