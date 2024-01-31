@@ -318,22 +318,14 @@
                 {'data': 'verified_time_start', 'className': 'text-center' },
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
                 {'data': 'case_study_status', 'className': 'display-none' }, //THIS IS FOR FILTERING IF CASE STUDY ALREADY SUBMITTED
-                {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
-                    'render': function(data,type,row,meta){
-                        if(row['case_study'] == '2'){
-                            if(row['status'] == 6){
-                                if(row['case_study_status'] == "1"){
-                                    return "Case study submitted"
-                                }else{
-                                    return "<a href='#' data-role='submit_case_study', 'className': 'text-start', data-id="+ row['transaction'] + ">Submitted</a>"+ " - " +"Case study for submission"
-                                }
+                {'data': 'case_study', 'className': 'text-center','sortable':false, 'searchable':false, 
+                        'render': function(data,type,row,meta){
+                            if(row['case_study'] == '2'){
+                                return "<td>For Case Study</td>"
                             }else{
-                                return "For Case Study"
+                                return "<td>Not for case Study</td>"
                             }
-                        }else{
-                            return "Not Case Study"
                         }
-                    }
                 },
                 {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
                     'render': function(data,type,row,meta){
