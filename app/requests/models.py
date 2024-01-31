@@ -337,6 +337,7 @@ class TransactionStatus1(models.Model):
     status_remarks = models.CharField(max_length=255, blank=True, null=True)
     signatories_approved = models.SmallIntegerField(blank=True, null=True)
     transaction_status = models.IntegerField(blank=True, null=True)
+    case_study_status = models.IntegerField()
 
     @property
     def get_total(self):
