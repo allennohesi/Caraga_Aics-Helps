@@ -361,8 +361,9 @@ def submitCaseStudy(request):
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
-				TransactionStatus1.objects.filter(transaction_id=request.POST.get('id')).update(
-					case_study_status=1
+				TransactionStatus1.objects.filter(transaction_id=request.POST.get('transactionID')).update(
+					case_study_status=1,
+					case_study_date=request.POST.get('date_submission')
 				)
 		return JsonResponse({'data': 'success'})
 	except ConnectionError as ce:
@@ -384,7 +385,8 @@ def removeCaseStudy(request):
 		if request.method == "POST":
 			with transaction.atomic():
 				TransactionStatus1.objects.filter(transaction_id=request.POST.get('id')).update(
-					case_study_status=None
+					case_study_status=None,
+					case_study_date=None
 				)
 		return JsonResponse({'data': 'success'})
 	except ConnectionError as ce:
