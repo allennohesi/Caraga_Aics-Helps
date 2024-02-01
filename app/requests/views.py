@@ -361,11 +361,14 @@ def submitCaseStudy(request):
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
+				Transaction.objects.filter(id=request.POST.get('transactionID')).update(
+					is_case_study=request.POST.get('case_study_input')
+				)
 				TransactionStatus1.objects.filter(transaction_id=request.POST.get('transactionID')).update(
 					case_study_status=1,
 					case_study_date=request.POST.get('date_submission')
 				)
-		return JsonResponse({'data': 'success'})
+			return JsonResponse({'data': 'success'})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
 		handle_error(ce, "CONNECTION ERROR IN submitCaseStudy")

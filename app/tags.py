@@ -81,3 +81,7 @@ def number_to_words(value):
         words += " Pesos"
 
     return words
+
+@register.filter
+def subtract(value, arg):
+    return value - arg
