@@ -79,6 +79,7 @@
                                             <th class="text-center">Assigned to SWO</th>
                                             <th class="display-none">Case Study</th>
                                             <th class="text-center">Case Study</th>
+                                            <th class="text-center">Case Study Status</th>
                                             <th class="text-center">Priority</th>
                                             <th class="text-center">Print</th>
                                         </tr>
@@ -249,7 +250,7 @@
             'serverSide': true, 
             'processing': true,
             'deferRender': true,
-            'lengthMenu': [ 15, 30, 50, 100 ],
+            'lengthMenu': [ 15, 30, 50, 100, 200 ],
             'order': [[ 1, 'asc' ]],
             'bDestroy': true,
             'ajax': {
@@ -332,6 +333,15 @@
                             }
                         }else{
                             return "Not Case Study"
+                        }
+                    }
+                },
+                {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['case_study_status'] == 1){
+                            return "<span class='badge badge-warning'>Submitted</span>"
+                        }else{
+                            return "<span class='badge badge-dark'>Pending</span>"
                         }
                     }
                 },
