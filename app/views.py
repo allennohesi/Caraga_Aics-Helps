@@ -96,10 +96,10 @@ def dashboard(request):
 	cancelled = TransactionStatus1.objects.filter(status=5).count()
 	
 	transactions_per_swo = (
-		Transaction.objects
+		TransactionStatus1.objects
 		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
-		.values('swo__first_name', 'swo__last_name')
-		.annotate(transaction_count=Count('swo'))
+		.values('transaction__swo__first_name', 'transaction__swo__last_name')
+		.annotate(transaction_count=Count('transaction__swo'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)[:5]
 
@@ -127,6 +127,16 @@ def dashboard(request):
 		.order_by('-transaction_count')
 	)[:10]
 
+	case_study_per_swo = (
+		TransactionStatus1.objects
+		.filter(transaction__is_case_study=2, status__in=[3, 6])  # Filter transactions with status 3 or 6
+		.values('transaction__swo__first_name', 'transaction__swo__last_name')
+		.annotate(
+			transaction_count=Count('transaction__swo'),
+			case_study_submitted=Count('case_study_status', filter=~Q(case_study_status__isnull=False, case_study_date__isnull=True)),
+		)
+		.order_by('-transaction_count')  # Order by transaction count in descending order
+	)
 
 	context = {
 		'title': 'Home',
@@ -152,6 +162,7 @@ def dashboard(request):
 		'total_transactions': total_count,
 
 		'transaction_per_verifier': transaction_per_verifier,
+		'case_study_status':case_study_per_swo,
 
 	}
 	return render(request, 'home.html', context)
