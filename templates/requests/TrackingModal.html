@@ -165,7 +165,7 @@
             <label>&nbsp;Action</label><br>
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
-      </div>
+        </div>
     </form>
   </div>
   <hr>
@@ -207,36 +207,62 @@
   <hr>
   {% endif %}
   {% if transaction_status.status == 6 %}
-  <div class="col-lg-12">
-    <small>Submission of case study</small>
-    <form id="submitCaseStudy">
-      {% csrf_token %}
-      <div class="row mb-3">
-        <div class="col-md-3">
-          <div class="form-group">
-            <input type="text" value="{{transaction_status.transaction_id}}" name="transactionID" hidden>
-            <label>Validation</label> <span class="txt-danger">*</span>
-              <select class="form-control select1 hidden" name="case_study" id="case_study" required>
-                  <option></option>
-                  <option value="1">Submitted</option>
-              </select>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label>Date submission</label> <span class="txt-danger">*</span>
-            <input type="date" class="form-control f-w-900 upper" name="date_submission" id="" required>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group">
-            <label>Submit</label><br>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
+  <form id="updateCaseStudy">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <div class="form-group">
+          <input type="text" name="transaction_id" value="{{datas.id}}" hidden>
+          <label>Case Study <span class="txt-danger">*</span></label>
+          <select class="form-control select" name="case_study_update" required>
+              <option></option>
+              {% if datas.is_case_study == 1 %}
+              <option value="1" selected>NO</option>
+              <option value="2">YES</option>
+              {% else %}
+              <option value="1">NO</option>
+              <option value="2"selected>YES</option>
+              {% endif %}
+          </select>
         </div>
       </div>
-    </form>
-  </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Action</label><br>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </form>
+<div class="col-lg-12">
+  <form id="submitCaseStudy">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-5">
+        <div class="form-group">
+          <input type="text" value="{{transaction_status.transaction_id}}" name="transactionID" hidden>
+          <label>Validation</label> <span class="txt-danger">*</span>
+            <select class="form-control select hidden" name="case_study" id="case_study" required>
+                <option></option>
+                <option value="1">SUBMITTED</option>
+            </select>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="form-group">
+          <label>Date submission</label> <span class="txt-danger">*</span>
+          <input type="date" class="form-control f-w-900 upper" name="date_submission" id="" required>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>Action</label><br>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
   {% endif %}
   <div class="col-lg-12">
       <p class="text-center">Timelines</p>
@@ -426,6 +452,50 @@
         Swal.fire({
             title: "Are you sure",
             text: "The social worker already submitted case study?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function (){
+                return $.post({
+                    url: "{% url 'submitCaseStudy' %}",
+                    data: form,
+                    success : function (response){
+                        if(!response.error){
+                            Swal.fire({
+                                title: "Good job!",
+                                html:  response.msg,
+                                icon: "success",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed){
+                                    $('#tracking_modal').load('/requests/tracking/{{ datas.id }}');
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                }
+                            });
+                        }
+                    },
+                    cache       : false,
+                    contentType : false,
+                    processData : false,
+                });
+            },
+        });
+    }
+  });
+  $('.select').select2({
+    width: '100%',
+    placeholder: 'Choose',
+    containerCssClass: 'select'
+  });
+  $('#updateCaseStudy').on('submit', function(e){
+    e.preventDefault();
+    var form = new FormData(this);
+    if (!validationForm()){
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to update the category of this study?",
             icon: "info",
             showCancelButton: true,
             confirmButtonText: "Yes",
