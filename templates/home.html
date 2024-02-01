@@ -134,7 +134,7 @@
                   <td class="bd-t-none u-s-tb">
                     <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
                       <div class="d-inline-block">
-                        <h6>{{ row.swo__first_name }} {{ row.swo__last_name }}</h6>
+                        <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
                       </div>
                     </div>
                   </td>
@@ -200,6 +200,53 @@
           <div class="card-body" id="">
             <canvas id="myChart2" style="width:100%"></canvas>
           </div>
+      </div>
+    </div>
+    <div class="col-xl-12 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Case study summary</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Total Case Study</th>
+                  <th scope="col">Submitted Case Study</th>
+                  <th scope="col">Pending Case Study</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in case_study_status %}
+                <tr>
+                    <td class="bd-t-none u-s-tb">
+                        <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                            <div class="d-inline-block">
+                                <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ row.transaction_count }}</td>
+                    <td>{{ row.case_study_submitted }}</td>
+                    <td>{{ row.transaction_count|subtract:row.case_study_submitted }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
     <div class="col-sm-6">
