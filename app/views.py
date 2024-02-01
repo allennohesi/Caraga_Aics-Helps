@@ -133,7 +133,7 @@ def dashboard(request):
 		.values('transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(
 			transaction_count=Count('transaction__swo'),
-			case_study_submitted=Count('case_study_status', filter=~Q(case_study_status__isnull=False, case_study_date__isnull=True)),
+			case_study_submitted=Count('case_study_status', filter=Q(case_study_status__isnull=False)),
 		)
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
