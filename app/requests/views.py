@@ -361,7 +361,7 @@ def submitCaseStudy(request):
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
-				if request.POST.get('transaction_id'):
+				if request.POST.get('update_case_study') == "update_case_study":
 					Transaction.objects.filter(id=request.POST.get('transaction_id')).update(
 						is_case_study=request.POST.get('case_study_update')
 					)
