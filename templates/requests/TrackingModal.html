@@ -215,7 +215,7 @@
           <input type="text" name="update_case_study" value="update_case_study" hidden>
           <input type="text" name="transaction_id" value="{{datas.id}}" hidden>
           <label>Case Study <span class="txt-danger">*</span></label>
-          <select class="form-control select" name="case_study_update" required>
+          <select class="form-control select1" name="case_study_update" required>
               <option></option>
               {% if datas.is_case_study == 1 %}
               <option value="1" selected>NO</option>
@@ -243,7 +243,7 @@
         <div class="form-group">
           <input type="text" value="{{transaction_status.transaction_id}}" name="transactionID" hidden>
           <label>Validation</label> <span class="txt-danger">*</span>
-            <select class="form-control select hidden" name="case_study" id="case_study" required>
+            <select class="form-control select1 hidden" name="case_study" id="case_study" required>
                 <option></option>
                 <option value="1">SUBMITTED</option>
             </select>
@@ -484,11 +484,6 @@
             },
         });
     }
-  });
-  $('.select').select2({
-    width: '100%',
-    placeholder: 'Choose',
-    containerCssClass: 'select'
   });
   $('#updateCaseStudy').on('submit', function(e){
     e.preventDefault();
