@@ -776,9 +776,17 @@ def confirmAmount(request):
 					data = Transaction.objects.filter(id=transaction_id).update(
 						signatories_id = 20, #RD
 					)
-				Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
-					total_amount=request.POST.get("final_total")
-				)
+				if integer_value > 10000:
+					Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
+						is_case_study=2,
+						total_amount=request.POST.get("final_total")
+					)
+				else:
+					Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
+						is_case_study=1,
+						total_amount=request.POST.get("final_total")
+					)
+
 				return JsonResponse({'data': 'success',
 								'msg': 'The total amount {} confirmed.'.format(total)})
 	except ConnectionError as ce:
