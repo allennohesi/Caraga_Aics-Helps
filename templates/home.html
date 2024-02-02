@@ -268,8 +268,8 @@
 {% endblock %}
 {% block script %}
 <script>
-  var xValues = ["ONHOLD TRANSACTION", "CANCELLED TRANSACTION", "COMPLETE TRANSACTION", "PENDING TRANSACTION", "ONGOING TRANSACTIONS"];
-  var yValues = [{{hold}},{{cancelled}}, {{completed}}, {{pending}}, {{ongoing}}];
+  var xValues = ["COMPLETED", "CANCELLED", "UPLOADING", "PENDING", "ONGOING", "HOLD"];
+  var yValues = [{% for row in summary_transactions %}{{row.transaction_count}},{% endfor %}];
   var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
   
   new Chart("counttransaction", {
@@ -339,52 +339,4 @@
     }
   });  
   </script>
-<script>
-var xValues = ["Active", "Inactive"];
-var yValues = [{{active_emp}}, {{inactive_emp}}];
-var barColors = [
-  "#AAC4FF",
-  "#D2DAFF",
-  
-];
-
-new Chart("myChart1", {
-  type: "doughnut",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues,
-    }]
-  },
-  options: {
-    title: {
-      display: true,
-      text: "Status of employee"
-    }
-  }
-});  
-</script>
-
-<script>
-
-
-function drawChart() {
-var data = google.visualization.arrayToDataTable([
-  ['Contry', 'Mhl'],
-  ['Italy',55],
-  ['France',49],
-  ['Spain',44],
-  ['USA',24],
-  ['Argentina',15]
-]);
-
-var options = {
-  title:'World Wide Wine Production'
-};
-
-var chart = new google.visualization.BarChart(document.getElementById('myChart'));
-  chart.draw(data, options);
-}
-</script>
 {% endblock %}

@@ -162,13 +162,12 @@
         <div class="col-md-2">
           <div class="form-group">
             <label>&nbsp;Action</label><br>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Update</button>
           </div>
         </div>
     </form>
   </div>
   <hr>
-  {% if transaction_status.status != 6 %}
   <div class="col-lg-12">
     <small>Updating of Social Worker, please review before submitting</small>
     <form id="submitUpdateSwo">
@@ -197,15 +196,14 @@
         </div>
         <div class="col-md-2">
           <div class="form-group">
-            <label>Submit</label><br>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <label>Action</label><br>
+            <button type="submit" class="btn btn-primary">Update</button>
           </div>
         </div>
       </div>
     </form>
   </div>
   <hr>
-  {% endif %}
   {% if transaction_status.status == 6 %}
   <form id="updateCaseStudy">
     {% csrf_token %}
@@ -258,7 +256,7 @@
       <div class="col-md-2">
         <div class="form-group">
           <label>Action</label><br>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary">Update</button>
         </div>
       </div>
     </div>
