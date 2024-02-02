@@ -117,7 +117,6 @@
   }
 </style>
 <div class="row" id="tracking_modal">
-  {% if transaction_status.status != 6 %}
   {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
   <small>Updating of Client/Beneficiary please select data you want to update</small>
   <div class="col-lg-12">
@@ -169,6 +168,7 @@
     </form>
   </div>
   <hr>
+  {% if transaction_status.status != 6 %}
   <div class="col-lg-12">
     <small>Updating of Social Worker, please review before submitting</small>
     <form id="submitUpdateSwo">
