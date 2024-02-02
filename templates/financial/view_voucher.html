@@ -43,7 +43,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Fund source</label>
-                            <input type="text" class="form-control" id="fund_source" readonly>
+                            <input type="text" class="form-control" id="fund_source_data" readonly>
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -264,7 +264,7 @@
                         $('#client_category').val(response.ct);
                         $('#client_sub_category').val(response.csc);
                         $('#service_provider').val(response.service_provider);
-                        $('#fund_source').val(response.fund_source);
+                        $('#fund_source_data').val(response.fund_source);
                     }
                });
         });
