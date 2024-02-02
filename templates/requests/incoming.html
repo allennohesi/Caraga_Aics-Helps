@@ -48,6 +48,7 @@
                                             <th class="display-none">Case Study</th>
                                             <th>Case study</th>
                                             <th>Case study Status</th>
+                                            <th>Amount</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -162,6 +163,21 @@
                         }else{
                             return "<span class='badge badge-dark'>N/a</span>"
                         }
+                    }
+                },
+                {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            // Retain the original formatting if already contains commas
+                            return data;
+                        }
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
             ]
