@@ -262,6 +262,73 @@ def generateTransactions(request):
 		response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
 		return response
 
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
+def generate_case_study(request):
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = TransactionStatus1.objects.filter(status__in=[3,6],
+					transaction__swo_date_time_end__range=(start_date_str, end_date_str)
+				).select_related(
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
+				).filter(
+					Q(status=3) | Q(status=6)
+				)
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Tracking number', 'Date Accomplished', 'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'DOB', 'Age', 
+				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene DOB', 'Bene Age',
+				    'Social Worker','Case Study','Amount','Status of Case Study','Date submitted']) + '\n'
+			for item in data:
+				total_amount_str = str(item.transaction.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+
+				case_study_str = str(item.transaction.is_case_study)
+				if case_study_str == "2":
+					category_of_study_str = "CASE STUDY"
+				else:
+					category_of_study_str = "NOT CASE STUDY"
+
+				case_study_status = str(item.case_study_status)
+				if case_study_status == "1":
+					case_study_result_str = "SUBMITTED"
+				else:
+					case_study_result_str = ""
+
+				swo_fullname_str = str(item.transaction.swo.first_name) + str(item.transaction.swo.last_name)
+
+				yield ','.join([
+					str(item.transaction.tracking_number),
+					str(item.transaction.swo_date_time_end),
+					str(item.transaction.client.last_name),
+					str(item.transaction.client.first_name),
+					str(item.transaction.client.middle_name),
+					str(item.transaction.client.suffix.name if item.transaction.client.suffix else ""),
+					str(item.transaction.client.sex.name),
+					str(item.transaction.client.birthdate),
+					str(item.transaction.client.age),
+					str(item.transaction.bene.last_name),
+					str(item.transaction.bene.first_name),
+					str(item.transaction.bene.middle_name),
+					str(item.transaction.bene.suffix.name if item.transaction.bene.suffix else ""),
+					str(item.transaction.bene.sex.name),
+					str(item.transaction.bene.birthdate),
+					str(item.transaction.bene.age),
+					swo_fullname_str,
+					category_of_study_str,
+					total_amount_str,
+					case_study_result_str,
+					str(item.case_study_date if item.case_study_date else "")
+
+				]) + '\n'
+
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="Case_study.csv"'
+		return response
+
 def generate_testXLS(request,pk):
 	from openpyxl.styles import NamedStyle
 	today = datetime.today()

@@ -267,6 +267,7 @@
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
                                                     {% comment %} <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
                                                     <li><a href="{% url 'generateByUser' %}">Users choice</a></li> {% endcomment %}
                                                 </ul>
@@ -293,7 +294,7 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="fundsource">Generate All</h5>
+                          <h5 class="modal-title" id="fundsource">GENERATE ALL</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{% url 'generateTransactions' %}" target="_blank" method="GET">
@@ -320,7 +321,7 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="fundsource">Generate report</h5>
+                          <h5 class="modal-title" id="fundsource">GENERATE FINANCE REPORT</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{% url 'export_fund_summary' %}" target="_blank" method="GET">
@@ -344,6 +345,33 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="generate_case_study" aria-labelledby="fundsource" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="fundsource">GENERATE CASE STUDY</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'generate_case_study' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="start_date">Start Date:</label>
+                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
+                                    <label for="end_date">End Date:</label>
+                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
+                                </div>
+                                <br>
                             </div>
                         </div>
                         <div class="modal-footer">
