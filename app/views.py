@@ -22,6 +22,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
+from django.http import StreamingHttpResponse
 
 currentDateAndTime = datetime.now()
 today = date.today()
@@ -222,67 +223,43 @@ def generateTransactions(request):
 				).filter(
 					Q(status=3) | Q(status=6)
 				)
-		# Create a CSV response
-		response = HttpResponse(content_type='text/csv')
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Field Office', 'Entered By', 'Client No', 'Date Accomplished', 'Region', 'Province', 'Municipality', 'Barangay', 'District', 'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age', 'Mode of Admission', 'Type of Assistance', 'Amount', 'Source of Fund', 'Client Category', 'Sub Category', 'Mode of Assistance']) + '\n'
+			for item in data:
+				total_amount_str = str(item.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+				yield ','.join([
+					"Caraga",
+					"BENGIE G. BOTOY",
+					str(item.tracking_number),
+					str(item.swo_date_time_end),
+					str(item.client.barangay.city_code.prov_code.region_code.region_name),
+					str(item.client.barangay.city_code.prov_code.prov_name),
+					str(item.client.barangay.city_code.city_name),
+					str(item.client.barangay.brgy_name),
+					str(item.client.street),
+					str(item.client.last_name),
+					str(item.client.first_name),
+					str(item.client.middle_name),
+					str(item.client.suffix.name if item.client.suffix else ""),
+					str(item.client.sex.name),
+					str(item.client.civil_status.name),
+					str(item.client.birthdate),
+					str(item.client.age),
+					"WALK-in / Referral" if item.is_referral else "Walk-in",
+					str(item.lib_assistance_category.name),
+					total_amount_str,
+					str(item.fund_source.name if item.fund_source else ""),
+					str(item.client_category.name),
+					str(item.client_sub_category.name),
+					"GL" if item.is_gl == 1 else "Cash"
+				]) + '\n'
+
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-
-		# Write data to the CSV file
-		csv_writer = csv.writer(response)
-		csv_writer.writerow(
-			['Field Office', 
-			'Entered By', 
-			'Client No', 
-			'Date Accomplished', 
-			'Region', 
-			'Province',
-			'Municipality',
-			'Barangay',
-			'District',
-			'Last Name',
-			'First Name',
-			'Middle Name',
-			'Ext Name',
-			'Sex Name',
-			'Civil Status',
-			'DOB',
-			'Age',
-			'Mode of Admission',
-			'Type of Assistance',
-			'Amount',
-			'Source of Fund',
-			'Client Category',
-			'Sub Category',
-			'Mode of Assistance'
-			])
-
-		for item in data:
-			csv_writer.writerow([
-				"Caraga", 
-				"BENGIE G. BOTOY",
-				item.tracking_number,
-				item.swo_date_time_end,
-				item.client.barangay.city_code.prov_code.region_code.region_name,
-				item.client.barangay.city_code.prov_code.prov_name,
-				item.client.barangay.city_code.city_name,
-				item.client.barangay.brgy_name,
-				item.client.street,
-				item.client.last_name,
-				item.client.first_name,
-				item.client.middle_name,
-				item.client.suffix.name if item.client.suffix else "",
-				item.client.sex.name,
-				item.client.civil_status.name,
-				item.client.birthdate,
-				item.client.age,
-				"WALK-in / Referral" if item.is_referral else "Walk-in",
-				item.lib_assistance_category.name,
-				item.total_amount,
-				item.fund_source.name if item.fund_source else "",
-				item.client_category.name,
-				item.client_sub_category.name,
-				"GL" if item.is_gl == 1 else "Cash"
-				])
-
 		return response
 
 def generate_testXLS(request,pk):
