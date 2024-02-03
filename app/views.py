@@ -138,6 +138,7 @@ def dashboard(request):
 		)
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
+	total_case_study = case_study_per_swo.aggregate(total_count=Sum('transaction_count'))['total_count']
 
 	context = {
 		'title': 'Home',
@@ -164,6 +165,7 @@ def dashboard(request):
 
 		'transaction_per_verifier': transaction_per_verifier,
 		'case_study_status':case_study_per_swo,
+		'total_case_study': total_case_study,
 
 	}
 	return render(request, 'home.html', context)
@@ -272,8 +274,6 @@ def generate_case_study(request):
 					transaction__swo_date_time_end__range=(start_date_str, end_date_str)
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
-				).filter(
-					Q(status=3) | Q(status=6)
 				)
 
 		# Create a generator function to yield CSV rows
@@ -298,7 +298,7 @@ def generate_case_study(request):
 				else:
 					case_study_result_str = ""
 
-				swo_fullname_str = str(item.transaction.swo.first_name) + str(item.transaction.swo.last_name)
+				swo_fullname_str = str(item.transaction.swo.first_name) + " " + str(item.transaction.swo.last_name)
 
 				yield ','.join([
 					str(item.transaction.tracking_number),
