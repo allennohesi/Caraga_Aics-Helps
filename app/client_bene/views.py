@@ -185,7 +185,7 @@ def registration(request):
 					Q(last_name__icontains=request.POST.get('last_name')) &
 					Q(first_name__icontains=request.POST.get('first_name')) &
 					Q(middle_name__icontains=request.POST.get('middle_name')) &
-					Q(suffix_id=request.POST.get('suffix') if request.POST.get('suffix') else 0) &
+					Q(suffix_id=request.POST.get('suffix') if request.POST.get('suffix') else None) &
 					Q(birthdate=request.POST.get('birthdate')))
 				if not check_if_name_exists:
 					if request.POST.get('suffix'):
