@@ -160,7 +160,7 @@ class ErrorLogData(models.Model):
         db_table = 'tbl_transaction_error_log'
 
 class Transaction(models.Model):
-    tracking_number = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    tracking_number = models.CharField(max_length=255, unique=True)
     relation = models.ForeignKey(Relation, models.DO_NOTHING)
     client_category = models.ForeignKey(Category, models.DO_NOTHING, related_name='client_category')
     client_sub_category = models.ForeignKey(SubCategory, models.DO_NOTHING, related_name='client_subcategory')
