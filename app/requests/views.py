@@ -295,6 +295,9 @@ def view_incoming(request, pk):
 				upload_time_end=datetime.now(),
 				status=6
 			)
+			update_transaction = Transaction.objects.filter(id=pk).update(
+				status=6
+			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully uploaded a picture.'})
 		else:
 			return JsonResponse({'error': True, 'msg': "File Type is not Valid"})
