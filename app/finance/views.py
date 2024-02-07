@@ -3,7 +3,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.db import transaction
 from datetime import timedelta, date
 from app.forms import ImageForm
 from app.global_variable import groups_only
@@ -12,7 +11,7 @@ from app.libraries.models import FileType, Relation, Category, SubCategory, Serv
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, FundSource
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
-	uploadfile, TransactionStatus1, SocialWorker_Status
+	uploadfile, TransactionStatus1, SocialWorker_Status, ErrorLogData
 from django.contrib.sessions.models import Session
 from app.models import AuthUser, AuthUserGroups
 from django.db.models import Value, Sum, Count
@@ -26,11 +25,20 @@ from django.utils.encoding import smart_str
 from io import StringIO
 from django.http import HttpResponse, StreamingHttpResponse
 from rest_framework.decorators import api_view
+from requests.exceptions import RequestException
+from django.core.exceptions import ValidationError
+from django.db import transaction, IntegrityError
 today = date.today()
 
 class Echo:
 	def write(self, value):
 		return value
+
+def handle_error(error, location): #ERROR HANDLING
+	ErrorLogData.objects.create(
+		error_log=error,
+		location=location
+	)
 
 def generate_serial_string(oldstring, prefix=None):
 	current_year = datetime.now().year
@@ -600,17 +608,31 @@ def remove_data_outside_fo(request):
 	return JsonResponse({'data': 'success'})
 
 def voucher_outside_fo(request,pk):
-	if request.method == "POST":
-		finance_outsideFo.objects.create(
-			voucher_id=pk,
-			glnumber=request.POST.get('glnumber'),
-			service_provider_id=request.POST.get('service_provider'),
-    		date_soa=request.POST.get('date'),
-			client_name=request.POST.get('clientname'),
-			assistance_type=request.POST.get('assistance_type'),
-			amount=request.POST.get('amount'),
-		)
-		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+	try:
+		if request.method == "POST":
+			finance_outsideFo.objects.create(
+				voucher_id=pk,
+				glnumber=request.POST.get('glnumber'),
+				service_provider_id=request.POST.get('service_provider'),
+				date_soa=request.POST.get('date'),
+				client_name=request.POST.get('clientname'),
+				assistance_type=request.POST.get('assistance_type'),
+				amount=request.POST.get('amount'),
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+	except RequestException as e:
+		handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except ValidationError as e:
+		handle_error(e, "VALIDATION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except IntegrityError as e:
+		handle_error(e, "INTEGRITY ERROR IN REQUEST VOUCHER OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+	except Exception as e:
+		handle_error(e, "EXCEPTION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+	
 	context = {
 		'data':finance_voucher.objects.filter(id=pk).first(),
 		'service_provider': ServiceProvider.objects.filter(status=1)
