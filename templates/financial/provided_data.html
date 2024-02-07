@@ -45,7 +45,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Updating amount <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" name="amount" id="amount" value="{% if transaction.total_amount %} {{transaction.total_amount|floatformat:2|intcomma}} {% else %} 0 {% endif %}" required>
+                    <input type="text" class="form-control" name="amount" id="amount" value="{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}" required>
                 </div>
             </div>
             <div class="col-md-4">
@@ -155,7 +155,7 @@
         </div>
         <p class="text-end">
 
-            <b>Final total: <span>&#8369;</span>{% if transaction.total_amount %} {{transaction.total_amount|floatformat:2|intcomma}} {% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            <b>Final total: <span>&#8369;</span>{% if transaction.total_amount %} {{transaction.total_amount|intcomma}} {% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
         </p>
     </form>
     <!-- Modal -->
