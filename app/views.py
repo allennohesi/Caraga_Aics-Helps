@@ -7,7 +7,7 @@ from app.requests.models import SocialWorker_Status, TransactionStatus1
 from app.models import AuthUser, AuthUserGroups, AuthGroup
 from django.db.models import Value, Sum, Count, Q
 from datetime import date
-from app.libraries.models import Category
+from app.libraries.models import Category, FundSource
 from django.utils.encoding import smart_str
 import csv
 import xlwt
@@ -166,6 +166,7 @@ def dashboard(request):
 		'transaction_per_verifier': transaction_per_verifier,
 		'case_study_status':case_study_per_swo,
 		'total_case_study': total_case_study,
+		'fund_source': FundSource.objects.all()
 
 	}
 	return render(request, 'home.html', context)

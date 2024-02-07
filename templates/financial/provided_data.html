@@ -11,7 +11,7 @@
         <div class="row mb-3">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Service Provider <span class="txt-danger">*</span></label>
+                    <label>Update Service Provider <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="service_provider" id="service_pr" required>
                         <option></option>
                         {% for row in service_provider  %}
@@ -22,6 +22,30 @@
                         {% endif %}
                         {% endfor %}
                     </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="submit" class="btn btn-primary" name="regprice" value="update">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="alert alert-secondary" role="alert">
+        Updating directly of amount, is only for FINANCE.
+    </div>
+    <form id="Update_amount_transaction">
+        {% csrf_token %}
+        <input type="text" value="update_amount" name="update_sp" hidden>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Updating amount <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" name="amount" id="amount" value="{% if transaction.total_amount %} {{transaction.total_amount|floatformat:2|intcomma}} {% else %} 0 {% endif %}" required>
                 </div>
             </div>
             <div class="col-md-4">
@@ -131,7 +155,7 @@
         </div>
         <p class="text-end">
 
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
+            <b>Final total: <span>&#8369;</span>{% if transaction.total_amount %} {{transaction.total_amount|floatformat:2|intcomma}} {% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
         </p>
     </form>
     <!-- Modal -->
@@ -390,6 +414,46 @@
                                     if (result.isConfirmed){
                                         $('#modal_view').load('/financial-transaction/finance_modal_provided/{{ transaction.id }}');
                                         $('#table').DataTable().ajax.reload();
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+    $('#Update_amount_transaction').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to update the amount",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'finance_modal_provided' transaction.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#modal_view').load('/financial-transaction/finance_modal_provided/{{ transaction.id }}');
+                                        $('#table').DataTable().ajax.reload();
+                                        $('#voucher-data').DataTable().ajax.reload();
                                     }
                                 });
                             }
