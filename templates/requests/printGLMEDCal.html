@@ -11,16 +11,25 @@
   <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
   <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
   <style>
-    @page{
-      size: A4 portrait;
-
+    @page {
+        size: A4 portrait;
+        margin: 1cm; /* Adjust margins as needed */
     }
-    input {border:0;outline:0;}
-    input:focus {outline:none!important;}
-  </style>
+
+    /* Define a class for breaking page after certain number of rows */
+    .break-after-5 {
+        page-break-after: always;
+    }
+
+    /* Hide next page link when printing */
+    @media print {
+        .next-page-link {
+            display: none;
+        }
+    }
+</style>
 </head>
-<body class="A4 portrait">
-     
+<body style="size: A4 portrait;">
   <section class="sheet page">
     <div class="container-fluid"> 
       <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
@@ -158,15 +167,68 @@
         </table>
   
         <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+          <tr style="font-weight:bold;text-align: left;">
+            <td colspan="4">
+              <label>Prepared by: </label>
+            </td>
+            <td colspan="4">
+              
+            </td>
+            <td colspan="4">
+              <label>Approved by: </label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+            <td colspan="4">              
+            </td>
+          </tr>
+          <tr style="font-size: 10px;font-weight: bold;">
+            <td></td>
+            <td colspan="3" width="100px" style="border-bottom:1px solid black;">
+              <label>{{data.swo.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="130px">
+              
+            </td>
+            <td></td>
+            <td colspan="2" width="10px" style="border-bottom:1px solid black;">
+              <label>{{data.signatories.get_fullname|upper}}</label>
+            </td>
+            <td></td>
+          </tr>
+          <tr style="font-size: 10px;">
+            <td></td>
+            <td colspan="3" width="100px">
+              <label>Social Worker</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+            </td>
+            <td></td>
+            <td colspan="3" width="100px">
+
+            </td>
+            <td></td>
+            <td colspan="2" width="100px">
+              <label>CIS Head</label><br>
+              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
+            </td>
+            <td></td>
+          </tr>
+        </table>
+          <br>
+
+          <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
             <tr style="font-weight:bold;text-align: left;">
               <td colspan="4">
-                <label>Prepared by: </label>
               </td>
               <td colspan="4">
                 
               </td>
               <td colspan="4">
-                <label>Approved by: </label>
               </td>
             </tr>
             <tr>
@@ -179,8 +241,7 @@
             </tr>
             <tr style="font-size: 10px;font-weight: bold;">
               <td></td>
-              <td colspan="3" width="100px" style="border-bottom:1px solid black;">
-                <label>{{data.swo.get_fullname|upper}}</label>
+              <td colspan="3" width="100px">
               </td>
               <td></td>
               <td colspan="3" width="130px">
@@ -188,15 +249,13 @@
               </td>
               <td></td>
               <td colspan="2" width="10px" style="border-bottom:1px solid black;">
-                <label>{{data.signatories.get_fullname|upper}}</label>
+                <label style="background-color:#FFFAA0;">{{data.client.get_client_fullname}}</label>
               </td>
               <td></td>
             </tr>
             <tr style="font-size: 10px;">
               <td></td>
               <td colspan="3" width="100px">
-                <label>Social Worker</label><br>
-                <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
               </td>
               <td></td>
               <td colspan="3" width="100px">
@@ -204,19 +263,13 @@
               </td>
               <td></td>
               <td colspan="2" width="100px">
-                <label>CIS Head</label><br>
+                <label>Client name</label><br>
                 <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
               </td>
               <td></td>
             </tr>
           </table>
-          <br>
-          <div style="text-align: right;">
-              <u style="background-color:#FFFAA0;">{{data.client.get_client_fullname}}</u>&nbsp;&nbsp;
-              <br>
-                <label style="font-size: 9px; color: #495579;">(Signature over Printed Name of client)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 
-          </div>
     </div>
   </section>
 

@@ -117,191 +117,204 @@
   }
 </style>
 <div class="row" id="tracking_modal">
-  {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
-  <small>Updating of Client/Beneficiary please select data you want to update</small>
-  <div class="col-lg-12">
-    <br>
-    <form id="submitForActionForm">
-      {% csrf_token %}
-      <div class="row mb-3">
-        <div class="col-md-3">
-          <div class="form-group">
-            <input type="text" class="form-control" id="trackingNumber" value="{{datas.tracking_number}}" readonly>
-          </div>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="trackingNumber" class="form-label">Current client</label>
-            <input type="text" class="form-control" id="trackingNumber" value="{{datas.client.client_bene_fullname}}" readonly>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="trackingNumber" class="form-label">Current beneficiary</label>
-            <input type="text" class="form-control" id="trackingNumber" value="{{datas.bene.client_bene_fullname}}" readonly>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group">
-            <label>Update data</label> <span class="txt-danger">*</span>
-            <select class="form-control select1 hidden" name="client_bene" id="client_bene" required>
-                <option></option>
-                <option value="Client">Client</option>
-                <option value="Beneficiary">Beneficiary</option>
-            </select>
-        </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-              <label>&nbsp;Name</label> <span class="txt-danger">*</span>
-              <select class="form-control select client_beneficiary" id="client_beneficiary" name="client_beneficiary" required></select>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Updating</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Timelines</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="col-lg-12">
+         <br>
+         <form id="submitForActionForm">
+            {% csrf_token %}
+            <div class="row mb-3">
+               <div class="col-md-3">
+                  <div class="form-group">
+                     <input type="text" class="form-control" id="trackingNumber" value="{{datas.tracking_number}}" readonly>
+                  </div>
+               </div>
             </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group">
-            <label>&nbsp;Action</label><br>
-            <button type="submit" class="btn btn-primary">Update</button>
-          </div>
-        </div>
-    </form>
-  </div>
-  <hr>
-  <div class="col-lg-12">
-    <small>Updating of Social Worker, please review before submitting</small>
-    <form id="submitUpdateSwo">
-      {% csrf_token %}
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="trackingNumber" class="form-label">Current Social Worker</label>
-            <input type="text" class="form-control" id="trackingNumber" value="{{datas.swo.get_fullname}}" readonly>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label>Validation</label> <span class="txt-danger">*</span>
-              <select class="form-control select1 hidden" name="client_bene" id="client_bene" required>
-                  <option></option>
-                  <option value="swo">Social worker</option>
-              </select>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label>Social worker name</label> <span class="txt-danger">*</span>
-            <select class="form-control select get_user" id="swo_name" name="swo_name" required></select>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group">
-            <label>Action</label><br>
-            <button type="submit" class="btn btn-primary">Update</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <hr>
-  {% if transaction_status.status == 6 %}
-  <form id="updateCaseStudy">
-    {% csrf_token %}
-    <div class="row mb-3">
-      <div class="col-md-3">
-        <div class="form-group">
-          <input type="text" name="update_case_study" value="update_case_study" hidden>
-          <input type="text" name="transaction_id" value="{{datas.id}}" hidden>
-          <label>Case Study <span class="txt-danger">*</span></label>
-          <select class="form-control select1" name="case_study_update" required>
-              <option></option>
-              {% if datas.is_case_study == 1 %}
-              <option value="1" selected>NO</option>
-              <option value="2">YES</option>
-              {% else %}
-              <option value="1">NO</option>
-              <option value="2"selected>YES</option>
-              {% endif %}
-          </select>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <label>Action</label><br>
-          <button type="submit" class="btn btn-primary">Update</button>
-        </div>
-      </div>
-    </div>
-  </form>
-<div class="col-lg-12">
-  <form id="submitCaseStudy">
-    {% csrf_token %}
-    <div class="row mb-3">
-      <div class="col-md-5">
-        <div class="form-group">
-          <input type="text" value="{{transaction_status.transaction_id}}" name="transactionID" hidden>
-          <label>Validation</label> <span class="txt-danger">*</span>
-            <select class="form-control select1 hidden" name="case_study" id="case_study" required>
-                <option></option>
-                <option value="1">SUBMITTED</option>
-            </select>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <div class="form-group">
-          <label>Date submission</label> <span class="txt-danger">*</span>
-          <input type="date" class="form-control f-w-900 upper" name="date_submission" id="" required>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <label>Action</label><br>
-          <button type="submit" class="btn btn-primary">Update</button>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
-  {% endif %}
-  <div class="col-lg-12">
-      <p class="text-center">Timelines</p>
-      <section style="background-color: #F0F2F5;">
-          <div class="container py-5">
-            <div class="main-timeline">
-              {% if transaction_status.is_verified %}
-              <div class="timeline left">
-                <div class="card">
-                  <div class="card-body p-4">
-                    <h3>Verifier History</h3>
-                    <p class="mb-0">Date Verified: {{transaction_status.verified_time_start}} <br> Verified End: {{transaction_status.verified_time_end}}.</p>
+            <div class="row mb-3">
+               <div class="col-md-3">
+                  <div class="form-group">
+                     <label for="trackingNumber" class="form-label">Current client</label>
+                     <input type="text" class="form-control" id="trackingNumber" value="{{datas.client.client_bene_fullname}}" readonly>
                   </div>
-                </div>
-              </div>
-              {% endif %}
-              {% if transaction_status.is_swo %}
-              <div class="timeline right">
-                <div class="card">
-                  <div class="card-body p-4">
-                    <h3>Social Worker History</h3>
-                    <p class="mb-0">Assessment Start: {{transaction_status.swo_time_start}} <br> Assessment End: {{transaction_status.swo_time_end}}.</p>
+               </div>
+               <div class="col-md-3">
+                  <div class="form-group">
+                     <label for="trackingNumber" class="form-label">Current beneficiary</label>
+                     <input type="text" class="form-control" id="trackingNumber" value="{{datas.bene.client_bene_fullname}}" readonly>
                   </div>
-                </div>
-              </div>
-              {% endif %}
-              {% if transaction_status.upload_time_end %}
-              <div class="timeline left">
-                <div class="card">
-                  <div class="card-body p-4">
-                    <h3>Transaction Summary</h3>
-                    <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} <br> Transaction End: {{transaction_status.swo_time_end}}.</p>
+               </div>
+               <div class="col-md-2">
+                  <div class="form-group">
+                     <label>Update data</label> <span class="txt-danger">*</span>
+                     <select class="form-control select1 hidden" name="client_bene" id="client_bene" required>
+                        <option></option>
+                        <option value="Client">Client</option>
+                        <option value="Beneficiary">Beneficiary</option>
+                     </select>
                   </div>
-                </div>
-              </div>
-              {% endif %}
+               </div>
+               <div class="col-md-2">
+                  <div class="form-group">
+                     <label>&nbsp;Name</label> <span class="txt-danger">*</span>
+                     <select class="form-control select client_beneficiary" id="client_beneficiary" name="client_beneficiary" required></select>
+                  </div>
+               </div>
+               <div class="col-md-2">
+                  <div class="form-group">
+                     <label>&nbsp;Action</label><br>
+                     <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+               </div>
             </div>
-          </div>
+         </form>
+      </div>
+      <hr>
+      <div class="col-lg-12">
+         <small>Updating of Social Worker, please review before submitting</small>
+         <form id="submitUpdateSwo">
+            {% csrf_token %}
+            <div class="row mb-3">
+               <div class="col-md-4">
+                  <div class="form-group">
+                     <label for="trackingNumber" class="form-label">Current Social Worker</label>
+                     <input type="text" class="form-control" id="trackingNumber" value="{{datas.swo.get_fullname}}" readonly>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="form-group">
+                     <label>Validation</label> <span class="txt-danger">*</span>
+                     <select class="form-control select1 hidden" name="client_bene" id="client_bene" required>
+                        <option></option>
+                        <option value="swo">Social worker</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="form-group">
+                     <label>Social worker name</label> <span class="txt-danger">*</span>
+                     <select class="form-control select get_user" id="swo_name" name="swo_name" required></select>
+                  </div>
+               </div>
+               <div class="col-md-2">
+                  <div class="form-group">
+                     <label>Action</label><br>
+                     <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <hr>
+      {% if transaction_status.status == 6 %}
+      <form id="updateCaseStudy">
+         {% csrf_token %}
+         <div class="row mb-3">
+            <div class="col-md-3">
+               <div class="form-group">
+                  <input type="text" name="update_case_study" value="update_case_study" hidden>
+                  <input type="text" name="transaction_id" value="{{datas.id}}" hidden>
+                  <label>Case Study <span class="txt-danger">*</span></label>
+                  <select class="form-control select1" name="case_study_update" required>
+                     <option></option>
+                     {% if datas.is_case_study == 1 %}
+                     <option value="1" selected>NO</option>
+                     <option value="2">YES</option>
+                     {% else %}
+                     <option value="1">NO</option>
+                     <option value="2" selected>YES</option>
+                     {% endif %}
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-2">
+               <div class="form-group">
+                  <label>Action</label><br>
+                  <button type="submit" class="btn btn-primary">Update</button>
+               </div>
+            </div>
+         </div>
+      </form>
+      <div class="col-lg-12">
+         <form id="submitCaseStudy">
+            {% csrf_token %}
+            <div class="row mb-3">
+               <div class="col-md-5">
+                  <div class="form-group">
+                     <input type="text" value="{{transaction_status.transaction_id}}" name="transactionID" hidden>
+                     <label>Validation</label> <span class="txt-danger">*</span>
+                     <select class="form-control select1 hidden" name="case_study" id="case_study" required>
+                        <option></option>
+                        <option value="1">SUBMITTED</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-md-5">
+                  <div class="form-group">
+                     <label>Date submission</label> <span class="txt-danger">*</span>
+                     <input type="date" class="form-control f-w-900 upper" name="date_submission" id="" required>
+                  </div>
+               </div>
+               <div class="col-md-2">
+                  <div class="form-group">
+                     <label>Action</label><br>
+                     <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      {% endif %}
+    </div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <div class="col-lg-12">
+        <p class="text-center">Timelines</p>
+        <section style="background-color: #F0F2F5;">
+            <div class="container py-5">
+                <div class="main-timeline">
+                    {% if transaction_status.is_verified %}
+                    <div class="timeline left">
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h3>Verifier History</h3>
+                                <p class="mb-0">Date Verified: {{transaction_status.verified_time_start}} <br> Verified End: {{transaction_status.verified_time_end}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if transaction_status.is_swo %}
+                    <div class="timeline right">
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h3>Social Worker History</h3>
+                                <p class="mb-0">Assessment Start: {{transaction_status.swo_time_start}} <br> Assessment End: {{transaction_status.swo_time_end}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if transaction_status.upload_time_end %}
+                    <div class="timeline left">
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h3>Transaction Summary</h3>
+                                <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} <br> Transaction End: {{transaction_status.swo_time_end}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </section>
     </div>
+  </div>
+  {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
 </div>
 <script>
   $('.client_beneficiary').select2({
