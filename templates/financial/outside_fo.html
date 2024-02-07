@@ -124,6 +124,8 @@
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
+                            }else{
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
