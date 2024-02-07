@@ -8,7 +8,7 @@ from datetime import timedelta, date
 from app.forms import ImageForm
 from app.global_variable import groups_only
 from app.libraries.models import FileType, Relation, Category, SubCategory, ServiceProvider, ServiceAssistance, \
-	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, FundSource, SubModeofAssistance, TypeOfAssistance, \
+	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, SubModeofAssistance, TypeOfAssistance, \
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, FundSource
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
@@ -625,6 +625,10 @@ def finance_modal_provided(request,pk):
 			#check = Transaction.objects.filter(id=pk)
 			if request.POST.get('update_sp') == "update_sp":
 				transaction_id.service_provider_id = request.POST.get('service_provider')
+				transaction_id.save()
+				return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
+			elif request.POST.get('update_sp') == "update_amount":
+				transaction_id.total_amount = request.POST.get('amount')
 				transaction_id.save()
 				return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
 			else:

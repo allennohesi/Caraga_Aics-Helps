@@ -337,7 +337,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Fund source</label><span class="txt-danger">*</span>
-                                        <select class="form-control select1 hidden" name="fund_source" id="fund_source" required>
+                                        <select class="form-control fund_source hidden" name="fund_source" id="fund_source" required>
                                             <option value="all">Generate All</option>
                                             {% for row in fund_source  %}
                                             <option value="{{ row.id }}">{{ row.name|upper }}</option>
@@ -498,6 +498,11 @@
                         },
                     });
                 }
+            });
+            $('.fund_source').select2({
+                width: '100%',
+                placeholder: 'Please Search Service Provider',
+                containerCssClass: 'select'
             });
             function isNumberKey(evt)
             {
