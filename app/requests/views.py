@@ -1093,7 +1093,7 @@ def view_online_swo(request):
 	search = request.GET.get('search', '')
 	page = request.GET.get('page', 1)
 	rows = request.GET.get('rows', 10)
-	active_sw = Paginator(SocialWorker_Status.objects.filter(Q(user__last_name__icontains=search,status=2,date_transaction=today)), rows).page(page)
+	active_sw = Paginator(SocialWorker_Status.objects.filter(Q(user__last_name__icontains=search,status=2,date_transaction=today)).order_by('-id'), rows).page(page)
 	context = {
 		'title': 'Status View',
 		'data': active_sw

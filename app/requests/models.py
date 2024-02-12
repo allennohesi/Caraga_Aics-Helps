@@ -411,22 +411,36 @@ class SocialWorker_Status(models.Model):
 
     @property
     def get_total(self):
-        data = TransactionStatus1.objects.filter(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=1).count()
+        data = TransactionStatus1.objects.filter(
+            transaction_id__swo_id=self.user,
+            transaction_id__date_of_transaction=today,
+            status=1
+        ).count()
         return data
 
     @property
     def get_ongoing(self):
-        data = TransactionStatus1.objects.filter(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=2).count()
+        data = TransactionStatus1.objects.filter(
+            transaction_id__swo_id=self.user,
+            transaction_id__date_of_transaction=today,
+            status=2
+        ).count()
         return data
 
     @property
     def get_complete(self):
-        data = TransactionStatus1.objects.filter(Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6) | Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=3)).count()
+        data = TransactionStatus1.objects.filter(
+            Q(transaction_id__swo_id=self.user) &
+            Q(transaction_id__date_of_transaction=today) &
+            (Q(status=6) | Q(status=3))
+        ).count()
         return data
 
     @property
     def case_study(self):
-        data = TransactionStatus1.objects.filter(Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=6,transaction_id__is_case_study=2) | Q(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=3,transaction_id__is_case_study=2)).count()
+        data = TransactionStatus1.objects.filter(
+            Q(transaction_id__swo_id=self.user, transaction_id__date_of_transaction=today, status__in=[3, 6], transaction_id__is_case_study=2)
+        ).count()
         return data
 
     class Meta:
