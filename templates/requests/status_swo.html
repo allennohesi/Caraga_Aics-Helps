@@ -102,6 +102,7 @@
                                 <table class="table table-bordered table-hover" id="">
                                     <thead>
                                         <th>ASSIGNED</th>
+                                        <th>TABLE NUMBER</th>
                                         <th class="text-center">PENDING ASSESSMENT</th>
                                         <th class="text-center">ONGOING ASSESSMENT</th>
                                         <th class="text-center">COMPLETE ASSESSMENT</th>
@@ -111,6 +112,7 @@
                                     {% for row in data %}
                                     <tbody>
                                         <td>{{row.user.get_fullname|upper}}</td>
+                                        <td>{{row.table}}</td>
                                         <td class="text-center">{{row.get_total}}</td>
                                         <td class="text-center">{{row.get_ongoing}}</td>
                                         <td class="text-center">{{row.get_complete}}</td>

@@ -166,8 +166,8 @@ def dashboard(request):
 		'transaction_per_verifier': transaction_per_verifier,
 		'case_study_status':case_study_per_swo,
 		'total_case_study': total_case_study,
-		'fund_source': FundSource.objects.all()
-
+		'fund_source': FundSource.objects.all(),
+		'today':today,
 	}
 	return render(request, 'home.html', context)
 
@@ -176,20 +176,22 @@ def status_activation(request,pk):
 	if request.method == "POST":
 		user = pk
 		status = request.POST.get('status')
+		table_number = request.POST.get('table_number')
 		date = request.POST.get('date')
 
 		filter = SocialWorker_Status.objects.filter(user_id=pk).first()
 		if filter:
 			SocialWorker_Status.objects.filter(user_id__id=pk).update(
 				status=status,
+				table=table_number,
 				date_transaction=date
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You are now active.'})
 		else:
-
 			SocialWorker_Status.objects.create(
 				user_id=user,
 				status=status,
+				table=table_number,
 				date_transaction=date
 			)          
 			return JsonResponse({'data': 'success', 'msg': 'Action completed.'})

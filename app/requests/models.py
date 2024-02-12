@@ -399,6 +399,7 @@ class Mail(models.Model):
 class SocialWorker_Status(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     status = models.IntegerField(blank=True, null=True)
+    table = models.CharField(max_length=255, blank=True, null=True)
     date_transaction = models.DateField()
 
     @property
