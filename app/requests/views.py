@@ -289,7 +289,7 @@ def view_incoming(request, pk):
 				file_field1=request.FILES.get('file'),
 				client_bene_id=client_b_id.client_id,
 				)
-			update = TransactionStatus1.objects.filter(id=pk).update(
+			update = TransactionStatus1.objects.filter(transaction_id=pk).update(
 				is_upload_photo=1,
 				uploader_verifier_id=request.user.id,
 				upload_time_end=datetime.now(),

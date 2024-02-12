@@ -269,6 +269,73 @@ def generateTransactions(request):
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
+def generateAICSData(request):
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = Transaction.objects.filter(
+					swo_date_time_end__range=(start_date_str, end_date_str)
+				).select_related(
+					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+				).filter(
+					Q(status=3) | Q(status=6)
+				)
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
+				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
+				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
+				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
+				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+				   'Mode of Admission', 'Type of Assistance', 
+				   'Amount', 'Source of Fund', 'Client Category', 'Sub Category', 'Mode of Assistance']) + '\n'
+			for item in data:
+				total_amount_str = str(item.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+				yield ','.join([
+					str(item.tracking_number),
+					str(item.client.unique_id_number),
+					str(item.client.last_name),
+					str(item.client.last_name),
+					str(item.client.first_name),
+					str(item.client.middle_name),
+					str(item.client.suffix.name if item.client.suffix else ""),
+					str(item.client.sex.name),
+					str(item.client.civil_status.name),
+					str(item.client.birthdate),
+					str(item.client.age),
+
+					str(item.client.is_4ps if item.client.number_4ps_id_number else "N/a"),
+					str(item.client.number_4ps_id_number if item.client.number_4ps_id_number else "N/a"),
+					str(item.client_category.name),
+					str(item.client_sub_category.name),
+
+
+					str(item.client.barangay.city_code.prov_code.region_code.region_name),
+					str(item.client.barangay.city_code.prov_code.prov_name),
+					str(item.client.barangay.city_code.city_name),
+					str(item.client.barangay.brgy_name),
+					str(item.client.street),
+
+					"WALK-in / Referral" if item.is_referral else "Walk-in",
+					str(item.lib_assistance_category.name),
+					total_amount_str,
+					str(item.fund_source.name if item.fund_source else ""),
+					str(item.client_category.name),
+					str(item.client_sub_category.name),
+					"GL" if item.is_gl == 1 else "Cash"
+				]) + '\n'
+
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="extract_data.csv"'
+		return response
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
 def generate_case_study(request):
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
