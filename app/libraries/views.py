@@ -924,6 +924,9 @@ def edit_barangay(request):
 
 @login_required
 def get_province_name(request, pk):
+    pk = str(pk)  # Convert pk to string
+    if len(pk) == 8:
+        pk = '0' + pk
     province = Province.objects.filter(region_code=pk).values('prov_code', 'prov_name').order_by('prov_name')
     json = []
     for row in province:
@@ -933,6 +936,9 @@ def get_province_name(request, pk):
 
 @login_required
 def get_city_name(request, pk):
+    pk = str(pk)  # Convert pk to string
+    if len(pk) == 8:
+        pk = '0' + pk
     citymuns = City.objects.filter(prov_code_id=pk).values('city_code', 'city_name').order_by('city_name')
     json = []
     for row in citymuns:
@@ -942,6 +948,9 @@ def get_city_name(request, pk):
 
 @login_required
 def get_barangay_name(request, pk):
+    pk = str(pk)  # Convert pk to string
+    if len(pk) == 8:
+        pk = '0' + pk
     barangay = Barangay.objects.filter(city_code_id=pk).values('brgy_code', 'brgy_name').order_by('brgy_name')
     json = []
     for row in barangay:
@@ -953,7 +962,6 @@ def get_barangay_name(request, pk):
 def occupation(request):
     if request.method == "POST":
         name = request.POST.get('name')
-
         check = occupation_tbl.objects.filter(occupation_name=name)
         if not check:
             occupation_tbl.objects.create(
@@ -961,7 +969,6 @@ def occupation(request):
                 user_id=request.user.id,
                 is_active=1
             )
-
             return JsonResponse({'error': False, 'msg': "New Occupation '{}' has been added successfully.".format(name)})
         else:
             return JsonResponse({'error': True, 'msg': "Occupation '{}' is already existed.".format(name)})

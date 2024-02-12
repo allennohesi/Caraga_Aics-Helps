@@ -194,7 +194,7 @@ def status_activation(request,pk):
 				table=table_number,
 				date_transaction=date
 			)          
-			return JsonResponse({'data': 'success', 'msg': 'Action completed.'})
+			return JsonResponse({'data': 'success', 'msg': 'You are now active.'})
 
 
 @login_required
