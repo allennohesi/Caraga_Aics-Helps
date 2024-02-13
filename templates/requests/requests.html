@@ -179,7 +179,7 @@
                             <hr>
                             <small>Beneficiary Identifying Information</small>
                             <div class="form-group float-end">
-                                <input type="checkbox" class="form-check-input" id="same_with_client"> Same with Client
+                                <input type="checkbox" class="form-check-input" id="same_with_client" name="same_with_client"> <b>SAME WITH CLIENT</b>
                             </div>
                             <br><br>
                             <div class="row mb-3">
@@ -338,7 +338,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-1">
                                     <div class="form-group">
-                                        <b><label>Queue Number <span class="txt-danger">*</span></label></b>
+                                        <b><label>Queuing Number <span class="txt-danger">*</span></label></b>
                                         <input type="text" class="form-control f-w-900 upper" id="queu_number" name="queu_number" required>
                                     </div>
                                 </div>
@@ -419,11 +419,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" id="beneficiary_category">
                                 <div class="col-md-7">
                                     <div class="form-group">
                                         <label>Beneficiary's Category <span class="txt-danger">*</span></label>
-                                        <select class="form-control select" name="bene_category" required>
+                                        <select class="form-control select" name="bene_category" id="bene_category" required>
                                             <option></option>
                                             {% for row in category %}
                                             <option value="{{ row.id }}">{{ row.name|upper }}</option>
@@ -434,7 +434,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Sub-Category <span class="txt-danger">*</span></label>
-                                        <select class="form-control select" name="bene_subcategory" required>
+                                        <select class="form-control select" name="bene_subcategory" id="bene_subcategory" required>
                                             <option></option>
                                             {% for row in sub_category %}
                                             <option value="{{ row.id }}">{{ row.name|upper }}</option>
@@ -674,11 +674,16 @@
                     var $option = $("<option selected></option>").val($('#client_beneficiary').val()).text($('#client_beneficiary').select2('data')[0].text);
                     $('#beneficiary').append($option).trigger('change');
                     getBeneficiary($('#client_beneficiary').val());
-                    
                     relation = $('#relationship').find("option:contains('SELF')").val();
                     $('#relationship').val(relation).trigger('change');
                 }
+                $('#bene_category').prop('required', false);
+                $('#bene_subcategory').prop('required', false);
+                $('#beneficiary_category').hide()
             } else {
+                $('#bene_category').prop('required', true);
+                $('#bene_subcategory').prop('required', true);
+                $('#beneficiary_category').show();
                 $('#beneficiary').val('').trigger('change');
                 $('#bene_birthdate').val("");
                 $('#bene_age').val("");
@@ -883,8 +888,13 @@
         console.log(selectedUserId)
         // Example: Update another field with the selected user ID
         $('#swo_id').val(selectedUserId);
-        
         // You can perform other actions with the selectedUserId as needed
     }
+    $(document).ready(function() {
+        $('#queu_number').on('input', function() {
+            // Remove non-numeric characters using a regular expression
+            $(this).val($(this).val().replace(/\D/g, ''));
+        });
+    });
 </script>
 {% endblock %}
