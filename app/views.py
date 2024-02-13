@@ -287,9 +287,11 @@ def generateAICSData(request):
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
 				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
 				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+				   
 				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
 				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
 				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+
 				   'Mode of Admission', 'Type of Assistance', 
 				   'Amount', 'Source of Fund', 'Client Category', 'Sub Category', 'Mode of Assistance']) + '\n'
 			for item in data:
@@ -308,18 +310,35 @@ def generateAICSData(request):
 					str(item.client.civil_status.name),
 					str(item.client.birthdate),
 					str(item.client.age),
-
 					str(item.client.is_4ps if item.client.number_4ps_id_number else "N/a"),
 					str(item.client.number_4ps_id_number if item.client.number_4ps_id_number else "N/a"),
 					str(item.client_category.name),
 					str(item.client_sub_category.name),
-
-
 					str(item.client.barangay.city_code.prov_code.region_code.region_name),
 					str(item.client.barangay.city_code.prov_code.prov_name),
 					str(item.client.barangay.city_code.city_name),
 					str(item.client.barangay.brgy_name),
 					str(item.client.street),
+
+					str(item.bene.unique_id_number),
+					str(item.bene.last_name),
+					str(item.bene.last_name),
+					str(item.bene.first_name),
+					str(item.bene.middle_name),
+					str(item.bene.suffix.name if item.bene.suffix else ""),
+					str(item.bene.sex.name),
+					str(item.bene.civil_status.name),
+					str(item.bene.birthdate),
+					str(item.bene.age),
+					str(item.bene.is_4ps if item.bene.number_4ps_id_number else "N/a"),
+					str(item.bene.number_4ps_id_number if item.bene.number_4ps_id_number else "N/a"),
+					str(item.bene_category.name),
+					str(item.bene_sub_category.name),
+					str(item.bene.barangay.city_code.prov_code.region_code.region_name),
+					str(item.bene.barangay.city_code.prov_code.prov_name),
+					str(item.bene.barangay.city_code.city_name),
+					str(item.bene.barangay.brgy_name),
+					str(item.bene.street),
 
 					"WALK-in / Referral" if item.is_referral else "Walk-in",
 					str(item.lib_assistance_category.name),
