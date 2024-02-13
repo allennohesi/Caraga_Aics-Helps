@@ -653,8 +653,8 @@ def save_assessment(request, pk):
 		bene_category=""
 		bene_sub_category=""
 		if request.method == "POST":
-			check_client_bene = request.POST.get('checking_if_same')
 			with transaction.atomic():
+				check_client_bene = request.POST.get('checking_if_same')
 				if check_client_bene == "same_with_client":
 					#CHECKING IF THE CLIENT AND BENEFICIARY ARE THE SAME
 					bene_category=request.POST.get('client_category')
