@@ -456,6 +456,7 @@
                 </div>
             </div>
         </div>
+        {% if transaction.client_id != transaction.bene_id %}
         <div class="row mb-3">
             <div class="col-md-7">
                 <div class="form-group">
@@ -486,6 +487,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="row mb-3">
             <div class="col-md-3">
                 <div class="form-group">

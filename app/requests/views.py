@@ -652,6 +652,13 @@ def save_assessment(request, pk):
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
+				if request.POST.get('checking_if_same') == "same_with_client":
+					#CHECKING IF THE CLIENT AND BENEFICIARY ARE THE SAME
+					bene_category=request.POST.get('client_category')
+					bene_sub_category=request.POST.get('client_subcategory')
+				elif request.POST.get('checking_if_same') == "not_same_with_client":
+					bene_category=request.POST.get('beneficiary_category')
+					bene_sub_category=request.POST.get('bene_subcategory')
 				check = Transaction.objects.filter(id=pk)
 				check.update(
 					swo_id=request.user.id,
@@ -660,8 +667,8 @@ def save_assessment(request, pk):
 					is_case_study=request.POST.get('case_study'),
 					client_category_id=request.POST.get('client_category'),
 					client_sub_category_id=request.POST.get('client_subcategory'),
-					bene_category_id=request.POST.get('beneficiary_category'),
-					bene_sub_category_id=request.POST.get('bene_subcategory'),
+					bene_category_id=bene_category,
+					bene_sub_category_id=bene_sub_category,
 					lib_type_of_assistance_id=request.POST.get('assistance_type'),
 					lib_assistance_category_id=request.POST.get('assistance_category'),
 					fund_source_id=request.POST.get('fund_source'),
