@@ -64,7 +64,15 @@ def transaction_request(request):
 			track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
 				generate_serial_string(None, 'AICS')
 			check_if_transaction_exists = Transaction.objects.filter(tracking_number=track_num)
-			if not check_if_transaction_exists: # CHECKING IF THE TRANSACITON CODE ALREADY EXISTS OR NOT
+			if not check_if_transaction_exists: # CHECKING IF THE TRACKING NUMBER ALREADY EXISTS OR NOT
+				if request.POST.get('same_with_client'):
+					# Checkbox is checked, handle accordingly
+					bene_category=request.POST.get('clients_category') #IF SAME WITH CLIENT, THE CATEGORY IS SAME TO BENE
+					bene_sub_category=request.POST.get('clients_subcategory')
+				else:
+					# Checkbox is not checked
+					bene_category=request.POST.get('bene_category')
+					bene_sub_category=request.POST.get('bene_subcategory')
 				data = Transaction( #DATA.ID SHOULD ALWAYS BE THE LATEST FOREIGNKEY TO ASSESSMENT TABLE AND TRANSACTIONSTATUS TABLE
 					tracking_number=track_num,
 					relation_id=request.POST.get('relationship'),
@@ -72,8 +80,8 @@ def transaction_request(request):
 					bene_id=request.POST.get('beneficiary'),
 					client_category_id=request.POST.get('clients_category'),
 					client_sub_category_id=request.POST.get('clients_subcategory'),
-					bene_category_id=request.POST.get('bene_category'),
-					bene_sub_category_id=request.POST.get('bene_subcategory'),
+					bene_category_id=bene_category,
+					bene_sub_category_id=bene_sub_category,
 					lib_type_of_assistance_id=request.POST.get('assistance_type'),
 					lib_assistance_category_id=request.POST.get('assistance_category'),
 					date_entried=request.POST.get('date_entried'),
@@ -107,11 +115,11 @@ def transaction_request(request):
 					status="1",
 					transaction_status=1,
 				)
+				return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
+							'tracking_number': track_num})
 			else:
 				return JsonResponse({'error': True, 'msg': 'There was a network traffic please refresh'})
 
-		return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
-							'tracking_number': track_num})
 		
 	except RequestException as e:
 		handle_error(e, "REQUEST EXCEPTION ERROR IN REQUEST TRANSACTION")
