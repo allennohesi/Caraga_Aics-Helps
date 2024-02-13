@@ -458,8 +458,14 @@
         </div>
         <div class="tab-pane fade m-t-30" id="assessment" role="tabpanel">
             <form id="submitAssessmentForm">
-                <input type="text" value="{{transaction.id}}" name="transaction_id" hidden>
                 {% csrf_token %}
+                {% if transaction.client_id != transaction.bene_id %}
+                <!-- IF CLIENT AND BENEFICIARY ARE NOT THE SAME -->
+                <input type="text" name="checking_if_same" value="not_same_with_client" hidden>
+                {% else %}
+                <input type="text" name="checking_if_same" value="same_with_client" hidden>
+                {% endif %}
+                <input type="text" value="{{transaction.id}}" name="transaction_id" hidden>
                 <div class="row mb-3">
                     <div class="col-md-3">
                         <input class="form-check-input" id="is_referral" name="is_referral" value="1" type="checkbox" {% if transaction.is_referral %} checked {% else %} {% endif %}> REFERRAL <br>
@@ -555,6 +561,7 @@
                         </div>
                     </div>
                 </div>
+                {% if transaction.client_id != transaction.bene_id %}
                 <div class="row mb-3">
                     <div class="col-md-7">
                         <div class="form-group">
@@ -585,6 +592,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Purpose <span class="txt-danger">*</span></label>
