@@ -650,13 +650,16 @@ def show_sub_category(request): #DYNAMIC DISPLAY IN SELECT2
 @groups_only('Social Worker', 'Super Administrator')
 def save_assessment(request, pk):
 	try:
+		bene_category=""
+		bene_sub_category=""
 		if request.method == "POST":
+			check_client_bene = request.POST.get('checking_if_same')
 			with transaction.atomic():
-				if request.POST.get('checking_if_same') == "same_with_client":
+				if check_client_bene == "same_with_client":
 					#CHECKING IF THE CLIENT AND BENEFICIARY ARE THE SAME
 					bene_category=request.POST.get('client_category')
 					bene_sub_category=request.POST.get('client_subcategory')
-				elif request.POST.get('checking_if_same') == "not_same_with_client":
+				elif check_client_bene == "not_same_with_client":
 					bene_category=request.POST.get('beneficiary_category')
 					bene_sub_category=request.POST.get('bene_subcategory')
 				check = Transaction.objects.filter(id=pk)
