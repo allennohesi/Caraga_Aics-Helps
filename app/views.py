@@ -273,12 +273,10 @@ def generateAICSData(request): #FOR GENERAL
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
-		data = Transaction.objects.filter(
-					swo_date_time_end__range=(start_date_str, end_date_str)
+		data = Transaction.objects.filter(Q(status=3) | Q(status=6),
+					date_of_transaction__range=(start_date_str, end_date_str)
 				).select_related(
 					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
-				).filter(
-					Q(status=3) | Q(status=6)
 				)
 
 		# Create a generator function to yield CSV rows
@@ -300,7 +298,7 @@ def generateAICSData(request): #FOR GENERAL
 				total_amount_str = str(item.total_amount)
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
-				service_provider = str(item.service_provider.name).replace(",", "")
+				service_provider = str(item.service_provider.name).replace(",", "") if item.service_provider is not None else "N/a"
 				swo_fullname_str = str(item.swo.first_name) + " " + str(item.swo.last_name)
 				yield ','.join([
 					str(item.tracking_number),
@@ -356,7 +354,102 @@ def generateAICSData(request): #FOR GENERAL
 				]) + '\n'
 
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="extract_data.csv"'
+		response['Content-Disposition'] = 'attachment; filename="general_data.csv"'
+		return response
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
+def personalData(request): #FOR GENERAL
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = Transaction.objects.filter(swo_id=request.user.id
+				).select_related(
+					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+				)
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
+				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
+				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
+				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+				   
+				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
+				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
+
+				   'Relationship', 'Type of Assistance', 'Amount', 
+				   'Mode of Assistance','Source of referral','Source of Fund',
+				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider', 'status'
+				   ]) + '\n'
+			for item in data:
+				total_amount_str = str(item.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+				service_provider = str(item.service_provider.name).replace(",", "") if item.service_provider is not None else "N/a"
+				swo_fullname_str = str(item.swo.first_name) + " " + str(item.swo.last_name)
+
+				status_str = (
+					str("Completed") if item.status == 6 else
+					str("Cancelled") if item.status == 5 else
+					str("Ongoing") if item.status == 2 else
+					str("Completed") if item.status == 3 else
+					"N/a"
+				)
+				yield ','.join([
+					str(item.tracking_number),
+					str(item.client.unique_id_number),
+					str(item.client.last_name),
+					str(item.client.last_name),
+					str(item.client.first_name),
+					str(item.client.middle_name),
+					str(item.client.suffix.name if item.client.suffix else ""),
+					str(item.client.sex.name),
+					str(item.client.civil_status.name),
+					str(item.client.birthdate),
+					str(item.client.age),
+					str(item.client.is_4ps if item.client.number_4ps_id_number else "N/a"),
+					str(item.client.number_4ps_id_number if item.client.number_4ps_id_number else "N/a"),
+					str(item.client_category.name),
+					str(item.client_sub_category.name),
+					str(item.client.barangay.city_code.prov_code.region_code.region_name),
+					str(item.client.barangay.city_code.prov_code.prov_name),
+					str(item.client.barangay.city_code.city_name),
+					str(item.client.barangay.brgy_name),
+					str(item.client.street),
+					str(item.bene.unique_id_number),
+					str(item.bene.last_name),
+					str(item.bene.first_name),
+					str(item.bene.middle_name),
+					str(item.bene.suffix.name if item.bene.suffix else ""),
+					str(item.bene.sex.name),
+					str(item.bene.civil_status.name),
+					str(item.bene.birthdate),
+					str(item.bene.age),
+					str(item.bene.is_4ps if item.bene.number_4ps_id_number else "N/a"),
+					str(item.bene.number_4ps_id_number if item.bene.number_4ps_id_number else "N/a"),
+					str(item.bene_category.name),
+					str(item.bene_sub_category.name),
+					str(item.bene.barangay.city_code.prov_code.region_code.region_name),
+					str(item.bene.barangay.city_code.prov_code.prov_name),
+					str(item.bene.barangay.city_code.city_name),
+					str(item.bene.barangay.brgy_name),
+					str(item.bene.street),
+					str(item.relation.name),
+					str(item.lib_assistance_category.name),
+					total_amount_str,
+					"GL" if item.is_gl == 1 else "Cash",
+					"Referral" if item.is_referral else "Walk-in",
+					str(item.fund_source.name if item.fund_source else ""),
+					str(item.purpose),
+					str(item.swo_date_time_end),
+					swo_fullname_str,
+					service_provider,
+					status_str,
+				]) + '\n'
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
 		return response
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
@@ -366,7 +459,7 @@ def generate_case_study(request):
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
 		data = TransactionStatus1.objects.filter(status__in=[3,6],
-					transaction__swo_date_time_end__range=(start_date_str, end_date_str)
+					swo_date_time_end__range=(start_date_str, end_date_str)
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
 				)
