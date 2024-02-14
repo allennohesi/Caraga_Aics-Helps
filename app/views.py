@@ -292,7 +292,7 @@ def generateAICSData(request): #FOR GENERAL
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider'
+				   'Date Interviewed', 'Interviewer/Swo','Service Provider'
 				   ]) + '\n'
 			for item in data:
 				total_amount_str = str(item.total_amount)
@@ -347,7 +347,6 @@ def generateAICSData(request): #FOR GENERAL
 					"GL" if item.is_gl == 1 else "Cash",
 					"Referral" if item.is_referral else "Walk-in",
 					str(item.fund_source.name if item.fund_source else ""),
-					str(item.purpose),
 					str(item.swo_date_time_end),
 					swo_fullname_str,
 					service_provider,
