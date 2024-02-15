@@ -39,9 +39,9 @@
             <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-            <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
-            <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
-            <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
+            <label style="font-size: 14px;">CRISIS INTERVENTION SECTION</label><br>
+            <label style="font-size: 11px;">PROTECTIVE SERVICES DIVISION</label><br>
+            <label style="font-size: 14px;">FIELD OFFICE CARAGA</label><br>
             <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
           </th>        
         </thead>
@@ -148,7 +148,7 @@
         </tr>
       </table>
 
-      <div style="background-color: black;color: white;margin-top: -20px;">
+      <div style="background-color: black;color: white;margin-top: -20px; font-size:12px;">
         <label>&nbsp;IMPORMASYON NG BENEPISYARYO <span style="font-size:13px;">(Beneficiary's Identifying Information)</span></label>
       </div>
       <div style="font-family: Snell Roundhand, cursive">
@@ -181,7 +181,7 @@
               <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
             </td>           
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>{{data.bene.house_no|upper}}</label>
             </td>
@@ -265,7 +265,7 @@
         </table>
       </div>
       <!--- Kinatawan -->
-      <div style="background-color: black;color: white;margin-top: -16px;">
+      <div style="background-color: black;color: white;margin-top: -16px; font-size:12px;">
         <label>&nbsp;IMPORMASYON NG KINATAWAN<span style="font-size:13px;"> (Representative's Identifying Information)</span></label>
       </div>
       {% if data.client_id == data.bene_id %}
@@ -299,7 +299,7 @@
               <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
             </td>           
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>N/a</label>
             </td>
@@ -441,7 +441,7 @@
               <span>Ext. <span style="font-size:8px;">(Sr,Jr,I,II,III)</span></span>
             </td>           
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>{{data.client.house_no}}</label>
             </td>
@@ -535,7 +535,7 @@
             <td></td>
             <td style="border-bottom: 1px solid black;"></td>
           </tr>
-          <tr style="font-size: 12px;text-align: center;">
+          <tr style="font-size: 10px;text-align: center;">
             <td colspan="4" style="border-bottom: 1px solid black;">
               <label>{{data.relation.name|upper}}</label>
             </td>
