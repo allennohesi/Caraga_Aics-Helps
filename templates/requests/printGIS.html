@@ -153,7 +153,7 @@
       </div>
       <div style="font-family: Snell Roundhand, cursive">
         <table class="beneficiary-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>{{data.bene.last_name|upper}}</label>
             </td>
@@ -215,7 +215,7 @@
               <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
             </td>        
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>{{data.bene.contact_number|upper}}</label>
             </td>
@@ -271,7 +271,7 @@
       {% if data.client_id == data.bene_id %}
       <div style="font-family: Snell Roundhand, cursive">
         <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>N/a</label>
             </td>
@@ -333,7 +333,7 @@
               <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
             </td>        
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>N/a</label>
             </td>
@@ -390,7 +390,7 @@
             <td></td>
             <td style="border-bottom: 1px solid black;"></td>
           </tr>
-          <tr style="font-size: 12px;text-align: center;">
+          <tr style="font-size: 10px;text-align: center;">
             <td colspan="4" style="border-bottom: 1px solid black;">
               <label>{{data.relation.name|upper}}</label>
             </td>
@@ -413,7 +413,7 @@
       {% else %}
       <div style="font-family: Snell Roundhand, cursive">
         <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>{{data.client.last_name}}</label>
             </td>
@@ -475,7 +475,7 @@
               <span>Region <span style="font-size:6px;">(Ex. NCR)</span></span>
             </td>        
           </tr>
-          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
             <td colspan="2">
               <label>{{data.client.contact_number}}</label>
             </td>
@@ -557,7 +557,7 @@
       </div>
       {% endif %}
       <!-- Assessment -->
-      <div style="background-color: black;color: white;margin-top: -16px;text-align: center;font-size: 14px;">
+      <div style="background-color: black;color: white;margin-top: -16px;text-align: center;font-size: 12px;">
         <label>Huwag sulatan ang DSWD lamang ang pwede gumamit<span style="font-size:11px;"> (Do not write below this part for DSWD's use only)</span></label>
       </div>
       <div style="font-family: DejaVu Sans Mono">
@@ -599,7 +599,7 @@
       </div>
       <!-- Family Composition -->
       <div style="background-color: black;color: white;margin-top: -16px;">
-        <label style="font-size:15px;">&nbsp;KOMPOSISYON NG PAMILYA<span> (Family Composition)</span></label>
+        <label style="font-size:11px;">&nbsp;KOMPOSISYON NG PAMILYA<span> (Family Composition)</span></label>
       </div>
       <div style="font-family: Andale Mono, monospace;font-weight: bold;">
         <table class="family-composition table table-bordered" style="border-color:white;">
@@ -749,8 +749,8 @@
           <tr style="font-size: 8px;font-weight: bold;">
             <td colspan="4"></td>
             <td  colspan="4">
-              <img height="45px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
-              <label>DSWD Field Office Caraga. R. Palma. Brgy. Dagohoy. Butuan City. Philippines 8600  </label><br><label>Website: http://www.dswd.gov.ph  Email: cis.focrg@dswd.gov.ph   Tel Nos.: 303-860</label>
+              <label><center>DSWD Field Office Caraga. R. Palma. Brgy. Dagohoy. Butuan City. Philippines 8600  </label><br><label>Website: http://www.dswd.gov.ph  Email: cis.focrg@dswd.gov.ph   Tel Nos.: 303-860</center></label>
+              <br><img height="45px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
             </td>
           </tr>
         </table>
