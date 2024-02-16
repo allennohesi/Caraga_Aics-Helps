@@ -362,9 +362,9 @@ def personalData(request): #FOR GENERAL
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
-		data = Transaction.objects.filter(swo_id=request.user.id
+		data = TransactionStatus1.objects.filter(transaction__swo_id=request.user.id
 				).select_related(
-					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
 				)
 
 		# Create a generator function to yield CSV rows
@@ -372,22 +372,20 @@ def personalData(request): #FOR GENERAL
 			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
 				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
-				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
 				   
 				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
 				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
-				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider', 'status'
+				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Transaction Category','Case study status' 'Status of transaction'
 				   ]) + '\n'
 			for item in data:
-				total_amount_str = str(item.total_amount)
+				total_amount_str = str(item.transaction.total_amount)
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
-				service_provider = str(item.service_provider.name).replace(",", "") if item.service_provider is not None else "N/a"
-				swo_fullname_str = str(item.swo.first_name) + " " + str(item.swo.last_name)
+				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
+				swo_fullname_str = str(item.transaction.swo.first_name) + " " + str(item.transaction.swo.last_name)
 
 				status_str = (
 					str("Completed") if item.status == 6 else
@@ -396,55 +394,60 @@ def personalData(request): #FOR GENERAL
 					str("Completed") if item.status == 3 else
 					"N/a"
 				)
+
+				case_study_str = str(item.transaction.is_case_study)
+				if case_study_str == "2":
+					category_of_study_str = "CASE STUDY"
+				else:
+					category_of_study_str = "NOT CASE STUDY"
+
+				case_study_status = str(item.case_study_status)
+				if case_study_status == "1":
+					case_study_result_str = "SUBMITTED"
+				else:
+					case_study_result_str = ""
+
 				yield ','.join([
-					str(item.tracking_number),
-					str(item.client.unique_id_number),
-					str(item.client.last_name),
-					str(item.client.last_name),
-					str(item.client.first_name),
-					str(item.client.middle_name),
-					str(item.client.suffix.name if item.client.suffix else ""),
-					str(item.client.sex.name),
-					str(item.client.civil_status.name),
-					str(item.client.birthdate),
-					str(item.client.age),
-					str(item.client.is_4ps if item.client.number_4ps_id_number else "N/a"),
-					str(item.client.number_4ps_id_number if item.client.number_4ps_id_number else "N/a"),
-					str(item.client_category.name),
-					str(item.client_sub_category.name),
-					str(item.client.barangay.city_code.prov_code.region_code.region_name),
-					str(item.client.barangay.city_code.prov_code.prov_name),
-					str(item.client.barangay.city_code.city_name),
-					str(item.client.barangay.brgy_name),
-					str(item.client.street),
-					str(item.bene.unique_id_number),
-					str(item.bene.last_name),
-					str(item.bene.first_name),
-					str(item.bene.middle_name),
-					str(item.bene.suffix.name if item.bene.suffix else ""),
-					str(item.bene.sex.name),
-					str(item.bene.civil_status.name),
-					str(item.bene.birthdate),
-					str(item.bene.age),
-					str(item.bene.is_4ps if item.bene.number_4ps_id_number else "N/a"),
-					str(item.bene.number_4ps_id_number if item.bene.number_4ps_id_number else "N/a"),
-					str(item.bene_category.name),
-					str(item.bene_sub_category.name),
-					str(item.bene.barangay.city_code.prov_code.region_code.region_name),
-					str(item.bene.barangay.city_code.prov_code.prov_name),
-					str(item.bene.barangay.city_code.city_name),
-					str(item.bene.barangay.brgy_name),
-					str(item.bene.street),
-					str(item.relation.name),
-					str(item.lib_assistance_category.name),
+					str(item.transaction.tracking_number),
+					str(item.transaction.client.unique_id_number),
+					str(item.swo_time_end),
+					str(item.transaction.client.last_name),
+					str(item.transaction.client.first_name),
+					str(item.transaction.client.middle_name),
+					str(item.transaction.client.suffix.name if item.transaction.client.suffix else ""),
+					str(item.transaction.client.sex.name),
+					str(item.transaction.client.civil_status.name),
+					str(item.transaction.client.birthdate),
+					str(item.transaction.client.age),
+					str(item.transaction.client.is_4ps if item.transaction.client.number_4ps_id_number else "N/a"),
+					str(item.transaction.client.number_4ps_id_number if item.transaction.client.number_4ps_id_number else "N/a"),
+					str(item.transaction.client_category.name),
+					str(item.transaction.client_sub_category.name),
+					str(item.transaction.bene.unique_id_number),
+					str(item.transaction.bene.last_name),
+					str(item.transaction.bene.first_name),
+					str(item.transaction.bene.middle_name),
+					str(item.transaction.bene.suffix.name if item.transaction.bene.suffix else ""),
+					str(item.transaction.bene.sex.name),
+					str(item.transaction.bene.civil_status.name),
+					str(item.transaction.bene.birthdate),
+					str(item.transaction.bene.age),
+					str(item.transaction.bene.is_4ps if item.transaction.bene.number_4ps_id_number else "N/a"),
+					str(item.transaction.bene.number_4ps_id_number if item.transaction.bene.number_4ps_id_number else "N/a"),
+					str(item.transaction.bene_category.name),
+					str(item.transaction.bene_sub_category.name),
+					str(item.transaction.relation.name),
+					str(item.transaction.lib_assistance_category.name),
 					total_amount_str,
-					"GL" if item.is_gl == 1 else "Cash",
-					"Referral" if item.is_referral else "Walk-in",
-					str(item.fund_source.name if item.fund_source else ""),
-					str(item.purpose),
-					str(item.swo_date_time_end),
+					"GL" if item.transaction.is_gl == 1 else "Cash",
+					"Referral" if item.transaction.is_referral else "Walk-in",
+					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
+					str(item.transaction.purpose),
+					str(item.transaction.swo_date_time_end),
 					swo_fullname_str,
 					service_provider,
+					category_of_study_str,
+					case_study_result_str,
 					status_str,
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
