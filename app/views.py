@@ -378,7 +378,7 @@ def personalData(request): #FOR GENERAL
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Transaction Category','Case study status' 'Status of transaction'
+				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Transaction Category','Case study status', 'Status of transaction'
 				   ]) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
@@ -461,11 +461,10 @@ def generate_case_study(request):
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
 		data = TransactionStatus1.objects.filter(status__in=[3,6],
-					swo_date_time_end__range=(start_date_str, end_date_str)
+					swo_time_end__range=(start_date_str, end_date_str),transaction__is_case_study=2
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
 				)
-
 		# Create a generator function to yield CSV rows
 		def generate_csv():
 			yield ','.join(['Tracking number', 'Date Accomplished', 'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'DOB', 'Age', 
@@ -492,7 +491,7 @@ def generate_case_study(request):
 
 				yield ','.join([
 					str(item.transaction.tracking_number),
-					str(item.transaction.swo_date_time_end),
+					str(item.swo_time_end),
 					str(item.transaction.client.last_name),
 					str(item.transaction.client.first_name),
 					str(item.transaction.client.middle_name),
