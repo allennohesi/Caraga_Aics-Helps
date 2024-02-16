@@ -472,7 +472,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>New / Returning <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="new_returning" required>
@@ -487,7 +487,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Relationship to beneficiary <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="relationship" required>
@@ -501,7 +501,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Priority <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="priority_name" required>
@@ -512,21 +512,6 @@
                                 <option value="{{ row.id }}">{{ row.priority_name|upper }}</option>
                                 {% endif %}
                                 {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Case Study <span class="txt-danger">*</span></label>
-                            <select class="form-control select" name="case_study" required>
-                                <option></option>
-                                {% if transaction.is_case_study == 1 %}
-                                <option value="1" selected>NO</option>
-                                <option value="2">YES</option>
-                                {% else %}
-                                <option value="1">NO</option>
-                                <option value="2"selected>YES</option>
-                                {% endif %}
                             </select>
                         </div>
                     </div>
