@@ -667,7 +667,6 @@ def save_assessment(request, pk):
 					swo_id=request.user.id,
 					relation_id=request.POST.get('relationship'),
 					priority=request.POST.get('priority_name'),
-					is_case_study=request.POST.get('case_study'),
 					client_category_id=request.POST.get('client_category'),
 					client_sub_category_id=request.POST.get('client_subcategory'),
 					bene_category_id=bene_category,
