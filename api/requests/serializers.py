@@ -13,7 +13,6 @@ class TransactionSerializer(serializers.ModelSerializer):
     #swo_lastname = serializers.CharField(source='transaction.swo.last_name', read_only=True, default=None)
     priority = serializers.CharField(source='transaction.priority.priority_name', read_only=True)
     action = serializers.CharField(source='transaction.get_action_action', read_only=True)
-    remarks_action = serializers.CharField(source='transaction.get_remarks_action', read_only=True)
     case_study = serializers.CharField(source='transaction.is_case_study', read_only=True)
     total_amount = serializers.CharField(source='transaction.total_amount', read_only=True)
     dv_number = serializers.CharField(source='transaction.dv_number', read_only=True)
@@ -23,7 +22,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionStatus1
-        fields = '__all__'
+        fields = ['tracking_number','status', 'client', 'beneficiary', 'verified_time_start', 'swo', 'priority', 'action', 'transaction', 'total_amount', 'dv_number', 'service_provider','case_study_status','case_study',]
 
 
 class Transaction_DescriptionSerializer(serializers.ModelSerializer):
