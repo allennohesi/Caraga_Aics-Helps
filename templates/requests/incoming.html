@@ -45,7 +45,7 @@
                                             <th>Client Name</th>
                                             <th class="text-center">Date of Transaction</th>
                                             <th>Social Worker</th>
-                                            <th class="display-none">Case Study</th>
+                                            {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
                                             <th>Case study</th>
                                             <th>Case study Status</th>
                                             <th>Amount</th>
@@ -134,12 +134,11 @@
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', },
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-                {'data': 'case_study_status', 'className': 'display-none' }, //THIS IS FOR FILTERING IF CASE STUDY ALREADY SUBMITTED
                 {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
                     'render': function(data,type,row,meta){
                         if(row['case_study'] == '2'){
                             if(row['status'] == 6){
-                                if(row['case_study_status'] == "1"){
+                                if(row['case_study_status'] == '1'){
                                     return "<a href='#' data-role='remove_case_study', 'className': 'text-start', data-id="+ row['transaction'] + ">Remove</a>"+ " - " +"Case study submitted"
                                 }else{
                                     return "For Case Study"
@@ -155,8 +154,10 @@
                 {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
                     'render': function(data,type,row,meta){
                         if(row['case_study_status'] == 1){
+                            console.log(row['case_study_status'])
                             return "<span class='badge badge-warning'>Submitted</span>"
                         }else{
+                            console.log(row['case_study_status'])
                             return "<span class='badge badge-dark'>N/a</span>"
                         }
                     }
