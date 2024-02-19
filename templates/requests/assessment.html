@@ -51,6 +51,7 @@
                                             <th class="text-center">Status</th>
                                             <th>Tracking Number</th>
                                             <th>Client Name</th>
+                                            <th>Beneficiary Name</th>
                                             <th class="text-center">Date of Transaction</th>
                                             <th class="text-center">Case Study</th>
                                             <th class="text-center">Priority</th>
@@ -72,6 +73,7 @@
                                             <th class="text-center">Status</th>
                                             <th>Tracking Number</th>
                                             <th>Client Name</th>
+                                            <th>Beneficiary Name</th>
                                             <th class="text-center">Date of Transaction</th>
                                             <th class="display-none">Case Study</th>
                                             <th class="text-center">Case Study</th>
@@ -211,6 +213,7 @@
                 },
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', },
                 {'data': 'case_study', 'className': 'text-center','sortable':false, 'searchable':false, 
                         'render': function(data,type,row,meta){
@@ -308,6 +311,7 @@
                 },
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center' },
                 {'data': 'case_study_status', 'className': 'display-none' }, //THIS IS FOR FILTERING IF CASE STUDY ALREADY SUBMITTED
                 {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
