@@ -18,13 +18,14 @@ class TransactionSerializer(serializers.ModelSerializer):
     dv_number = serializers.CharField(source='transaction.dv_number', read_only=True)
     service_provider = serializers.CharField(source='transaction.service_provider.name', read_only=True, default=None)
     mode_of_release = serializers.CharField(source='transaction.is_gl', read_only=True)
+    assistance_type = serializers.CharField(source='transaction.lib_assistance_category.name', read_only=True)
     # is_verified = serializers.CharField(source='transaction.get_verified', read_only=True)
     # is_swo = serializers.CharField(source='transaction.get_swo', read_only=True)
 
     class Meta:
         model = TransactionStatus1
         fields = ['tracking_number','status', 'client', 'beneficiary', 'verified_time_start', 'swo', 'priority', 'action', 'transaction', 'total_amount', 'dv_number', 'service_provider','case_study_status','case_study',
-                  'mode_of_release']
+                  'mode_of_release', 'assistance_type']
 
 
 class Transaction_DescriptionSerializer(serializers.ModelSerializer):
