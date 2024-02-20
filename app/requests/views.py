@@ -274,7 +274,7 @@ def get_bene_info(request, pk):
 
 
 @login_required
-@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker')
 def incoming(request):
 	context = {
 		'title': 'Incoming'
