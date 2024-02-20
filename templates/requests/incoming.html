@@ -47,6 +47,7 @@
                                             {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
                                             <th>Case study</th>
                                             <th>Case study Status</th>
+                                            <th class="text-center">Assistance type</th>
                                             <th>Service provider</th>
                                             <th>Mode of release</th>
                                             <th>Amount</th>
@@ -168,6 +169,7 @@
                         }
                     }
                 },
+                {'data': 'assistance_type', 'className': 'text-center', 'searchable': false, 'sortable': false },
                 {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false },
                 {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false, 'searchable': false,
                     'render': function(data,type,row,meta){
