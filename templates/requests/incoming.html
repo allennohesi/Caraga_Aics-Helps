@@ -47,8 +47,8 @@
                                             {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
                                             <th>Case study</th>
                                             <th>Case study Status</th>
-                                            <th>Mode of release</th>
                                             <th>Service provider</th>
+                                            <th>Mode of release</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -168,6 +168,7 @@
                         }
                     }
                 },
+                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false },
                 {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false,
                     'render': function(data,type,row,meta){
                         if(row['mode_of_release'] == 0){
@@ -176,8 +177,7 @@
                             return "<span class='badge bg-light text-dark'>GL</span>"
                         }
                     }
-                 },
-                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false },
+                },
                 {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data, type, row, meta) {
                         // Check if total_amount is null or undefined
