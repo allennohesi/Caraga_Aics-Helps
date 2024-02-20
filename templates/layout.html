@@ -134,17 +134,13 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
                                     </li>
                                     {% endif %}
+                                    {% comment %} {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-primary"></label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'all_transactions' %}"><i data-feather="zap"></i><span>All transactions</span></a>
                                     </li>
-                                    {% if user|check_group_permission:"Super Administrator" %}
-                                    <li class="sidebar-list">
-                                        <label class="badge badge-primary"></label>
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="cast"></i><span>Case Study</span></a>
-                                    </li>
-                                    {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" %}
+                                    {% endif %} {% endcomment %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" %}
                                     <li class="sidebar-list">
                                         {% comment %} <label class="badge badge-success">{% count_assessment_all %}</label> {% endcomment %}
                                         <label class="badge badge-info">Click me !</label>
