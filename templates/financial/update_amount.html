@@ -250,6 +250,7 @@
                                     if (result.isConfirmed){
                                         $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
                                         $('#all-transaction').DataTable().ajax.reload();
+                                        $('#incoming-table').DataTable().ajax.reload();
                                     }
                                 });
                             }
@@ -380,6 +381,7 @@
                                     if (result.isConfirmed){
                                         $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
                                         $('#table').DataTable().ajax.reload();
+                                        $('#incoming-table').DataTable().ajax.reload();
                                     }
                                 });
                             }
@@ -419,6 +421,7 @@
                                     if (result.isConfirmed){
                                         $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
                                         $('#all-transaction').DataTable().ajax.reload();
+                                        $('#incoming-table').DataTable().ajax.reload();
                                     }
                                 });
                             }
