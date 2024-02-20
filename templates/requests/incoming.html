@@ -38,7 +38,6 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width:100">Action</th>
-                                            <th>Track</th>
                                             <th class="text-center">Transaction Status</th>
                                             <th>Tracking Number</th>
                                             <th>Client Name</th>
@@ -75,6 +74,18 @@
         </div>
     </div>
 </div>
+<div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Change amount</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="load_data">
+        </div>
+      </div>
+    </div>
+</div>
 {% endblock %}
 {% block script %}
 <script>
@@ -96,14 +107,9 @@
             'columns': [
                 {'data': 'transaction',
                     'render': function(data, type, row, meta) {
-                        return "<a href='javascript:void(0);' data-role='details' data-id='"+ row['transaction'] + "'>Details</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'transaction',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a>"
+                        return "<a href='javascript:void(0);' data-role='details' data-id='" + row['transaction'] + "'>Details</a> | " +
+                        "<a href='javascript:void(0)' data-role='edit_amount' data-id="+ row['transaction'] + ">Amount</a> | " +
+                        "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a>";
                     },
                     'sortable': false,
                     'searchable': false
@@ -154,10 +160,8 @@
                 {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
                     'render': function(data,type,row,meta){
                         if(row['case_study_status'] == 1){
-                            console.log(row['case_study_status'])
                             return "<span class='badge badge-warning'>Submitted</span>"
                         }else{
-                            console.log(row['case_study_status'])
                             return "<span class='badge badge-dark'>N/a</span>"
                         }
                     }
@@ -189,7 +193,11 @@
             var id = $(this).data('id');
             $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
         });
-
+        $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/update_amount/' +id);
+        });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
             var id = $(this).data('id');
             Swal.fire({
@@ -271,5 +279,6 @@
             });
         });
     });
+    
 </script>
 {% endblock %}
