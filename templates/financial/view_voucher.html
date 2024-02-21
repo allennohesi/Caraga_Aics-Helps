@@ -92,14 +92,13 @@
                     <table class="table table-responsive table-sm table-bordered" id="voucher-data">
                         <thead>
                             <tr>
-                                <th>Action</th>
+                                <th class="text-center" style="width:180px;">Action</th>
                                 <th class="text-center">GL Number</th>
                                 <th class="text-center">Client name</th>
                                 <th class="text-center">Assistance Category</th>
                                 <th class="text-center">Service provider</th>
-                                <th class="text-center">Client name</th>
                                 <th class="text-center">Date of transaction</th>
-                                <th class="text-center">DV-Name</th>
+                                <th class="text-center" style="width:150px;">DV-Name</th>
                                 <th class="text-center">DV-Date</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
@@ -107,12 +106,11 @@
                         <tbody>
                             {% for row in outside_fo %}
                             <tbody>
-                                <td><a href='#' data-role='delete' data-id='{{row.id}}'>Remove</a></td>
+                                <td><a href='#' data-role='delete' data-id='{{row.id}}'>Remove</a> | <a href='#' data-role='edit_outside_fo' data-id='{{row.id}}'>Edit</a></td>
                                 <td class="text-center">{{row.glnumber}}</td>
                                 <td class="text-center">{{row.client_name}}</td>
                                 <td class="text-center">{{row.assistance_type}}</td>
                                 <td class="text-center">{{row.service_provider.name}}</td>
-                                <td class="text-center">{{row.client_name}}</td>
                                 <td class="text-center">{{row.date_soa}}</td>
                                 <td class="text-center">{{row.voucher.voucher_title}}</td>
                                 <td class="text-center">{{row.voucher.date}}</td>
@@ -128,14 +126,6 @@
             <p class="text-end">
                 Final total: <u><b style="color:red;">{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}</b></u>
             </p>
-            {% comment %} <div class="row mb-3">
-                <div class="col-md-1">
-                    <div class="form-group text-right">
-                        <label>Total Amount <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" readonly>
-                    </div>
-                </div>
-            </div> {% endcomment %}
             <div class="modal fade bd-example-modal-xl" id="modal_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -152,6 +142,17 @@
                     <div class="modal-content">
                     <div class="modal-header text-end">
                         <a href="javascript:void(0);" id="exit"><i class="fa fa-angle-double-left"></i>exit</a>
+                    </div>
+                    <div class="modal-body" id="load_data">
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade bd-example-modal-xl" id="updated_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header text-end">
+                        <a href="javascript:void(0);" id="close_voucher"><i class="fa fa-angle-double-left"></i>exit</a>
                     </div>
                     <div class="modal-body" id="load_data">
                     </div>
@@ -222,6 +223,10 @@
             width: '100%',
             placeholder: 'CHOOSE',
             containerCssClass: 'select'
+        });
+        $('#close_voucher').on('click', function(){ // CLOSE THE MODAL FOR UPDATING
+            $('#updated_outside_fo').modal('hide');
+            $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
         });
         $('#exit, #close, #close_modal').on('click', function(){
             $('#modalProvided').modal('hide');
@@ -434,7 +439,12 @@
             $('#empid').val(id)
             $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/outside/fo/voucher/' +id);
         });
-
+        $(document).on('click','a[data-role=edit_outside_fo]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#updated_outside_fo').modal('show').find('#load_data').load('/financial-transaction/edit_outside_fo/' +id);
+           
+        });
     });
 </script>
 {% endblock %}
