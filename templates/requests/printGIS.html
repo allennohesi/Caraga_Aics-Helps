@@ -153,7 +153,7 @@
       </div>
       <div style="font-family: Snell Roundhand, cursive">
         <table class="beneficiary-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>{{data.bene.last_name|upper}}</label>
             </td>
@@ -271,7 +271,7 @@
       {% if data.client_id == data.bene_id %}
       <div style="font-family: Snell Roundhand, cursive">
         <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>N/a</label>
             </td>
@@ -413,7 +413,7 @@
       {% else %}
       <div style="font-family: Snell Roundhand, cursive">
         <table class="representative-info table table-bordered" style="margin-top:0px;border-top-color: black;border-color: white;">
-          <tr style="font-size: 10px;text-align: center;border-bottom-color: black;">
+          <tr style="font-size: 12px;text-align: center;border-bottom-color: black;">
             <td colspan="3">
               <label>{{data.client.last_name}}</label>
             </td>
@@ -720,7 +720,7 @@
                 <small>"I declare under oath that I personally accomplished the GIS Form and all the information provided herewith are TRUE, CORRECT, VALID & COMPLETE pursuant to existing laws, rules, and regulations of the Republic of the Philippines. I authorized the Agency Head/validate the contents stated herein. I also AGREE that any MISINTERPETATION and information/acts to DEFRAUD the government including attached documents shall cause the filling of appropriate case/s against me"
                   <br>
                   <br>
-                  <label><u style="background-color:#FFFAA0;">{{data.client.get_client_fullname}}</u><br>Buong Pangalan at Pirma<br><small>(Signature over Printed Name)</label>
+                  <label ><u style="background-color:#FFFAA0; font-size:14px;">{{data.client.get_client_fullname}}</u><br>Buong Pangalan at Pirma<br><small>(Signature over Printed Name)</label>
                 </small>
               </td>
               <td></td>
