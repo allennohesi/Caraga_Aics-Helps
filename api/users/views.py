@@ -5,7 +5,13 @@ from api.users.serializers import UserSerializer, ActiveSwoSerializer
 from app.models import AuthUser
 from app.requests.models import SocialWorker_Status
 from datetime import timedelta, date, datetime, timedelta, time #DATE TIME
+from rest_framework.pagination import PageNumberPagination
 today = date.today()
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 8
+    page_size_query_param = 'page_size'
+    max_page_size = 200
 
 class UserViews(generics.ListAPIView):
     queryset = AuthUser.objects.all()
@@ -17,3 +23,4 @@ class ActiveSwoView(generics.ListAPIView):
     queryset = SocialWorker_Status.objects.filter(status=2,date_transaction=today).order_by('-id')
     serializer_class = ActiveSwoSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination

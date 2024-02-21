@@ -410,7 +410,7 @@ class SocialWorker_Status(models.Model):
             return tracking_number
 
     @property
-    def get_total(self):
+    def get_total(self): #PENDING
         data = TransactionStatus1.objects.filter(
             transaction_id__swo_id=self.user,
             transaction_id__date_of_transaction=today,

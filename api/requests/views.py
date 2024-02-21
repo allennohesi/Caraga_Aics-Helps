@@ -21,6 +21,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 class TransactionPerSession(generics.ListAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
     def get_queryset(self):
         if self.request.query_params.get('user'):
             queryset = TransactionStatus1.objects.filter(
