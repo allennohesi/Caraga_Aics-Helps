@@ -639,6 +639,37 @@ def voucher_outside_fo(request,pk):
 	}
 	return render(request,'financial/outside_fo.html',context)
 
+def edit_outside_fo(request,pk):
+	try:
+		if request.method == "POST":
+			finance_outsideFo.objects.filter(id=pk).update(
+				glnumber=request.POST.get('glnumber'),
+				service_provider_id=request.POST.get('service_provider'),
+				date_soa=request.POST.get('date'),
+				client_name=request.POST.get('clientname'),
+				assistance_type=request.POST.get('assistance_type'),
+				amount=request.POST.get('amount'),
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Voucher successfully updated'})
+	except RequestException as e:
+		handle_error(e, "REQUEST EXCEPTION ERROR IN EDIT OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except ValidationError as e:
+		handle_error(e, "VALIDATION ERROR IN REQUEST EDIT OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except IntegrityError as e:
+		handle_error(e, "INTEGRITY ERROR IN REQUEST EDIT OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+	except Exception as e:
+		handle_error(e, "EXCEPTION ERROR IN REQUEST EDIT OUTSIDE FO")
+		return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+	
+	context = {
+		'data':finance_outsideFo.objects.filter(id=pk).first(),
+		'service_provider': ServiceProvider.objects.filter(status=1)
+	}
+	return render(request,'financial/edit_outside_fo.html',context)
+
 def finance_modal_provided(request,pk):
 	voucher_data = finance_voucherData.objects.filter(transactionStatus_id=pk).first()
 	transaction_id = Transaction.objects.filter(id=pk).first()

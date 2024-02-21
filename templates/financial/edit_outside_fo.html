@@ -11,13 +11,13 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>GL Number <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" name="glnumber" required>
+                    <input type="text" class="form-control" id="" value="{{data.glnumber}}" name="glnumber" required>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Client / Beneficiary name <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" name="clientname" required>
+                    <input type="text" class="form-control" id="" value="{{data.client_name}}" name="clientname" required>
                 </div>
             </div>
             <div class="col-md-4">
@@ -26,7 +26,7 @@
                     <select class="form-control select" name="service_provider" id="service_pr" required>
                         <option></option>
                         {% for row in service_provider  %}
-                        {% if row.id == transaction.service_provider_id %}
+                        {% if row.id == data.service_provider_id %}
                         <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
                         {% else %}
                         <option value="{{ row.id }}">{{ row.name|upper }}</option>
@@ -40,32 +40,30 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label>Assistance type <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" name="assistance_type" required>
+                    <input type="text" class="form-control" id="" value="{{data.assistance_type}}" name="assistance_type" required>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Date of transaction</label> <span class="txt-danger" id="required">*</span>
-                    <input type="date" class="form-control f-w-900 upper" name="date" required>
+                    <label>Date of transaction </label> <span class="txt-danger" id="required">*</span>
+                    <input type="date" class="form-control f-w-900 upper" value="{{ data.date_soa|date:'Y-m-d' }}" name="date" required>
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label>Amount <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" name="amount" required>
+                    <input type="text" class="form-control" id="" value="{{data.amount}}" name="amount" required>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label>SAVE</label>
+                    <label>Update</label>
                     <input type="submit" class="form-control f-w-900">
                 </div>
             </div>
         </div>
     </form>
-    <!-- Modal -->
 </div>
-
 <script>
     $('.select1').select2({
         width: '100%',
@@ -79,6 +77,13 @@
     });
 </script>
 <script>
+    var originalDate = "{{data.date_soa}}";
+    var parts = originalDate.split('-');
+    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0]; // dd/mm/yyyy
+
+    // Set the value of the input element using JavaScript
+    document.querySelector(".f-w-900").value = formattedDate;
+
     function validate(evt) {
         var theEvent = evt || window.event;
         // Handle paste
@@ -101,7 +106,7 @@
         if (!validationForm()){
             Swal.fire({
                 title: "Are you sure",
-                text: "You want to add this data",
+                text: "You want to update this data",
                 icon: "info",
                 showCancelButton: true,
                 confirmButtonText: "Yes",
@@ -109,7 +114,7 @@
                 showLoaderOnConfirm: true,
                 preConfirm: function (){
                     return $.post({
-                        url: "{% url 'voucher_outside_fo' data.id %}",
+                        url: "{% url 'edit_outside_fo' data.id %}",
                         data: form,
                         success : function (response){
                             if(!response.error){
@@ -120,7 +125,7 @@
                                     allowOutsideClick: false,
                                 }).then((result) => {
                                     if (result.isConfirmed){
-                                        $('#modal_view').load('/financial-transaction/outside/fo/voucher/{{ data.id }}');
+                                        $('#modal_view').load('/financial-transaction/outside/fo/edit_outside_fo/{{ data.id }}');
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
