@@ -51,6 +51,7 @@
                                             <th>Service provider</th>
                                             <th>Mode of release</th>
                                             <th>Amount</th>
+                                            <th class="text-center">DV - Title</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -199,6 +200,7 @@
                         return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
+                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
             ]
         });
 
