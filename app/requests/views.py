@@ -1106,16 +1106,42 @@ def approveTransactions(request):
 
 @login_required
 @groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
-def view_online_swo(request):
+def view_online_swo_data(request):
 	search = request.GET.get('search', '')
 	page = request.GET.get('page', 1)
 	rows = request.GET.get('rows', 10)
-	active_sw = Paginator(SocialWorker_Status.objects.filter(Q(user__last_name__icontains=search,status=2,date_transaction=today)).order_by('-id'), rows).page(page)
-	context = {
-		'title': 'Status View',
-		'data': active_sw
-	}
-	return render(request, 'requests/status_swo.html', context)
+	
+	# Filter queryset based on search query
+	active_sw = SocialWorker_Status.objects.filter(
+		Q(user__last_name__icontains=search, status=2, date_transaction=today) |
+		Q(user__first_name__icontains=search, status=2, date_transaction=today)
+	).order_by('-id')
+	
+	paginator = Paginator(active_sw, rows)
+	active_sw_page = paginator.page(page)
+	
+	data = []
+	for instance in active_sw_page.object_list:
+		# total = instance.get_total  # Retrieve the value of the get_total property
+		data.append({
+			'table': instance.table,
+			'user__first_name': instance.user.first_name,
+			'user__last_name': instance.user.last_name,
+			'pending': instance.get_total,
+			'ongoing': instance.get_ongoing,
+			'completed': instance.get_complete,
+			'case_study': instance.case_study,
+		})
+
+	response = JsonResponse(data, safe=False)
+	response['X-Pagination-Page'] = active_sw_page.number
+	response['X-Pagination-Total-Pages'] = paginator.num_pages
+	return response
+
+@login_required
+@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
+def view_online_swo(request):
+	return render(request, 'requests/status_swo.html')
 
 
 
