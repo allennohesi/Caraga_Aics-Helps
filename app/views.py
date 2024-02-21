@@ -126,7 +126,7 @@ def dashboard(request):
 		.values('registered_by__first_name', 'registered_by__last_name')
 		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
 		.order_by('-transaction_count')
-	)[:10]
+	)[:5]
 
 	case_study_per_swo = (
 		TransactionStatus1.objects
