@@ -327,6 +327,7 @@
             <th scope="col">Beneficiary Full name</th>
             <th scope="col">Assistance type</th>
             <th scope="col">Date of transaction</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -338,6 +339,25 @@
             <td>{{row.bene.client_bene_fullname}}</td>
             <td>{{row.lib_assistance_category.name}}</td>
             <td>{{row.date_of_transaction}}</td>
+            <td>
+              {% if row.status == 1 %}
+              Pending
+              {% elif row.status == 2 %}
+              Ongoing
+              {% elif row.status == 3 %}
+              For uploading picture
+              {% elif row.status == 4 %}
+              Hold
+              {% elif row.status == 5 %}
+              Cancelled
+              {% elif row.status == 6 %}
+              Completed
+              {% elif row.status == 7 %}
+              Resumed
+              {% else %}
+              Pending
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
