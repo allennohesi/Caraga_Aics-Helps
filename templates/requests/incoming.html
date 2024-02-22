@@ -1,5 +1,54 @@
 {% extends 'layout.html' %}
 {% block content %}
+<style>
+    /* Styling for DataTable */
+    #incoming-table_wrapper {
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
+
+    #incoming-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #incoming-table th,
+    #incoming-table td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+    #incoming-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    #incoming-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    #incoming-table tbody tr:hover {
+        background-color: #f2f2f2;
+    }
+
+    /* Styling for DataTable Search Boxes */
+    .dataTables_filter input {
+        width: 300px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    .dataTables_length select {
+        width: 100px;
+        padding: 6px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+</style>
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
@@ -94,12 +143,12 @@
 {% block script %}
 <script>
     $(document).ready(function(){
-        $('#incoming-table').DataTable({
+        var table = $('#incoming-table').DataTable({
             'serverSide': true,
             'processing': true,
             'deferRender': true,
             'lengthMenu': [ 15, 30, 50, 100, 200 ],
-            'order': [[ 4, 'asc' ]],
+            'order': [[ 1, 'asc' ]],
             'bDestroy': true,
             'ajax': {
                 'url': '/api/requests/transaction/session/?format=datatables',
@@ -203,7 +252,42 @@
                 {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
             ]
         });
+        
+        // Add individual search box for tracking_number column
+        var columnIndex = table.column('transaction.tracking_number:name').index();
+        var headerText = $(table.column(columnIndex).header()).text().trim();
+        
+        
+        var input = $('<input type="text" class="form-control" placeholder="Search Tracking"/>')
+            .appendTo($(table.column(columnIndex).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndex).search() !== this.value) {
+                    table.column(columnIndex).search(this.value).draw();
+                }
+            });
 
+        var columnIndexClient = table.column('transaction.client.client_bene_fullname:name').index();
+        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
+        
+        var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients"/>')
+            .appendTo($(table.column(columnIndexClient).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexClient).search() !== this.value) {
+                    table.column(columnIndexClient).search(this.value).draw();
+                }
+            });
+
+        var columnIndexBene = table.column('transaction.bene.client_bene_fullname:name').index();
+        var headerTextBene = $(table.column(columnIndexBene).header()).text().trim();
+        
+        var inputBene = $('<input type="text" class="form-control" placeholder="Search Beneficiary"/>')
+            .appendTo($(table.column(columnIndexBene).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexBene).search() !== this.value) {
+                    table.column(columnIndexBene).search(this.value).draw();
+                }
+            });
+        
         $(document).on('click', 'a[data-role=details]', function(){
             var id = $(this).data('id');
             $('#transaction_content').load('/requests/incoming/view/' + id);
