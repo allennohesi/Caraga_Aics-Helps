@@ -74,13 +74,34 @@ def number_to_words(value):
 
     # Check if there is a decimal part
     if decimal_part and decimal_part != '00':
-        # Append a space and the decimal part as a fraction
-        words += f" Pesos {decimal_part} / 100"
+        # Append 'Pesos' and the decimal part as a fraction
+        words = words.replace(' And', '')
+        AndFor = "Pesos And"
+        words = f"{words} {AndFor} {decimal_part} / 100"
+        # words += f" Pesos {decimal_part} / 100"
     else:
         # If no decimal part, append 'Pesos' directly
-        words += " Pesos"
+        data = words.replace(' And', '')
+        words = data + " Pesos"
 
     return words
+    # value = str(value).replace(',', '')
+
+    # # Split the value into integer and decimal parts
+    # integer_part, _, decimal_part = str(value).partition('.')
+
+    # # Convert the integer part to words
+    # words = num2words(int(integer_part), lang='en').title()
+
+    # # Check if there is a decimal part
+    # if decimal_part and decimal_part != '00':
+    #     # Append a space and the decimal part as a fraction
+    #     words += f" Pesos {decimal_part} / 100"
+    # else:
+    #     # If no decimal part, append 'Pesos' directly
+    #     words += " Pesos"
+
+    # return words
 
 @register.filter
 def subtract(value, arg):
