@@ -52,7 +52,7 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label>Amount <span class="txt-danger">*</span></label>
-                    <input type="text" class="form-control" id="" value="{{data.amount}}" name="amount" required>
+                    <input type="text" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" value="{{data.amount|intcomma}}" name="amount" required>
                 </div>
             </div>
             <div class="col-md-3">
@@ -125,7 +125,7 @@
                                     allowOutsideClick: false,
                                 }).then((result) => {
                                     if (result.isConfirmed){
-                                        $('#modal_view').load('/financial-transaction/outside/fo/edit_outside_fo/{{ data.id }}');
+                                        $('#modal_view').load('/financial-transaction/edit_outside_fo/{{ data.id }}');
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });

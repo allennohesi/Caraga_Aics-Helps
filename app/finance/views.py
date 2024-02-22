@@ -520,6 +520,7 @@ def get_all_transaction(request):
 		transactions = Transaction.objects.filter(
 			Q(tracking_number__icontains=search_term) &
 			Q(status__in=[3, 6]) &
+			Q(total_amount__isnull=False) &
 			Q(dv_number=None)
 		)[:8]
 
@@ -641,8 +642,8 @@ def view_dv_number(request,pk):
 	outside_fo_data = outside_fo.values_list('amount', flat=True)
 
 	# Convert to numeric in Python and calculate sum
-	total_values = sum(float(value.replace(',', '')) for value in total_values_data)
-	total_amount = sum(float(value.replace(',', '')) for value in outside_fo_data)
+	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
+	total_amount = sum(float(value.replace(',', '')) if value else 0 for value in outside_fo_data)
 
 	# Calculate total sum
 	total_sum = total_values + total_amount

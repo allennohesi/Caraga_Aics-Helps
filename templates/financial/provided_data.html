@@ -53,7 +53,7 @@
                             <div class="col-md-7">
                                 <div class="form-group">
                                     <label>Updating amount <span class="txt-danger">*</span></label>
-                                    <input type="text" class="form-control" name="amount" id="amount" value="{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}" required>
+                                    <input type="text" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="amount" id="amount" value="{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
