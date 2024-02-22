@@ -61,49 +61,66 @@ def generate_serial_string(oldstring, prefix=None):
 @groups_only('Super Administrator', 'Biller','Finance')
 def financial_transaction(request):
 	if request.method == "POST":
-		with transaction.atomic():
-			voucher=request.POST.get('voucher_title')
-			date=request.POST.get('date')
-			remarks=request.POST.get('remarks')
-			
-			lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
-			track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
-				generate_serial_string(None, 'CODE')
-			check_if_exists = finance_voucher.objects.filter(
-				Q(voucher_title__icontains=request.POST.get('voucher_title'))
-			).first()
-			if not check_if_exists:
-				if request.POST.get('dv_id'):
-					finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
-						voucher_title=voucher,
-						date=date,
-						remarks=remarks,
-						user_id=request.user.id,
-						with_without_dv=request.POST.get('with_without_dv'),
-						status=1,
-					)
-					data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
-					voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
-					for row in voucher_data:
-						Transaction.objects.filter(id=row.transactionStatus_id).update(
-							dv_number=voucher,
-							dv_date=date
+		try:
+			with transaction.atomic():
+				voucher=request.POST.get('voucher_title')
+				date=request.POST.get('date')
+				remarks=request.POST.get('remarks')
+				
+				lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
+				track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
+					generate_serial_string(None, 'CODE')
+				check_if_exists = finance_voucher.objects.filter(
+					Q(voucher_title__icontains=request.POST.get('voucher_title'))
+				).first()
+				if not check_if_exists:
+					if request.POST.get('dv_id'):
+						finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+							voucher_title=voucher,
+							date=date,
+							remarks=remarks,
+							user_id=request.user.id,
+							with_without_dv=request.POST.get('with_without_dv'),
+							status=1,
 						)
+						data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
+						voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
+						for row in voucher_data:
+							Transaction.objects.filter(id=row.transactionStatus_id).update(
+								dv_number=voucher,
+								dv_date=date
+							)
 
-					return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
+						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
+					else:
+						finance_voucher.objects.create(
+							voucher_code=track_num,
+							voucher_title=voucher,
+							date=date,
+							remarks=remarks,
+							user_id=request.user.id,
+							with_without_dv=request.POST.get('with_without_dv'),
+							status=1,
+						)
+						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
-					finance_voucher.objects.create(
-						voucher_code=track_num,
-						voucher_title=voucher,
-						date=date,
-						remarks=remarks,
-						user_id=request.user.id,
-						with_without_dv=request.POST.get('with_without_dv'),
-						status=1,
-					)
-					return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
-			else:
-				return JsonResponse({'error': True, 'msg': 'This Title/DV already exists, please try different Title/DV for the better tracking.'})
+					return JsonResponse({'error': True, 'msg': 'This Title/DV already exists, please try different Title/DV for the better tracking.'})
+				
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST financial_transaction")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST financial_transaction")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+
+
+
 	context = {
 		'service_provider': ServiceProvider.objects.all(),
 		'fund_source': FundSource.objects.all()
@@ -442,11 +459,24 @@ def generate_csv_data(queryset):
 @login_required 
 def voucher_modal(request, pk):
 	if request.method == "POST":
-		finance_voucherData.objects.create(
-			voucher_id=pk,
-			transactionStatus_id=request.POST.get('transaction_id'),
-		)
-		return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+		try:
+			finance_voucherData.objects.create(
+				voucher_id=pk,
+				transactionStatus_id=request.POST.get('transaction_id'),
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN voucher_modal")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST voucher_modal")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST voucher_modal")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST voucher_modal")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 	
 	test = finance_voucherData.objects.filter(voucher_id=pk)
 	context = {
@@ -458,16 +488,29 @@ def voucher_modal(request, pk):
 @csrf_exempt
 def remove_voucherData(request):
 	if request.method == "POST":
-		data = finance_voucherData.objects.filter(id=request.POST.get('id')).first()
-		TransactionStatus1.objects.filter(id=data.transactionStatus_id).update(
-			finance_status=None,
-		)
-		Transaction.objects.filter(id=data.transactionStatus_id).update(
-			dv_number=None,
-			dv_date=None
-		)
-		data = finance_voucherData.objects.filter(id=request.POST.get('id')).delete()
-	return JsonResponse({'data': 'success'})
+		try:
+			data = finance_voucherData.objects.filter(id=request.POST.get('id')).first()
+			TransactionStatus1.objects.filter(id=data.transactionStatus_id).update(
+				finance_status=None,
+			)
+			Transaction.objects.filter(id=data.transactionStatus_id).update(
+				dv_number=None,
+				dv_date=None
+			)
+			data = finance_voucherData.objects.filter(id=request.POST.get('id')).delete()
+			return JsonResponse({'data': 'success'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST remove_voucherData")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_voucherData")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_voucherData")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 @csrf_exempt
 def get_all_transaction(request):
@@ -569,19 +612,30 @@ def view_dv_number(request,pk):
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
-
 	if request.method == "POST":
-		with transaction.atomic():
-			finance_voucherData.objects.create(
-				voucher_id=pk,
-				transactionStatus_id=request.POST.get('transaction_id'),
-			)
-			Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
-				dv_number = finance_data.voucher_title,
-				dv_date = finance_data.date
-			)
-			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	
+		try:
+			with transaction.atomic():
+				finance_voucherData.objects.create(
+					voucher_id=pk,
+					transactionStatus_id=request.POST.get('transaction_id'),
+				)
+				Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
+					dv_number = finance_data.voucher_title,
+					dv_date = finance_data.date
+				)
+				return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN view_dv_number FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST view_dv_number FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST view_dv_number FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
 
 	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
 	outside_fo_data = outside_fo.values_list('amount', flat=True)
@@ -607,9 +661,9 @@ def remove_data_outside_fo(request):
 		finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
 	return JsonResponse({'data': 'success'})
 
-def voucher_outside_fo(request,pk):
-	try:
-		if request.method == "POST":
+def voucher_outside_fo(request, pk):
+	if request.method == "POST":
+		try:
 			finance_outsideFo.objects.create(
 				voucher_id=pk,
 				glnumber=request.POST.get('glnumber'),
@@ -620,24 +674,23 @@ def voucher_outside_fo(request,pk):
 				amount=request.POST.get('amount'),
 			)
 			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
-	except RequestException as e:
-		handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO")
-		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
-	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN REQUEST VOUCHER OUTSIDE FO")
-		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
-	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN REQUEST VOUCHER OUTSIDE FO")
-		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
-	except Exception as e:
-		handle_error(e, "EXCEPTION ERROR IN REQUEST VOUCHER OUTSIDE FO")
-		return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
-	
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 	context = {
-		'data':finance_voucher.objects.filter(id=pk).first(),
+		'data': finance_voucher.objects.filter(id=pk).first(),
 		'service_provider': ServiceProvider.objects.filter(status=1)
 	}
-	return render(request,'financial/outside_fo.html',context)
+	return render(request, 'financial/outside_fo.html', context)
 
 def edit_outside_fo(request,pk):
 	try:
@@ -674,41 +727,55 @@ def finance_modal_provided(request,pk):
 	voucher_data = finance_voucherData.objects.filter(transactionStatus_id=pk).first()
 	transaction_id = Transaction.objects.filter(id=pk).first()
 	if request.method == "POST":
-		with transaction.atomic():
-			#check = Transaction.objects.filter(id=pk)
-			if request.POST.get('update_sp') == "update_sp":
-				transaction_id.service_provider_id = request.POST.get('service_provider')
-				transaction_id.save()
-				return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
-			elif request.POST.get('update_sp') == "update_amount":
-				transaction_id.total_amount = request.POST.get('amount')
-				transaction_id.save()
-				return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
-			else:
-				if request.POST.get('sid'):
-					transaction_description.objects.filter(id=request.POST.get('sid')).update(
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),	
-					)
-					return JsonResponse({'data': 'success',
-						'msg': 'The data provided to client, successfully updated'})
+		try:
+			with transaction.atomic():
+				#check = Transaction.objects.filter(id=pk)
+				if request.POST.get('update_sp') == "update_sp":
+					transaction_id.service_provider_id = request.POST.get('service_provider')
+					transaction_id.save()
+					return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
+				elif request.POST.get('update_sp') == "update_amount":
+					transaction_id.total_amount = request.POST.get('amount')
+					transaction_id.save()
+					return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
 				else:
-					transaction_description.objects.create(
-						tracking_number_id=transaction_id.tracking_number,
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),
-						user_id=request.user.id,
-					)
-					return JsonResponse({'data': 'success',
-										'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(transaction_id.tracking_number)})
+					if request.POST.get('sid'):
+						transaction_description.objects.filter(id=request.POST.get('sid')).update(
+							provided_data=request.POST.get('provided'),
+							regular_price=request.POST.get('regprice'),
+							regular_quantity=request.POST.get('qty'),
+							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+							discount_quantity=request.POST.get('qty1'), #CHECKING
+							total=request.POST.get('tot'),	
+						)
+						return JsonResponse({'data': 'success',
+							'msg': 'The data provided to client, successfully updated'})
+					else:
+						transaction_description.objects.create(
+							tracking_number_id=transaction_id.tracking_number,
+							provided_data=request.POST.get('provided'),
+							regular_price=request.POST.get('regprice'),
+							regular_quantity=request.POST.get('qty'),
+							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+							discount_quantity=request.POST.get('qty1'), #CHECKING
+							total=request.POST.get('tot'),
+							user_id=request.user.id,
+						)
+						return JsonResponse({'data': 'success',
+											'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(transaction_id.tracking_number)})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN finance_modal_provided")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST finance_modal_provided")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST finance_modal_provided")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST finance_modal_provided")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
@@ -725,41 +792,55 @@ def finance_modal_provided(request,pk):
 def update_amount(request,pk):
 	transaction_id = Transaction.objects.filter(id=pk).first()
 	if request.method == "POST":
-		with transaction.atomic():
-			check = Transaction.objects.filter(id=pk)
-			if request.POST.get('status_update') == "status":
-				data = TransactionStatus1.objects.filter(transaction_id=pk).update(
-					status=request.POST.get("change_status"),
-				)
-				data = Transaction.objects.filter(id=pk).update(
-					status=request.POST.get("change_status")
-				)
-				return JsonResponse({'data': 'success', 'msg': 'The status has been updated'})
-			else:
-				if request.POST.get('sid'):
-					transaction_description.objects.filter(id=request.POST.get('sid')).update(
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),	
+		try:
+			with transaction.atomic():
+				check = Transaction.objects.filter(id=pk)
+				if request.POST.get('status_update') == "status":
+					data = TransactionStatus1.objects.filter(transaction_id=pk).update(
+						status=request.POST.get("change_status"),
 					)
-					return JsonResponse({'data': 'success',
-						'msg': 'The data provided to client, successfully updated'})
+					data = Transaction.objects.filter(id=pk).update(
+						status=request.POST.get("change_status")
+					)
+					return JsonResponse({'data': 'success', 'msg': 'The status has been updated'})
 				else:
-					transaction_description.objects.create(
-						tracking_number_id=transaction_id.tracking_number,
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),
-						user_id=request.user.id,
-					)
-					return JsonResponse({'data': 'success',
-										'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+					if request.POST.get('sid'):
+						transaction_description.objects.filter(id=request.POST.get('sid')).update(
+							provided_data=request.POST.get('provided'),
+							regular_price=request.POST.get('regprice'),
+							regular_quantity=request.POST.get('qty'),
+							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+							discount_quantity=request.POST.get('qty1'), #CHECKING
+							total=request.POST.get('tot'),	
+						)
+						return JsonResponse({'data': 'success',
+							'msg': 'The data provided to client, successfully updated'})
+					else:
+						transaction_description.objects.create(
+							tracking_number_id=transaction_id.tracking_number,
+							provided_data=request.POST.get('provided'),
+							regular_price=request.POST.get('regprice'),
+							regular_quantity=request.POST.get('qty'),
+							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
+							discount_quantity=request.POST.get('qty1'), #CHECKING
+							total=request.POST.get('tot'),
+							user_id=request.user.id,
+						)
+						return JsonResponse({'data': 'success',
+											'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN update_amount")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST update_amount")
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST update_amount")
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST update_amount")
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+		
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),

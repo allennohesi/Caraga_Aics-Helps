@@ -357,10 +357,11 @@ def trackingModal(request,pk):
 			Transaction.objects.filter(id=data.id).update(
 				swo_id = request.POST.get("swo_name")
 			)
-
+	get_client_history = Transaction.objects.filter(client_id=data.client_id).order_by('-id')
 	context = {
 		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
 		'datas':data, #TRANSACTION TABLE
+		'get_client_history': get_client_history, # CLIENT HISTORY
 	}
 	
 	return render(request,'requests/TrackingModal.html', context)
