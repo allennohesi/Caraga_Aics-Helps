@@ -31,8 +31,6 @@ class TransactionPerSession(generics.ListAPIView):
             return queryset
         else:
             billed_param = self.request.query_params.get("billed")
-            print(billed_param)
-
             if billed_param is not None:
                 if billed_param.lower() == "true":
                     # Filter where dv_number is not null
@@ -40,6 +38,10 @@ class TransactionPerSession(generics.ListAPIView):
                 elif billed_param.lower() == "false":
                     # Filter where dv_number is null
                     queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True).order_by('-id')
+                elif billed_param.lower() == "for_case_study":
+                    queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2, status__in=[3,6]).order_by('-id')
+                elif billed_param.lower() == "submitted_case_study":
+                    queryset = TransactionStatus1.objects.filter(case_study_status=1, status__in=[3,6]).order_by('-id')
                 else:
                     queryset = TransactionStatus1.objects.none()
             else:
