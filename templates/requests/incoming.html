@@ -76,7 +76,7 @@
 </div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-9">
             <div class="card">
                 <div class="card-body" id="transaction_content">
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
@@ -114,6 +114,19 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="ibox-title">
+                        <h5>Filter Transactions</h5>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item active"  id="filter_billed-all" href="javascript:void(0);" data-role="filter_billed" data-filter="all">UNBILLED TRANSACTIONS</a>
+                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="True">BILLED / WITH DV TRANSACTIONS</a>
                     </div>
                 </div>
             </div>
@@ -309,6 +322,15 @@
             var id = $(this).data('id');
             $('#empid').val(id)
             $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/update_amount/' +id);
+        });
+        $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS
+            $('.list-group-item').removeClass('active');
+            $(this).addClass('active'); // Add 'active' class to the clicked element
+            if($(this).data('filter') == 'all'){
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables').load();
+            }else{
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&billed='+$(this).data('filter')).load();
+            }
         });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
             var id = $(this).data('id');

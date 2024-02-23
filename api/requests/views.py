@@ -30,7 +30,20 @@ class TransactionPerSession(generics.ListAPIView):
             ).order_by('-id')
             return queryset
         else:
-            queryset = TransactionStatus1.objects.all().order_by('-id')
+            billed_param = self.request.query_params.get("billed")
+            print(billed_param)
+
+            if billed_param is not None:
+                if billed_param.lower() == "true":
+                    # Filter where dv_number is not null
+                    queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False).order_by('-id')
+                elif billed_param.lower() == "false":
+                    # Filter where dv_number is null
+                    queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True).order_by('-id')
+                else:
+                    queryset = TransactionStatus1.objects.none()
+            else:
+                queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True).exclude(status__in=[5]).order_by('-id')
             return queryset
 
 class TransactionPerSessionAllViews(generics.ListAPIView):
