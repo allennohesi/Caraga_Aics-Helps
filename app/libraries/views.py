@@ -11,7 +11,7 @@ from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, Se
     SignatoriesTbl, occupation_tbl
 from app.requests.models import ClientBeneficiary
 from app.models import AuthUser, AuthUserGroups
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def signatories(request):
@@ -262,23 +262,39 @@ def get_all_user(request):
     return JsonResponse([], safe=False)
 
 
-@login_required #ORIGINAL CODE
+@login_required
 @csrf_exempt
 def get_all_client_beneficiary(request):
     search_term = request.GET.get('searchTerm', '')
-    
     if search_term:
-        clients = (
+        clients_query = (
             ClientBeneficiary.objects
             .filter(Q(client_bene_fullname__icontains=search_term) & Q(is_validated=1))
             .order_by('client_bene_fullname')[:10]
-            .values_list('id', 'client_bene_fullname')
         )
-
-        json_data = [{'id': id, 'text': client_bene_fullname} for id, client_bene_fullname in clients]
+        
+        json_data = [{'id': client.id, 'text': client.client_bene_fullname} for client in clients_query]
         return JsonResponse(json_data, safe=False)
     
     return JsonResponse([], safe=False)
+
+# @login_required #ORIGINAL CODE
+# @csrf_exempt
+# def get_all_client_beneficiary(request):
+#     search_term = request.GET.get('searchTerm', '')
+    
+#     if search_term:
+#         clients = (
+#             ClientBeneficiary.objects
+#             .filter(Q(client_bene_fullname__icontains=search_term) & Q(is_validated=1))
+#             .order_by('client_bene_fullname')[:10]
+#             .values_list('id', 'client_bene_fullname')
+#         )
+
+#         json_data = [{'id': id, 'text': client_bene_fullname} for id, client_bene_fullname in clients]
+#         return JsonResponse(json_data, safe=False)
+    
+#     return JsonResponse([], safe=False)
 
 # @login_required
 # @csrf_exempt
