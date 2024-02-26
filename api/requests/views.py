@@ -38,6 +38,12 @@ class TransactionPerSession(generics.ListAPIView):
                 elif billed_param.lower() == "false":
                     # Filter where dv_number is null
                     queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True).order_by('-id')
+                elif billed_param.lower() == "completed":
+                    # Filter where dv_number is null
+                    queryset = TransactionStatus1.objects.filter(status=6).order_by('-id')
+                elif billed_param.lower() == "cancelled":
+                    # Filter where dv_number is null
+                    queryset = TransactionStatus1.objects.filter(status=5).order_by('-id')
                 elif billed_param.lower() == "for_case_study":
                     queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2, status__in=[3,6]).order_by('-id')
                 elif billed_param.lower() == "submitted_case_study":
@@ -45,7 +51,7 @@ class TransactionPerSession(generics.ListAPIView):
                 else:
                     queryset = TransactionStatus1.objects.none()
             else:
-                queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True).exclude(status__in=[5]).order_by('-id')
+                queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4]).order_by('-id')
             return queryset
 
 class TransactionPerSessionAllViews(generics.ListAPIView):
