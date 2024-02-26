@@ -274,7 +274,7 @@ def get_bene_info(request, pk):
 
 
 @login_required
-@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def incoming(request):
 	context = {
 		'title': 'Incoming'
@@ -285,7 +285,7 @@ def incoming(request):
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def view_incoming(request, pk):
 	if request.method == "POST":
 		client_b_id = Transaction.objects.filter(id=pk).first()
