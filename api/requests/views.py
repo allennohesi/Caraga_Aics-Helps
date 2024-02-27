@@ -36,7 +36,6 @@ class TransactionPerSession(generics.ListAPIView):
 			year = self.request.query_params.get("year")
 			
 			if billed_param is not None:
-				print("Filtering by billed_param:", billed_param)
 				if billed_param.lower() == "true":
 					queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False).order_by('-id')
 				elif billed_param.lower() == "false":

@@ -357,6 +357,14 @@ def trackingModal(request,pk):
 			Transaction.objects.filter(id=data.id).update(
 				swo_id = request.POST.get("swo_name")
 			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the social worker'})
+		elif request.POST.get("relationship") == "relationship":
+			print(data.tracking_number)
+			Transaction.objects.filter(id=data.id).update(
+				relation_id = request.POST.get("relationship_selected")
+			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the relationship'})
+		
 	get_client_history = Transaction.objects.filter(client_id=data.client_id).order_by('-id')
 	verifier = request.user.groups.filter(name='Verifier').exists()
 	context = {
@@ -364,6 +372,7 @@ def trackingModal(request,pk):
 		'datas':data, #TRANSACTION TABLE
 		'get_client_history': get_client_history, # CLIENT HISTORY
 		'verifier': verifier,
+		'relation': Relation.objects.filter(status=1),
 	}
 	
 	return render(request,'requests/TrackingModal.html', context)
