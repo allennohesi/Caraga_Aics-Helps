@@ -927,7 +927,6 @@ def printGL(request, pk):
 	rows = count + 1
 
 	data = "The Client is {}. and the Benefiary is {} and the Social Worker is {}. The service provider is {} ".format(transaction.client.get_client_fullname,transaction.bene.get_client_fullname,transaction.swo.get_fullname, transaction.service_provider.name)
-	print("TEST",data)
 	qrcode = segno.make_qr(data)
 	qrcode.save('./static/staticfiles/qrcode/GL.png', scale=10)
 
