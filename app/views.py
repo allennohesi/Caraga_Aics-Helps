@@ -629,8 +629,6 @@ def generate_testXLS(request,pk):
 							'transaction__client__occupation__occupation_name','transaction__client__salary','transaction__client__sex__name','upload_time_end')
 	if transaction:
 		for indx, row in enumerate(transaction):
-			print("START", row['verified_time_start'].strftime("%I:%M %p"))
-			print("END", row['upload_time_end'].strftime("%I:%M %p"))
 			dateoftransaction = row['verified_time_start'].strftime("%I:%M %p")
 			transactionDate = row['verified_time_start'].strftime("%B %d, %Y")
 			birth_date = row['transaction__bene__birthdate'].strftime("%B %d, %Y")

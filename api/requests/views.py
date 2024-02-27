@@ -48,8 +48,8 @@ class TransactionPerSession(generics.ListAPIView):
                     queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2, status__in=[3,6]).order_by('-id')
                 elif billed_param.lower() == "submitted_case_study":
                     queryset = TransactionStatus1.objects.filter(case_study_status=1, status__in=[3,6]).order_by('-id')
-                else:
-                    queryset = TransactionStatus1.objects.none()
+                elif billed_param.lower() == "all_transactions":
+                    queryset = TransactionStatus1.objects.all().order_by('-id')
             else:
                 queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4]).order_by('-id')
             return queryset
