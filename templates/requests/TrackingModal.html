@@ -181,6 +181,34 @@
      </div>
      <hr>
      <div class="col-lg-12">
+        <form id="updateRelationship">
+          {% csrf_token %}
+          <div class="row mb-3">
+              <div class="col-md-4">
+                <label>Relationship to Beneficiary <span class="txt-danger">*</span></label>
+                <select class="form-control relationship" id="relationship" name="relationship_selected" required>
+                    <option></option>
+                    {% for row in relation %}
+                    {% if row.id == datas.relation_id %}
+                    <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                    {% else %}
+                    <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+              </div>
+              <input type="text" name="relationship" value="relationship" hidden>
+              <div class="col-md-2">
+                <div class="form-group">
+                    <label>Action</label><br>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+              </div>
+          </div>
+        </form>
+      </div>
+     <hr>
+     <div class="col-lg-12">
         <small>Updating of Social Worker, please review before submitting</small>
         <form id="submitUpdateSwo">
            {% csrf_token %}
@@ -276,9 +304,6 @@
         </form>
      </div>
      {% endif %}
-     {% else %}
-     <hr>
-     <small>Please contact the verifier</small>
      {% endif %}
     </div>
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -417,7 +442,11 @@
         cache: true
     }
 });
-
+  $('.relationship').select2({
+    width: '100%',
+    placeholder: 'Choose',
+    containerCssClass: 'select'
+  });
   $('.select1').select2({
     width: '100%',
     placeholder: 'Choose',
@@ -441,6 +470,45 @@
         Swal.fire({
             title: "Are you sure",
             text: "You want to update Client/Beneficiary?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function (){
+                return $.post({
+                    url: "{% url 'trackingModal' datas.id %}",
+                    data: form,
+                    success : function (response){
+                        if(!response.error){
+                            Swal.fire({
+                                title: "Good job!",
+                                html:  response.msg,
+                                icon: "success",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed){
+                                    $('#tracking_modal').load('/requests/tracking/{{ datas.id }}');
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                }
+                            });
+                        }
+                    },
+                    cache       : false,
+                    contentType : false,
+                    processData : false,
+                });
+            },
+        });
+    }
+  });
+  $('#updateRelationship').on('submit', function(e){
+    e.preventDefault();
+    var form = new FormData(this);
+    if (!validationForm()){
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to update the relationship?",
             icon: "info",
             showCancelButton: true,
             confirmButtonText: "Yes",
