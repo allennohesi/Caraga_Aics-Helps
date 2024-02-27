@@ -6,7 +6,7 @@
 </style>
 <div class="row" id="modal_view">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Updating of service provider</h5>
@@ -42,7 +42,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        {% if finance %}
+        <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Updating of amount for finance</h5>
@@ -69,6 +70,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
     <hr>
     <form id="submitformProvided">
