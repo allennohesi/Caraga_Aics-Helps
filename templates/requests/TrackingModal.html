@@ -216,6 +216,7 @@
         </form>
      </div>
      <hr>
+     {% if verifier %}
      {% if transaction_status.status == 6 %}
      <form id="updateCaseStudy">
         {% csrf_token %}
@@ -274,6 +275,10 @@
            </div>
         </form>
      </div>
+     {% endif %}
+     {% else %}
+     <hr>
+     <small>Please ask the verifier</small>
      {% endif %}
     </div>
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
