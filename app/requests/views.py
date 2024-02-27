@@ -56,7 +56,7 @@ def handle_error(error, location): #ERROR HANDLING
 # 		Transaction.objects.filter(id=data.id).delete()
 # 		AssessmentProblemPresented.objects.filter(transaction_id=data.id).delete()
 # 		TransactionStatus1.objects.filter(transaction_id=data.id).delete()
-		
+
 def transaction_request(request):
 	try:
 		with transaction.atomic():
@@ -358,10 +358,12 @@ def trackingModal(request,pk):
 				swo_id = request.POST.get("swo_name")
 			)
 	get_client_history = Transaction.objects.filter(client_id=data.client_id).order_by('-id')
+	verifier = request.user.groups.filter(name='Verifier').exists()
 	context = {
 		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
 		'datas':data, #TRANSACTION TABLE
 		'get_client_history': get_client_history, # CLIENT HISTORY
+		'verifier': verifier,
 	}
 	
 	return render(request,'requests/TrackingModal.html', context)
