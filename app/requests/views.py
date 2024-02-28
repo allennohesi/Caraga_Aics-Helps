@@ -359,7 +359,6 @@ def trackingModal(request,pk):
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the social worker'})
 		elif request.POST.get("relationship") == "relationship":
-			print(data.tracking_number)
 			Transaction.objects.filter(id=data.id).update(
 				relation_id = request.POST.get("relationship_selected")
 			)
@@ -382,8 +381,20 @@ def trackingModal(request,pk):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @groups_only('Social Worker', 'Super Administrator')
 def assessment(request):
+	transaction_data = TransactionStatus1.objects.filter(Q(status=1) | Q(status=2), transaction_id__swo_id=request.user.id)
+	today_date = date.today()
+	modal_show = False  # Set modal_show to False initially
+	
+	for row in transaction_data:
+		row_date = row.verified_time_start.strftime('%Y-%m-%d')
+		
+		if today_date.strftime('%Y-%m-%d') != row_date:
+			modal_show = True  # Set modal_show to True if any transaction has a different date
+			break  # Exit the loop as soon as a transaction with a different date is found
+	
 	context = {
-		'title': 'Assessment'
+		'title': 'Assessment',
+		'modal_show': modal_show,
 	}
 	return render(request, 'requests/assessment.html', context)
 
