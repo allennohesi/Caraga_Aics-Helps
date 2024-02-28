@@ -88,9 +88,8 @@
                                     allowOutsideClick: false,
                                 }).then((result) => {
                                     if (result.isConfirmed){
-                                        location.reload();
-                                        //$('#assigned-to-me').DataTable().ajax.reload();
-                                        //$('#completed-table').DataTable().ajax.reload();
+                                        $('#assigned-to-me').DataTable().ajax.reload();
+                                        $('#assessment-table').DataTable().ajax.reload();
                                         //$('#assessment-table').DataTable().ajax.reload();
                                         //$('#modal_view').load('/requests/assessmentStatusModal/{{ TransactionData.id }}');
                                     }

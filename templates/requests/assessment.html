@@ -238,6 +238,18 @@
 {% block script %}
 <script>
     $(document).ready(function(){
+        // Show the modal when the page loads
+        {% if modal_show %}
+        Swal.fire({
+            title: "Transactions updating",
+            text: "You have pending or ongoing transactions that are not from today. Please update.",
+            icon: "question"
+            });
+        {% endif %}
+    })
+</script>
+<script>
+    $(document).ready(function(){
         $('#assigned-to-me').DataTable({ //ASSIGNED TO SELF
             'serverSide': true,
             'processing': true,
