@@ -14,7 +14,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
 from django.contrib.sessions.models import Session
-from app.models import AuthUser, AuthUserGroups
+from app.models import AuthUser, AuthUserGroups, AuthtokenToken
 from django.db.models import Value, Sum, Count, Q
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -26,7 +26,7 @@ import os
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from decimal import Decimal
-
+from rest_framework.authtoken.models import Token
 today = date.today()
 
 def generate_serial_string(oldstring, prefix=None):

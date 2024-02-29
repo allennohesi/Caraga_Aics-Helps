@@ -87,7 +87,15 @@ class AuthUser(models.Model):
         managed = False
         db_table = 'auth_user'
 
+class AuthtokenToken(models.Model):
+    key = models.CharField(primary_key=True, max_length=40)
+    created = models.DateTimeField()
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
 
+    class Meta:
+        managed = False
+        db_table = 'authtoken_token'
+        
 class AuthUserGroups(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
