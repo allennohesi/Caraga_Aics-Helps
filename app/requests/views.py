@@ -143,7 +143,13 @@ def requests(request):
 		today = date.today()
 		active_swo = SocialWorker_Status.objects.all()
 		if request.method == "POST":
-			check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
+			# check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
+			check_transaction = TransactionStatus1.objects.filter(
+				Q(transaction_id__client_id=request.POST.get('client')) &
+				Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
+				Q(status=6) |
+				Q(transaction_id__bene_id=request.POST.get('beneficiary'))
+				).last()
 			if check_transaction:
 				entriedDate1 = check_transaction.swo_time_end.date()
 				threemonths1 = timedelta(3*365/12)
@@ -154,12 +160,12 @@ def requests(request):
 				if present > convertedDate: #IF LAPAS NA SYAS 3 months same client
 					submission=transaction_request(request)
 					return submission
-				elif request.POST.get('justification'): #IF dili pa sya lapas 3 months but same client, proceed
+				elif request.POST.get('justification'): #IF dili pa sya lapas 3 months but same client, nay justificiation proceed
 					submission=transaction_request(request)
 					return submission
 				else: #IF dili pa sya lapas 3 months, walay justification
 					return JsonResponse({'error': True,
-											'msg': 'The assistance you get is not yet available, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
+											'msg': 'The assistance you get is not yet available for the client/beneficiary, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
 			else:
 				submission=transaction_request(request) #IF new pa ang client
 				return submission
