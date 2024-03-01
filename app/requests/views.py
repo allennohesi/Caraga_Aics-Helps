@@ -145,25 +145,37 @@ def requests(request):
 		if request.method == "POST":
 			# check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
 			check_transaction = TransactionStatus1.objects.filter(
-				Q(transaction_id__client_id=request.POST.get('client'), transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6) |
-				Q(transaction_id__bene_id=request.POST.get('beneficiary'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6)
-				).last()
+				(
+					Q(transaction_id__client_id=request.POST.get('client')) &
+					Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
+					(Q(status=6) | Q(status=1) | Q(status=2))
+				) |
+				(
+					Q(transaction_id__bene_id=request.POST.get('beneficiary')) &
+					Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
+					(Q(status=6) | Q(status=1) | Q(status=2))
+				)
+			).last()
 			if check_transaction:
-				entriedDate1 = check_transaction.swo_time_end.date()
-				threemonths1 = timedelta(3*365/12)
-				result1 = (entriedDate1 + threemonths1).isoformat()
-				convertedDate = date.fromisoformat(result1)
-				present = datetime.now().date()
-				dateStr = convertedDate.strftime("%d %b, %Y")
-				if present > convertedDate: #IF LAPAS NA SYAS 3 months same client
-					submission=transaction_request(request)
-					return submission
-				elif request.POST.get('justification'): #IF dili pa sya lapas 3 months but same client, nay justificiation proceed
-					submission=transaction_request(request)
-					return submission
-				else: #IF dili pa sya lapas 3 months, walay justification
+				if check_transaction.swo_time_end:
+					entriedDate1 = check_transaction.swo_time_end.date()
+					threemonths1 = timedelta(3*365/12)
+					result1 = (entriedDate1 + threemonths1).isoformat()
+					convertedDate = date.fromisoformat(result1)
+					present = datetime.now().date()
+					dateStr = convertedDate.strftime("%d %b, %Y")
+					if present > convertedDate: #IF LAPAS NA SYAS 3 months same client
+						submission=transaction_request(request)
+						return submission
+					elif request.POST.get('justification'): #IF dili pa sya lapas 3 months but same client, nay justificiation proceed
+						submission=transaction_request(request)
+						return submission
+					else: #IF dili pa sya lapas 3 months, walay justification
+						return JsonResponse({'error': True,
+												'msg': 'The assistance you get is not yet available for the client/beneficiary, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
+				else:
 					return JsonResponse({'error': True,
-											'msg': 'The assistance you get is not yet available for the client/beneficiary, please wait for another 3 months DATE: ' + dateStr + ' Thank you!'})
+						'msg': 'The client/Beneficiary are still pending/ongoing/ please update the transaction to cancelled or completed'})
 			else:
 				submission=transaction_request(request) #IF new pa ang client
 				return submission
