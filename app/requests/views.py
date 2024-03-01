@@ -145,10 +145,8 @@ def requests(request):
 		if request.method == "POST":
 			# check_transaction = TransactionStatus1.objects.filter(transaction_id__client_id=request.POST.get('client'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6).last()
 			check_transaction = TransactionStatus1.objects.filter(
-				Q(transaction_id__client_id=request.POST.get('client')) &
-				Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
-				Q(status=6) |
-				Q(transaction_id__bene_id=request.POST.get('beneficiary'))
+				Q(transaction_id__client_id=request.POST.get('client'), transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6) |
+				Q(transaction_id__bene_id=request.POST.get('beneficiary'),transaction_id__lib_assistance_category_id=request.POST.get('assistance_category'),status=6)
 				).last()
 			if check_transaction:
 				entriedDate1 = check_transaction.swo_time_end.date()
