@@ -125,7 +125,10 @@
       <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Timelines</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">History</button>
+      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Client history</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="beneficiary-tab" data-bs-toggle="tab" data-bs-target="#beneficiary" type="button" role="tab" aria-controls="beneficiary" aria-selected="false">Beneficiary history</button>
     </li>
   </ul>
   <div class="tab-content" id="myTabContent">
@@ -362,6 +365,52 @@
         </thead>
         <tbody>
           {% for row in get_client_history %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{row.tracking_number}}</td>
+            <td>{{row.client.client_bene_fullname}}</td>
+            <td>{{row.bene.client_bene_fullname}}</td>
+            <td>{{row.lib_assistance_category.name}}</td>
+            <td>{{row.date_of_transaction}}</td>
+            <td>
+              {% if row.status == 1 %}
+              Pending
+              {% elif row.status == 2 %}
+              Ongoing
+              {% elif row.status == 3 %}
+              For uploading picture
+              {% elif row.status == 4 %}
+              Hold
+              {% elif row.status == 5 %}
+              Cancelled
+              {% elif row.status == 6 %}
+              Completed
+              {% elif row.status == 7 %}
+              Resumed
+              {% else %}
+              Pending
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="beneficiary" role="tabpanel" aria-labelledby="beneficiary-tab">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Tracking Number</th>
+            <th scope="col">Client Full name</th>
+            <th scope="col">Beneficiary Full name</th>
+            <th scope="col">Assistance type</th>
+            <th scope="col">Date of transaction</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in get_beneficiary_history %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{row.tracking_number}}</td>

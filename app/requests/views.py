@@ -398,11 +398,13 @@ def trackingModal(request,pk):
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the relationship'})
 		
 	get_client_history = Transaction.objects.filter(client_id=data.client_id).order_by('-id')
+	get_beneficiary_history = Transaction.objects.filter(bene_id=data.bene_id).order_by('-id')
 	verifier = request.user.groups.filter(name='Verifier').exists()
 	context = {
 		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
 		'datas':data, #TRANSACTION TABLE
 		'get_client_history': get_client_history, # CLIENT HISTORY
+		'get_beneficiary_history': get_beneficiary_history,
 		'verifier': verifier,
 		'relation': Relation.objects.filter(status=1),
 	}
