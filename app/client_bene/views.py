@@ -302,31 +302,32 @@ def registration(request):
 	return render(request, 'client_bene/registration.html', context)
 
 def modal_transaction(request,pk):
-	transactionClientSide = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).order_by('-id')
-	date1 = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).last()
-	if date1:
-		entriedDate1 = date1.swo_time_end.date()
-		threemonths1 = timedelta(3*365/12)
-		result1 = (entriedDate1 + threemonths1).isoformat()
-	else:
-		result1 = "No data"
-
-	transactionBeneside = TransactionStatus1.objects.filter(transaction_id__bene_id=pk, status=6).order_by('-id')
-	date = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).last()
-	if date:
-		entriedDate = date.swo_time_end.date()
-		threemonths = timedelta(3*365/12)
-		result2 = (entriedDate + threemonths).isoformat()
-	else:
-		result2 = "No data"
+	transactionClientSide = TransactionStatus1.objects.filter(transaction_id__client_id=pk).order_by('-id')
+	# date1 = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).last()
+	# if date1:
+	# 	entriedDate1 = date1.swo_time_end.date()
+	# 	threemonths1 = timedelta(3*365/12)
+	# 	result1 = (entriedDate1 + threemonths1).isoformat()
+	# else:
+	# 	result1 = "No data"
+	print(pk)
+	transactionBeneside = TransactionStatus1.objects.filter(transaction_id__bene_id=pk).order_by('-id')
+	print(transactionBeneside)
+	# date = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).last()
+	# if date:
+	# 	entriedDate = date.swo_time_end.date()
+	# 	threemonths = timedelta(3*365/12)
+	# 	result2 = (entriedDate + threemonths).isoformat()
+	# else:
+	# 	result2 = "No data"
 
 	picture = uploadfile.objects.filter(client_bene_id=pk).first()
 	data = ClientBeneficiary.objects.filter(id=pk).first()
 	context = {
 		'transactionClientData':transactionClientSide,
 		'transactionBeneData':transactionBeneside,
-		'clientNextTransaction':result1,
-		'beneNextTransaction':result2,
+		# 'clientNextTransaction':result1,
+		# 'beneNextTransaction':result2,
 		'pict':picture,
 		'transaction':data,
 	}
