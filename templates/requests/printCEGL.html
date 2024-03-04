@@ -95,7 +95,9 @@
           <td style="border-right:1px solid black;">
             <label>GL No.</label>
           </td>
-          <td colspan="3" style="border: 1px solid black;">{{data.tracking_number}}</td>
+          {% comment %} <td colspan="3" style="border: 1px solid black;">{{data.tracking_number}}</td> {% endcomment %}
+          <td colspan="3" style="border: 1px solid black;">{{ data.tracking_number|stringformat:"s"|slice:":8" }}</td>
+          
         </tr>
         <tr style="font-size:10px;font-weight: bold;">
           <td style="border-right:1px solid black;">

@@ -47,7 +47,8 @@
             GL No.
           </td>
           <td width="160px"  style="border-bottom: 1px solid black;font-weight: bold;">
-            <label>{{data.tracking_number}}</label>            
+            {% comment %} <label>{{data.tracking_number}} {{ data.tracking_number|stringformat:"s"|slice:":8" }}</label>             {% endcomment %}
+            <label>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</label>
           </td>
         </tr>
         <tr>
