@@ -533,7 +533,7 @@ def get_all_transaction(request):
 
 @login_required
 def get_data_transaction(request, pk):
-	data = TransactionStatus1.objects.filter(id=pk).first()
+	data = TransactionStatus1.objects.filter(transaction_id=pk).first()
 	fullname = data.transaction.client.get_client_fullname
 	toa = data.transaction.lib_type_of_assistance.type_name
 	ta = data.transaction.lib_assistance_category.name
