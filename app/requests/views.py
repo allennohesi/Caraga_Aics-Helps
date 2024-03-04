@@ -61,12 +61,6 @@ def transaction_request(request):
 	try:
 		with transaction.atomic():
 			unique_id = uuid.uuid4()
-			# lasttrack = Transaction.objects.order_by('-tracking_number').first()
-			# print("THIS IS THE lasttrack",lasttrack.tracking_number)
-			# track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
-			# 	generate_serial_string(None, 'AICS')
-			# check_if_transaction_exists = Transaction.objects.filter(tracking_number=track_num)
-			# if not check_if_transaction_exists: # CHECKING IF THE TRACKING NUMBER ALREADY EXISTS OR NOT
 			if request.POST.get('same_with_client'):
 				# Checkbox is checked, handle accordingly
 				bene_category=request.POST.get('clients_category') #IF SAME WITH CLIENT, THE CATEGORY IS SAME TO BENE
@@ -401,7 +395,7 @@ def trackingModal(request,pk):
 		
 	get_client_history = Transaction.objects.filter(client_id=data.client_id).order_by('-id')
 	get_beneficiary_history = Transaction.objects.filter(bene_id=data.bene_id).order_by('-id')
-	verifier = request.user.groups.filter(name='Verifier').exists()
+	verifier = request.user.groups.filter(name__in=['Verifier', 'Super Administrator']).exists()
 	context = {
 		'transaction_status': TransactionStatus1.objects.filter(transaction_id=data.id).first(), #TRANSACTION STATUS TABLE
 		'datas':data, #TRANSACTION TABLE

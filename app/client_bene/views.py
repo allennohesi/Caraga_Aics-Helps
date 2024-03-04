@@ -310,9 +310,7 @@ def modal_transaction(request,pk):
 	# 	result1 = (entriedDate1 + threemonths1).isoformat()
 	# else:
 	# 	result1 = "No data"
-	print(pk)
 	transactionBeneside = TransactionStatus1.objects.filter(transaction_id__bene_id=pk).order_by('-id')
-	print(transactionBeneside)
 	# date = TransactionStatus1.objects.filter(transaction_id__client_id=pk,status=6).last()
 	# if date:
 	# 	entriedDate = date.swo_time_end.date()
