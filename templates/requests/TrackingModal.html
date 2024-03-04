@@ -133,6 +133,7 @@
   </ul>
   <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+       {% if verifier %}
       <div class="col-lg-12">
         <br>
         <form id="submitForActionForm">
@@ -247,7 +248,6 @@
         </form>
      </div>
      <hr>
-     {% if verifier %}
      {% if transaction_status.status == 6 %}
      <form id="updateCaseStudy">
         {% csrf_token %}
@@ -307,6 +307,11 @@
         </form>
      </div>
      {% endif %}
+     {% else %}
+     <br>
+     <div class="alert alert-dark" role="alert">
+      Updating of information, please contact the verifiers
+     </div>
      {% endif %}
     </div>
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -351,96 +356,100 @@
       </div>
     </div>
     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Tracking Number</th>
-            <th scope="col">Client Full name</th>
-            <th scope="col">Beneficiary Full name</th>
-            <th scope="col">Assistance type</th>
-            <th scope="col">Date of transaction</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in get_client_history %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{row.tracking_number}}</td>
-            <td>{{row.client.client_bene_fullname}}</td>
-            <td>{{row.bene.client_bene_fullname}}</td>
-            <td>{{row.lib_assistance_category.name}}</td>
-            <td>{{row.date_of_transaction}}</td>
-            <td>
-              {% if row.status == 1 %}
-              Pending
-              {% elif row.status == 2 %}
-              Ongoing
-              {% elif row.status == 3 %}
-              For uploading picture
-              {% elif row.status == 4 %}
-              Hold
-              {% elif row.status == 5 %}
-              Cancelled
-              {% elif row.status == 6 %}
-              Completed
-              {% elif row.status == 7 %}
-              Resumed
-              {% else %}
-              Pending
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-responsive text-nowrap table-scroll">
+        <table class="table table-responsive" width="100%" id="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Tracking Number</th>
+              <th scope="col">Client Full name</th>
+              <th scope="col">Beneficiary Full name</th>
+              <th scope="col">Assistance type</th>
+              <th scope="col">Date of transaction</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in get_client_history %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{row.tracking_number}}</td>
+              <td>{{row.client.client_bene_fullname}}</td>
+              <td>{{row.bene.client_bene_fullname}}</td>
+              <td>{{row.lib_assistance_category.name}}</td>
+              <td>{{row.date_of_transaction}}</td>
+              <td>
+                {% if row.status == 1 %}
+                Pending
+                {% elif row.status == 2 %}
+                Ongoing
+                {% elif row.status == 3 %}
+                For uploading picture
+                {% elif row.status == 4 %}
+                Hold
+                {% elif row.status == 5 %}
+                Cancelled
+                {% elif row.status == 6 %}
+                Completed
+                {% elif row.status == 7 %}
+                Resumed
+                {% else %}
+                Pending
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="tab-pane fade" id="beneficiary" role="tabpanel" aria-labelledby="beneficiary-tab">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Tracking Number</th>
-            <th scope="col">Client Full name</th>
-            <th scope="col">Beneficiary Full name</th>
-            <th scope="col">Assistance type</th>
-            <th scope="col">Date of transaction</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in get_beneficiary_history %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{row.tracking_number}}</td>
-            <td>{{row.client.client_bene_fullname}}</td>
-            <td>{{row.bene.client_bene_fullname}}</td>
-            <td>{{row.lib_assistance_category.name}}</td>
-            <td>{{row.date_of_transaction}}</td>
-            <td>
-              {% if row.status == 1 %}
-              Pending
-              {% elif row.status == 2 %}
-              Ongoing
-              {% elif row.status == 3 %}
-              For uploading picture
-              {% elif row.status == 4 %}
-              Hold
-              {% elif row.status == 5 %}
-              Cancelled
-              {% elif row.status == 6 %}
-              Completed
-              {% elif row.status == 7 %}
-              Resumed
-              {% else %}
-              Pending
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-responsive text-nowrap table-scroll">
+        <table class="table table-responsive" width="100%" id="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Tracking Number</th>
+              <th scope="col">Client Full name</th>
+              <th scope="col">Beneficiary Full name</th>
+              <th scope="col">Assistance type</th>
+              <th scope="col">Date of transaction</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in get_beneficiary_history %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{row.tracking_number}}</td>
+              <td>{{row.client.client_bene_fullname}}</td>
+              <td>{{row.bene.client_bene_fullname}}</td>
+              <td>{{row.lib_assistance_category.name}}</td>
+              <td>{{row.date_of_transaction}}</td>
+              <td>
+                {% if row.status == 1 %}
+                Pending
+                {% elif row.status == 2 %}
+                Ongoing
+                {% elif row.status == 3 %}
+                For uploading picture
+                {% elif row.status == 4 %}
+                Hold
+                {% elif row.status == 5 %}
+                Cancelled
+                {% elif row.status == 6 %}
+                Completed
+                {% elif row.status == 7 %}
+                Resumed
+                {% else %}
+                Pending
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
