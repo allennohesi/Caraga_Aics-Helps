@@ -60,65 +60,67 @@ def handle_error(error, location): #ERROR HANDLING
 def transaction_request(request):
 	try:
 		with transaction.atomic():
-			lasttrack = Transaction.objects.order_by('-tracking_number').first()
-			track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
-				generate_serial_string(None, 'AICS')
-			check_if_transaction_exists = Transaction.objects.filter(tracking_number=track_num)
-			if not check_if_transaction_exists: # CHECKING IF THE TRACKING NUMBER ALREADY EXISTS OR NOT
-				if request.POST.get('same_with_client'):
-					# Checkbox is checked, handle accordingly
-					bene_category=request.POST.get('clients_category') #IF SAME WITH CLIENT, THE CATEGORY IS SAME TO BENE
-					bene_sub_category=request.POST.get('clients_subcategory')
-				else:
-					# Checkbox is not checked
-					bene_category=request.POST.get('bene_category')
-					bene_sub_category=request.POST.get('bene_subcategory')
-				data = Transaction( #DATA.ID SHOULD ALWAYS BE THE LATEST FOREIGNKEY TO ASSESSMENT TABLE AND TRANSACTIONSTATUS TABLE
-					tracking_number=track_num,
-					relation_id=request.POST.get('relationship'),
-					client_id=request.POST.get('client'),
-					bene_id=request.POST.get('beneficiary'),
-					client_category_id=request.POST.get('clients_category'),
-					client_sub_category_id=request.POST.get('clients_subcategory'),
-					bene_category_id=bene_category,
-					bene_sub_category_id=bene_sub_category,
-					lib_type_of_assistance_id=request.POST.get('assistance_type'),
-					lib_assistance_category_id=request.POST.get('assistance_category'),
-					date_entried=request.POST.get('date_entried'),
-					swo_id=request.POST.get('swo_id'),
-					is_case_study=request.POST.get('case_study'),
-					priority_id=request.POST.get('priority_name'),
-					is_return_new=request.POST.get('new_returning'), 
-					is_onsite_offsite=request.POST.get('site'),
-					is_online=request.POST.get('online') if request.POST.get('online') else None,
-					is_walkin=request.POST.get('walkin') if request.POST.get('walkin') else None,
-					is_referral=request.POST.get('referral') if request.POST.get('referral') else None,
-					is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
-					is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
-					is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
-					is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
-					is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
-					transaction_status=1,
-				)
-				data.save()
-				AssessmentProblemPresented.objects.create(
-					problem_presented=request.POST.get('problem'),
-					transaction_id=data.id
-				)
-				TransactionStatus1.objects.create(
-					transaction_id=data.id,
-					queu_number=request.POST.get('queu_number'),
-					verified_time_start=data.date_entried,
-					is_verified = "1",
-					verifier_id=request.user.id,
-					verified_time_end=data.date_entried,
-					status="1",
-					transaction_status=1,
-				)
-				return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
-							'tracking_number': track_num})
+			unique_id = uuid.uuid4()
+			# lasttrack = Transaction.objects.order_by('-tracking_number').first()
+			# print("THIS IS THE lasttrack",lasttrack.tracking_number)
+			# track_num = generate_serial_string(lasttrack.tracking_number) if lasttrack else \
+			# 	generate_serial_string(None, 'AICS')
+			# check_if_transaction_exists = Transaction.objects.filter(tracking_number=track_num)
+			# if not check_if_transaction_exists: # CHECKING IF THE TRACKING NUMBER ALREADY EXISTS OR NOT
+			if request.POST.get('same_with_client'):
+				# Checkbox is checked, handle accordingly
+				bene_category=request.POST.get('clients_category') #IF SAME WITH CLIENT, THE CATEGORY IS SAME TO BENE
+				bene_sub_category=request.POST.get('clients_subcategory')
 			else:
-				return JsonResponse({'error': True, 'msg': 'There was a network traffic please refresh'})
+				# Checkbox is not checked
+				bene_category=request.POST.get('bene_category')
+				bene_sub_category=request.POST.get('bene_subcategory')
+			data = Transaction( #DATA.ID SHOULD ALWAYS BE THE LATEST FOREIGNKEY TO ASSESSMENT TABLE AND TRANSACTIONSTATUS TABLE
+				tracking_number=str(unique_id).upper(),
+				relation_id=request.POST.get('relationship'),
+				client_id=request.POST.get('client'),
+				bene_id=request.POST.get('beneficiary'),
+				client_category_id=request.POST.get('clients_category'),
+				client_sub_category_id=request.POST.get('clients_subcategory'),
+				bene_category_id=bene_category,
+				bene_sub_category_id=bene_sub_category,
+				lib_type_of_assistance_id=request.POST.get('assistance_type'),
+				lib_assistance_category_id=request.POST.get('assistance_category'),
+				date_entried=request.POST.get('date_entried'),
+				swo_id=request.POST.get('swo_id'),
+				is_case_study=request.POST.get('case_study'),
+				priority_id=request.POST.get('priority_name'),
+				is_return_new=request.POST.get('new_returning'), 
+				is_onsite_offsite=request.POST.get('site'),
+				is_online=request.POST.get('online') if request.POST.get('online') else None,
+				is_walkin=request.POST.get('walkin') if request.POST.get('walkin') else None,
+				is_referral=request.POST.get('referral') if request.POST.get('referral') else None,
+				is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
+				is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
+				is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
+				is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
+				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
+				transaction_status=1,
+			)
+			data.save()
+			AssessmentProblemPresented.objects.create(
+				problem_presented=request.POST.get('problem'),
+				transaction_id=data.id
+			)
+			TransactionStatus1.objects.create(
+				transaction_id=data.id,
+				queu_number=request.POST.get('queu_number'),
+				verified_time_start=data.date_entried,
+				is_verified = "1",
+				verifier_id=request.user.id,
+				verified_time_end=data.date_entried,
+				status="1",
+				transaction_status=1,
+			)
+			return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
+						'tracking_number': unique_id})
+			# else:
+			# 	return JsonResponse({'error': True, 'msg': 'There was a network traffic please refresh'})
 
 		
 	except RequestException as e:
