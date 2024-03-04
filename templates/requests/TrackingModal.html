@@ -133,7 +133,6 @@
   </ul>
   <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-       {% if verifier %}
       <div class="col-lg-12">
         <br>
         <form id="submitForActionForm">
@@ -306,9 +305,6 @@
            </div>
         </form>
      </div>
-     {% else %}
-     <small>Updating of transaction for verifiers only</small>
-     {% endif %}
      {% endif %}
     </div>
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
