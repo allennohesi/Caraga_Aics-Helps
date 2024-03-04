@@ -144,7 +144,8 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><u>{{data.tracking_number}}</u></td>
+          {% comment %} <td><u>{{data.tracking_number}}</u></td> {% endcomment %}
+          <td>Code: {{ data.tracking_number|stringformat:"s"|slice:":8" }}</td>
         </tr>
       </table>
 
