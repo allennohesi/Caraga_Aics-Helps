@@ -90,9 +90,9 @@
             <a type="button" style="align-right:400px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-print"></i> Print
             </a>
+            {% if transaction.total_amount %}
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
-              <li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li>
               <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
               <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (FA)</a></li>
               <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
@@ -100,6 +100,7 @@
               <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
               {% comment %} <li><a class="dropdown-item" href="#">Something else here</a></li> {% endcomment %}
             </ul>
+            {% endif %}
         </div>
     </li>
 </ul>
