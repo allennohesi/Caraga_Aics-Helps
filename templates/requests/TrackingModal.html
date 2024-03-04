@@ -373,11 +373,11 @@
             {% for row in get_client_history %}
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
-              <td>{{row.tracking_number}}</td>
-              <td>{{row.client.client_bene_fullname}}</td>
-              <td>{{row.bene.client_bene_fullname}}</td>
-              <td>{{row.lib_assistance_category.name}}</td>
-              <td>{{row.date_of_transaction}}</td>
+              <td>{{row.transaction.tracking_number}}</td>
+              <td>{{row.transaction.client.client_bene_fullname}}</td>
+              <td>{{row.transaction.bene.client_bene_fullname}}</td>
+              <td>{{row.transaction.lib_assistance_category.name}}</td>
+              <td>{{row.transaction.date_of_transaction}}</td>
               <td>
                 {% if row.status == 1 %}
                 Pending
@@ -421,11 +421,11 @@
             {% for row in get_beneficiary_history %}
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
-              <td>{{row.tracking_number}}</td>
-              <td>{{row.client.client_bene_fullname}}</td>
-              <td>{{row.bene.client_bene_fullname}}</td>
-              <td>{{row.lib_assistance_category.name}}</td>
-              <td>{{row.date_of_transaction}}</td>
+              <td>{{row.transaction.tracking_number}}</td>
+              <td>{{row.transaction.client.client_bene_fullname}}</td>
+              <td>{{row.transaction.bene.client_bene_fullname}}</td>
+              <td>{{row.transaction.lib_assistance_category.name}}</td>
+              <td>{{row.transaction.date_of_transaction}}</td>
               <td>
                 {% if row.status == 1 %}
                 Pending
