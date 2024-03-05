@@ -76,7 +76,7 @@
 </div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-9">
             <div class="card">
                 <div class="card-body" id="transaction_content">
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
@@ -119,16 +119,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <div class="card">
                 <div class="card-body">
-                    <h5>By year</h5>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Year" id="year" aria-label="Recipient's username" aria-describedby="button-addon2" autocomplete="off">
-
+                        <input type="text" class="form-control" placeholder="Tracking Code" id="code" aria-describedby="button-addon2" autocomplete="off">
+                        <button class="btn btn-outline-primary" type="button" id="filter-code">Filter</button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Year" id="year" aria-describedby="button-addon2" autocomplete="off">
                         <button class="btn btn-outline-primary" type="button" id="filter-year">Filter</button>
                     </div>
-                    <h5>Filter Transactions</h5>
                     <div class="list-group">
                         <a class="list-group-item active"  id="filter_billed-all" href="javascript:void(0);" data-role="filter_billed" data-filter="all">ONGOING</a>
                         <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="completed">COMPLETED</a>
@@ -339,6 +340,13 @@
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
 			} else {
 				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&year=' + $('#year').val()).load();
+			}
+		});
+        $('#filter-code').on('click', function(){
+			if($('#code').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&code=' + $('#code').val()).load();
 			}
 		});
         $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS

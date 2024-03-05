@@ -412,7 +412,7 @@ def trackingModal(request,pk):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @groups_only('Social Worker', 'Super Administrator')
 def assessment(request):
-	transaction_data = TransactionStatus1.objects.filter(Q(status=1) | Q(status=2) | Q(status=3), transaction_id__swo_id=request.user.id)
+	transaction_data = TransactionStatus1.objects.filter(Q(status=1) | Q(status=2) | Q(status=3) | Q(status=4), transaction_id__swo_id=request.user.id)
 	print(transaction_data)
 	today_date = date.today()
 	modal_show = False  # Set modal_show to False initially
