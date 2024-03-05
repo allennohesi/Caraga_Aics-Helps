@@ -34,6 +34,7 @@ class TransactionPerSession(generics.ListAPIView):
 
 			billed_param = self.request.query_params.get("billed")
 			year = self.request.query_params.get("year")
+			code = self.request.query_params.get("code")
 			
 			if billed_param is not None:
 				if billed_param.lower() == "true":
@@ -53,6 +54,9 @@ class TransactionPerSession(generics.ListAPIView):
 			else:
 				if year:
 					queryset = TransactionStatus1.objects.filter(verified_time_start__year=year).order_by('-id')
+					return queryset
+				elif code:
+					queryset = TransactionStatus1.objects.filter(transaction__tracking_number__icontains=code).order_by('-id')
 					return queryset
 				else:
 					queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4]).order_by('-id')
