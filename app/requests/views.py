@@ -783,32 +783,71 @@ def modal_provided(request,pk):
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
+				provided_to_client = request.POST.getlist('provided[]')
+				regular_price = request.POST.getlist('regprice[]')
+				regular_quantity = request.POST.getlist('qty[]')
+				discount_price = request.POST.getlist('discounted_price[]')
+				discount_quantity = request.POST.getlist('qty1[]')
+				total = request.POST.getlist('tot[]')
+				
 				if request.POST.get('sid'):
-					transaction_description.objects.filter(id=request.POST.get('sid')).update(
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),
-					)
-					return JsonResponse({'data': 'success',
-						'msg': 'The data provided to client, successfully updated'})
+					data = [
+						{
+							'provided_to_client': pc,
+							'regular_price': rp,
+							'regular_quantity': rq,
+							'discount_price': dp,
+							'discount_quantity': dq,
+							'total': tot
+						}
+						for pc, rp, rq, dp, dq, tot in zip(provided_to_client, regular_price, regular_quantity, discount_price, discount_quantity, total)
+					]
+					for row in data:
+						transaction_description.objects.filter(id=request.POST.get('sid')).update(
+							provided_data=row['provided_to_client'],
+							regular_price=row['regular_price'],
+							regular_quantity=row['regular_quantity'],
+							discount_price=row['discount_price'],
+							discount_quantity=row['discount_quantity'],
+							total=row['total'],
+						)
+						return JsonResponse({'data': 'success',
+							'msg': 'The data provided to client, successfully updated'})
 				else:
 					check = Transaction.objects.filter(id=pk)
-					transaction_description.objects.create(
-						tracking_number_id=transaction_id.tracking_number,
-						provided_data=request.POST.get('provided'),
-						regular_price=request.POST.get('regprice'),
-						regular_quantity=request.POST.get('qty'),
-						discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-						discount_quantity=request.POST.get('qty1'), #CHECKING
-						total=request.POST.get('tot'),
-						user_id=request.user.id,
-					)
-					return JsonResponse({'data': 'success',
-										'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
-				
+
+					tracking_number=transaction_id.tracking_number,
+					# Ensure all lists have the same length
+					if len(provided_to_client) == len(regular_price) == len(regular_quantity) == len(discount_price) == len(discount_quantity) == len(total):
+						data = [
+							{
+								'provided_to_client': pc,
+								'regular_price': rp,
+								'regular_quantity': rq,
+								'discount_price': dp,
+								'discount_quantity': dq,
+								'total': tot
+							}
+							for pc, rp, rq, dp, dq, tot in zip(provided_to_client, regular_price, regular_quantity, discount_price, discount_quantity, total)
+						]
+						for row in data:
+							transaction_description.objects.create(
+								tracking_number_id=transaction_id.tracking_number,
+								provided_data=row['provided_to_client'],
+								regular_price=row['regular_price'],
+								regular_quantity=row['regular_quantity'],
+								discount_price=row['discount_price'],
+								discount_quantity=row['discount_quantity'],
+								total=row['total'],
+								user_id=request.user.id,
+							)
+						return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
+					else:
+						# Handle case where lengths are not equal
+						return JsonResponse({'error': True, 'msg': 'There was a problem with your input fields'})
+
+
+
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
 		handle_error(ce, "CONNECTION ERROR IN MODAL PROVIDED")
