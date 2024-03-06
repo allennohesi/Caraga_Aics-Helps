@@ -49,12 +49,12 @@
                 <table class="table table-bordered w-100 table-sm" id="provided-table">
                     <thead>
                         <th width="250px;">Provided</th>
-                        <th class="text-center" width="200px;">Reg-Price</th>
+                        <th class="text-center" width="200px;">Regular Price</th>
                         <th width="200px;" class="text-center">Quantity</th>
                         <th class="text-center" width="200px;">Discount %</th>
-                        <th class="text-center" width="200px;">Disc-Price</th>
+                        <th class="text-center" width="238px;">Discounted Price</th>
                         <th width="250px;" class="text-center">Quantity</th>
-                        <th width="250px;" class="text-center">Final total</th>
+                        <th width="250px;" class="text-center">Final total *</th>
                         <th>
                             <center>
                                 <button type="button" class="btn btn-primary btn-xs" id="add-provided"><i class="fa fa-plus"></i></button>
@@ -132,6 +132,7 @@
         <input type="text" class="form-control" name="tracking_number" id="" value="{{transaction.tracking_number}}" hidden>
         <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2}}{% else %}0{% endif %}" hidden>
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
+        <br>
         <div class="alert alert-secondary" role="alert">
             Please confirm the total amount, if you're all set.
         </div>
@@ -220,7 +221,7 @@ function calculateTotal() {
             var finalTotal = main + total2;
             total += finalTotal;
 
-            $(this).find('input[name="tot[]"]').val(finalTotal.toFixed(2))
+            $(this).find('input[name="tot[]"]').val(finalTotal.toFixed(2));
         }
     });
     $('#pre_total_label').text(total.toFixed(2));
@@ -228,6 +229,28 @@ function calculateTotal() {
 
 $(document).on('change keyup', '#provided-table input', function() {
     calculateTotal();
+});
+$(document).on('change keyup', '#provided-table input[name="regprice[]"], #provided-table input[name="dsc[]"]', function() {
+    // Get the parent table row
+    var row = $(this).closest('tr');
+    
+    // Get the values of regprice and discount from the current row
+    var regPrice = parseFloat(row.find('input[name="regprice[]"]').val());
+    var dsc = parseFloat(row.find('input[name="dsc[]"]').val());
+    
+    // Check if regPrice and discount are valid numbers
+    if (!isNaN(regPrice) && !isNaN(dsc)) {
+        // Calculate regPriceTotal
+        var dec = dsc / 100;
+        var regPriceTotal = regPrice - (regPrice * dec);
+        
+        // Display regPriceTotal in the console
+        if (dsc === 0) {
+            row.find('input[name="discounted_price[]"]').val("0");
+        } else {
+            row.find('input[name="discounted_price[]"]').val(regPriceTotal.toFixed(2));
+        }
+    }
 });
 </script>
 <script>
