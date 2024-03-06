@@ -8,7 +8,7 @@
     <form id="updateStatus">
         {% csrf_token %}
         <div class="row mb-3">
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <div class="form-group">
                     <label>Change Status <span class="txt-danger">*</span></label>
                     <input type="text" class="form-control" name="status_update" value="status" hidden>
@@ -22,7 +22,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <div class="col-md-1">
                     <div class="form-group">
                         <label>&nbsp;</label>
@@ -33,7 +33,7 @@
         </div>
     </form>
     <hr>
-    <form id="submitformProvided">
+    {% comment %} <form id="submitformProvided">
         {% csrf_token %}
         <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment|floatformat:2}}" hidden>
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
@@ -123,7 +123,7 @@
 
             <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}}{% else %} 0 {% endif %}</b> <input type="submit" class="btn btn-primary" name="regprice" value="confirm">
         </p>
-    </form>
+    </form> {% endcomment %}
     <!-- Modal -->
 </div>
 <script>
