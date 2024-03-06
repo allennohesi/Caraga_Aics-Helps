@@ -40,64 +40,65 @@
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <input type="text" class="form-control" name="sid" id="sid" hidden>
         <br>
+        {% comment %} <br>
         <input type="checkbox" class="form-check-input" id="type_of_assistance" name="type_of_assistance"> Click me!.. If transaction is not Medicine Assistance
         <br>
-        <br>
+        <br> {% endcomment %}
         <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Provided</label>
-                    <input type="text" class="form-control" name="provided" id="provided" required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label id="reprice_label">Reg-Price</label> <span class="txt-danger" id="required">*</span>
-                    <br>
-                    <input type="text" class="form-control" name="regprice" onkeypress='validate(event)' id="reg_price" required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Quantity<span class="txt-danger">*</span></label>
-                    <br>
-                    <input type="text" class="form-control" name="qty" id="qty" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Discount %</label> <span class="txt-danger">*</span>
-                    <br>
-                    <input type="text" class="form-control" name="dsc" id="dsc" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Disc-Price</label> <span class="txt-danger">*</span>
-                    <br>
-                    <input type="text" class="form-control" name="discounted_price" id="discounted_price" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Quantity</label> <span class="txt-danger">*</span>
-                    <br>
-                    <input type="text" class="form-control" name="qty1" id="qty1" onkeypress='validate(event)' required>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Final total</label>
-                    <br>
-                    <input type="text" class="form-control" name="tot" id="tot" onkeypress='validate(event)' required readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <label>Action</label>
-                    <br>
-                    <input type="submit" class="btn btn-primary" name="regprice" value="+">
-                </div>
+            <div class="table-responsive">
+                <table class="table table-bordered w-100 table-sm" id="provided-table">
+                    <thead>
+                        <th width="250px;">Provided</th>
+                        <th class="text-center" width="200px;">Reg-Price</th>
+                        <th width="200px;" class="text-center">Quantity</th>
+                        <th class="text-center" width="200px;">Discount %</th>
+                        <th class="text-center" width="200px;">Disc-Price</th>
+                        <th width="250px;" class="text-center">Quantity</th>
+                        <th width="250px;" class="text-center">Final total</th>
+                        <th>
+                            <center>
+                                <button type="button" class="btn btn-primary btn-xs" id="add-provided"><i class="fa fa-plus"></i></button>
+                            </center>
+                        </th>
+                    </thead>           
+                    <tbody>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="provided[]" id="provided" required>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" required>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' required>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' required>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' required>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' required>
+                                    <div class="invalid-feedback"></div>
+                                </td>
+                                <td valign="middle">
+                                    <input type="text" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
+                                    <div class="invalid-feedback"></div>
+                                </td>
+                                <td valign="middle">
+                                    <center>
+                                        <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+                                    </center>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>*nothing follows*</td>
+                                <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
+                                <td colspan="2" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;"> 0</label></td>
+                              </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         {% comment %} <div class="col-md-1">
@@ -107,24 +108,25 @@
                 <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
             </div>
         </div> {% endcomment %}
-        <br>
-        <div class="table-responsive text-nowrap table-scroll">
-            <table class="table table-responsive" width="100%" id="table">
-                <thead>
-                    <th class="text-left">Delete</th>
-                    <th class="text-left">Edit</th>
-                    <th class="text-left">Transaction Provided</th>
-                    <th class="text-left">Service Provider</th>
-                    <th class="text-left">Regular Price</th>
-                    <th class="text-left">Quantity</th>
-                    <th class="text-left">Discounted Price</th>
-                    <th class="text-left">Quantity</th>
-                    <th class="text-left">Total</th>
-                </thead>
-            </table>
-        </div>
-        <br>
+        <center><button type="submit" class="btn btn-primary btn-lg">Save provided data</button></center>
     </form>
+    <br>
+    <div class="table-responsive text-nowrap table-scroll">
+        <table class="table table-responsive" width="100%" id="table">
+            <thead>
+                <th class="text-left">Delete</th>
+                <th class="text-left">Edit</th>
+                <th class="text-left">Transaction Provided</th>
+                <th class="text-left">Service Provider</th>
+                <th class="text-left">Regular Price</th>
+                <th class="text-left">Quantity</th>
+                <th class="text-left">Discounted Price</th>
+                <th class="text-left">Quantity</th>
+                <th class="text-left">Total</th>
+            </thead>
+        </table>
+    </div>
+    <br>
     <form id="Confirmation">
         {% csrf_token %}
         <input type="text" class="form-control" name="tracking_number" id="" value="{{transaction.tracking_number}}" hidden>
@@ -134,7 +136,7 @@
             Please confirm the total amount, if you're all set.
         </div>
         <p class="text-end">
-            <b>Pre total: <span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></b> ||
+            <!--<b>Pre total: <span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></b> || -->
             <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}} <input type="submit" class="btn btn-primary" name="regprice" value="confirm">{% else %} 0 {% endif %}</b> </b>
         </p>
     </form>
@@ -157,6 +159,77 @@
         </div>
     </div>
 </div>
+<script>
+    var template_provided = `
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="provided[]" id="provided" required>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" required>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' required>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' required>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' required>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' required>
+            <div class="invalid-feedback"></div>
+        </td>
+        <td valign="middle">
+            <input type="text" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
+            <div class="invalid-feedback"></div>
+        </td>
+        <td valign="middle">
+            <center>
+                <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+            </center>
+        </td>
+    </tr>
+`;
+
+$('#add-provided').on('click', function(){
+    $('#provided-table tbody').prepend(template_provided);
+});
+
+$(document).on('click', 'button[data-role=remove]', function(){
+    $(this).closest('tr').remove();
+    calculateTotal();
+});
+function calculateTotal() {
+    var total = 0;
+    $('#provided-table tbody tr').each(function() {
+        var regPrice = parseFloat($(this).find('input[name="regprice[]"]').val());
+        var qty = parseFloat($(this).find('input[name="qty[]"]').val());
+        var dsc = parseFloat($(this).find('input[name="dsc[]"]').val());
+        var discountedPrice = parseFloat($(this).find('input[name="discounted_price[]"]').val());
+        var qty1 = parseFloat($(this).find('input[name="qty1[]"]').val());
+
+        if (!isNaN(regPrice) && !isNaN(qty) && !isNaN(dsc) && !isNaN(discountedPrice) && !isNaN(qty1)) {
+            var main = regPrice * qty;
+            var dec = dsc / 100;
+            var mult = main * dec;
+            var discount = main - mult;
+            var regPriceTotal = regPrice - (regPrice * dec);
+            var total2 = qty1 * regPriceTotal;
+            var finalTotal = main + total2;
+            total += finalTotal;
+
+            $(this).find('input[name="tot[]"]').val(finalTotal.toFixed(2))
+        }
+    });
+    $('#pre_total_label').text(total.toFixed(2));
+}
+
+$(document).on('change keyup', '#provided-table input', function() {
+    calculateTotal();
+});
+</script>
 <script>
     $(document).ready(function(){
         $('#table').DataTable({
@@ -257,61 +330,6 @@
         width: '100%',
         placeholder: 'Choose',
         containerCssClass: 'select'
-    });
-    $("#reg_price, #qty, #dsc, #qty1, #tot, #final_total").on("change keyup", function(e) {
-        var reg_price = $("#reg_price").val()
-        var quantity = $("#qty").val()
-        var discount_price = $("#dsc").val() //DISCOUNT % FIELD
-        var discount_quantity = $("#tot").val()
-        var quantity1 = $('#qty1').val()
-        var final_total = $("#final_total").val()
-
-        var main = reg_price * quantity;
-
-        var dec = (discount_price / 100).toFixed(2);
-        var mult = main * dec;
-        var discount = main - mult
-
-        var result_percentage = reg_price * dec
-
-        $('#result_of_percentage').val(result_percentage);
-        //$('#qty1').val(quantity);//
-        $('#tot').val(discount.toFixed(2));
-
-        var discounted_total = (reg_price * discount_price) / 100;
-        var reg_price_total = reg_price - discounted_total //THIS IS THE TOTAL DISCOUNTED PRICE
-
-        
-        if(discount_price != 0){
-            //console.log("NOT EQUALS 0")
-            $('#discounted_price').val(reg_price_total.toFixed(2))
-        }else if(discount_price == 0){
-            //console.log("ZERO")
-            $('#discounted_price').val("0")
-            $('#qty1').val("0")
-        }else {
-            //console.log("ELSE")
-            $('#discounted_price').val("0")
-            $('#qty1').val("0")
-        }
-
-        var total2 = quantity1 * reg_price_total
-        var final_total_calculation = parseFloat(main) + parseFloat(total2)
-        
-        var pre_total_result = parseFloat(final_total_calculation) + parseFloat(final_total)
-        var pre_total = $("#pre_total_label");
-        if(quantity){
-            pre_total.text(pre_total_result.toLocaleString('en-US', { maximumFractionDigits: 2 }));
-            pre_total.addClass("underline");
-        }else{
-            pre_total.text("0");
-            pre_total.addClass("underline");
-        }
-        $('#pre_total').val(pre_total_result.toFixed(2));
-        $('#tot').val(final_total_calculation.toFixed(2));
-        
-        //var pre_total = parseFloat(final_total_calculation) + parseFloat(final_total)
-        //$('#pre_total').val(pre_total);
     });
 
     $(document).on('click','a[data-role=edit_meds]', function(){ // For assessmentStatus
