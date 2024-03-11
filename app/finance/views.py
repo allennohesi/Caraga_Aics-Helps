@@ -267,7 +267,7 @@ def export_fund_summary(request):
 		if request.GET.get("fund_source") == "all":
 			queryset = Transaction.objects.filter(
 				date_of_transaction__range=(start_date_str, end_date_str)
-			).order_by("tracking_number").select_related(
+			).order_by("-id").select_related(
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
@@ -324,7 +324,7 @@ def export_fund_summary(request):
 		else:
 			queryset = Transaction.objects.filter(fund_source_id=request.GET.get("fund_source"),
 				date_of_transaction__range=(start_date_str, end_date_str)
-			).order_by("tracking_number").select_related(
+			).order_by("-id").select_related(
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
@@ -662,19 +662,26 @@ def remove_data_outside_fo(request):
 		finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
 	return JsonResponse({'data': 'success'})
 
+def list_outside_fo(request):
+	print("OUTSIDE FO")
+
 def voucher_outside_fo(request, pk):
 	if request.method == "POST":
 		try:
-			finance_outsideFo.objects.create(
-				voucher_id=pk,
-				glnumber=request.POST.get('glnumber'),
-				service_provider_id=request.POST.get('service_provider'),
-				date_soa=request.POST.get('date'),
-				client_name=request.POST.get('clientname'),
-				assistance_type=request.POST.get('assistance_type'),
-				amount=request.POST.get('amount'),
-			)
-			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+			check_exists = finance_outsideFo.objects.filter(glnumber=request.POST.get('glnumber'))
+			if check_exists:
+				return JsonResponse({'error': True, 'msg': 'The GL number you entried already exists'})
+			else:
+				finance_outsideFo.objects.create(
+					voucher_id=pk,
+					glnumber=request.POST.get('glnumber'),
+					service_provider_id=request.POST.get('service_provider'),
+					date_soa=request.POST.get('date'),
+					client_name=request.POST.get('clientname'),
+					assistance_type=request.POST.get('assistance_type'),
+					amount=request.POST.get('amount'),
+				)
+				return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 		except RequestException as e:
 			handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO")
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
