@@ -663,7 +663,7 @@ def remove_data_outside_fo(request):
 	return JsonResponse({'data': 'success'})
 
 def list_outside_fo(request):
-	print("OUTSIDE FO")
+	return render(request, "financial/outside_fo_list.html")
 
 def voucher_outside_fo(request, pk):
 	if request.method == "POST":
