@@ -15,7 +15,7 @@ urlpatterns = [
     path('print/service-provider/', print_service_provider, name='print_service_provider'),
 
     path('edit_outside_fo/<int:pk>', edit_outside_fo,name='edit_outside_fo'),
-    path('list_outside_fo', list_outside_fo, name='list_outside_fo'),
+    path('oustside/field-office/', list_outside_fo, name='list_outside_fo'),
     path('remove_data_outside_fo/', remove_data_outside_fo, name='remove_data_outside_fo'),
     path('outside/fo/voucher/<int:pk>',voucher_outside_fo, name='voucher_outside_fo'),
     
