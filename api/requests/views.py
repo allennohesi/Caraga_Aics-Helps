@@ -1,8 +1,9 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from api.requests.serializers import TransactionSerializer, Transaction_DescriptionSerializer, FinanceVoucherSerializer, financeVoucherDataSerializer, TransactionsSignatoriesSerializer
+from api.requests.serializers import TransactionSerializer, Transaction_DescriptionSerializer, FinanceVoucherSerializer, financeVoucherDataSerializer, TransactionsSignatoriesSerializer, \
+								TransactionOutsideFOSerializer
 from app.requests.models import Transaction, transaction_description, TransactionStatus1
-from app.finance.models import finance_voucher, finance_voucherData
+from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo
 from datetime import datetime, timedelta, time, date
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination
@@ -133,7 +134,12 @@ class VoucherDataViews(generics.ListAPIView):
 			queryset = finance_voucherData.objects.filter(voucher_id=self.request.query_params.get('data')).order_by('-id')
 			return queryset
 
-
+class OutsideFoDataViews(generics.ListAPIView):
+	serializer_class = TransactionOutsideFOSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	queryset = finance_outsideFo.objects.all()
+		
 #CASH TRANSACTION
 class CashTransactionViews(generics.ListAPIView):
 	serializer_class = TransactionSerializer
