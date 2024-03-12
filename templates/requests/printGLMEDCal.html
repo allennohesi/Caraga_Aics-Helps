@@ -11,37 +11,44 @@
   <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
   <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
   <style>
-    @page {
-        size: A4 portrait;
-        margin: 1cm; /* Adjust margins as needed */
-    }
+    @page{
+      size: legal portrait;
 
-    /* Define a class for breaking page after certain number of rows */
-    .break-after-5 {
-        page-break-after: always;
     }
-
-    /* Hide next page link when printing */
-    @media print {
-        .next-page-link {
-            display: none;
-        }
+    .print-clean {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid black;
     }
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+    body {
+      width: 8.5in; /* Width of a legal paper size */
+      height: 14in; /* Height of a legal paper size */
+      margin: 0 auto; /* Centering the body horizontally */
+      background-color: white; /* Background color */
+  }
 </style>
 </head>
-<body style="size: A4 portrait;">
+<body>
+  <!-- <body style="size: A4 portrait;">-->
   <section class="sheet page">
     <div class="container-fluid"> 
       <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
         <thead style="line-height:15px;">
           <th>
-            <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
+            <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="170" height="30">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
             
           </th>  
         </thead>      
       </table>
+      <br>
       Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u>
       <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 9px;">
         <tr>
@@ -175,7 +182,7 @@
         <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height:15px;">
             <th>
-              <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
+              <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="170" height="30">
             </th>
             <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
               <div id="qrcode"></div>
