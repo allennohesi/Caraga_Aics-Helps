@@ -13,23 +13,33 @@
   <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
   <style>
     @page{
-      size: legal portrait;
+      size: a4 portrait;
 
     }
-
+    .print-clean {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid black;
+    }
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+    body {
+      font-family: 'Arial', sans-serif;
+    }
   </style>
 </head>
-<body class="legal portrait">
+<body class="a4 portrait">
      
   <section class="sheet page">
     <div class="container-fluid" style="font-family:Arial, sans-serif;"> 
       <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
         <thead style="line-height:15px;">
           <th>
-            <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
+            <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="180px" height="35px">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-            <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
+            <label style="font-size: 13px;">CRISIS INTERVENTION SECTION</label><br>
             <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
             <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
             <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
@@ -253,7 +263,7 @@
           <tr style="font-size: 8px;font-weight: bold;">
             <td colspan="4"></td>
             <td  colspan="4">
-              <img height="70px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
+              <img height="35px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
               <label>DSWD Field Office Caraga. R. Palma. Brgy. Dagohoy. Butuan City. Philippines 8600  </label><br><label>Website: http://www.dswd.gov.ph  Email: cis.focrg@dswd.gov.ph   Tel Nos.: 303-860</label>
             </td>
           </tr>
