@@ -24,13 +24,14 @@
             <div class="card">
                 <div class="card-body">
                     <br><br>
-                    <table class="table table-sm table-bordered table-hover w-100" id="fund-source">
+                    <table class="table table-sm table-bordered table-hover w-100" id="outside-fo">
                         <thead>
-                            <th>Action</th>
+                            <th>Voucher</th>
+                            <th>GL Number</th>
+                            <th>Service provider</th>
                             <th>Name</th>
-                            <th>Updated by</th>
-                            <th>date updated</th>
-                            <th>Status</th>
+                            <th>Assistance Type</th>
+                            <th>Amount</th>
                         </thead>
                     </table>
                 </div>
@@ -42,7 +43,7 @@
 {% block script %}
 <script for="init">
     $(document).ready(function(){
-        $('').DataTable({
+        $('#outside-fo').DataTable({
             'serverSide': true,
             'processing': true,
             'deferRender': true,
@@ -50,35 +51,36 @@
             'order': [[ 1, 'asc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/libraries/fund-source/?format=datatables',
+                'url': '/api/requests/finance/outside/fo/?format=datatables',
                 'type': 'GET',
+                'data': function(d) {
+                    d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
+                    d.page_size = d.length;  // Send the page size
+                },
             },
             'fnCreatedRow': function (row, data, index) {
                 $(row).attr('id', data['id']);
             },
             'columns': [
-                {'data': 'id',
+                {'data': 'voucher','name':'voucher.voucher_title', 'className': 'text-start', 'sortable': false },
+                {'data': 'glnumber', 'className': 'text-start', 'sortable': false },
+                {'data': 'service_provider','name':'service_provider.name', 'className': 'text-start', 'sortable': false },
+                {'data': 'client_name', 'className': 'text-start', 'sortable': false },
+                {'data': 'assistance_type', 'className': 'text-start', 'sortable': false },
+                {'data': 'amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data, type, row, meta) {
-                        return "<a href='javascript:void(0);' data-role='edit' data-id='"+ row['id'] + "'>Edit</a>"
-                    }
-                },
-                {'data': 'name', 'className': 'text-start' },
-                {'data': 'updated_by',
-                    'name': 'updated_by.last_name, updated_by.first_name',
-                    'className': 'text-center'
-                },
-                {'data': 'date_updated',
-                    'className': 'text-center'
-                },
-                {'data': 'status',
-                    'render': function(data, type, row, meta) {
-                        if(data == 1) {
-                            return '<i class="fa fa-circle txt-success"></i> Active'
-                        }else if (data == 0) {
-                            return '<i class="fa fa-circle txt-danger"></i> Inactive'
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
                         }
-                    },
-                    'className': 'text-center'
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            // Retain the original formatting if already contains commas
+                            return data;
+                        }
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
                 },
             ]
         });
