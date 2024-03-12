@@ -138,7 +138,7 @@ class OutsideFoDataViews(generics.ListAPIView):
 	serializer_class = TransactionOutsideFOSerializer
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
-	queryset = finance_outsideFo.objects.all()
+	queryset = finance_outsideFo.objects.all().order_by('-id')
 		
 #CASH TRANSACTION
 class CashTransactionViews(generics.ListAPIView):
