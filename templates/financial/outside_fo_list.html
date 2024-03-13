@@ -26,6 +26,7 @@
                     <br><br>
                     <table class="table table-sm table-bordered table-hover w-100" id="outside-fo">
                         <thead>
+                            <th>Action</th>
                             <th>Voucher</th>
                             <th>GL Number</th>
                             <th>Service provider</th>
@@ -62,6 +63,13 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='delete', 'className': 'text-center', data-id="+ row['id'] + ">REMOVE</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
                 {'data': 'voucher','name':'voucher.voucher_title', 'className': 'text-start', 'sortable': false },
                 {'data': 'glnumber', 'className': 'text-start', 'sortable': false },
                 {'data': 'service_provider','name':'service_provider.name', 'className': 'text-start', 'sortable': false },
@@ -85,128 +93,43 @@
             ]
         });
 
-        $(document).on('click', 'a[data-role=edit]', function(){
+        $(document).on('click', 'a[data-role=delete]', function(){
             var id = $(this).data('id');
-            var name = $('#'+id).find('td:eq(1)').text();
-            var status = $('#'+id).find('td:eq(4)').text();
-
-            $('#edit-id').val(id);
-            $('#edit-name').val(name);
-            (status.trim() == "Active") ? $('#edit-status').attr('checked', true) : $('#edit-status').attr('checked', false)
-            $('#edit-relation-modal').modal('show');
-        });
-    });
-</script>
-<script for="request">
-    $(document).ready(function(){
-        function validationForm(){
-            var invalid = false;
-            $('.form-control').each(function() {
-                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
-                    $(this).addClass('is-invalid');
-                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
-                    invalid = true;
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to delete this?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'remove_data_outside_fo' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Data removed",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#outside-fo').DataTable().ajax.reload();
+                                  }
+                            });
+                        }
+                    });
                 }
             });
-            return invalid;
-        }
-
-        function clearValidation(){
-            $('.form-control').each(function() {
-                $(this).removeClass('is-invalid');
-                $(this).next('.invalid-feedback').html("");
-            });
-        }
-
-        $('#submitForm').on('submit', function(e){
-            e.preventDefault();
-            if (!validationForm()){
-                var form = new FormData(this);
-                Swal.fire({
-                    title: "Are you sure",
-                    text: "You want to add this new fund source?",
-                    icon: "info",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes",
-                    allowOutsideClick: false,
-                    showLoaderOnConfirm: true,
-                    preConfirm: function (){
-                        return $.post({
-                            url: "{% url 'fund_source' %}",
-                            data: form,
-                            success : function (response){
-                                if(!response.error){
-                                    Swal.fire({
-                                        title: "Good job!",
-                                        html:  response.msg,
-                                        icon: "success",
-                                        allowOutsideClick: false,
-                                    }).then((result) => {
-                                        if (result.isConfirmed){
-                                            $('#submitForm').trigger('reset');
-                                            $('.select').val("").trigger('change');
-                                            $('#fund-source').DataTable().ajax.reload();
-                                            clearValidation();
-                                            $('#add-sp-modal').modal('hide');
-                                        }
-                                    });
-                                } else {
-                                    $('#name').addClass('is-invalid');
-                                    $('#alert-on-name').html(response.msg);
-                                }
-                            },
-                            cache       : false,
-                            contentType : false,
-                            processData : false,
-                        });
-                    },
-                });
-            }
-        });
-        $('#submitEditForm').on('submit', function(e){
-            e.preventDefault();
-            if (!validationForm()){
-                var form = new FormData(this);
-                Swal.fire({
-                    title: "Are you sure",
-                    text: "You want to edit this fund source?",
-                    icon: "info",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes",
-                    allowOutsideClick: false,
-                    showLoaderOnConfirm: true,
-                    preConfirm: function (){
-                        return $.post({
-                            url: "{% url 'edit_fund_source' %}",
-                            data: form,
-                            success : function (response){
-                                if(!response.error){
-                                    Swal.fire({
-                                        title: "Good job!",
-                                        html:  response.msg,
-                                        icon: "success",
-                                        allowOutsideClick: false,
-                                    }).then((result) => {
-                                        if (result.isConfirmed){
-                                            $('#submitForm').trigger('reset');
-                                            $('.select').val("").trigger('change');
-                                            $('#fund-source').DataTable().ajax.reload();
-                                            clearValidation();
-                                            $('#add-sp-modal').modal('hide');
-                                        }
-                                    });
-                                } else {
-                                    $('#name').addClass('is-invalid');
-                                    $('#alert-on-name').html(response.msg);
-                                }
-                            },
-                            cache       : false,
-                            contentType : false,
-                            processData : false,
-                        });
-                    },
-                });
-            }
         });
     });
 </script>
