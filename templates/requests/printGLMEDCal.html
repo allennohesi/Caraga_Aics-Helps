@@ -44,13 +44,11 @@
             <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="170" height="30">
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
-            
           </th>  
         </thead>      
       </table>
-      <br>
-      Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u>
-      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 9px;">
+      <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u></small>
+      <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 8px;">
         <tr>
           <td>Medicine</td>
           <td>Regular Price (each)</td>
@@ -78,7 +76,7 @@
           <td style="border-bottom: 1px solid black">{{calculate.total_payment|floatformat:2|intcomma}}</td>
         </tr>
       </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center; ">
+      <table class="beneficiary-info table table-bordered" style="font-size: 8px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center; ">
           <tr style="font-weight:bold;text-align: left;">
             <td colspan="4">
               <label>Prepared by: </label>
@@ -98,7 +96,7 @@
             <td colspan="4">              
             </td>
           </tr>
-          <tr style="font-size: 10px;font-weight: bold;">
+          <tr style="font-size: 8px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="110px" style="border-bottom:1px solid black;">
               <label>{{data.swo.get_fullname|upper}}</label>
@@ -113,7 +111,7 @@
             </td>
             <td></td>
           </tr>
-          <tr style="font-size: 10px;">
+          <tr style="font-size: 8px;">
             <td></td>
             <td colspan="3" width="100px">
               <label>Social Worker</label><br>
@@ -126,12 +124,12 @@
             <td></td>
             <td colspan="2" width="100px">
               <label>CIS Head</label><br>
-              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
+              <label style="font-size: 8px;color:#495579;">(Signature over Printed Name)</label>              
             </td>
             <td></td>
           </tr>
         </table>
-        <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+        <table class="beneficiary-info table table-bordered" style="font-size: 8px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
           <tr style="font-weight:bold;text-align: left;">
             <td colspan="4">
             </td>
@@ -149,7 +147,7 @@
             <td colspan="4">              
             </td>
           </tr>
-          <tr style="font-size: 10px;font-weight: bold;">
+          <tr style="font-size: 8px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="100px">
             </td>
@@ -163,7 +161,7 @@
             </td>
             <td></td>
           </tr>
-          <tr style="font-size: 10px;">
+          <tr style="font-size: 8px;">
             <td></td>
             <td colspan="3" width="100px">
             </td>
@@ -174,11 +172,12 @@
             <td></td>
             <td colspan="2" width="100px">
               <label>Client name</label><br>
-              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
+              <label style="font-size: 8px;color:#495579;">(Signature over Printed Name)</label>              
             </td>
             <td></td>
           </tr>
         </table>
+        <hr>
         <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height:15px;">
             <th>
@@ -189,8 +188,8 @@
             </th>  
           </thead>      
         </table>
-        Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u>
-        <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 9px;">
+        <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u></small>
+        <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 8px;">
           <tr>
             <td>Medicine</td>
             <td>Regular Price (each)</td>
@@ -221,7 +220,7 @@
           </tr>
         </table>
   
-        <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+        <table class="beneficiary-info table table-bordered" style="font-size: 8px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
           <tr style="font-weight:bold;text-align: left;">
             <td colspan="4">
               <label>Prepared by: </label>
@@ -241,7 +240,7 @@
             <td colspan="4">              
             </td>
           </tr>
-          <tr style="font-size: 10px;font-weight: bold;">
+          <tr style="font-size: 8px;font-weight: bold;">
             <td></td>
             <td colspan="3" width="100px" style="border-bottom:1px solid black;">
               <label>{{data.swo.get_fullname|upper}}</label>
@@ -256,11 +255,11 @@
             </td>
             <td></td>
           </tr>
-          <tr style="font-size: 10px;">
+          <tr style="font-size: 8px;">
             <td></td>
             <td colspan="3" width="100px">
               <label>Social Worker</label><br>
-              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
+              <label style="font-size: 8px;color:#495579;">(Signature over Printed Name)</label>
             </td>
             <td></td>
             <td colspan="3" width="100px">
@@ -269,12 +268,12 @@
             <td></td>
             <td colspan="2" width="100px">
               <label>CIS Head</label><br>
-              <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
+              <label style="font-size: 8px;color:#495579;">(Signature over Printed Name)</label>              
             </td>
             <td></td>
           </tr>
         </table>
-          <table class="beneficiary-info table table-bordered" style="font-size: 9px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
+          <table class="beneficiary-info table table-bordered" style="font-size: 8px;margin-top:0px;;border-top-color: black;border-color: white;text-align: center;">
             <tr style="font-weight:bold;text-align: left;">
               <td colspan="4">
               </td>
@@ -292,7 +291,7 @@
               <td colspan="4">              
               </td>
             </tr>
-            <tr style="font-size: 10px;font-weight: bold;">
+            <tr style="font-size: 8px;font-weight: bold;">
               <td></td>
               <td colspan="3" width="100px">
               </td>
@@ -306,7 +305,7 @@
               </td>
               <td></td>
             </tr>
-            <tr style="font-size: 10px;">
+            <tr style="font-size: 8px;">
               <td></td>
               <td colspan="3" width="100px">
               </td>
@@ -317,7 +316,7 @@
               <td></td>
               <td colspan="2" width="100px">
                 <label>Client name</label><br>
-                <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>              
+                <label style="font-size: 8px;color:#495579;">(Signature over Printed Name)</label>              
               </td>
               <td></td>
             </tr>
