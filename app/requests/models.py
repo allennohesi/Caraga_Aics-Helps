@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from app.libraries.models import CivilStatus, Suffix, Sex, Barangay, Relation, FundSource, ServiceProvider, FileType, \
     Category, SubCategory, Tribe, ModeOfAdmission, ModeOfAssistance,SubModeofAssistance, TypeOfAssistance, Purpose, \
     LibAssistanceType, PriorityLine, medicine, occupation_tbl, AssistanceProvided, presented_id
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator, MaxValueValidator
 from app.models import AuthUser
 from django.db.models import Value, Sum, Count
 from django.db.models import Q
@@ -103,7 +105,14 @@ def get_file_path(instance, filename):
     return os.path.join('CIS', filename)
 
 class uploadfile(models.Model):
-    file_field1 = models.FileField(upload_to=get_file_path,verbose_name=(u'File'))
+    file_field1 = models.FileField(
+        upload_to=get_file_path,
+        verbose_name=(u'File'),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']),
+            MaxValueValidator(1024 * 1024)  # Limiting to 1 MB
+        ]
+    )
     client_bene = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING)
     class Meta:
         managed = False
