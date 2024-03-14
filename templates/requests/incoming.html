@@ -94,7 +94,7 @@
                                 <table class="table table-responsive table-sm table-bordered" id="incoming-table">
                                     <thead>
                                         <tr>
-                                            
+                                            <th class="text-center">#</th>
                                             <th class="text-center">Action</th>
                                             <th class="text-center">Transaction Status</th>
                                             <th>Tracking Code</th>
@@ -180,7 +180,7 @@
             'processing': true,
             'deferRender': true,
             'lengthMenu': [ 15, 30, 50, 100, 200 ],
-            'order': [[ 0, 'asc' ]],
+            'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
                 'url': '/api/requests/transaction/session/?format=datatables',
@@ -192,8 +192,13 @@
             },
             'fnCreatedRow': function (row, data, index) {
                 $(row).attr('id', data['id']);
-            },
+            }, 
             'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
                 {'data': 'transaction',
                     'render': function(data, type, row, meta) {
                         return "<a href='javascript:void(0);' data-role='details' data-id='" + row['transaction'] + "'>Details</a> | " +

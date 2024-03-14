@@ -136,6 +136,7 @@
                                 <table class="table table-responsive" width="100%" id="assigned-to-me">
                                     <thead>
                                         <tr>
+                                            <th class="text-center">#</th>
                                             <th class="text-center">Action</th>
                                             <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
@@ -158,6 +159,7 @@
                                 <table class="table table-responsive" width="100%" id="assessment-table">
                                     <thead>
                                         <tr>
+                                            <th class="text-center">#</th>
                                             <th class="text-center">Action</th>
                                             <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
@@ -180,42 +182,6 @@
         </div>
     </div>
 </div>
-{% comment %} <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="alertDiv"></div>
-        <form id="submitNewRequestForm">
-        {% csrf_token %}
-        <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Status</h5>
-        </div>
-        <div class="modal-body">
-            <div class="row mb-3">
-                <input type="text" id="empid" name="id" hidden>
-                <div class="form-group">
-                    <label>Change Status <span class="txt-danger">*</span></label>
-                    <select class="form-control select" id="change_status" name="change_status" required>
-                        <option value="2">ASSESSED</option>
-                        <option value="4">HOLD</option>
-                        <option value="5">CANCELLED</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="form-group">
-                    <label>Remarks</label>
-                    <textarea class="form-control" name="remarks_transaction" rows="2" cols="2"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-        </div>
-        </form>
-      </div>
-    </div>
-</div> {% endcomment %}
 <div class="modal fade" id="PrintingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -255,7 +221,7 @@
             'processing': true,
             'deferRender': true,
             'lengthMenu': [ 15, 30, 50, 100 ],
-            'order': [[ 1, 'desc' ]],
+            'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
                 'url': '/api/requests/transaction/session/?format=datatables&user={{ request.user.id }}',
@@ -265,6 +231,11 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
                 {'data': 'transaction',
                     'render': function(data, type, row, meta) {
                         return "<a href='#' data-role='AssessmentStatus' data-id="+ row['transaction'] + ">CHANGE STATUS</a>"
@@ -349,7 +320,7 @@
             'processing': true,
             'deferRender': true,
             'lengthMenu': [ 15, 30, 50, 100, 200 ],
-            'order': [[ 1, 'asc' ]],
+            'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
                 'url': '/api/requests/transaction/all/session/?format=datatables&user={{ request.user.id }}',
@@ -363,6 +334,11 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
                 {'data': 'transaction',
                     'render': function(data, type, row, meta) {
                     return "<a href='#' data-role='AssessmentStatus' data-id="+ row['transaction'] + ">CHANGE STATUS</a>"
