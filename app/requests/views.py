@@ -27,6 +27,10 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from decimal import Decimal
 from rest_framework.authtoken.models import Token
+import os
+import base64
+import uuid
+
 today = date.today()
 
 def generate_serial_string(oldstring, prefix=None):
@@ -310,22 +314,45 @@ def incoming(request):
 	}
 	return render(request, 'requests/incoming.html', context)
 
-
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename_start = filename.replace('.' + ext, '')
+    filename = "%s__%s.%s" % (uuid.uuid4(), filename_start, ext)
+    return os.path.join('media/CIS', filename)
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def view_incoming(request, pk):
 	if request.method == "POST":
-		client_b_id = Transaction.objects.filter(id=pk).first()
-		delete = uploadfile.objects.filter(client_bene_id=client_b_id.client_id).delete()
-		split_tup = os.path.splitext(str(request.FILES.get('file')))
-		file_extension = split_tup[1]
-		if file_extension == ".jpg" or file_extension == ".jpeg" or file_extension == ".png":
+		image_data_url = request.POST.get('image_data_url')
+		if image_data_url:
+			# Extract the image data from the URL
+			_, encoded = image_data_url.split(",", 1)
+			# Decode base64 data
+			image_data = base64.b64decode(encoded)
+			
+			# Generate file path using the get_file_path function
+			filename = 'image_from_canvas.jpg'  # Example filename
+			file_path = get_file_path(None, filename)  # Pass None as instance for now
+
+			# Ensure the directory exists before saving
+			os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+			# Save the image data to a file in the 'CIS' directory within the 'media' directory
+			with open(file_path, 'wb') as file:
+				file.write(image_data)
+
+			# Construct the database file path
+			db_file_path = file_path.replace('media/', '')  # Remove 'media/' prefix
+
+			# Now the image is saved in the 'CIS' directory within the 'media' directory
+			client_b_id = Transaction.objects.filter(id=pk).first()
+			delete = uploadfile.objects.filter(client_bene_id=client_b_id.client_id).delete()
 			insert2 = uploadfile.objects.create(
-				file_field1=request.FILES.get('file'),
+				file_field1=db_file_path,  # Store the database file path
 				client_bene_id=client_b_id.client_id,
-				)
+			)
 			update = TransactionStatus1.objects.filter(transaction_id=pk).update(
 				is_upload_photo=1,
 				uploader_verifier_id=request.user.id,
@@ -336,8 +363,6 @@ def view_incoming(request, pk):
 				status=6
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully uploaded a picture.'})
-		else:
-			return JsonResponse({'error': True, 'msg': "File Type is not Valid"})
 
 	data = Transaction.objects.filter(id=pk).first()
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
