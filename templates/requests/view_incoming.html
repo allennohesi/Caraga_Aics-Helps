@@ -1,39 +1,41 @@
 {% load tags %}
 {% load static %}
 {% load humanize %}
+<style>
+    #canvas {
+        border-radius: 50%; /* Make the canvas circular */
+        overflow: hidden; /* Ensure content outside the border-radius is hidden */
+    }
+</style>
 <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Back</a>
 <hr>
 <div class="col-sm-12">
     <div class="text-center">
-      <div class="cardheader"></div>
-      <div class="user-image">
-        {% if pict %}
-            <div class="avatar"><img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150"></div>
-        {% else %}
-            {% if transaction.client.sex.name == "Male" %}
-            <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
-            {% elif transaction.client.sex.name == "Female" %}
-            <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
-            {% endif %}
-        {% endif %}
-        </div>
-        <form id="submitForActionForm">
-            {% csrf_token %}
-            <div class="icon-wrapper">
-                <label for="file">
-                    <i class="icofont icofont-pencil-alt-5"></i>
-                <label>
-                <input id="file" type="file" name="file"  accept="image/png, image/jpeg" style="display: none;" onchange="ValidateSingleInput(this);">
-                {% comment %} <input name="file" type="file" class="form-control-file" accept="image/png, image/jpeg" style="display: none;" onchange="ValidateSingleInput(this);" class="sample" capture="camera" required> {% endcomment %}
-            </div>
-            {% comment %} <div class="user-image">
-                <div class="avatar"><img alt="" src="../assets/images/user/7.jpg"></div>
-                <div class="icon-wrapper"><i class="icofont icofont-pencil-alt-5"></i></div>
-            </div> {% endcomment %}
-            {% comment %} <input name="file" type="file" class="form-control-file" accept="image/png, image/jpeg" onchange="ValidateSingleInput(this);" class="sample" capture="camera" required>
-            <button type="submit" class="btn btn-primary">Upload</button> {% endcomment %}
-        </form>
-      <div class="info">
+    <div class="cardheader"></div>
+    <div class="user-image">
+    {% if pict %}
+    <div class="avatar"><img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150"></div>
+    <label>
+        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+    <label>
+    </div>
+    {% else %}
+    {% if transaction.client.sex.name == "Male" %}
+    <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+    <label>
+        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+    <label>
+    </div>
+    {% elif transaction.client.sex.name == "Female" %}
+    <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+    <label>
+        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+    <label>
+    </div>
+    {% endif %}
+    {% endif %}
+    </div>
+    <div class="info">
         <div class="row">
           <div class="col-sm-6 col-lg-4 order-sm-1 order-xl-0">
             <div class="row">
@@ -50,8 +52,8 @@
           </div>
           <div class="col-sm-12 col-lg-4 order-sm-0 order-xl-1">
             <div class="user-designation">
-              <div class="title">{{ transaction.client.get_client_fullname }}</div>
-              <div class="desc">Representative</div>
+              <div class="title"></div>
+              <div class="desc"></div>
             </div>
           </div>
           <div class="col-sm-6 col-lg-4 order-sm-2 order-xl-2">
@@ -667,6 +669,29 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="capturingimage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Capturing of picture</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="submitForActionForm">
+            <div class="modal-body">
+            {% csrf_token %}
+            <center><a id="start-camera" class="btn btn-light btn-xs">Start Camera</a><br><br>
+            <video id="video" width="320" height="240" autoplay></video><br><br>
+            <a id="click-photo" class="btn btn-light btn-xs">capture Image</a><br><br>
+            <canvas id="canvas" width="320" height="240"></canvas>
+            </center>
+            </div>
+            <div class="modal-footer">
+            <button type="submit" class="btn btn-primary-gradien">Save changes</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
 {% block script %}
 <script>
     var _validFileExtensions = [".jpg", ".jpeg",".png"];    
@@ -724,47 +749,6 @@
             });
             return invalid;
         }
-        $('#submitForActionForm').on('submit', function(e){
-            e.preventDefault();
-            var form = new FormData(this);
-            if (!validationForm()){
-                Swal.fire({
-                    title: "Are you sure",
-                    text: "You want to upload picture?",
-                    icon: "info",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes",
-                    allowOutsideClick: false,
-                    showLoaderOnConfirm: true,
-                    preConfirm: function (){
-                        return $.post({
-                            url: "{% url 'view_incoming' transaction.id %}",
-                            data: form,
-                            success : function (response){
-                                if(!response.error){
-                                    Swal.fire({
-                                        title: "Good job!",
-                                        html:  response.msg,
-                                        icon: "success",
-                                        allowOutsideClick: false,
-                                    }).then((result) => {
-                                        if (result.isConfirmed){
-                                            $('#transaction_content').load('/requests/incoming/view/{{ transaction.id }}');
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire('Oops...', response.msg, 'warning');
-                                }
-                            },
-                            cache       : false,
-                            contentType : false,
-                            processData : false,
-                        });
-                    },
-                });
-            }
-        });
-
         $('.user').select2({
             width: '100%',
             placeholder: 'Choose',
@@ -789,5 +773,75 @@
         });
     });
 
+</script>
+<script>
+    $(document).ready(function() {
+        // Your code for form submission
+        $('#submitForActionForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = new FormData(this);
+
+            // Add the image data URL to the form data
+            let canvas = document.getElementById('canvas');
+            let image_data_url = canvas.toDataURL('image/jpeg');
+            form.append('image_data_url', image_data_url);
+
+            // Validate form
+            if (!validationForm()) {
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to upload picture?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function() {
+                        return $.post({
+                            url: "{% url 'view_incoming' transaction.id %}",
+                            data: form,
+                            success: function(response) {
+                                if (!response.error) {
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html: response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            $('#capturingimage').modal('hide');
+                                            $('#transaction_content').load('/requests/incoming/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Oops...', response.msg, 'warning');
+                                }
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                        });
+                    },
+                });
+            }
+        });
+
+        // Camera setup
+        let video = document.getElementById("video");
+        let camera_button = document.getElementById("start-camera");
+        let click_button = document.getElementById("click-photo");
+        let canvas = document.getElementById("canvas");
+
+        camera_button.addEventListener('click', async function() {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
+        });
+
+        click_button.addEventListener('click', function() {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            let image_data_url = canvas.toDataURL('image/jpeg');
+            // You may use the image_data_url as needed here
+        });
+    });
 </script>
 {% endblock %}
