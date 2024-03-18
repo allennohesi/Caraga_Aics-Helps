@@ -36,6 +36,35 @@
     body {
       font-family: 'Arial', sans-serif;
     }
+    .styled-text {
+      display: inline-block;
+      border-bottom: 1px solid black; /* Change the color and style as needed */
+      width: 485px; /* Set the desired width */
+      text-align: center;
+      font-weight: bold;
+    }
+    .styled-name {
+      display: inline-block;
+      border-bottom: 1px solid black; /* Change the color and style as needed */
+      width:230px; /* Set the desired width */
+      text-align: center;
+      font-weight: bold;
+    }
+    .styled-address {
+      display: inline-block;
+      border-bottom: 1px solid black; /* Change the color and style as needed */
+      width:400px; /* Set the desired width */
+      text-align: center;
+      font-size:13px;
+      font-weight: bold;
+    }
+    .span {
+      display: inline-block;
+      border-bottom: 1px solid black; /* Change the color and style as needed */
+      width:340px; /* Set the desired width */
+      text-align: center;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body class="legal portrait">
@@ -47,31 +76,26 @@
           <th>
             <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="180px" height="35px">
           </th>
-          <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
+          {% comment %} <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
             <label style="font-size: 13px;">CRISIS INTERVENTION SECTION</label><br>
             <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
             <label style="font-size: 14px;">FIELD OFFICE CARAGA</label><br>
             <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
-          </th>        
+          </th>         {% endcomment %}
         </thead>          
       </table>
       <!-- Letter Head -->
-      <table class="beneficiary-info table table-bordered" style="font-size: 10px;margin-top:20px;border-top-color: black;border-color: white;text-align: center;">
+      <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:20px;border-top-color: black;border-color: white;text-align: center;">
         <tr>
-          <td colspan="2"></td>
-          <td colspan="2"></td>
-          <td colspan="2"></td>
-          <td colspan="2"></td>
-          <td colspan="2" style="text-align: right;font-weight: bold;">
-            GL No.
+          <td width="30px" style="text-align: left;">
+            <label>GL&nbsp;No.</label>
           </td>
-          <td width="160px"  style="border-bottom: 1px solid black;font-weight: bold;">
-            {% comment %} <label>{{data.tracking_number}} {{ data.tracking_number|stringformat:"s"|slice:":8" }}</label>             {% endcomment %}
+          <td width="150px"  style="border-bottom: 1px solid black;font-weight: bold;">
             <label>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</label>
           </td>
         </tr>
         <tr>
-          <td width="10px" style="text-align:left;font-size: 15px;">
+          <td width="10px" style="text-align:left;">
             <label>Date</label>
           </td>
           <td width="150px" style="border-bottom: 1px solid black;font-weight: bold;">
@@ -83,6 +107,7 @@
           <td colspan="2"></td>
         </tr>
       </table>
+      <br>
       <table class="beneficiary-info table table-bordered" style="font-size: 15px;margin-top:10px;border-top-color: black;border-color: white;text-align: center;">
         <tr>
           <td width="300px" style="text-align:left;">
@@ -110,93 +135,49 @@
           <td colspan="2"></td>
         </tr>        
       </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:10px;border-top-color: black;border-color: white;text-align: Center;">
-        <tr>
-          <td width="800px" style="text-align: left;">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>This has reference to the request for the</label>
-          </td>
-          <td width="400px" style="border-bottom: 1px solid black;font-weight: bold;">
-            <label>{{data.lib_assistance_category.name|upper}}</label>
-          </td>
-          <td width="560px" style="text-align: left;">
-            <label>assistance of herein client</label>
-          </td>
-        </tr>
-      </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 13px;margin-top:-10px;border-top-color: black;border-color: white;text-align: Center;font-weight: bold;">
-        <tr>
-          <td width="150px" style="border-bottom: 1px solid black;">
-            <label>{{data.client.get_client_fullname}}</label>
-          </td>
-          <td width="100px" >
-            <label>for his/her</label>
-          </td>
-          <td width="180px" style="border-bottom: 1px solid black;">
-            <label>{{data.relation.name|upper}}</label>
-          </td>
-          <td width="20px">
-            <label>,</label>
-          </td>
-          <td width="300px" style="border-bottom: 1px solid black;">
-            <label>{{data.bene.get_client_fullname}}</label>
-          </td>
-          <td></td>
-        </tr>
-      </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:30px;border-top-color: black;border-color: white;text-align: left;">
+      <table class="beneficiary-info table table-bordered" style="font-size: 14px; margin-top: 30px; border-top-color: black; border-color: white; text-align: justify;">
         <tr>
           <td>
-            <label>The Department of Social Welfare and Development has assessed and validated the said request for</label><br>
-            <label>assistance through the Crisis Intervention Division. Thus, the Department is using this letter to guarantee the</label>
-          </td>
-        </tr>        
-      </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
-        <tr>
-          <td width="260px">
-            <label>payment of the bill in the amount of</label>
-          </td>
-          <td style="border-bottom: 1px solid black;text-align: center;font-weight:bold;">
-            <label>
-              {% with numeric_value=calculate.total_payment|floatformat:2|intcomma %}
-                  <!-- Convert the number to words -->
-                  {{ numeric_value|number_to_words }}
-              {% endwith %}
-            </label>
-          </td>
-          <td width="20px">
-            <label>Php</label>
-          </td>
-          <td width="150px" style="border-bottom: 1px solid black;text-align: center;font-weight: bold;">
-            {{calculate.total_payment|floatformat:2|intcomma}}
-          </td>
-        </tr>
-      </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:30px;border-top-color: black;border-color: white;text-align: left;">
-        <tr>
-          <td width="560px">
-            <label>To facilitate the payment, please submit to the Crisis Intervention Division through</label>
-          </td>
-          <td width="200px" style="border-bottom: 1px solid black;text-align: center;line-height: 14px;font-weight: bold;">Guarantee Letter</td>          
-        </tr>
-        <tr>
-          <td colspan="2">
-            <label>the following documents for the preparation of Disbursement Voucher with one week after service has been </label><br>
-            <label>completed.</label>
-          </td>
-        </tr>
-      </table>
-      <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:-20px;border-top-color: black;border-color: white;text-align: center;">
-        <tr>
-          <td>
-            <label>Ø Guarantee Letter (GL) from the DSWD with your company's "received" stamp</label><br>
-            <label>Ø Statement of Accounts (SOA) or Billing Statement addressed to DSWD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <label>This has reference to the request for the <span class="styled-text">{{data.lib_assistance_category.name|upper}}</span> of <br>
+              herein client, <span class="styled-name">{{data.client.get_client_fullname}}</span>, from <span class="styled-address">{{data.client.get_client_address}}</span>,</label><br>
+            <label>for his/her <span class="span">{{data.relation.name|upper}}</span>, <span class="span">{{data.bene.get_client_fullname}}</span>.</label>
           </td>
         </tr>
         <tr>
           <td></td>
         </tr>
+        <tr>
+          <td>
+            <label>The Department of Social Welfare and Development has assessed and validated the said request for assistance through <br>the Crisis Intervention Division. Thus, 
+              the Department is using this letter to guarantee the payment of the bill in the amount of <br> 
+              <span class="span">
+                {% with numeric_value=calculate.total_payment|floatformat:2|intcomma %}
+                <!-- Convert the number to words -->
+                {{ numeric_value|number_to_words }}
+                {% endwith %}
+              </span> 
+              (<span class="span">PHP {{calculate.total_payment|floatformat:2|intcomma}}</span>).</label>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <label>To facilitate the payment, please submit to the Crisis Intervention Unit/Section through 	<span class="styled-name">LORAINE R. CAGULA</span>	 the following documents for the preparation of the Disbursement Voucher 
+              within one week after the service has been completed. <br><br>
+              Ø Guarantee Letter (GL) from the DSWD with your company's "received" stamp or signature over the printed name of the authorized representative. <br>
+              Ø Statement of Accounts (SOA) or Billing Statement or Sales Invoice with corresponding operative technique or charge slip addressed to DSWD
+              </label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label></label>
+          </td>
+        </tr>
       </table>
+      
       <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
         <tr>
           <td>
@@ -207,13 +188,9 @@
       </table>
       <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:-30px;border-top-color: black;border-color: white;text-align: left;">
         <tr>
-          <td width="130px">
-            <label>there be any query, you may call us at </label>
+          <td width="150px">
+            <label>there be any query, you may call us at <u><b>303-8620</b></u>.</label>
           </td>
-          <td width="150px" style="border-bottom: 1px solid black;">
-            <b>303-8620</b>
-          </td>
-          <td width="80px"></td>
         </tr>
       </table>
       <!-- End of Letter Body -->
@@ -232,12 +209,11 @@
           <td></td>
         </tr>
         <tr>
-          <td width="280px">
+          <td width="200px">
             <label><b><u>{{data.signatories.get_fullname|upper}}</b></u></label><br>
             <label>Approving Authority</label><br>
-            {% comment %} <label>Position: CIS HEAD</label><br>
-            <label>Office: CRISIS INTERVENTION SECTION</label><br> {% endcomment %}
-          </td>
+            {% comment %} <label>Position: SWO III</label><br>
+            <label>Office: CIS</label><br> {% endcomment %}
         </tr>
       </table>
       <table class="beneficiary-info table table-bordered" style="font-size: 14px;margin-top:10px;border-top-color: black;border-color: white;text-align: left;">
