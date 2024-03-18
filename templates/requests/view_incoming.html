@@ -6,6 +6,10 @@
         border-radius: 50%; /* Make the canvas circular */
         overflow: hidden; /* Ensure content outside the border-radius is hidden */
     }
+    .avatar {
+        border-radius: 50%; /* Make the canvas circular */
+        overflow: hidden; /* Ensure content outside the border-radius is hidden */
+    }
 </style>
 <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Back</a>
 <hr>
@@ -14,22 +18,22 @@
     <div class="cardheader"></div>
     <div class="user-image">
     {% if pict %}
-    <div class="avatar"><img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150"></div>
+    <div><img class="avatar" alt="" src="{{pict.file_field1.url}}" alt="avatar" width="150" height="150"></div>
     <label>
-        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+        <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
     <label>
     </div>
     {% else %}
     {% if transaction.client.sex.name == "Male" %}
-    <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+    <div><img class="avatar" alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
     <label>
-        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+        <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
     <label>
     </div>
     {% elif transaction.client.sex.name == "Female" %}
-    <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+    <div><img class="avatar" alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
     <label>
-        <i class="icofont icofont-pencil-alt-5" data-bs-toggle="modal" data-bs-target="#capturingimage"></i>
+        <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
     <label>
     </div>
     {% endif %}
@@ -100,6 +104,7 @@
               <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
               <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
               <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
+              <li><a class="dropdown-item" href="{% url 'printPagPamatuod' transaction.id %}" target="_blank">Pag-Pamatuod</a></li>
               {% comment %} <li><a class="dropdown-item" href="#">Something else here</a></li> {% endcomment %}
             </ul>
             {% endif %}
@@ -672,10 +677,6 @@
 <div class="modal fade" id="capturingimage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Capturing of picture</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
         <form id="submitForActionForm">
             <div class="modal-body">
             {% csrf_token %}
@@ -686,7 +687,7 @@
             </center>
             </div>
             <div class="modal-footer">
-            <button type="submit" class="btn btn-primary-gradien">Save changes</button>
+            <button type="submit" class="btn btn-primary-gradien">Upload picture</button>
             </div>
         </form>
       </div>

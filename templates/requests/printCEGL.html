@@ -61,7 +61,6 @@
           </th>
           <th style="font-family: Times, Times New Roman, serif;text-align: center;float: right;">
             <label style="font-size: 15px;">CRISIS INTERVENTION SECTION</label><br>
-            <label style="font-size: 12px;">PROTECTIVE SERVICES DIVISION</label><br>
             <label style="font-size: 15px;">FIELD OFFICE CARAGA</label><br>
             <label style="font-size: 10px;">DSWD-PMB-GF-000 | REV 00 / xx xxx xxxx</label>
           </th>        
@@ -287,7 +286,7 @@
                   <input type="checkbox" name="sector"> Prescriptions <br>
                   <input type="checkbox" name="sector"> Statement of Account <br>
                   <input type="checkbox" name="sector"> Treatment Protocol <br>
-                  <input type="checkbox" name="sector"> Quotation <br>
+                  <input type="checkbox" name="sector"> Quotation/Chargeslip<br>
                 </span>
               </td>
               <td style="border-bottom: 1px solid black;">
@@ -360,19 +359,14 @@
         </table>
         <table class="beneficiary-info table table-bordered" style="font-size: 12px;border-top-color: black;border-color: white;text-align: center;">          
           <tr>
-            <td width="125px;" style="text-align:left;">
+            <td width="200px;" style="text-align:left;">
               <label>Chargeable against </label>
             </td>
             <td width="500px" style="border-bottom: 1px solid black;font-weight: bold;">
               {{data.fund_source.name}}
             </td>
-            <td></td>
-          </tr>
-        </table>
-        <table class="beneficiary-info table table-bordered" style="font-size: 12px;border-top-color: black;border-color: white;text-align: center;">          
-          <tr>
-            <td width="125px;" style="text-align:left;">
-              <label>Cliente Category: </label>
+            <td width="200px;" style="text-align:left;">
+              <label>Clientele Category:</label>
             </td>
             <td width="500px" style="border-bottom: 1px solid black;font-weight: bold;">
               {{data.client_category.name}}
@@ -387,6 +381,17 @@
             </td>
             <td width="500px" style="border-bottom: 1px solid black;font-weight: bold;">
               {{data.service_provider.name}}
+            </td>
+            <td></td>
+          </tr>
+        </table>
+        <table class="beneficiary-info table table-bordered" style="font-size: 12px;border-top-color: black;border-color: white;text-align: center;">          
+          <tr>
+            <td width="125px;" style="text-align:left;">
+              <label>Address: </label>
+            </td>
+            <td width="500px" style="border-bottom: 1px solid black;font-weight: bold;">
+              {{data.service_provider.address}}
             </td>
             <td></td>
           </tr>
@@ -434,7 +439,7 @@
               
             </td>
             <td></td>
-            <td colspan="2" width="130px" style="border-bottom:1px solid black;">
+            <td colspan="2" width="200px" style="border-bottom:1px solid black;">
               <label>{{data.swo.get_fullname|upper}}</label>
             </td>
             <td></td>
@@ -501,11 +506,6 @@
               <label>Approving Authority</label><br>
               <label style="font-size: 9px;color:#495579;">(Signature over Printed Name)</label>
             </td>
-            <td></td>
-            <td colspan="2" width="100px">
-
-            </td>
-            <td></td>
           </tr>
         </table>
         <!---End of Sentence 7--->

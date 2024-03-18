@@ -10,6 +10,10 @@
         max-width: 65%;
         width: auto;
     }
+    .avatar {
+        border-radius: 50%; /* Make the canvas circular */
+        overflow: hidden; /* Ensure content outside the border-radius is hidden */
+    }
 </style>
 <div class="row" id="client_content">
     <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i>Back</a>
@@ -19,12 +23,12 @@
           <div class="cardheader"></div>
           <div class="user-image">
             {% if pict %}
-            <img alt="" src="{{pict.file_field1.url}}" alt="avatar" width = "150" height = "150">
+            <img class="avatar" src="{{pict.file_field1.url}}" width = "150" height = "150">
             {% else %}
                 {% if transaction.client.sex.name == "Male" %}
-                <div class="avatar"><img alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+                <div><img class="avatar" alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
                 {% elif transaction.client.sex.name == "Female" %}
-                <div class="avatar"><img alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+                <div><img class="avatar" alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
                 {% endif %}
             {% endif %}
           </div>

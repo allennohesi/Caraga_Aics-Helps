@@ -1,6 +1,3 @@
-img {
-    border-radius: 50%;
-  }
 
   /* The actual timeline (the vertical ruler) */
   .main-timeline {
@@ -126,9 +123,6 @@ img {
 .imagefile{
     margin-left:120px;
 }
-img {
-    border-radius: 50%;
-  }
   /* The actual timeline (the vertical ruler) */
   .main-timeline {
     position: relative;
