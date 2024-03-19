@@ -1,0 +1,161 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load tags %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>User Profile</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">User</li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="edit-profile">
+      <div class="row">
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title mb-0">My Profile</h4>
+              <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="row mb-2">
+                  <div class="profile-title">
+                    <div class="media"><img class="img-70 rounded-circle" alt="" src="{% static 'images/login/icon.png' %}">
+                      <div class="media-body">
+                        <h5 class="mb-1">{% get_user_info request.user.id %}</h5>
+                        <p>{% get_user_role request.user.id %}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% comment %} <div class="mb-3">
+                  <h6 class="form-label">Bio</h6>
+                  <textarea class="form-control" rows="5">On the other hand, we denounce with righteous indignation</textarea>
+                </div> {% endcomment %}
+                <div class="mb-3">
+                  <label class="form-label">Email-Address</label>
+                  <input class="form-control" value="{{user_data.email}}" placeholder="your-email@domain.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input class="form-control" value="{{user_data.username}}" placeholder="your-email@domain.com">
+                  </div>
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input class="form-control" type="password" value="" placeholder="*******" required>
+                </div>
+                <div class="form-footer">
+                  <button class="btn btn-primary btn-block">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-8">
+          <form class="card">
+            <div class="card-header">
+              <h4 class="card-title mb-0">Edit Profile</h4>
+              <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-7">
+                  <div class="mb-3">
+                    <label class="form-label">Company</label>
+                    <input class="form-control" type="text" value="Department of Social Welfare and Development" placeholder="Company" readonly>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input class="form-control" type="text" value="{{user_data.first_name}}">
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input class="form-control" type="text" value="{{user_data.last_name}}">
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">City</label>
+                    <input class="form-control" type="text" placeholder="City">
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="mb-3">
+                    <label class="form-label">Postal Code</label>
+                    <input class="form-control" type="number" placeholder="ZIP Code">
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="mb-3">
+                    <label class="form-label">Country</label>
+                    <select class="form-control btn-square">
+                      <option value="0">--Select--</option>
+                      <option value="1">Germany</option>
+                      <option value="2">Canada</option>
+                      <option value="3">Usa</option>
+                      <option value="4">Aus</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div>
+                    <label class="form-label">About Me</label>
+                    <textarea class="form-control" rows="5" placeholder="Enter About your description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer text-end">
+              <button class="btn btn-primary" type="submit">Update Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
+
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+
+
+    });
+</script>
+{% endblock %}

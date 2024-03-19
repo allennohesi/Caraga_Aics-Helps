@@ -126,3 +126,11 @@ def edit_user(request, pk):
         'group': AuthGroup.objects.all().order_by('name')
     }
     return render(request, 'users/edit_user.html', context)
+
+@login_required
+def user_profile(request):
+    user_data = AuthUser.objects.filter(id=request.user.id).first()
+    context = {
+        'user_data': user_data,
+    }
+    return render(request, 'users/user_profile.html', context)
