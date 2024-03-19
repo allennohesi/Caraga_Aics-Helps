@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-
+from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id
 from app.models import AuthUser, AuthUserGroups, AuthGroup
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
@@ -132,5 +132,6 @@ def user_profile(request):
     user_data = AuthUser.objects.filter(id=request.user.id).first()
     context = {
         'user_data': user_data,
+        'region': region.objects.filter(is_active=1).order_by('region_name'),
     }
     return render(request, 'users/user_profile.html', context)
