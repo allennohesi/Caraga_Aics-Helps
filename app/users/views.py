@@ -4,8 +4,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id
-from app.models import AuthUser, AuthUserGroups, AuthGroup
+from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id, City, Barangay
+from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -15,123 +15,133 @@ from django.contrib.auth.hashers import make_password
 
 @login_required
 def user_list(request):
-    if request.method == "POST":
-        check_username = AuthUser.objects.filter(username=request.POST.get('username'))
-        check_email = AuthUser.objects.filter(email=request.POST.get('email'))
-        if check_email:
-            return JsonResponse({'error': True, 'msg': "Email '{}' is already existed.".format(request.POST.get('email'))})
-        else:
-            if not check_username:
-                with transaction.atomic():
-                    user = AuthUser(
-                        first_name=request.POST.get('first_name'),
-                        middle_name=request.POST.get('middle_name'),
-                        last_name=request.POST.get('last_name'),
-                        email=request.POST.get('email'),
-                        username=request.POST.get('username'),
-                        password=make_password(request.POST.get('password')),
-                        is_superuser=True if request.POST.get('is_superuser') else False,
-                        is_staff=True if request.POST.get('is_staff') else False,
-                        is_active=1,
-                        updated_by_id=request.user.id
-                    )
-
-                    user.save()
-
-                    AuthUserGroups.objects.create(
-                        user_id=user.id,
-                        group_id=request.POST.get('group')
-                    )
-                    return JsonResponse({'data': 'success', 'msg': "New user '{}' has been added successfully.".format(request.POST.get('username'))})
-                return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
-            return JsonResponse({'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
-    context = {
-        'title': 'User List',
-        'group': AuthGroup.objects.all().order_by('name')
-    }
-    return render(request, 'users/list.html', context)
+	if request.method == "POST":
+		check_username = AuthUser.objects.filter(username=request.POST.get('username'))
+		check_email = AuthUser.objects.filter(email=request.POST.get('email'))
+		if check_email:
+			return JsonResponse({'error': True, 'msg': "Email '{}' is already existed.".format(request.POST.get('email'))})
+		else:
+			if not check_username:
+				with transaction.atomic():
+					user = AuthUser(
+						first_name=request.POST.get('first_name'),
+						middle_name=request.POST.get('middle_name'),
+						last_name=request.POST.get('last_name'),
+						email=request.POST.get('email'),
+						username=request.POST.get('username'),
+						password=make_password(request.POST.get('password')),
+						is_superuser=True if request.POST.get('is_superuser') else False,
+						is_staff=True if request.POST.get('is_staff') else False,
+						is_active=1,
+						updated_by_id=request.user.id
+					)
+					user.save()
+					AuthuserDetails.objects.create(
+						user_id=user.id,
+						barangay_id=request.POST.get('barangay')
+					)
+					AuthUserGroups.objects.create(
+						user_id=user.id,
+						group_id=request.POST.get('group')
+					)
+					return JsonResponse({'data': 'success', 'msg': "New user '{}' has been added successfully.".format(request.POST.get('username'))})
+				return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
+			return JsonResponse({'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
+	context = {
+		'title': 'User List',
+		'group': AuthGroup.objects.all().order_by('name'),
+		'region': region.objects.filter(is_active=1).order_by('region_name'),
+	}
+	return render(request, 'users/list.html', context)
 
 
 @login_required
 def get_role(request, pk):
-    return JsonResponse({'data': AuthUserGroups.objects.filter(user_id=pk).first().group.name })
+	return JsonResponse({'data': AuthUserGroups.objects.filter(user_id=pk).first().group.name })
 
 @login_required
 def change_password(request):
-    if request.method == 'POST':
-        # Create a PasswordChangeForm with the target user
-        target_user = AuthUser.objects.filter(id=request.POST.get('empid')).update(
-            password = make_password(request.POST.get('password'))
-        )
-        return JsonResponse({'data': 'success','msg':'Password has been updated'})
-        
+	if request.method == 'POST':
+		# Create a PasswordChangeForm with the target user
+		target_user = AuthUser.objects.filter(id=request.POST.get('empid')).update(
+			password = make_password(request.POST.get('password'))
+		)
+		return JsonResponse({'data': 'success','msg':'Password has been updated'})
+		
 @login_required
 def edit_user(request, pk):
-    if request.method == "POST":
-        check = AuthUser.objects.filter(Q(username=request.POST.get('username')) | Q(email=request.POST.get('email')) |
-                                        Q(first_name=request.POST.get('first_name')) | Q(last_name=request.POST.get('last_name')))
-        if check:
-            with transaction.atomic():
-                AuthUser.objects.filter(id=pk).update(
-                    first_name=request.POST.get('first_name'),
-                    middle_name=request.POST.get('middle_name'),
-                    last_name=request.POST.get('last_name'),
-                    email=request.POST.get('email'),
-                    username=request.POST.get('username'),
-                    is_superuser=True if request.POST.get('is_superuser') else False,
-                    is_staff=True if request.POST.get('is_staff') else False,
-                    is_active=True if request.POST.get('is_active') else False,
-                    updated_by_id=request.user.id,
-                    date_updated=datetime.now()
-                )
-
-                AuthUserGroups.objects.filter(user_id=pk).update(
-                    group_id=request.POST.get('group')
-                )
-
-                return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(
-                    request.POST.get('username'))})
-        else:
-            check_username = AuthUser.objects.filter(username=request.POST.get('username'))
-            check_email = AuthUser.objects.filter(email=request.POST.get('email'))
-            if check_email:
-                return JsonResponse(
-                    {'error': True, 'msg': "Email '{}' is already existed.".format(request.POST.get('email'))})
-            else:
-                if not check_username:
-                    with transaction.atomic():
-                        AuthUser.objects.filter(id=pk).update(
-                            first_name=request.POST.get('first_name'),
-                            middle_name=request.POST.get('middle_name'),
-                            last_name=request.POST.get('last_name'),
-                            email=request.POST.get('email'),
-                            username=request.POST.get('username'),
-                            is_superuser=True if request.POST.get('is_superuser') else False,
-                            is_staff=True if request.POST.get('is_staff') else False,
-                            is_active=True if request.POST.get('is_active') else False,
-                            updated_by_id=request.user.id,
-                            date_updated=datetime.now()
-                        )
-
-                        AuthUserGroups.objects.filter(user_id=pk).update(
-                            group_id=request.POST.get('group')
-                        )
-
-                        return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(request.POST.get('username'))})
-                return JsonResponse(
-                    {'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
-    context = {
-        'user': AuthUser.objects.filter(id=pk).first(),
-        'user_group': AuthUserGroups.objects.filter(user_id=pk).first(),
-        'group': AuthGroup.objects.all().order_by('name')
-    }
-    return render(request, 'users/edit_user.html', context)
+	if request.method == "POST":
+		check = AuthUser.objects.filter(Q(username=request.POST.get('username')) | Q(email=request.POST.get('email')) |
+										Q(first_name=request.POST.get('first_name')) | Q(last_name=request.POST.get('last_name')))
+		check_if_details_exists = AuthuserDetails.objects.filter(user_id=pk)
+		if check:
+			with transaction.atomic():
+				AuthUser.objects.filter(id=pk).update(
+					first_name=request.POST.get('first_name'),
+					middle_name=request.POST.get('middle_name'),
+					last_name=request.POST.get('last_name'),
+					email=request.POST.get('email'),
+					username=request.POST.get('username'),
+					is_superuser=True if request.POST.get('is_superuser') else False,
+					is_staff=True if request.POST.get('is_staff') else False,
+					is_active=True if request.POST.get('is_active') else False,
+					updated_by_id=request.user.id,
+					date_updated=datetime.now()
+				)
+				if check_if_details_exists:
+					AuthuserDetails.objects.filter(user_id=pk).update(
+						barangay_id=request.POST.get('barangay')
+					)
+				else:
+					AuthuserDetails.objects.create(
+						user_id=pk,
+						barangay_id=request.POST.get('barangay')
+					)
+				AuthUserGroups.objects.filter(user_id=pk).update(
+					group_id=request.POST.get('group')
+				)
+				return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(
+					request.POST.get('username'))})
+		else:
+			return JsonResponse(
+					{'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
+		
+	context = {
+		'user': AuthUser.objects.filter(id=pk).first(),
+		'information': AuthuserDetails.objects.filter(user_id=pk).first(),
+		'region': region.objects.filter(is_active=1).order_by('region_name'),
+		'user_group': AuthUserGroups.objects.filter(user_id=pk).first(),
+		'group': AuthGroup.objects.all().order_by('name')
+	}
+	return render(request, 'users/edit_user.html', context)
 
 @login_required
 def user_profile(request):
-    user_data = AuthUser.objects.filter(id=request.user.id).first()
-    context = {
-        'user_data': user_data,
-        'region': region.objects.filter(is_active=1).order_by('region_name'),
-    }
-    return render(request, 'users/user_profile.html', context)
+	user_data = AuthUser.objects.filter(id=request.user.id).first()
+	check_if_details_exists = AuthuserDetails.objects.filter(user_id=request.user.id)
+	if request.method == "POST":
+		if request.POST.get('change_password') == "changepassword":
+			target_user = AuthUser.objects.filter(id=request.user.id).update(
+				password = make_password(request.POST.get('password'))
+			)
+			return JsonResponse({'data': 'success','msg':'Password has been updated'})
+		else:
+			if check_if_details_exists:
+				AuthuserDetails.objects.filter(user_id=request.user.id).update(
+					barangay_id=request.POST.get('barangay')
+				)
+			else:
+				AuthuserDetails.objects.create(
+					user_id=request.user.id,
+					barangay_id=request.POST.get('barangay')
+				)
+			return JsonResponse({'data': 'success','msg':'Information has been updated'})
+	context = {
+		'user_data': user_data,
+		'information': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
+		'region': region.objects.filter(is_active=1).order_by('region_name'),
+		'province': Province.objects.filter(is_active=1).order_by('prov_name'),
+		'city': City.objects.filter(is_active=1).order_by('city_name'),
+		'barangay': Barangay.objects.filter(is_active=1).order_by('brgy_name'),
+	}
+	return render(request, 'users/user_profile.html', context)
