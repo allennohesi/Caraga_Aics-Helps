@@ -30,7 +30,8 @@
               <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
             </div>
             <div class="card-body">
-              <form>
+              <form id="changepassword">
+                {% csrf_token %}
                 <div class="row mb-2">
                   <div class="profile-title">
                     <div class="media"><img class="img-70 rounded-circle" alt="" src="{% static 'images/login/icon.png' %}">
@@ -55,41 +56,55 @@
                   </div>
                 <div class="mb-3">
                   <label class="form-label">Password</label>
-                  <input class="form-control" type="password" value="" placeholder="*******" required>
+                  <input class="form-control" type="password" value="" name="password" placeholder="*******" required>
                 </div>
                 <div class="form-footer">
-                  <button class="btn btn-primary btn-block">Update</button>
+                  <button action="submit" class="btn btn-primary btn-block">Update</button>
                 </div>
+                <input type="text" hidden value="changepassword" name="change_password">
               </form>
             </div>
           </div>
         </div>
         <div class="col-xl-8">
-          <form class="card">
+          <form id="employee_profile_update" class="card">
+            {% csrf_token %}
             <div class="card-header">
-              <h4 class="card-title mb-0">Edit Profile</h4>
+              <h4 class="card-title mb-0">Employee Profile</h4>
               <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-5">
                   <div class="mb-3">
                     <label class="form-label">Company</label>
                     <input class="form-control" type="text" value="Department of Social Welfare and Development" placeholder="Company" readonly>
                   </div>
                 </div>
-                <div class="col-sm-6 col-md-6">
+              </div>
+              <div class="row">
+                <div class="col-sm-4 col-md-4">
                   <div class="mb-3">
                     <label class="form-label">First Name</label>
                     <input class="form-control" type="text" value="{{user_data.first_name}}">
                   </div>
                 </div>
-                <div class="col-sm-6 col-md-6">
+                <div class="col-sm-4 col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Middle Name</label>
+                    <input class="form-control" type="text" value="{{user_data.middle_name}}">
+                  </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Last Name</label>
                     <input class="form-control" type="text" value="{{user_data.last_name}}">
                   </div>
                 </div>
+                <hr>
+                <small>The address below, is your area of assignment.</small>
+                <br>
+                <br>
                 <div class="row mb-3">
                     <div class="col-md-3">
                         <div class="form-group">
@@ -146,10 +161,38 @@
             containerCssClass: 'select',
             placeholder: 'Choose',
         }
-        new Select2Cascade($('#region'), $('#province'), '/libraries/province/get/:parentId:', select2options);
-        new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', select2options);
-        new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', select2options);
+        
 
+        var addressOptions = {
+          width: "100%",
+          placeholder: 'Choose',
+          containerCssClass: 'select'
+        }
+
+        $('#region').select2(addressOptions);
+        $('#province').select2(addressOptions);
+        $('#city').select2(addressOptions);
+        $('#barangay').select2(addressOptions);
+
+
+        var processProvince = new Select2Cascade($('#region'), $('#province'), '/libraries/province/get/:parentId:', addressOptions);
+        var processCity = new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', addressOptions);
+        var processBrgy = new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', addressOptions);
+
+        $('#region').val('{{ information.barangay.city_code.prov_code.region_code.region_code }}').trigger('change');
+
+        processProvince.then( function(parent, child, items) {
+            $('#province').val('{{ information.barangay.city_code.prov_code.prov_code }}').trigger('change');
+        });
+
+        processCity.then( function(parent, child, items) {
+            $('#city').val('{{ information.barangay.city_code.city_code }}').trigger('change');
+        });
+
+        processBrgy.then( function(parent, child, items) {
+            $('#barangay').val('{{ information.barangay_id }}').trigger('change');
+        });
+        
         function validationForm(){
             var invalid = false;
             $('.form-control').each(function() {
@@ -161,8 +204,88 @@
             });
             return invalid;
         }
-
+        $('#changepassword').on('submit', function(e){
+          e.preventDefault();
+          if (!validationForm()){
+              var form = new FormData(this);
+              Swal.fire({
+                  title: "Are you sure",
+                  text: "You want to change this password?",
+                  icon: "info",
+                  showCancelButton: true,
+                  confirmButtonText: "Yes",
+                  allowOutsideClick: false,
+                  showLoaderOnConfirm: true,
+                  preConfirm: function (){
+                      return $.post({
+                          url: "{% url 'user_profile' %}",
+                          data: form,
+                          success : function (response){
+                              if(!response.error){
+                                  Swal.fire({
+                                      title: "Good job!",
+                                      html:  response.msg,
+                                      icon: "success",
+                                      allowOutsideClick: false,
+                                  }).then((result) => {
+                                      if (result.isConfirmed){
+                                          
+                                      }
+                                  });
+                              } else {
+                                  Swal.fire('Oops...', response.msg, 'warning');
+                              }
+                          },
+                          cache       : false,
+                          contentType : false,
+                          processData : false,
+                      });
+                  },
+              });
+            }
+        });   
+        $('#employee_profile_update').on('submit', function(e){
+          e.preventDefault();
+          if (!validationForm()){
+              var form = new FormData(this);
+              Swal.fire({
+                  title: "Are you sure",
+                  text: "You want to update your information?",
+                  icon: "info",
+                  showCancelButton: true,
+                  confirmButtonText: "Yes",
+                  allowOutsideClick: false,
+                  showLoaderOnConfirm: true,
+                  preConfirm: function (){
+                      return $.post({
+                          url: "{% url 'user_profile' %}",
+                          data: form,
+                          success : function (response){
+                              if(!response.error){
+                                  Swal.fire({
+                                      title: "Good job!",
+                                      html:  response.msg,
+                                      icon: "success",
+                                      allowOutsideClick: false,
+                                  }).then((result) => {
+                                      if (result.isConfirmed){
+                                        location.reload()
+                                      }
+                                  });
+                              } else {
+                                  Swal.fire('Oops...', response.msg, 'warning');
+                              }
+                          },
+                          cache       : false,
+                          contentType : false,
+                          processData : false,
+                      });
+                  },
+              });
+            }
+        });   
 
     });
+
 </script>
 {% endblock %}

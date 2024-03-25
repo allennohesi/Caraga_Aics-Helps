@@ -87,6 +87,16 @@ class AuthUser(models.Model):
         managed = False
         db_table = 'auth_user'
 
+class AuthuserDetails(models.Model):
+    from app.libraries.models import Barangay
+
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    barangay = models.ForeignKey(Barangay, models.DO_NOTHING, to_field='brgy_code')
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_details'
+
 class AuthtokenToken(models.Model):
     key = models.CharField(primary_key=True, max_length=40)
     created = models.DateTimeField()

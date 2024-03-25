@@ -46,7 +46,7 @@
     </div>
 </div>
 <div class="modal fade" id="add-user-modal">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header flex-column position-relative">
                 <h5 class="modal-title f-w-700">REGISTER USER</h5>
@@ -56,36 +56,31 @@
             <form id="submitForm">
                 {% csrf_token %}
                 <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="First name" id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Middle name" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Last name" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <br>
                     <div class="form-group mb-3">
-                        <label>First Name <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control " id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        <input type="email" class="form-control" placeholder="Email" id="email" name="email" autocomplete="off" required>
                         <div class="invalid-feedback"></div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label>Last Name <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Middle Name (Optional)</label>
-                        <input type="text" class="form-control" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Email <span class="txt-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Username <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="username" name="username" autocomplete="off" required>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Password <span class="txt-danger">*</span></label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <p id="password-validation-message" style="color: red;"></p>
-                        <div class="invalid-feedback"></div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Username" id="username" name="username" autocomplete="off" required>
+                        </div>
+                        <div class="col">
+                            <input type="password" placeholder="password" class="form-control" id="password" name="password" required>
+                            <p id="password-validation-message" style="color: red;"></p>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
                     <div class="form-group mb-3">
                         <label>Group <span class="txt-danger">*</span></label>
@@ -96,11 +91,46 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group mb-3">
-                        <input type="checkbox" class="form-check-input" name="is_superuser" id="is_superuser"> Is Super User
+                    <hr>
+                    <small>The address below, is your area of assignment.</small>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Region <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="region" id="region" required>
+                                    <option></option>
+                                    {% for row in region %}
+                                    <option value="{{ row.region_code }}">{{ row.region_name|upper  }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Province <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="province" id="province" required></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>City <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="city" id="city" required></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Barangay <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="barangay" id="barangay" required></select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <input type="checkbox" class="form-check-input" name="is_staff" id="is_staff"> Is Staff
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="is_superuser" id="is_superuser">
+                        <label class="form-check-label" for="inlineCheckbox1">Is Super User</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="is_staff" id="is_staff">
+                        <label class="form-check-label" for="inlineCheckbox2">Is Staff</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -111,8 +141,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="edit-user-modal">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="edit-user-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header flex-column position-relative">
                 <h5 class="modal-title f-w-700">EDIT USER</h5>
@@ -319,7 +349,7 @@
                 var form = new FormData(this);
                 Swal.fire({
                     title: "Are you sure",
-                    text: "You want to register this new user?",
+                    text: "You want to change this password?",
                     icon: "info",
                     showCancelButton: true,
                     confirmButtonText: "Yes",
@@ -364,6 +394,14 @@
             $('#change_password').modal('show');
             //$('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
         });
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+        new Select2Cascade($('#region'), $('#province'), '/libraries/province/get/:parentId:', select2options);
+        new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', select2options);
+        new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', select2options);
     });
 </script>
 {% endblock %}

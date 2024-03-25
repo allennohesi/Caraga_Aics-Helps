@@ -1,31 +1,29 @@
 <form id="submitEditForm">
     {% csrf_token %}
     <div class="modal-body">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="First name" id="first_name" name="first_name" value="{{ user.first_name }}"  oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Middle name" id="middle_name" name="middle_name" value="{% if user.middle_name %}{{ user.middle_name }}{% endif %}" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Last name" id="last_name" name="last_name" value="{{ user.last_name }}" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+            </div>
+        </div>
+        <br>
         <div class="form-group mb-3">
-            <label>First Name <span class="txt-danger">*</span></label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" autocomplete="off" required>
+            <input type="email" class="form-control" placeholder="Email" id="email" name="email" value="{{ user.email }}" autocomplete="off" required>
             <div class="invalid-feedback"></div>
         </div>
-        <div class="form-group mb-3">
-            <label>Last Name <span class="txt-danger">*</span></label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" autocomplete="off" required>
-            <div class="invalid-feedback"></div>
+        <div class="row">
+            <div class="col">
+                <label>Username <span class="txt-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Username" id="username" name="username" value="{{ user.username }}" autocomplete="off" required>
+            </div>
         </div>
-        <div class="form-group mb-3">
-            <label>Middle Name (Optional)</label>
-            <input type="text" class="form-control" id="middle_name" name="middle_name" value="{% if user.middle_name %}{{ user.middle_name }}{% endif %}" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
-            <div class="invalid-feedback"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label>Email <span class="txt-danger">*</span></label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" autocomplete="off" required>
-            <div class="invalid-feedback"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label>Username <span class="txt-danger">*</span></label>
-            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" autocomplete="off" required>
-            <div class="invalid-feedback"></div>
-        </div>
+        <br>
         <div class="form-group mb-3">
             <label>Group <span class="txt-danger">*</span></label>
             <select class="form-control select" name="group" required>
@@ -39,13 +37,44 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group mb-3">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Region <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="region" id="edit_region" required>
+                        <option></option>
+                        {% for row in region %}
+                        <option value="{{ row.region_code }}">{{ row.region_name|upper  }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Province <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="province" id="edit_province" required></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>City <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="city" id="edit_city" required></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Barangay <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="barangay" id="edit_barangay" required></select>
+                </div>
+            </div>
+        </div>
+        <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input" name="is_superuser" id="is_superuser" {% if user.is_superuser %}checked{% endif %}> Is Super User
         </div>
-        <div class="form-group mb-3">
+        <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input" name="is_staff" id="is_staff" {% if user.is_staff %}checked{% endif %}> Is Staff
         </div>
-        <div class="form-group mb-3">
+        <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input" name="is_active" id="is_active" {% if user.is_active %}checked{% endif %}> Is Active
         </div>
     </div>
@@ -74,7 +103,36 @@
             });
             return invalid;
         }
+        var addressOptions = {
+            width: "100%",
+            placeholder: 'Choose',
+            containerCssClass: 'select'
+        }
 
+        $('#edit_region').select2(addressOptions);
+        $('#edit_province').select2(addressOptions);
+        $('#edit_city').select2(addressOptions);
+        $('#edit_barangay').select2(addressOptions);
+
+
+        var processProvince = new Select2Cascade($('#edit_region'), $('#edit_province'), '/libraries/province/get/:parentId:', addressOptions);
+        var processCity = new Select2Cascade($('#edit_province'), $('#edit_city'), '/libraries/city/get/:parentId:', addressOptions);
+        var processBrgy = new Select2Cascade($('#edit_city'), $('#edit_barangay'), '/libraries/barangay/get/:parentId:', addressOptions);
+
+        $('#edit_region').val('{{ information.barangay.city_code.prov_code.region_code.region_code }}').trigger('change');
+
+        processProvince.then( function(parent, child, items) {
+            $('#edit_province').val('{{ information.barangay.city_code.prov_code.prov_code }}').trigger('change');
+        });
+
+        processCity.then( function(parent, child, items) {
+            $('#edit_city').val('{{ information.barangay.city_code.city_code }}').trigger('change');
+        });
+
+        processBrgy.then( function(parent, child, items) {
+            $('#edit_barangay').val('{{ information.barangay_id }}').trigger('change');
+        });
+        console.log("TEST", {{ information.barangay_id }})
         function clearValidation(){
             $('.form-control').each(function() {
                 $(this).removeClass('is-invalid');
