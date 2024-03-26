@@ -131,7 +131,7 @@ def dashboard(request):
 	case_study_per_swo = (
 		TransactionStatus1.objects
 		.filter(transaction__is_case_study=2, status__in=[3, 6])  # Filter transactions with status 3 or 6
-		.values('transaction__swo__first_name', 'transaction__swo__last_name')
+		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(
 			transaction_count=Count('transaction__swo'),
 			case_study_submitted=Count('case_study_status', filter=Q(case_study_status__isnull=False)),
