@@ -30,22 +30,34 @@
               <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
             </div>
             <div class="card-body">
-              <form id="changepassword">
-                {% csrf_token %}
-                <div class="row mb-2">
+              <div class="row mb-2">
+                <form id="submitForActionForm">
+                  {% csrf_token %}
                   <div class="profile-title">
-                    <div class="media"><img class="img-70 rounded-circle" alt="" src="{% static 'images/login/icon.png' %}">
+                    <div class="media">
+                      <label for="file">
+                        {% if profile_picture.profile_pict.url %}
+                        <img id="profileImage" class="img-70 rounded-circle" alt="" src="{{profile_picture.profile_pict.url}}">
+                        {% else %}
+                        <img id="profileImage" class="img-70 rounded-circle" alt="" src="{% static 'images/login/icon.png' %}">
+                        {% endif %}
+                      </label>
+                      <input id="file" type="file" name="file_name"  accept="image/png, image/jpeg" style="display: none;" onchange="ValidateSingleInput(this);">
+                      <input type="text" name="verification" value="changeprofile" hidden>
                       <div class="media-body">
                         <h5 class="mb-1">{% get_user_info request.user.id %}</h5>
                         <p>{% get_user_role request.user.id %}</p>
                       </div>
                     </div>
                   </div>
-                </div>
+                </form>
+              </div>
                 {% comment %} <div class="mb-3">
                   <h6 class="form-label">Bio</h6>
                   <textarea class="form-control" rows="5">On the other hand, we denounce with righteous indignation</textarea>
                 </div> {% endcomment %}
+              <form id="changepassword">
+                {% csrf_token %}
                 <div class="mb-3">
                   <label class="form-label">Email-Address</label>
                   <input class="form-control" value="{{user_data.email}}" placeholder="your-email@domain.com">
@@ -61,7 +73,7 @@
                 <div class="form-footer">
                   <button action="submit" class="btn btn-primary btn-block">Update</button>
                 </div>
-                <input type="text" hidden value="changepassword" name="change_password">
+                <input type="text" hidden value="changepassword" name="verification">
               </form>
             </div>
           </div>
@@ -155,6 +167,90 @@
 {% endblock %}
 {% block script %}
 <script>
+  var _validFileExtensions = [".jpg", ".jpeg",".png"];    
+  function ValidateSingleInput(oInput) {
+      if (oInput.type == "file") {
+          var sFileName = oInput.value;
+           if (sFileName.length > 0) {
+              var blnValid = false;
+              for (var j = 0; j < _validFileExtensions.length; j++) {
+                  var sCurExtension = _validFileExtensions[j];
+                  if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                      blnValid = true;
+                      break;
+                  }
+              }
+               
+              if (!blnValid) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'The file extension you have entered is invalid! ' + sFileName ,
+                      footer: 'Valid extensions are JPG and PNG'
+                    })
+                  oInput.value = "";
+                  return false;
+              }
+          }
+      }
+      return true;
+  }
+  $('#file').change(function() {
+    $('#submitForActionForm').submit();
+  });
+  function validationForm(){
+    var invalid = false;
+    $('.form-control').each(function() {
+        if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+            $(this).addClass('is-invalid');
+            $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+            invalid = true;
+        }
+    });
+    return invalid;
+  }
+  $('#submitForActionForm').on('submit', function(e){
+    e.preventDefault();
+    var form = new FormData(this);
+    if (!validationForm()){
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to upload picture?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function (){
+                return $.post({
+                    url: "{% url 'user_profile' %}",
+                    data: form,
+                    success : function (response){
+                        if(!response.error){
+                            Swal.fire({
+                                title: "Good job!",
+                                html:  response.msg,
+                                icon: "success",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed){
+                                  location.reload()
+                                }
+                            });
+                        } else {
+                            Swal.fire('Oops...', response.msg, 'warning');
+                        }
+                    },
+                    cache       : false,
+                    contentType : false,
+                    processData : false,
+                });
+            },
+        });
+    }
+});
+</script>
+<script>
     $(document).ready(function(){
         var select2options = {
             width: "100%",
@@ -229,7 +325,7 @@
                                       allowOutsideClick: false,
                                   }).then((result) => {
                                       if (result.isConfirmed){
-                                          
+                                        location.reload()
                                       }
                                   });
                               } else {

@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models import Value, Sum, Count
+from django.core.validators import FileExtensionValidator, MaxValueValidator
+import uuid, os
+from django.dispatch import receiver
+
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
@@ -75,17 +79,24 @@ class AuthUser(models.Model):
     def get_role(self):
         return AuthUserGroups.objects.filter(user_id=self.id).first().group.name
 
+    @property
+    def get_picture(self):
+        data = AuthuserProfile.objects.filter(user_id=self.id).first()
+        if data:
+            return data.profile_pict.url
+        return None
+
     # @property
     # def test(self):
     #     from app.requests.models import Transaction
     #     checking = Transaction.objects.filter(swo_id=self.id).all()
     #     return checking
 
-
-
     class Meta:
         managed = False
         db_table = 'auth_user'
+
+
 
 class AuthuserDetails(models.Model):
     from app.libraries.models import Barangay
@@ -96,6 +107,36 @@ class AuthuserDetails(models.Model):
     class Meta:
         managed = False
         db_table = 'auth_user_details'
+        
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename_start = filename.replace('.'+ext,'')
+    filename = "%s__%s.%s" % (uuid.uuid4(),filename_start, ext)
+    return os.path.join('PROFILE_PICTURE', filename)
+
+class AuthuserProfile(models.Model):
+    from app.libraries.models import Barangay
+
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    profile_pict = models.FileField(
+        upload_to=get_file_path,
+        verbose_name=(u'File'),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']),
+            MaxValueValidator(1024 * 1024)  # Limiting to 1 MB
+        ]
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_profile'
+
+@receiver(models.signals.post_delete, sender=AuthuserProfile)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.profile_pict:
+        if os.path.isfile(instance.profile_pict.path):
+            os.remove(instance.profile_pict.path)
+
 
 class AuthtokenToken(models.Model):
     key = models.CharField(primary_key=True, max_length=40)
