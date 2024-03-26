@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id, City, Barangay
-from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails
+from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -120,11 +120,17 @@ def user_profile(request):
 	user_data = AuthUser.objects.filter(id=request.user.id).first()
 	check_if_details_exists = AuthuserDetails.objects.filter(user_id=request.user.id)
 	if request.method == "POST":
-		if request.POST.get('change_password') == "changepassword":
+		if request.POST.get('verification') == "changepassword":
 			target_user = AuthUser.objects.filter(id=request.user.id).update(
 				password = make_password(request.POST.get('password'))
 			)
 			return JsonResponse({'data': 'success','msg':'Password has been updated'})
+		elif request.POST.get('verification') == "changeprofile":
+			AuthuserProfile.objects.filter(user_id=request.user.id).delete()
+			AuthuserProfile.objects.create(
+				profile_pict=request.FILES.get('file_name'),
+				user_id=request.user.id,
+			)
 		else:
 			if check_if_details_exists:
 				AuthuserDetails.objects.filter(user_id=request.user.id).update(
@@ -138,6 +144,7 @@ def user_profile(request):
 			return JsonResponse({'data': 'success','msg':'Information has been updated'})
 	context = {
 		'user_data': user_data,
+		'profile_picture':AuthuserProfile.objects.filter(user_id=request.user.id).first(),
 		'information': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
 		'region': region.objects.filter(is_active=1).order_by('region_name'),
 		'province': Province.objects.filter(is_active=1).order_by('prov_name'),

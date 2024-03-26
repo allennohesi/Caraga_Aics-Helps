@@ -99,7 +99,7 @@ def dashboard(request):
 	transactions_per_swo = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
-		.values('transaction__swo__first_name', 'transaction__swo__last_name')
+		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(transaction_count=Count('transaction__swo'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)[:5]
@@ -123,7 +123,7 @@ def dashboard(request):
 	transaction_per_verifier = (
 		ClientBeneficiary.objects
 		.filter(registered_by__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"))
-		.values('registered_by__first_name', 'registered_by__last_name')
+		.values('registered_by__id', 'registered_by__first_name', 'registered_by__last_name')
 		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
 		.order_by('-transaction_count')
 	)[:5]

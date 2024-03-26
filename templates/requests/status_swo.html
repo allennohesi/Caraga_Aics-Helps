@@ -1,39 +1,5 @@
 {% extends 'layout.html' %}
 {% block content %}
-<style>
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-    }
-    
-    .pagination a {
-        display: inline-block;
-        padding: 6px 12px;
-        margin: 0 2px;
-        border: 1px solid #ddd;
-        text-decoration: none;
-        color: #333;
-    }
-    
-    .pagination a:hover {
-        background-color: #ddd;
-    }
-    
-    .pagination .active {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-    
-    .pagination .disabled {
-        pointer-events: none;
-        background-color: #ddd;
-        color: #999;
-        border-color: #ddd;
-    }
-</style>
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
@@ -65,31 +31,20 @@
                     </ul>
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
-                            <div id="table-container" hx-target="#table-container">
-                                <input class="form-control" type="search" name="search" placeholder="Begin Typing To Search Social worker..."
-                                    hx-trigger="keyup delay:500ms"
-                                    hx-target="#table-body">
-                                <br>
-                                <table class="table table-bordered table-hover" hx-get="{% url 'view_online_swo_data' %}">
+                            <div class="table table-responsive">
+                                <table class="table table-responsive" width="100%"  id="active-swo">
                                     <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Table</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Pending</th>
-                                            <th>Ongoing</th>
-                                            <th>Completed</th>
-                                            <th>Case Study</th>
-                                        </tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">TABLE NUMBER</th>
+                                        <th class="text-center">LAST NAME</th>
+                                        <th class="text-center">FIRST NAME</th>
+                                        <th class="text-center">MIDDLE NAME</th>
+                                        <th class="text-center">PENDING ASSESSMENT</th>
+                                        <th class="text-center">ONGOING ASSESSMENT</th>
+                                        <th class="text-center">COMPLETED ASSESSMENT</th>
+                                        <th class="text-center">CASE STUDY</th>
                                     </thead>
-                                    <tbody id="table-body">
-                                        <!-- Table rows will be inserted here dynamically -->
-                                    </tbody>
                                 </table>
-                            </div>
-                            <div id="pagination-container" class="pagination">
-                                <!-- Pagination links will be inserted here dynamically -->
                             </div>
                         </div>
                     </div>
@@ -100,78 +55,52 @@
 </div>
 {% endblock %}
 {% block script %}
-<script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
 <script>
-    // Define the fetchData function globally
-    function fetchData(pageNumber, searchValue) {
-        var tableBody = document.getElementById('table-body');
-        var paginationContainer = document.getElementById('pagination-container');
-        fetch('{% url 'view_online_swo_data' %}?search=' + encodeURIComponent(searchValue) + '&page=' + pageNumber)
-            .then(response => {
-                // Check if response is successful
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                // Get pagination headers
-                var pageHeader = response.headers.get('X-Pagination-Page');
-                var totalPagesHeader = response.headers.get('X-Pagination-Total-Pages');
-                // Parse headers as integers
-                var currentPage = parseInt(pageHeader, 10);
-                var totalPages = parseInt(totalPagesHeader, 10);
-                // Update pagination links
-                updatePaginationLinks(currentPage, totalPages);
-                // Parse JSON response
-                return response.json();
-            })
-            .then(data => {
-                tableBody.innerHTML = '';
-                data.forEach((item, index) => {
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${item.table}</td>
-                            <td>${item.user__first_name}</td>
-                            <td>${item.user__last_name}</td>
-                            <td>${item.pending}</td>
-                            <td>${item.ongoing}</td>
-                            <td>${item.completed}</td>
-                            <td>${item.case_study}</td>
-                        </tr>
-                    `;
-                });
-            })
-            .catch(error => console.error('Error:', error));
+    $('#active-swo').DataTable({ //ASSIGNED TO SELF
+        'serverSide': true,
+        'processing': true,
+        'deferRender': true,
+        'lengthMenu': [ 8, 30, 50, 100 ],
+        'order': [[ 1, 'desc' ]],
+        'bDestroy': true,
+        'ajax': {
+            'url': '/api/user/active/swo/?format=datatables',
+            'type': 'GET',
+            'data': function(d) {
+                d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
+                d.page_size = d.length;  // Send the page size
+            },
+        },
+        'fnCreatedRow': function (row, data, index) {
+            $(row).attr('id', data['id']);
+        },
+        'columns': [
+            {'data': 'id',
+                'render': function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                },
+            },
+            {'data': 'table', 'className': 'text-center', 'sortable': false},
+            {'data': 'last_name','name':'user.last_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'first_name','name':'user.first_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'middle_name','name':'user.middle_name', 'className': 'text-center', 'sortable': false },
+            {'data': 'pending','name':'get_total', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'ongoing','name':'get_ongoing', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'complete','name':'get_complete', 'className': 'text-center', 'sortable': false, 'searchable': false },
+            {'data': 'datas','name':'case_study', 'className': 'text-center', 'sortable': false, 'searchable': false},
+        ]
+    });
+    function handleRadioClick(radio) {
+        selectedUserId = radio.value;
+        console.log(selectedUserId)
+        // Example: Update another field with the selected user ID
+        $('#swo_id').val(selectedUserId);
+        // You can perform other actions with the selectedUserId as needed
     }
-
-    // Function to update pagination links
-    function updatePaginationLinks(currentPage, totalPages) {
-        var paginationContainer = document.getElementById('pagination-container');
-        paginationContainer.innerHTML = '';
-    
-        // Previous button (if currentPage is greater than 1)
-        if (currentPage > 1) {
-            paginationContainer.innerHTML += `<a href="#" onclick="fetchData(${currentPage - 1}, '${document.querySelector('input[name="search"]').value}')">&laquo; Previous</a>`;
-        }
-    
-        // Page numbers
-        for (var i = 1; i <= totalPages; i++) {
-            paginationContainer.innerHTML += `<a href="#" onclick="fetchData(${i}, '${document.querySelector('input[name="search"]').value}')">${i}</a> `;
-        }
-    
-        // Next button (if totalPages is greater than currentPage)
-        if (totalPages > currentPage) {
-            paginationContainer.innerHTML += `<a href="#" onclick="fetchData(${currentPage + 1}, '${document.querySelector('input[name="search"]').value}')">Next &raquo;</a>`;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initial data fetch
-        fetchData(1, '');
-
-        // Real-time search input event listener
-        document.querySelector('input[name="search"]').addEventListener('input', function(event) {
-            var searchValue = event.target.value;
-            fetchData(1, searchValue);
+    $(document).ready(function() {
+        $('#queu_number').on('input', function() {
+            // Remove non-numeric characters using a regular expression
+            $(this).val($(this).val().replace(/\D/g, ''));
         });
     });
 </script>
