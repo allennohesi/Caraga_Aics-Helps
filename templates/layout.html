@@ -61,7 +61,16 @@
                             </li>
                             <li class="profile-nav onhover-dropdown p-0 me-0">
                                 <div class="media profile-media">
-                                    <img class="b-r-10" src="{% static 'images/dashboard/profile.jpg' %}" alt="" />
+                                    {% with user_id=request.user.id %}
+                                        {% get_profile_pict user_id as profile_pic_url %}
+                                        {% if profile_pic_url %}
+                                            <img id="profileImage" class="rounded-circle" alt="" src="{{ profile_pic_url }}" style="height:35px; width:28px;">
+                                        {% else %}
+                                            <!-- Display a placeholder image or alternative content if profile_pic_url is empty -->
+                                            <!-- For example, you can use a default profile image -->
+                                            <img class="b-r-10" src="{% static 'images/dashboard/profile.jpg' %}" alt="" />
+                                        {% endif %}
+                                    {% endwith %}
                                     <div class="media-body">
                                         <span>{% get_user_info request.user.id %}</span>
                                         <p class="mb-0 font-roboto">{% get_user_role request.user.id %} <i class="middle fa fa-angle-down"></i></p>

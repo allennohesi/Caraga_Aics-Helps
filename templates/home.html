@@ -132,7 +132,14 @@
                 {% for row in transaction_per_swo %}
                 <tr>
                   <td class="bd-t-none u-s-tb">
-                    <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                      {% with user_id=row.transaction__swo_id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" alt="">
+                      {% else %}
+                      <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
                       <div class="d-inline-block">
                         <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
                       </div>
@@ -179,7 +186,15 @@
                 {% for row in transaction_per_verifier %}
                 <tr>
                   <td class="bd-t-none u-s-tb">
-                    <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                    <div class="align-middle image-sm-size">
+                      {% with user_id=row.registered_by__id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                        <img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" alt="">
+                      {% else %}
+                        <img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
                       <div class="d-inline-block">
                         <div class="span badge rounded-pill pill-badge-primary">{{ row.registered_by__first_name }} {{ row.registered_by__last_name }}</div>
                       </div>
