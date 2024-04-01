@@ -17,16 +17,16 @@
                             <option></option>
                             {% if TransactionStatus.status == 4 %}
                             <option value="7">RESUME</option>
-                            <option value="5">CANCEL</option>
-                            <option value="6">COMPLETE</option>
+                            <option value="5">CANCELLED</option>
+                            <option value="6">COMPLETED</option>
                             {% elif TransactionStatus.status == 5 %}
                             <option value="7">RESUME</option>
-                            <option value="6">COMPLETE</option>
+                            <option value="6">COMPLETED</option>
                             {% else %}
                             <option value="2">ASSESS</option>
                             <option value="4">HOLD</option>
-                            <option value="5">CANCEL</option>
-                            <option value="6">COMPLETE</option>
+                            <option value="5">CANCELLED</option>
+                            <option value="6">COMPLETED</option>
                             {% endif %}
                         </select>
                     </div>
