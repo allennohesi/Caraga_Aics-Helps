@@ -23,11 +23,23 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
 from django.http import StreamingHttpResponse
+from suds.client import Client
 
 currentDateAndTime = datetime.now()
 today = date.today()
 month = today.strftime("%m")
 year = today.strftime("%Y")
+
+
+
+def send_notification(message, contact_number):
+	url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
+	try:
+		client = Client(url)
+		result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
+											MobileNo=contact_number, Message=message)
+	except Exception:
+		pass
 
 def landingpage(request):
 	context = {
@@ -61,9 +73,10 @@ def media_access(request, path):
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
-	search = request.GET.get('search', '')
-	page = request.GET.get('page', 1)
-	rows = request.GET.get('rows', 3)
+	# url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
+	# client = Client(url)
+	# result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
+	# 									MobileNo="09567114086", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
 
 	am = AuthUserGroups.objects.all().filter(group_id=3).count() #adminCount
 	swo = AuthUserGroups.objects.all().filter(group_id=2).count() #SwoCount
@@ -469,7 +482,7 @@ def generate_case_study(request):
 		def generate_csv():
 			yield ','.join(['Tracking number', 'Date Accomplished', 'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'DOB', 'Age', 
 				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene DOB', 'Bene Age',
-				    'Social Worker','Case Study','Amount','Status of Case Study','Date submitted']) + '\n'
+					'Social Worker','Case Study','Amount','Status of Case Study','Date submitted']) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
 				if ',' in total_amount_str:
