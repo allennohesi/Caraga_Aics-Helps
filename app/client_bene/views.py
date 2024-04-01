@@ -280,6 +280,12 @@ def registration(request):
 	except ConnectionError as ce:
 		handle_error(ce, "CONNECTION ERROR IN REGISTRATION PAGE")
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except ValidationError as e:
+		handle_error(e, "VALIDATION ERROR IN REGISTRATION TRANSACTION")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except IntegrityError as e:
+		handle_error(e, "INTEGRITY ERROR IN REGISTRATION TRANSACTION")
+		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except RequestException as re:
 		handle_error(re, "NETWORK NETWORK ERROR IN REGISTRATION PAGE")
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
