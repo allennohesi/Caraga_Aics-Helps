@@ -637,6 +637,7 @@ def view_assessment(request, pk):
 	
 	context = {
 		'transaction': data,
+		'today':today,
 		'pict':picture,
 		'requirements': requirements_client.objects.filter(transaction=data.id).first(),
 		'family_composistion': ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=data.bene_id),
@@ -734,6 +735,8 @@ def save_assessment(request, pk):
 		bene_sub_category=""
 		if request.method == "POST":
 			with transaction.atomic():
+				date_assessment_str = request.POST.get('date_assessment')
+				date_assessment = datetime.strptime(date_assessment_str, '%Y-%m-%dT%H:%M')
 				check_client_bene = request.POST.get('checking_if_same')
 				if check_client_bene == "same_with_client":
 					#CHECKING IF THE CLIENT AND BENEFICIARY ARE THE SAME
@@ -765,7 +768,7 @@ def save_assessment(request, pk):
 					is_return_new=request.POST.get('new_returning'),
 					service_provider=request.POST.get('service_provider'),
 					status=3,
-					swo_date_time_end=datetime.now(),
+					swo_date_time_end=request.POST.get('date_assessment'),
 					is_referral=1 if request.POST.get('is_referral') else None,
 				)
 				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
@@ -776,14 +779,15 @@ def save_assessment(request, pk):
 				if Check_exists.swo_time_end == None: # IF NO SWO TIME MAG BUTANG SYAG TIME END
 					TransactionStatus1.objects.filter(transaction_id=pk).update(
 						is_swo="1",
-						swo_time_end=datetime.now(),
+						swo_time_end=request.POST.get('date_assessment'),
 						status="3",
-						end_assessment=today
+						end_assessment=date_assessment
 					)
 				else:
 					TransactionStatus1.objects.filter(transaction_id=pk).update(
 						is_swo="1",
-						end_assessment=today,
+						swo_time_end=request.POST.get('date_assessment'),
+						end_assessment=date_assessment,
 						#status="3",
 					)
 				return JsonResponse({'data': 'success',
