@@ -23,7 +23,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
 from django.http import StreamingHttpResponse
-from suds.client import Client
+# from suds.client import Client
 
 currentDateAndTime = datetime.now()
 today = date.today()
