@@ -87,7 +87,7 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" id="pills-timeline" data-bs-toggle="pill" href="#for-action" role="tab">
-            <i class="fa fa-calendar-o"></i> For Action
+            <i class="fa fa-calendar-o"></i> Timelines
         </a>
     </li>
     &nbsp;&nbsp;
@@ -639,37 +639,37 @@
                       <div class="main-timeline">
                         {% if transaction_status.is_verified %}
                         <div class="timeline left">
-                          <div class="card">
-                            <div class="card-body p-4">
-                              <h3>Verifier Side Information</h3>
-                              <p class="mb-0">Date Start: {{transaction_status.verified_time_start}} Date End: {{transaction_status.verified_time_end}}.</p>
+                            <div class="card">
+                                <div class="card-body p-4">
+                                <h3>Verifier Side Information</h3>
+                                <p class="mb-0">Date Start: {{transaction_status.verified_time_start}} Date End: {{transaction_status.verified_time_end}}.</p>
+                                </div>
                             </div>
-                          </div>
                         </div>
                         {% endif %}
                         {% if transaction_status.is_swo %}
                         <div class="timeline right">
-                          <div class="card">
-                            <div class="card-body p-4">
-                              <h3>Social Worker Side Information</h3>
-                              <p class="mb-0">Time Start: {{transaction_status.verified_time_start}} Time End: {{transaction_status.verified_time_end}}.</p>
+                            <div class="card">
+                                <div class="card-body p-4">
+                                <h3>Social Worker Side Information</h3>
+                                <p class="mb-0">Time Start: {{transaction_status.swo_time_start}} Time End: {{transaction_status.swo_time_end}}.</p>
+                                </div>
                             </div>
-                          </div>
                         </div>
                         {% endif %}
                         {% if transaction_status.is_verified == 1 and transaction_status.is_swo == 1 %}
                         <div class="timeline left">
-                          <div class="card">
-                            <div class="card-body p-4">
-                              <h3>Transaction Ended</h3>
-                              <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} and Transaction End: {{transaction_status.verified_time_end}}.</p>
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    <h3>Transaction Ended</h3>
+                                    <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} and Transaction End: {{transaction_status.swo_time_end}}.</p>
+                                </div>
                             </div>
-                          </div>
                         </div>
                         {% endif %}
                       </div>
                     </div>
-                  </section>
+                </section>
             </div>
         </div>
     </div>

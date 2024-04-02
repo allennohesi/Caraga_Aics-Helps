@@ -208,7 +208,8 @@
         {% if modal_show %}
         Swal.fire({
             title: "Update Transaction",
-            text: "You have uncompleted transactions that are not from today. Please update.",
+            text: "You have uncompleted transactions that are not from today. " +
+                "Change status to ( Completed / Cancelled )",
             icon: "question"
             });
         {% endif %}
