@@ -37,7 +37,7 @@
                     <div class="media">
                       <label for="file">
                         {% if profile_picture.profile_pict.url %}
-                        <img id="profileImage" class="img-70 rounded-circle" alt="" src="{{profile_picture.profile_pict.url}}">
+                        <img id="profileImage" class="img-70 rounded-circle" alt="" src="{{profile_picture.profile_pict.url}}" width="750" height="50">
                         {% else %}
                         <img id="profileImage" class="img-70 rounded-circle" alt="" src="{% static 'images/login/icon.png' %}">
                         {% endif %}
