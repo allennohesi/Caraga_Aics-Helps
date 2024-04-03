@@ -60,7 +60,7 @@ class TransactionPerSession(generics.ListAPIView):
 				# 	queryset = TransactionStatus1.objects.filter(transaction__tracking_number__icontains=code).order_by('-id')
 				# 	return queryset
 				elif code: #CHANGE FROM CODE TO FUND SOURCE
-					queryset = TransactionStatus1.objects.filter(transaction__fund_source__name__icontains=code).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code).order_by('-id')
 					return queryset
 				else:
 					queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4]).order_by('-id')
