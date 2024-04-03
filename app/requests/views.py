@@ -767,32 +767,38 @@ def save_assessment(request, pk):
 					provided_hygienekit=request.POST.get('hygiene_kit') if request.POST.get('hygiene_kit') else 0,
 					is_return_new=request.POST.get('new_returning'),
 					service_provider=request.POST.get('service_provider'),
-					status=3,
-					swo_date_time_end=request.POST.get('date_assessment'),
 					is_referral=1 if request.POST.get('is_referral') else None,
 				)
 				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 					sw_assessment=request.POST.get('sw_asessment'),
 					problem_presented=request.POST.get('sw_purpose'),
 				)
-				Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first()
-				if Check_exists.swo_time_end == None: # IF NO SWO TIME MAG BUTANG SYAG TIME END
-					TransactionStatus1.objects.filter(transaction_id=pk).update(
-						is_swo="1",
-						swo_time_end=request.POST.get('date_assessment'),
-						status="3",
-						end_assessment=date_assessment
-					)
-				else:
-					TransactionStatus1.objects.filter(transaction_id=pk).update(
-						is_swo="1",
-						swo_time_end=request.POST.get('date_assessment'),
-						end_assessment=date_assessment,
-						#status="3",
-					)
+				Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first() #THIS QUERY WILL ONLY BE EXECUTED IF THERE'S NOT TIME OF TRANSACTIONSTATUS1
+				if Check_exists.swo_time_end == None: # TRANSACTION STATUS IS NOT YET ASSESSED, SAVE THE DETAILS OF ASSESSMENT
+					if Check_exists.upload_time_end: # IF TRANSACTION ALREADY HAD AN UPLOADED TIME AND DATE EXECUTE THIS QUERY
+						Check_exists.is_swo=1
+						Check_exists.swo_time_end=request.POST.get('date_assessment')
+						Check_exists.status=6
+						Check_exists.end_assessment=date_assessment
+						Check_exists.save()
+						
+						check.update( #
+							status=6,
+							swo_date_time_end=request.POST.get('date_assessment'),
+						)
+					else:
+						Check_exists.is_swo=1
+						Check_exists.swo_time_end=request.POST.get('date_assessment')
+						Check_exists.status=3
+						Check_exists.end_assessment=date_assessment
+						Check_exists.save()
+
+						check.update( #
+							status=3,
+							swo_date_time_end=request.POST.get('date_assessment'),
+						)
 				return JsonResponse({'data': 'success',
 									'msg': 'You have successfully submitted the assessment for tracking number {}.'.format(check.first().tracking_number)})
-			return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
 		
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
