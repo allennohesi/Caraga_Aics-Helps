@@ -94,6 +94,11 @@ class ClientBeneficiary(models.Model):
         return today.year - self.birthdate.year - (
                     (today.month, today.day) < (self.birthdate.month, self.birthdate.day))
 
+    @property
+    def get_picture(self):
+        get_picture = uploadfile.objects.filter(client_bene_id=self.id).first()
+        return get_picture.file_field1.url
+
     class Meta:
         managed = False
         db_table = 'tbl_client_beneficiary_information'
