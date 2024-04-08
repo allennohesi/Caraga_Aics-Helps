@@ -135,7 +135,7 @@
                       {% with user_id=row.transaction__swo_id %}
                       {% profile_picture_dashboard user_id as profile %}
                       {% if profile %}
-                      <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" alt="">
+                      <div class="align-middle image-sm-size"><img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="500" height="30"> 
                       {% else %}
                       <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
                       {% endif %}
