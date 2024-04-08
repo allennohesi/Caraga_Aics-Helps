@@ -56,6 +56,13 @@
     ::placeholder {
         color: #aaa;
     }
+    .image-container img {
+        transition: transform 0.3s ease;
+    }
+    
+    .image-container img:hover {
+        transform: scale(1.2); /* Adjust scale factor for desired zoom level */
+    }
 </style>
 
 <div class="container-fluid">
@@ -238,13 +245,15 @@
                 {'data': 'get_picture',
                     'render': function(data, type, row, meta) {
                         if (data) {
-                            return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
-                                data-html="true"
-                                loading="lazy"
-                                style="object-fit:cover; width: 40px; height: 40px;"
-                                data-placement="right"
-                                data-content="<center><img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'></center>" src="` + data + `">
-                            </center>`;
+                            return `<div class="image-container">
+                                <img loading="lazy" class="rounded-circle img-radius align-top m-r-15" 
+                                    data-toggle="popover" data-trigger="hover" 
+                                    data-html="true" loading="lazy" 
+                                    style="object-fit:cover; width: 40px; height: 40px;" 
+                                    data-placement="right" 
+                                    data-content="<img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'>" 
+                                    src='`+ data + `'>
+                            </div>`;
                         }else{
                             return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
                                 data-html="true"
@@ -255,6 +264,8 @@
                             </center>`;
                         }
                     },
+                    searchable:'false',
+                    sortable:'false',
                     className: 'text-center'
                 },
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
