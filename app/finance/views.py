@@ -266,7 +266,7 @@ def export_fund_summary(request):
 		end_date_str = request.GET.get("end_date")
 		if request.GET.get("fund_source") == "all":
 			queryset = Transaction.objects.filter(
-				date_of_transaction__range=(start_date_str, end_date_str)
+				date_of_transaction__range=(start_date_str, end_date_str), requested_in="AGUSAN DEL NORTE"
 			).order_by("id").select_related(
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
@@ -322,7 +322,7 @@ def export_fund_summary(request):
 
 			return response
 		else:
-			queryset = Transaction.objects.filter(fund_source_id=request.GET.get("fund_source"),
+			queryset = Transaction.objects.filter(fund_source_id=request.GET.get("fund_source"),requested_in="AGUSAN DEL NORTE",
 				date_of_transaction__range=(start_date_str, end_date_str)
 			).order_by("-id").select_related(
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'

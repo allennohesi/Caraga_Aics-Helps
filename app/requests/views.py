@@ -14,7 +14,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
 from django.contrib.sessions.models import Session
-from app.models import AuthUser, AuthUserGroups, AuthtokenToken
+from app.models import AuthUser, AuthUserGroups, AuthtokenToken, AuthuserDetails
 from django.db.models import Value, Sum, Count, Q
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -99,6 +99,7 @@ def transaction_request(request):
 				is_ce_cash=request.POST.get('ce_cash') if request.POST.get('ce_cash') else 0,
 				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
 				transaction_status=1,
+				requested_in=request.POST.get('requested_in'),
 			)
 			data.save()
 			AssessmentProblemPresented.objects.create(
@@ -218,7 +219,8 @@ def requests(request):
 	
 	context = {
 		'title': 'New Requests',
-		'file_type': FileType.objects.filter(status=1, is_required=1),
+		'user_details': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
+		# 'file_type': FileType.objects.filter(status=1, is_required=1),
 		'relation': Relation.objects.filter(status=1),
 		'category': Category.objects.filter(status=1),
 		'sub_category': SubCategory.objects.filter(status=1),
