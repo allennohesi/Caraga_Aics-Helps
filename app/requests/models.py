@@ -214,6 +214,7 @@ class Transaction(models.Model):
     dv_number = models.CharField(max_length=255, blank=True, null=True)
     dv_date = models.DateField()
     transaction_status = models.IntegerField(blank=True, null=True)
+    requested_in = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_action_action(self):
