@@ -188,7 +188,9 @@
               </div>
               <form id="submitFeedback" class="php-form">
                 {% csrf_token %}
-                <h3>Feedback:</h3>
+                <div class="alert alert-primary dark" role="alert">
+                  <i class="fa fa-info-circle"></i> You can submit your suggestions/recommendations/feedback here.
+                </div>
                 <div class="row gy-3">
                   <div class="col-md-12">
                     <input type="text" name="subject" class="form-control" placeholder="Subject" required>
