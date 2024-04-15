@@ -412,51 +412,54 @@ class Mail(models.Model):
 
 
 class SocialWorker_Status(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, on_delete=models.DO_NOTHING)
     status = models.IntegerField(blank=True, null=True)
     table = models.CharField(max_length=255, blank=True, null=True)
     date_transaction = models.DateField()
 
     @property
     def get_tracking(self):
-        data = TransactionStatus1.objects.filter(transaction_id__swo_id=self.user,transaction_id__date_of_transaction=today,status=2)
-        for row in data:
-            tracking_number = row.transaction.tracking_number
-            return tracking_number
-
-    @property
-    def get_total(self): #PENDING
         data = TransactionStatus1.objects.filter(
             transaction_id__swo_id=self.user,
-            transaction_id__date_of_transaction=today,
+            transaction_id__date_of_transaction=date.today(),
+            status=2
+        ).first()
+        if data:
+            return data.transaction.tracking_number
+        return None
+
+    @property
+    def get_total(self):
+        return TransactionStatus1.objects.filter(
+            transaction_id__swo_id=self.user,
+            transaction_id__date_of_transaction=date.today(),
             status=1
         ).count()
-        return data
 
     @property
     def get_ongoing(self):
-        data = TransactionStatus1.objects.filter(
+        return TransactionStatus1.objects.filter(
             transaction_id__swo_id=self.user,
-            transaction_id__date_of_transaction=today,
+            transaction_id__date_of_transaction=date.today(),
             status=2
         ).count()
-        return data
 
     @property
     def get_complete(self):
-        data = TransactionStatus1.objects.filter(
+        return TransactionStatus1.objects.filter(
             Q(transaction_id__swo_id=self.user) &
-            Q(transaction_id__date_of_transaction=today) &
+            Q(transaction_id__date_of_transaction=date.today()) &
             (Q(status=6) | Q(status=3))
         ).count()
-        return data
 
     @property
     def case_study(self):
-        data = TransactionStatus1.objects.filter(
-            Q(transaction_id__swo_id=self.user, transaction_id__date_of_transaction=today, status__in=[3, 6], transaction_id__is_case_study=2)
+        return TransactionStatus1.objects.filter(
+            Q(transaction_id__swo_id=self.user) &
+            Q(transaction_id__date_of_transaction=date.today()) &
+            Q(status__in=[3, 6]) &
+            Q(transaction_id__is_case_study=2)
         ).count()
-        return data
 
     class Meta:
         managed = False
