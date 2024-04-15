@@ -76,6 +76,10 @@
             'ajax': {
                 'url': '/api/client-beneficiary/?format=datatables',
                 'type': 'GET',
+                'data': function(d) {
+                    d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
+                    d.page_size = d.length;  // Send the page size
+                },
             },
             'fnCreatedRow': function (row, data, index) {
                 $(row).attr('id', data['id']);

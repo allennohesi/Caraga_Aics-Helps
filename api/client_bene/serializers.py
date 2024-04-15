@@ -8,6 +8,7 @@ class ClientBeneficiarySerializer(serializers.ModelSerializer):
     date_of_registration = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
     sex = serializers.CharField(source='sex.name', read_only=True)
     birthdate = serializers.DateField(format="%b %d, %Y", read_only=True)
+    suffix = serializers.CharField(source='suffix.name', read_only=True)
     class Meta:
         model = ClientBeneficiary
         fields = '__all__'
