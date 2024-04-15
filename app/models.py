@@ -184,6 +184,16 @@ class AuthUserUserPermissions(models.Model):
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
+class AuthFeedback(models.Model):
+    subject = models.CharField(max_length=255)
+    message = models.CharField(max_length=255)
+    mood = models.CharField(max_length=255)
+    date_created = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_feedback'
 
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()

@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id, City, Barangay
-from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile
+from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile, AuthFeedback
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -54,6 +54,16 @@ def user_list(request):
 	}
 	return render(request, 'users/list.html', context)
 
+@login_required
+def feedback(request):
+	if request.method == 'POST':
+		feedback = AuthFeedback.objects.create(
+			subject=request.POST.get('subject'),
+			message=request.POST.get('message'),
+            mood=request.POST.get('mood'),
+			user_id=request.user.id
+		)
+		return JsonResponse({'data': 'success','msg':'You successfully submitted your feedback'})
 
 @login_required
 def get_role(request, pk):
