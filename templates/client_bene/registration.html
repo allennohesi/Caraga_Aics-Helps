@@ -25,13 +25,16 @@
                 <div class="card-body" id="client_content">
                     <div class="card" id="searching_data">
                         <div class="card-body">
+                            <div class="alert alert-primary dark" role="alert">
+                                <i class="fa fa-info-circle"></i> If the client/beneficiary's full name exists in the table below, you can directly request it to avoid duplications.
+                            </div>
                             <table class="table table-bordered" id="filteringSearch" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>Direct</th>
                                         <th>Lastname</th>
                                         <th class="text-center">Firstname</th>
                                         <th class="text-center">Middlename</th>
+                                        <th class="text-center">Suffix</th>
                                         <th class="text-center">Date of Birth</th>
                                     </tr>
                                 </thead>
@@ -588,14 +591,18 @@
                 $(row).attr('id', data['id']);
             },
             'columns': [
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                            return " <a href='#' data-role='direct' data-id="+ data + ">REQUEST</a> "
-                        }
-                },
                 {'data': 'last_name', 'className': 'text-center'},
                 {'data': 'first_name', 'className': 'text-center'},
                 {'data': 'middle_name', 'className': 'text-center'},
+                {'data': 'suffix','name': 'suffix.name', 'className': 'text-center',
+                    'render': function(data,type,row,meta){
+                        if(row['suffix']){
+                            return row['suffix']
+                        }else{
+                            return ""
+                        }
+                    }
+                },
                 {'data': 'birthdate','className': 'text-center'}
             ],
         });
