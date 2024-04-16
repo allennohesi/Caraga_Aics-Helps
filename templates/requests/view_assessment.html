@@ -111,257 +111,335 @@
         <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel" readonly>
             <small>Client Identifying Information</small>
             <br><br>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Client Name</label>
-                        <input type="text" class="form-control" value="{{ transaction.client.get_client_fullname|upper }}" readonly>
+            <form id="update_client">
+                {% csrf_token %}
+                <input type="text" name="updatin_info" value="update_client" hidden>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>ID Number</label>
+                        <input type="text" class="form-control" name="client_uuid" value="{{ transaction.client.unique_id_number }}" readonly>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Birthdate</label>
-                        <input type="date" class="form-control" id="birthdate" value="{{ transaction.client.birthdate|date:'Y-m-d' }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Client Name</label>
+                            <input type="text" class="form-control" value="{{ transaction.client.get_client_fullname|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Birthdate</label>
+                            <input type="date" class="form-control" id="birthdate" value="{{ transaction.client.birthdate|date:'Y-m-d' }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="text" class="form-control" id="age" value="{{ transaction.client.get_age }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Sex</label>
+                            <input type="text" class="form-control" id="sex" value="{{ transaction.client.sex.name|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>Age</label>
-                        <input type="text" class="form-control" id="age" value="{{ transaction.client.get_age }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Relationship to Beneficiary</label>
+                            <input type="text" class="form-control" value="{{ transaction.relation.name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" class="form-control" id="contact_number" value="{{ transaction.client.contact_number }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Civil Status</label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.civil_status.name|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Sex</label>
-                        <input type="text" class="form-control" id="sex" value="{{ transaction.client.sex.name|upper }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Region <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Province <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.prov_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>City <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.city_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Barangay <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.brgy_name|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>Relationship to Beneficiary</label>
-                        <input type="text" class="form-control" value="{{ transaction.relation.name|upper }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>House / Block / Lot No.</label>
+                            <input type="text" class="form-control" id="house_no" value="{{ transaction.client.house_no|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Street</label>
+                            <input type="text" class="form-control" id="street" value="{{ transaction.client.street|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Subdivision / Village</label>
+                            <input type="text" class="form-control" id="village" value="{{ transaction.client.village|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" class="form-control" id="contact_number" value="{{ transaction.client.contact_number }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>ID Presented</label>
+                            <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.presented %}{{transaction.client.presented.presented}}{% else %}NO{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>4Ps ID Number</label>
+                            <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.presented_id_no %}{{ transaction.client.presented_id_no }}{% else %}N/A{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>4Ps Member</label>
+                            <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.is_4ps %}YES{% else %}NO{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>4Ps ID Number</label>
+                            <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.number_4ps_id_number %}{{ transaction.client.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>Indigenous People</label>
+                            <input type="text" class="form-control" id="indi" value="{% if transaction.client.is_indi %}YES{% else %}NO{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Tribe</label>
+                            <input type="text" class="form-control" id="tribe" value="{% if transaction.client.tribu %}{{ transaction.client.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Civil Status</label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.civil_status.name|upper }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Occupation <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="occupation_data">
+                                <option></option>
+                                {% for row in occupation %}
+                                {% if row.id == transaction.client.occupation.id %}
+                                <option value="{{ row.id }}" selected>{{ row.occupation_name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.occupation_name|upper  }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Salary <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" value="{{transaction.client.salary}}" name="salary" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Update Client <span class="txt-danger">*</span></label><br>
+                            <button type="submit" class="btn btn-primary btn-lg">Update Client</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Region <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Province <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.prov_code.prov_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>City <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.city_code.city_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Barangay <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.client.barangay.brgy_name|upper }}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>House / Block / Lot No.</label>
-                        <input type="text" class="form-control" id="house_no" value="{{ transaction.client.house_no|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Street</label>
-                        <input type="text" class="form-control" id="street" value="{{ transaction.client.street|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Subdivision / Village</label>
-                        <input type="text" class="form-control" id="village" value="{{ transaction.client.village|upper }}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>ID Presented</label>
-                        <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.presented %}{{transaction.client.presented.presented}}{% else %}NO{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>4Ps ID Number</label>
-                        <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.presented_id_no %}{{ transaction.client.presented_id_no }}{% else %}N/A{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>4Ps Member</label>
-                        <input type="text" class="form-control" id="is_4psmember" value="{% if transaction.client.is_4ps %}YES{% else %}NO{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>4Ps ID Number</label>
-                        <input type="text" class="form-control" id="4ps_id_number" value="{% if transaction.client.number_4ps_id_number %}{{ transaction.client.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>Indigenous People</label>
-                        <input type="text" class="form-control" id="indi" value="{% if transaction.client.is_indi %}YES{% else %}NO{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Tribe</label>
-                        <input type="text" class="form-control" id="tribe" value="{% if transaction.client.tribu %}{{ transaction.client.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
-                    </div>
-                </div>
-            </div>
+            </form>
             <hr>
             {% if transaction.client_id != transaction.bene_id %}
             <small>Beneficiary Identifying Information</small>
             <br><br>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Beneficiary Name</label>
-                        <input type="text" class="form-control" value="{{ transaction.bene.get_client_fullname|upper }}" readonly>
+            <form id="update_bene">
+                {% csrf_token %}
+                <input type="text" name="updatin_info" value="update_bene" hidden>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>ID Number</label>
+                        <input type="text" class="form-control" name="bene_uuid" value="{{ transaction.bene.unique_id_number }}" readonly>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Birthdate</label>
-                        <input type="date" class="form-control" id="bene_birthdate" value="{{ transaction.bene.birthdate|date:'Y-m-d' }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Beneficiary Name</label>
+                            <input type="text" class="form-control" value="{{ transaction.bene.get_client_fullname|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Birthdate</label>
+                            <input type="date" class="form-control" id="bene_birthdate" value="{{ transaction.bene.birthdate|date:'Y-m-d' }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="text" class="form-control" id="bene_age" value="{{ transaction.bene.get_age }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Sex</label>
+                            <input type="text" class="form-control" id="bene_sex" value="{{ transaction.bene.sex.name|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>Age</label>
-                        <input type="text" class="form-control" id="bene_age" value="{{ transaction.bene.get_age }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" class="form-control" id="bene_contact_number" value="{{ transaction.bene.contact_number }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Civil Status</label>
+                            <input type="text" class="form-control" id="bene_civil_status" value="{{ transaction.bene.civil_status.name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Indigenous People</label>
+                            <input type="text" class="form-control" id="bene_indi" value="{% if transaction.bene.is_indi %}YES{% else %}NO{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Tribe</label>
+                            <input type="text" class="form-control" id="bene_tribe" value="{% if transaction.bene.tribu.name %}{{ transaction.bene.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Sex</label>
-                        <input type="text" class="form-control" id="bene_sex" value="{{ transaction.bene.sex.name|upper }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Region <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Province <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.prov_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>City <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.city_name|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Barangay <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.brgy_name|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" class="form-control" id="bene_contact_number" value="{{ transaction.bene.contact_number }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>House / Block / Lot No.</label>
+                            <input type="text" class="form-control" id="bene_house_no" value="{{ transaction.bene.house_no|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Street</label>
+                            <input type="text" class="form-control" id="bene_street" value="{{ transaction.bene.street|upper }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Subdivision / Village</label>
+                            <input type="text" class="form-control" id="bene_village" value="{{ transaction.bene.village|upper }}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Civil Status</label>
-                        <input type="text" class="form-control" id="bene_civil_status" value="{{ transaction.bene.civil_status.name|upper }}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>4Ps Member</label>
+                            <input type="text" class="form-control" id="bene_is_4psmember" value="{% if transaction.bene.is_4ps %}YES{% else %}NO{% endif %}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>4Ps ID Number</label>
+                            <input type="text" class="form-control" id="bene_4ps_id_number" value="{% if transaction.bene.number_4ps_id_number %}{{ transaction.bene.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Indigenous People</label>
-                        <input type="text" class="form-control" id="bene_indi" value="{% if transaction.bene.is_indi %}YES{% else %}NO{% endif %}" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Occupation <span class="txt-danger">*</span></label>
+                            <select class="form-control select" name="occupation_data">
+                                <option></option>
+                                {% for row in occupation %}
+                                {% if row.id == transaction.bene.occupation.id %}
+                                <option value="{{ row.id }}" selected>{{ row.occupation_name|upper }}</option>
+                                {% else %}
+                                <option value="{{ row.id }}">{{ row.occupation_name|upper  }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Salary <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" value="{{transaction.bene.salary}}" name="salary" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Update Client <span class="txt-danger">*</span></label><br>
+                            <button type="submit" class="btn btn-primary btn-lg">Update Client</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Tribe</label>
-                        <input type="text" class="form-control" id="bene_tribe" value="{% if transaction.bene.tribu.name %}{{ transaction.bene.tribu.name|upper }}{% else %}N/A{% endif %}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Region <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.region_code.region_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Province <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.prov_code.prov_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>City <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.city_code.city_name|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Barangay <span class="txt-danger">*</span></label>
-                        <input type="text" class="form-control" id="civil_status" value="{{ transaction.bene.barangay.brgy_name|upper }}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>House / Block / Lot No.</label>
-                        <input type="text" class="form-control" id="bene_house_no" value="{{ transaction.bene.house_no|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Street</label>
-                        <input type="text" class="form-control" id="bene_street" value="{{ transaction.bene.street|upper }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Subdivision / Village</label>
-                        <input type="text" class="form-control" id="bene_village" value="{{ transaction.bene.village|upper }}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>4Ps Member</label>
-                        <input type="text" class="form-control" id="bene_is_4psmember" value="{% if transaction.bene.is_4ps %}YES{% else %}NO{% endif %}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>4Ps ID Number</label>
-                        <input type="text" class="form-control" id="bene_4ps_id_number" value="{% if transaction.bene.number_4ps_id_number %}{{ transaction.bene.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
-                    </div>
-                </div>
-            </div>
+            </form>
             {% else %}
             <small>Client and Benefiary are the same</small>
             <br>
+            <br>
             {% endif %}
-            <hr>
             <small>Beneficiary Family Composistion</small>
             <br>
             <form id="submitFamilyComposition">
@@ -1076,7 +1154,89 @@
             if (!validationForm()){
                 Swal.fire({
                     title: "Are you sure",
-                    text: "You want to submit this data?",
+                    text: "You want to submit this family composition?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'view_assessment' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $("#check").modal('hide');
+                                            $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }else{
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#update_client').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to update this client data?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'view_assessment' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $("#check").modal('hide');
+                                            $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }else{
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
+        $('#update_bene').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to update this beneficiary data?",
                     icon: "info",
                     showCancelButton: true,
                     confirmButtonText: "Yes",
