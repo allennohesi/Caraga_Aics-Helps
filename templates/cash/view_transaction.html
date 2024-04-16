@@ -233,6 +233,29 @@
                     </div>
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Occupation <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="occupation_data" disabled>
+                            <option></option>
+                            {% for row in occupation %}
+                            {% if row.id == transaction.client.occupation.id %}
+                            <option value="{{ row.id }}" selected>{{ row.occupation_name|upper }}</option>
+                            {% else %}
+                            <option value="{{ row.id }}">{{ row.occupation_name|upper  }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Salary <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" value="{{transaction.client.salary}}" name="salary" autocomplete="off" required readonly>
+                    </div>
+                </div>
+            </div>
             <hr>
             {% if transaction.client_id != transaction.bene_id %}
             <small>Beneficiary Identifying Information</small>
@@ -346,6 +369,29 @@
                     <div class="form-group">
                         <label>4Ps ID Number</label>
                         <input type="text" class="form-control" id="bene_4ps_id_number" value="{% if transaction.bene.number_4ps_id_number %}{{ transaction.bene.number_4ps_id_number }}{% else %}N/A{% endif %}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Occupation <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="occupation_data" disabled>
+                            <option></option>
+                            {% for row in occupation %}
+                            {% if row.id == transaction.bene.occupation.id %}
+                            <option value="{{ row.id }}" selected>{{ row.occupation_name|upper }}</option>
+                            {% else %}
+                            <option value="{{ row.id }}">{{ row.occupation_name|upper  }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Salary <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" value="{{transaction.bene.salary}}" name="salary" autocomplete="off" required readonly>
                     </div>
                 </div>
             </div>
