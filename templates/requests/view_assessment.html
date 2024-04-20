@@ -715,12 +715,9 @@
                         <div class="form-group">
                             <label>Assistance Type <span class="txt-danger">*</span></label>
                             <select class="form-control select" name="assistance_type" id="assistance_type" required>
+                                <option></option>
                                 {% for row in assistance_type %}
-                                {% if row.id == transaction.lib_type_of_assistance_id %}
-                                <option value="{{ row.id }}" selected>{{ row.type_name|upper }}</option>
-                                {% else %}
                                 <option value="{{ row.id }}">{{ row.type_name|upper }}</option>
-                                {% endif %}
                                 {% endfor %}
                             </select>
                         </div>
@@ -728,15 +725,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Assistance Category <span class="txt-danger">*</span></label>
-                            <select class="form-control select" name="assistance_category" id="assistance_category" required>
-                                {% for row in TypeOfAssistance %}
-                                {% if row.id == transaction.lib_assistance_category_id %}
-                                <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
-                                {% else %}
-                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
+                            <select class="form-control select" name="assistance_category" id="assistance_category" required></select>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -963,6 +952,27 @@
 </div>
 {% block script %}
 <script>
+    var select2options = {
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose',
+    }
+
+    $('#assistance_type').select2(select2options);
+    $('#assistance_category').select2(select2options);
+
+    var processCategory = new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+
+    $('#assistance_type').val('{{transaction.lib_type_of_assistance_id}}').trigger('change');
+
+
+    processCategory.then( function(parent, child, items) {
+        $('#assistance_category').val('{{transaction.lib_assistance_category_id}}').trigger('change');
+    });
+
+</script>
+<script>
     $(document).ready(function(){
         {% if transaction_status.swo_time_start == null %}
         $("#check").modal('show');
@@ -995,15 +1005,6 @@
             });
             return invalid;
         }
-        var select2options = {
-            width: "100%",
-            containerCssClass: 'select',
-            placeholder: 'Choose',
-        }
-        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
-
-        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
-
         $('.user').select2({
             width: '100%',
             placeholder: 'Choose',
