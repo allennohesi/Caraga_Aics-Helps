@@ -340,12 +340,12 @@
                         </div>
                     </div>
                     {% endif %}
-                    {% if transaction_status.upload_time_end %}
+                    {% if transaction_status.is_verified == 1 and transaction_status.is_swo == 1 %}
                     <div class="timeline left">
                         <div class="card">
                             <div class="card-body p-4">
-                                <h3>Transaction Summary</h3>
-                                <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} <br> Transaction End: {{transaction_status.swo_time_end}}.</p>
+                                <h3>Transaction Ended</h3>
+                                <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} and Transaction End: {{transaction_status.swo_time_end}}.</p>
                             </div>
                         </div>
                     </div>
