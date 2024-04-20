@@ -543,13 +543,9 @@
                 <div class="form-group">
                     <label>Assistance Type <span class="txt-danger">*</span></label>
                     <select class="form-control select" name="assistance_type" id="assistance_type" readonly>
-                        <option value="">None</option>
+                        <option></option>
                         {% for row in assistance_type %}
-                        {% if row.id == transaction.lib_type_of_assistance_id %}
-                        <option value="{{ row.id }}" selected>{{ row.type_name }}</option>
-                        {% else %}
                         <option value="{{ row.id }}">{{ row.type_name }}</option>
-                        {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -557,15 +553,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Assistance Category <span class="txt-danger">*</span></label>
-                    <select class="form-control select" name="assistance_category" id="assistance_category" readonly>
-                        {% for row in TypeOfAssistance %}
-                        {% if row.id == transaction.lib_assistance_category_id %}
-                        <option value="{{ row.id }}" selected>{{ row.name }}</option>
-                        {% else %}
-                        <option value="{{ row.id }}">{{ row.name }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    <select class="form-control select" name="assistance_category" id="assistance_category" readonly></select>
                 </div>
             </div>
             <div class="col-md-4">
@@ -700,6 +688,26 @@
     </div>
   </div>
 {% block script %}
+<script>
+    var select2options = {
+        width: "100%",
+        containerCssClass: 'select',
+        placeholder: 'Choose',
+    }
+
+    $('#assistance_type').select2(select2options);
+    $('#assistance_category').select2(select2options);
+
+    var processCategory = new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+
+    $('#assistance_type').val('{{transaction.lib_type_of_assistance_id}}').trigger('change');
+
+
+    processCategory.then( function(parent, child, items) {
+        $('#assistance_category').val('{{transaction.lib_assistance_category_id}}').trigger('change');
+    });
+</script>
 <script>
     var _validFileExtensions = [".jpg", ".jpeg",".png"];    
     function ValidateSingleInput(oInput) {
