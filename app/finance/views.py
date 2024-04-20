@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from app.finance.models import finance_voucher, finance_voucherData, exporting_csv, finance_outsideFo
 from django.db.models import Q
-import csv
+import csv, uuid
 from django.utils.encoding import smart_str
 from io import StringIO
 from django.http import HttpResponse, StreamingHttpResponse
@@ -67,9 +67,7 @@ def financial_transaction(request):
 				date=request.POST.get('date')
 				remarks=request.POST.get('remarks')
 				
-				lasttrack = finance_voucher.objects.order_by('-voucher_code').first()
-				track_num = generate_serial_string(lasttrack.voucher_code) if lasttrack else \
-					generate_serial_string(None, 'CODE')
+				unique_id = uuid.uuid4()
 				check_if_exists = finance_voucher.objects.filter(
 					Q(voucher_title__icontains=request.POST.get('voucher_title'))
 				).first()
@@ -94,7 +92,7 @@ def financial_transaction(request):
 						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
 					else:
 						finance_voucher.objects.create(
-							voucher_code=track_num,
+							voucher_code=str(unique_id).upper(),
 							voucher_title=voucher,
 							date=date,
 							remarks=remarks,
@@ -104,7 +102,7 @@ def financial_transaction(request):
 						)
 						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
-					return JsonResponse({'error': True, 'msg': 'This Title/DV already exists, please try different Title/DV for the better tracking.'})
+					return JsonResponse({'error': True, 'msg': 'This Title/DV-name already exists, please double check.'})
 				
 		except RequestException as e:
 			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction")
