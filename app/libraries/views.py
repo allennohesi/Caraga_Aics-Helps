@@ -269,11 +269,12 @@ def get_all_client_beneficiary(request):
     if search_term:
         clients_query = (
             ClientBeneficiary.objects
-            .filter(Q(client_bene_fullname__icontains=search_term) & Q(is_validated=1))
-            .order_by('client_bene_fullname')[:10]
+            .filter(client_bene_fullname__icontains=search_term, is_validated=1)
+            .order_by('client_bene_fullname')
+            .values_list('id', 'client_bene_fullname')[:10]
         )
         
-        json_data = [{'id': client.id, 'text': client.client_bene_fullname} for client in clients_query]
+        json_data = [{'id': client[0], 'text': client[1]} for client in clients_query]
         return JsonResponse(json_data, safe=False)
     
     return JsonResponse([], safe=False)
