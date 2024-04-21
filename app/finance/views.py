@@ -193,7 +193,7 @@ def export_fund_summary(request):
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
-				"date_entried",
+				"date_of_transaction",
 				"client__last_name",
 				"client__first_name",
 				"client__middle_name",
@@ -251,7 +251,7 @@ def export_fund_summary(request):
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
-				"date_entried",
+				"date_of_transaction",
 				"client__last_name",
 				"client__first_name",
 				"client__middle_name",
@@ -338,7 +338,7 @@ def generate_csv_data(queryset):
 		dv_number_str = smart_str(transaction.dv_number).replace(",", "") if transaction.dv_number else ""
 		# Yield CSV data
 		yield ','.join([
-			smart_str(transaction.date_entried),
+			smart_str(transaction.date_of_transaction),
 			smart_str(transaction.tracking_number),
 			smart_str(transaction.client.last_name),
 			smart_str(transaction.client.first_name),
