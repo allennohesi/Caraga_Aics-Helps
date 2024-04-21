@@ -196,7 +196,7 @@
             'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/transaction/session/?format=datatables',
+                'url': '/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}',
                 'type': 'GET',
                 'data': function(d) {
                     d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
@@ -383,23 +383,23 @@
 			if($('#year').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&year=' + $('#year').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&year=' + $('#year').val()).load();
 			}
 		});
         $('#filter-code').on('click', function(){
 			if($('#code').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&code=' + $('#code').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
 			}
 		});
         $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS
             $('.list-group-item').removeClass('active');
             $(this).addClass('active'); // Add 'active' class to the clicked element
             if($(this).data('filter') == 'all'){
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables').load();
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}').load();
             }else{
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&billed='+$(this).data('filter')).load();
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&billed='+$(this).data('filter')).load();
             }
         });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){

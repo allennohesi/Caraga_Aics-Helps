@@ -309,18 +309,20 @@ def get_bene_info(request, pk):
 @login_required
 @groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def incoming(request):
+	user_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	# token = Token.objects.create(user_id=6)
 	# print(token.key)
 	context = {
-		'title': 'Incoming'
+		'title': 'Incoming',
+		'user_address': user_address
 	}
 	return render(request, 'requests/incoming.html', context)
 
 def get_file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    filename_start = filename.replace('.' + ext, '')
-    filename = "%s__%s.%s" % (uuid.uuid4(), filename_start, ext)
-    return os.path.join('media/CIS', filename)
+	ext = filename.split('.')[-1]
+	filename_start = filename.replace('.' + ext, '')
+	filename = "%s__%s.%s" % (uuid.uuid4(), filename_start, ext)
+	return os.path.join('media/CIS', filename)
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -440,7 +442,6 @@ def trackingModal(request,pk):
 @groups_only('Social Worker', 'Super Administrator')
 def assessment(request):
 	transaction_data = TransactionStatus1.objects.filter(Q(status=1) | Q(status=2) | Q(status=3) | Q(status=4), transaction_id__swo_id=request.user.id)
-	print(transaction_data)
 	today_date = date.today()
 	modal_show = False  # Set modal_show to False initially
 	
@@ -450,10 +451,11 @@ def assessment(request):
 		if today_date.strftime('%Y-%m-%d') != row_date:
 			modal_show = True  # Set modal_show to True if any transaction has a different date
 			break  # Exit the loop as soon as a transaction with a different date is found
-	
+	swo_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	context = {
 		'title': 'Assessment',
 		'modal_show': modal_show,
+		'swo_address':swo_address,
 	}
 	return render(request, 'requests/assessment.html', context)
 
