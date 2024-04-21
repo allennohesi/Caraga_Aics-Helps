@@ -27,7 +27,7 @@ class ClientBeneficiary(models.Model):
     civil_status = models.ForeignKey(CivilStatus, models.DO_NOTHING)
     is_indi = models.BooleanField(blank=True, null=True)
     tribu = models.ForeignKey(Tribe, models.DO_NOTHING)
-    barangay = models.ForeignKey(Barangay, models.DO_NOTHING, to_field='brgy_code')
+    barangay = models.ForeignKey(Barangay, models.DO_NOTHING,blank=False, null=False, to_field='brgy_code')
     street = models.CharField(max_length=255, blank=True, null=True)
     house_no = models.CharField(max_length=255, blank=True, null=True)
     village = models.CharField(max_length=255, blank=True, null=True)
