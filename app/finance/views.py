@@ -193,6 +193,7 @@ def export_fund_summary(request):
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
+				"date_entried",
 				"client__last_name",
 				"client__first_name",
 				"client__middle_name",
@@ -250,6 +251,7 @@ def export_fund_summary(request):
 				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
 			).only(
 				"tracking_number",
+				"date_entried",
 				"client__last_name",
 				"client__first_name",
 				"client__middle_name",
@@ -303,7 +305,7 @@ def export_fund_summary(request):
 
 def generate_csv_data(queryset):
 	# Write the header
-	header = ["Tracking_number", "Client Surname", "Client First name", "Client Middle name", "Client suffix name", "Client age",
+	header = ["Date Entried", "Tracking_number", "Client Surname", "Client First name", "Client Middle name", "Client suffix name", "Client age",
 					"Civil Status", "Birthday", "Client Sex", "Street", "Barangay", "Municipality", "Client District",
 					"Province", "Region",
 					"Bene Surname", "Bene First name", "Bene Middle name", "Bene suffix name", "Bene age",
@@ -325,6 +327,7 @@ def generate_csv_data(queryset):
 			"N/a"
 		)
 		client_street_str = smart_str(transaction.client.street).replace(",", "") if transaction.client.street else ""
+		
 		bene_street_str = smart_str(transaction.bene.street).replace(",", "") if transaction.bene.street else ""
 		total_amount_str = f'"{transaction.total_amount}"' if transaction.total_amount is not None else '0'
 		service_provider_str = (
@@ -335,6 +338,7 @@ def generate_csv_data(queryset):
 		dv_number_str = smart_str(transaction.dv_number).replace(",", "") if transaction.dv_number else ""
 		# Yield CSV data
 		yield ','.join([
+			smart_str(transaction.date_entried),
 			smart_str(transaction.tracking_number),
 			smart_str(transaction.client.last_name),
 			smart_str(transaction.client.first_name),
