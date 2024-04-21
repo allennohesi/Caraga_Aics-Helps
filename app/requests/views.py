@@ -551,49 +551,78 @@ def view_assessment(request, pk):
 	data = Transaction.objects.filter(id=pk).first()
 	try:
 		if request.method == "POST":
-			update_info = request.POST.get('updatin_info')
-			if update_info == "update_client":
-				client = ClientBeneficiary.objects.filter(unique_id_number=request.POST.get('client_uuid'))
-				client.update(
-					occupation_id=request.POST.get('occupation_data'),
-					salary=request.POST.get('salary'),
-				)
-				return JsonResponse({'data': 'success','msg': 'Client successfully updated'})
-			elif update_info == "update_bene":
-				beneficiary = ClientBeneficiary.objects.filter(unique_id_number=request.POST.get('bene_uuid'))
-				beneficiary.update(
-					occupation_id=request.POST.get('occupation_data'),
-					salary=request.POST.get('salary'),
-				)
-				return JsonResponse({'data': 'success','msg': 'Beneficiary successfully updated'})
-			else:
-				uuid = data.bene.unique_id_number
-				bene_id = data.bene.id
-				get_bene_fullname = data.bene.client_bene_fullname
-				first_name = request.POST.getlist('first_name[]')
-				middle_name = request.POST.getlist('middle_name[]')
-				last_name = request.POST.getlist('last_name[]')
-				suffix = request.POST.getlist('suffix[]')
-				rosterSex = request.POST.getlist('rosterSex[]')
-				age = request.POST.getlist('age[]')
-				relation = request.POST.getlist('relation[]')
-				occupation = request.POST.getlist('occupation[]')
-				salary = request.POST.getlist('salary[]')
-				if not first_name == [''] and not last_name == [''] and not age == [''] and not occupation == [
-					''] and not salary == [''] and not rosterSex == ['']:
-					data = [
-						{'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'age': b, 'occupation': o,
-						'salary': s, 'relation': rl, 'rosterSex': rs}
-						for fn, mn, ln, sx, b, o, s, rl, rs in
-						zip(first_name, middle_name, last_name, suffix, age, occupation, salary, relation, rosterSex)
-					]
-					family_composition = ClientBeneficiaryFamilyComposition.objects.filter(clientbene__unique_id_number=uuid)
-					store = [row.id for row in family_composition]
-					if family_composition:
-						y = 1
-						x = 0
-						for row in data:
-							if y > len(family_composition):
+			with transaction.atomic():
+				update_info = request.POST.get('updatin_info')
+				if update_info == "update_client":
+					client = ClientBeneficiary.objects.filter(unique_id_number=request.POST.get('client_uuid'))
+					client.update(
+						occupation_id=request.POST.get('occupation_data'),
+						salary=request.POST.get('salary'),
+					)
+					return JsonResponse({'data': 'success','msg': 'Client successfully updated'})
+				elif update_info == "update_bene":
+					beneficiary = ClientBeneficiary.objects.filter(unique_id_number=request.POST.get('bene_uuid'))
+					beneficiary.update(
+						occupation_id=request.POST.get('occupation_data'),
+						salary=request.POST.get('salary'),
+					)
+					return JsonResponse({'data': 'success','msg': 'Beneficiary successfully updated'})
+				else:
+					uuid = data.bene.unique_id_number
+					bene_id = data.bene.id
+					get_bene_fullname = data.bene.client_bene_fullname
+					first_name = request.POST.getlist('first_name[]')
+					middle_name = request.POST.getlist('middle_name[]')
+					last_name = request.POST.getlist('last_name[]')
+					suffix = request.POST.getlist('suffix[]')
+					rosterSex = request.POST.getlist('rosterSex[]')
+					age = request.POST.getlist('age[]')
+					relation = request.POST.getlist('relation[]')
+					occupation = request.POST.getlist('occupation[]')
+					salary = request.POST.getlist('salary[]')
+					if not first_name == [''] and not last_name == [''] and not age == [''] and not occupation == [
+						''] and not salary == [''] and not rosterSex == ['']:
+						data = [
+							{'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'age': b, 'occupation': o,
+							'salary': s, 'relation': rl, 'rosterSex': rs}
+							for fn, mn, ln, sx, b, o, s, rl, rs in
+							zip(first_name, middle_name, last_name, suffix, age, occupation, salary, relation, rosterSex)
+						]
+						family_composition = ClientBeneficiaryFamilyComposition.objects.filter(clientbene__unique_id_number=uuid)
+						store = [row.id for row in family_composition]
+						if family_composition:
+							y = 1
+							x = 0
+							for row in data:
+								if y > len(family_composition):
+									ClientBeneficiaryFamilyComposition.objects.create(
+										first_name=row['first_name'],
+										middle_name=row['middle_name'],
+										last_name=row['last_name'],
+										suffix_id=row['suffix'],
+										sex_id=row['rosterSex'],
+										age=row['age'],
+										relation_id=row['relation'],
+										occupation_id=row['occupation'],
+										salary=row['salary'],
+										clientbene_id=bene_id
+									)
+								else:
+									ClientBeneficiaryFamilyComposition.objects.filter(id=store[x]).update(
+										first_name=row['first_name'],
+										middle_name=row['middle_name'],
+										last_name=row['last_name'],
+										suffix_id=row['suffix'],
+										sex_id=row['rosterSex'],
+										age=row['age'],
+										relation_id=row['relation'],
+										occupation_id=row['occupation'],
+										salary=row['salary'],
+									)
+									y += 1
+									x += 1
+						else:
+							for row in data:
 								ClientBeneficiaryFamilyComposition.objects.create(
 									first_name=row['first_name'],
 									middle_name=row['middle_name'],
@@ -606,42 +635,20 @@ def view_assessment(request, pk):
 									salary=row['salary'],
 									clientbene_id=bene_id
 								)
-							else:
-								ClientBeneficiaryFamilyComposition.objects.filter(id=store[x]).update(
-									first_name=row['first_name'],
-									middle_name=row['middle_name'],
-									last_name=row['last_name'],
-									suffix_id=row['suffix'],
-									sex_id=row['rosterSex'],
-									age=row['age'],
-									relation_id=row['relation'],
-									occupation_id=row['occupation'],
-									salary=row['salary'],
-								)
-								y += 1
-								x += 1
 					else:
-						for row in data:
-							ClientBeneficiaryFamilyComposition.objects.create(
-								first_name=row['first_name'],
-								middle_name=row['middle_name'],
-								last_name=row['last_name'],
-								suffix_id=row['suffix'],
-								sex_id=row['rosterSex'],
-								age=row['age'],
-								relation_id=row['relation'],
-								occupation_id=row['occupation'],
-								salary=row['salary'],
-								clientbene_id=bene_id
-							)
-				else:
-					return JsonResponse({'error': True, 'msg': 'You have provided information in Family Composistion. Please fill in or leave the form blank if not applicable. Thank you!'})
-				return JsonResponse({'data': 'success','msg': 'Beneficiary family composition with the name: {} has been updated successfully.'.format(get_bene_fullname)})
+						return JsonResponse({'error': True, 'msg': 'You have provided information in Family Composistion. Please fill in or leave the form blank if not applicable. Thank you!'})
+					return JsonResponse({'data': 'success','msg': 'Beneficiary family composition with the name: {} has been updated successfully.'.format(get_bene_fullname)})
 		
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
 		handle_error(ce, "CONNECTION ERROR IN VIEW ASSESSMENT")
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except ValidationError as e:
+		handle_error(e, "VALIDATION ERROR IN VIEW ASSESSMENT")
+		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+	except IntegrityError as e:
+		handle_error(e, "INTEGRITY ERROR IN RVIEW ASSESSMENT")
+		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
 		handle_error(re, "NETWORK RELATED ISSUE IN VIEW ASSESSMENT")
