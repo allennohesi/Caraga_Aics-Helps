@@ -15,7 +15,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
 from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id
 from django.contrib.sessions.models import Session
-from app.models import AuthUser, AuthUserGroups
+from app.models import AuthUser, AuthUserGroups, AuthuserDetails
 from django.db.models import Value, Sum, Count
 from datetime import datetime, timedelta, time, date
 from django.utils import timezone
@@ -37,8 +37,10 @@ def handle_error(error, location): #ERROR HANDLING
 @login_required
 @groups_only('Social Worker', 'Super Administrator', 'Cash')
 def cash(request):
+	user_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	context = {
-		'title': "Cash Transaction"
+		'title': "Cash Transaction",
+		'user_address': user_address,
 	}
 	return render(request, "cash/cash_transaction.html", context)
 
