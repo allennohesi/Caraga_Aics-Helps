@@ -1327,7 +1327,7 @@
             <input type="text" class="form-control" name="first_name[]" placeholder="First Name" autocomplete="off" required><br>
             <input type="text" class="form-control" name="middle_name[]" placeholder="Middle Name" autocomplete="off" required><br>
             <input type="text" class="form-control" name="last_name[]" placeholder="Last Name" autocomplete="off" required><br>
-            <select class="form-control suffix-select" name="suffix[]" required>
+            <select class="form-control suffix-select" name="suffix[]">
                 <option></option>
                 {% for row in suffix %}
                 <option value="{{ row.id }}">{{ row.name }}</option>
