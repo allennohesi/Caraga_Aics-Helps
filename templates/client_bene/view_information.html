@@ -386,9 +386,9 @@
         var template = `
             <tr>
                 <td>
-                    <input type="text" class="form-control" name="first_name[]" placeholder="First Name" autocomplete="off"><br>
+                    <input type="text" class="form-control" name="first_name[]" placeholder="First Name" autocomplete="off" required><br>
                     <input type="text" class="form-control" name="middle_name[]" placeholder="Middle Name" autocomplete="off"><br>
-                    <input type="text" class="form-control" name="last_name[]" placeholder="Last Name" autocomplete="off"><br>
+                    <input type="text" class="form-control" name="last_name[]" placeholder="Last Name" autocomplete="off" required><br>
                     <select class="form-control suffix-select" name="suffix[]">
                         <option></option>
                         {% for row in suffix %}
@@ -398,7 +398,7 @@
                     <div class="invalid-feedback"></div>
                 </td>
                 <td valign="middle">
-                    <select class="form-control compo-select" name="rosterSex[]">
+                    <select class="form-control compo-select" name="rosterSex[]" required>
                         <option></option>
                         {% for row in sex %}
                         <option value="{{ row.id }}">{{ row.name }}</option>
@@ -406,10 +406,10 @@
                     </select>
                 </td>   
                 <td valign="middle">
-                    <input type="text" class="form-control" name="age[]">
+                    <input type="text" class="form-control" name="age[]" required>
                 </td>
                 <td valign="middle">
-                    <select class="form-control relation-select" name="relation[]">
+                    <select class="form-control relation-select" name="relation[]" required>
                         <option></option>
                         {% for row in Relation %}
                         <option value="{{ row.id }}">{{ row.name }}</option>
@@ -417,7 +417,7 @@
                     </select>
                 </td>
                 <td valign="middle">
-                    <select class="form-control occupation-select" name="occupation[]">
+                    <select class="form-control occupation-select" name="occupation[]" required>
                         <option></option>
                         {% for row in occupation %}
                         <option value="{{ row.id }}">{{ row.occupation_name }}</option>
@@ -425,7 +425,7 @@
                     </select>
                 </td>
                 <td valign="middle">
-                    <input type="text" class="form-control" name="salary[]" autocomplete="off">
+                    <input type="text" class="form-control" name="salary[]" autocomplete="off" required>
                     <div class="invalid-feedback"></div>
                 </td>
                 <td valign="middle">
