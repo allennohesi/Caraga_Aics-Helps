@@ -8,32 +8,6 @@
 }
 </style>
 <div class="row" id="modal_view">
-    {% if transaction.total_amount %}
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="col-md-12">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Printable Forms
-                    </button>
-                    <ul class="dropdown-menu align-right-dropdown">
-                        <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
-                        {% if transaction.is_gl == 1 %}
-                        <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printPagPamatuod' transaction.id %}" target="_blank">Pag-Pamatuod</a></li>
-                        {% else %}
-                        <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
-                        <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    <br>
     <form id="submitformProvided">
         {% csrf_token %}
         <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment|floatformat:2}}" hidden>
@@ -95,20 +69,13 @@
                             <tr>
                                 <td>*nothing follows*</td>
                                 <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
-                                <td colspan="2" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;"> 0</label></td>
+                                <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></td>
+                                <td><button type="submit" class="btn btn-primary">Submit</button></td>
                               </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        {% comment %} <div class="col-md-1">
-            <div class="form-group">
-                <label>Pre total</label>
-                <br>
-                <input type="text" class="form-control" name="pre_total" onkeypress='validate(event)' id="pre_total" readonly>
-            </div>
-        </div> {% endcomment %}
-        <center><button type="submit" class="btn btn-primary btn-lg">Save provided data</button></center>
     </form>
     <br>
     <div class="table-responsive text-nowrap table-scroll">
@@ -133,32 +100,35 @@
         <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2}}{% else %}0{% endif %}" hidden>
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <br>
-        <div class="alert alert-secondary" role="alert">
-            Please confirm the total amount, if you're all set.
+        <div class="alert alert-light" role="alert">
+            Final total: <a href="#" class="alert-link"><span>&#8369;</span> <u>{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</u></a>. Confirm if you're set!
         </div>
-        <p class="text-end">
-            <!--<b>Pre total: <span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></b> || -->
-            <b>Final total: <span>&#8369;</span>{% if calculate.total_payment%} {{calculate.total_payment|floatformat:2|intcomma}} <input type="submit" class="btn btn-primary" name="regprice" value="confirm">{% else %} 0 {% endif %}</b> </b>
-        </p>
+        <center>
+            {% if calculate.total_payment%}
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">CONFIRM</button>
+                {% if transaction.total_amount %}
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
+                    {% if transaction.is_gl == 1 %}
+                    <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Eligibility (GL)</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printGLHead' transaction.id %}" target="_blank">Guarantee Letter Head</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printGLMEDCal' transaction.id %}" target="_blank">Guarantee Letter MED-CALCULATOR</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printPagPamatuod' transaction.id %}" target="_blank">Pag-Pamatuod</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
+                    <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+            </b>
+        </center>
     </form>
-    <!-- Modal -->
-</div>
-<div class="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
 </div>
 <script>
     var template_provided = `
