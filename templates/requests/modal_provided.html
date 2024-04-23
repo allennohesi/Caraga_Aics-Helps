@@ -74,7 +74,7 @@
                             <td>*nothing follows*</td>
                             <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
                             <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
-                            <td><button type="submit" class="btn btn-primary">Submit</button></td>
+                            <td><button type="submit" id="submit_button" class="btn btn-primary" disabled>Submit</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -188,6 +188,18 @@ function calculateTotal() {
 
 $(document).on('change keyup', '#provided-table input', function() {
     calculateTotal();
+    let hasValue = false;
+
+    // Check if any input in the table has a value
+    $('#provided-table input').each(function() {
+        if ($(this).val().trim() !== '') {
+            hasValue = true;
+            return false; // Exit the loop if any input has a value
+        }
+    });
+
+    // Enable or disable the submit button based on the presence of input values
+    $('#submit_button').prop('disabled', !hasValue);
 });
 $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provided-table input[name="dsc[]"]', function() {
     // Get the parent table row
