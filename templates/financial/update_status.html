@@ -1,0 +1,73 @@
+{% load humanize %}
+<style>
+    .hidden {
+        display: none;
+        }
+</style>
+<div class="row" id="modal_view">
+    <form id="updateStatus">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Change Status <span class="txt-danger">*</span></label>
+                    <input type="text" class="form-control" name="status_update" value="status" hidden>
+                    <select class="form-control select" id="change_status" name="change_status" required>
+                        <option></option>
+                        <option value="5">CANCELLED</option>
+                        <option value="6">COMPLETED</option>
+                    </select>
+                </div>
+                <br>
+                <input type="submit" class="btn btn-primary" name="regprice" value="update" style="width:100%;">
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $('.select').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select'
+    });
+    $('#updateStatus').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to update status?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'update_amount' transaction.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#modal_view').load('/financial-transaction/update_amount/{{ transaction.id }}');
+                                        $('#all-transaction').DataTable().ajax.reload();
+                                        $('#incoming-table').DataTable().ajax.reload();
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+</script>

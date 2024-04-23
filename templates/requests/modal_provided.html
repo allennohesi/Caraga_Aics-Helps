@@ -36,63 +36,52 @@
                         </th>
                     </thead>           
                     <tbody>
+                        {% if transactionProvided %}
+                            {% for row in transactionProvided %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="provided[]" id="provided" required>
+                                    <input type="text" class="form-control" name="provided[]" value="{{row.provided_data}}" id="provided" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" required>
+                                    <input type="text" class="form-control" name="regprice[]" value="{{row.regular_price}}" onkeypress='validate(event)' id="reg_price" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' required>
+                                    <input type="text" class="form-control" name="qty[]" id="qty" value="{{row.regular_quantity}}" onkeypress='validate(event)' required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' required>
+                                    <input type="text" class="form-control" name="dsc[]" id="dsc" value="{% if row.discount %}{{row.discount}}{% else %}0{% endif %}" onkeypress='validate(event)' required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' required>
+                                    <input type="text" class="form-control" name="discounted_price[]" value="{{row.discount_price}}" id="discounted_price" onkeypress='validate(event)' required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' required>
+                                    <input type="text" class="form-control" name="qty1[]" id="qty1" value="{{row.discount_quantity}}" onkeypress='validate(event)' required>
                                     <div class="invalid-feedback"></div>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
+                                    <input type="text" class="form-control" name="tot[]" id="tot" value="{{row.total}}" onkeypress='validate(event)' required readonly>
                                     <div class="invalid-feedback"></div>
                                 </td>
                                 <td valign="middle">
                                     <center>
-                                        <button type="button" class="btn btn-danger btn-xs" data-role="remove"><i class="fa fa-minus"></i></button>
+                                        <a type="button" class="btn btn-danger btn-xs" data-role="delete" data-id="{{row.id}}"><i class="fa fa-minus"></i></a>
                                     </center>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>*nothing follows*</td>
-                                <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
-                                <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">0</label></td>
-                                <td><button type="submit" class="btn btn-primary">Submit</button></td>
-                              </tr>
+                            {% endfor %}
+                        {% endif %}
+                        <tr>
+                            <td>*nothing follows*</td>
+                            <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
+                            <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
+                            <td><button type="submit" class="btn btn-primary">Submit</button></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </form>
     <br>
-    <div class="table-responsive text-nowrap table-scroll">
-        <table class="table table-responsive" width="100%" id="table">
-            <thead>
-                <th class="text-left">Delete</th>
-                <th class="text-left">Edit</th>
-                <th class="text-left">Transaction Provided</th>
-                <th class="text-left">Service Provider</th>
-                <th class="text-left">Regular Price</th>
-                <th class="text-left">Quantity</th>
-                <th class="text-left">Discounted Price</th>
-                <th class="text-left">Quantity</th>
-                <th class="text-left">Total</th>
-            </thead>
-        </table>
-    </div>
     <br>
     <form id="Confirmation">
         {% csrf_token %}
@@ -224,67 +213,11 @@ $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provi
 });
 </script>
 <script>
-    $(document).ready(function(){
-        $('#table').DataTable({
-            'serverSide': true,
-            'processing': true,
-            'deferRender': true,
-            'lengthMenu': [ 5, 8, 12, 20 ],
-            'order': [[0, 'desc' ]],
-            'bDestroy': true,
-            'ajax': {
-                'url': '/api/requests/transactionDescription/list/?format=datatables&data={{ transaction.tracking_number }}',
-                'type': 'GET',
-            },
-            'fnCreatedRow': function (row, data, index) {
-                $(row).attr('id', data['id']);
-            },
-            'columns': [
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='delete', 'className': 'text-start', data-id="+ row['id'] + ">Delete</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'id',
-                    'render': function(data, type, row, meta) {
-                    return "<a href='#' data-role='edit_meds' data-id="+ row['id'] + ">EDIT</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'provided_data',  'sortable': false},
-                {'data': 'service_provider',  'searchable':false, 'sortable': false},
-                {'data': 'regular_price',  'searchable':false, 'sortable': false},
-                {'data': 'regular_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'discount_price',  'searchable':false, 'sortable': false},
-                {'data': 'discount_quantity',  'searchable':false, 'sortable': false},
-                {'data': 'total', 'searchable': false, 'sortable': false,
-                    'render': function(data, type, row, meta) {
-                        // Check if total_amount is null or undefined
-                        if (data === null || data === undefined) {
-                            return 'N/a';
-                        }
-
-                        // Check if data already contains commas
-                        if (data.includes(',')) {
-                            // Retain the original formatting if already contains commas
-                            return data;
-                        }
-
-                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
-                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    }
-                },  
-            ]
-        });
-    });
     $(document).on('click', 'a[data-role=delete]', function(){
         var id = $(this).data('id');
         Swal.fire({
             title: "Are you sure",
-            text: "You want to remove this data in Data Provided?",
+            text: "You want to remove this data",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3498DB",
@@ -304,7 +237,7 @@ $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provi
                     if (data.data == 'success'){
                         Swal.fire({
                             title: "Good job!",
-                            text: "Data removed in Transaction Provided",
+                            text: "Data provided removed",
                             icon: "success",
                             confirmButtonColor: "#3498DB",
                             allowOutsideClick: false,
