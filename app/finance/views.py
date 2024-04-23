@@ -711,7 +711,7 @@ def finance_modal_provided(request,pk):
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
-	finance = request.user.groups.filter(name='Finance').exists()
+	finance = request.user.groups.filter(name__in=['Finance', 'Super Administrator']).exists()
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
 		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number).first(),
@@ -787,6 +787,6 @@ def update_amount(request,pk):
 		'calculate': total_amount,
 		'medicine': medicine.objects.filter(is_active=1),
 	}
-	return render(request,"financial/update_amount.html",context)
+	return render(request,"financial/update_status.html",context)
 
 
