@@ -879,6 +879,7 @@ def modal_provided(request,pk):
 									total=row['total'],
 									user_id=request.user.id,
 								)
+								return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
 							else:
 								transaction_description.objects.filter(id=store[x]).update(
 									tracking_number_id=transaction_id.tracking_number,
@@ -892,6 +893,7 @@ def modal_provided(request,pk):
 								)
 								y += 1
 								x += 1
+								return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
 					else:
 						for row in data:
 							transaction_description.objects.create(
@@ -905,7 +907,7 @@ def modal_provided(request,pk):
 								total=row['total'],
 								user_id=request.user.id,
 							)
-							
+							return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
 				else:
 					# Handle case where lengths are not equal
 					return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
