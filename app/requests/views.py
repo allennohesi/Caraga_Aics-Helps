@@ -842,71 +842,73 @@ def save_assessment(request, pk):
 
 def modal_provided(request,pk):
 	transaction_id = Transaction.objects.filter(id=pk).first()
+	tracking_id = transaction_id.tracking_number
 	try:
 		if request.method == "POST":
 			with transaction.atomic():
 				provided_to_client = request.POST.getlist('provided[]')
 				regular_price = request.POST.getlist('regprice[]')
 				regular_quantity = request.POST.getlist('qty[]')
+				discount = request.POST.getlist('dsc[]')
 				discount_price = request.POST.getlist('discounted_price[]')
 				discount_quantity = request.POST.getlist('qty1[]')
 				total = request.POST.getlist('tot[]')
 				
-				if request.POST.get('sid'):
+				if not provided_to_client == [''] and not regular_price == [''] and not regular_quantity == [''] and not discount_price == [
+					''] and not discount_quantity == [''] and not total == ['']:
 					data = [
-						{
-							'provided_to_client': pc,
-							'regular_price': rp,
-							'regular_quantity': rq,
-							'discount_price': dp,
-							'discount_quantity': dq,
-							'total': tot
-						}
-						for pc, rp, rq, dp, dq, tot in zip(provided_to_client, regular_price, regular_quantity, discount_price, discount_quantity, total)
+						{'provided_to_client': fn, 'regular_price': mn, 'regular_quantity': ln,'discount': disc, 'discount_price': sx, 'discount_quantity': b, 'total': o}
+						for fn, mn, ln, disc, sx, b, o in
+						zip(provided_to_client, regular_price, regular_quantity, discount, discount_price, discount_quantity, total)
 					]
-					for row in data:
-						transaction_description.objects.filter(id=request.POST.get('sid')).update(
-							provided_data=row['provided_to_client'],
-							regular_price=row['regular_price'],
-							regular_quantity=row['regular_quantity'],
-							discount_price=row['discount_price'],
-							discount_quantity=row['discount_quantity'],
-							total=row['total'],
-						)
-						return JsonResponse({'data': 'success',
-							'msg': 'The data provided to client, successfully updated'})
-				else:
-					check = Transaction.objects.filter(id=pk)
-
-					tracking_number=transaction_id.tracking_number,
-					# Ensure all lists have the same length
-					if len(provided_to_client) == len(regular_price) == len(regular_quantity) == len(discount_price) == len(discount_quantity) == len(total):
-						data = [
-							{
-								'provided_to_client': pc,
-								'regular_price': rp,
-								'regular_quantity': rq,
-								'discount_price': dp,
-								'discount_quantity': dq,
-								'total': tot
-							}
-							for pc, rp, rq, dp, dq, tot in zip(provided_to_client, regular_price, regular_quantity, discount_price, discount_quantity, total)
-						]
+					transaction_provided = transaction_description.objects.filter(tracking_number=tracking_id)
+					store = [row.id for row in transaction_provided]
+					if transaction_provided:
+						y = 1
+						x = 0
+						for row in data:
+							if y > len(transaction_provided):
+								transaction_description.objects.create(
+									tracking_number_id=transaction_id.tracking_number,
+									provided_data=row['provided_to_client'],
+									regular_price=row['regular_price'],
+									regular_quantity=row['regular_quantity'],
+									discount=row['discount'],
+									discount_price=row['discount_price'],
+									discount_quantity=row['discount_quantity'],
+									total=row['total'],
+									user_id=request.user.id,
+								)
+							else:
+								transaction_description.objects.filter(id=store[x]).update(
+									tracking_number_id=transaction_id.tracking_number,
+									provided_data=row['provided_to_client'],
+									regular_price=row['regular_price'],
+									regular_quantity=row['regular_quantity'],
+									discount=row['discount'],
+									discount_price=row['discount_price'],
+									discount_quantity=row['discount_quantity'],
+									total=row['total'],
+								)
+								y += 1
+								x += 1
+					else:
 						for row in data:
 							transaction_description.objects.create(
 								tracking_number_id=transaction_id.tracking_number,
 								provided_data=row['provided_to_client'],
 								regular_price=row['regular_price'],
 								regular_quantity=row['regular_quantity'],
+								discount=row['discount'],
 								discount_price=row['discount_price'],
 								discount_quantity=row['discount_quantity'],
 								total=row['total'],
 								user_id=request.user.id,
 							)
-						return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
-					else:
-						# Handle case where lengths are not equal
-						return JsonResponse({'error': True, 'msg': 'There was a problem with your input fields'})
+							
+				else:
+					# Handle case where lengths are not equal
+					return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
 
 
 
@@ -926,7 +928,7 @@ def modal_provided(request,pk):
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
-		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number).first(),
+		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number),
 		'viewProvidedData': transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).order_by('-id'),
 		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
 		'transaction': transaction_id,
