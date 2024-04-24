@@ -254,7 +254,7 @@ def get_all_user(request):
     if search_term:
         users = AuthUser.objects.filter(
             (Q(first_name__icontains=search_term) | Q(last_name__icontains=search_term)) & Q(is_active=1)
-        ).order_by('last_name')[:10]
+        ).order_by('last_name')[:6]
 
         json_data = [{'id': user.id, 'text': user.get_fullname} for user in users]
         return JsonResponse(json_data, safe=False)
@@ -271,7 +271,7 @@ def get_all_client_beneficiary(request):
             ClientBeneficiary.objects
             .filter(client_bene_fullname__icontains=search_term, is_validated=1)
             .order_by('client_bene_fullname')
-            .values_list('id', 'client_bene_fullname')[:10]
+            .values_list('id', 'client_bene_fullname')[:6]
         )
         
         json_data = [{'id': client[0], 'text': client[1]} for client in clients_query]
