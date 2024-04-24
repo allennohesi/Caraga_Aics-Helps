@@ -122,6 +122,12 @@
         <small>Client's Identifying Information</small>
         <br><br>
         <div class="row mb-3">
+            <div class="col-md-4">
+                <label>CLIENT GENERATED ID</label>
+                <input type="text" class="form-control" name="bene_uuid" value="{{ transaction.bene.unique_id_number }}" readonly>
+            </div>
+        </div>
+        <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Client Name</label>
@@ -255,6 +261,12 @@
         {% if transaction.client_id != transaction.bene_id %}
         <small>Beneficiary Identifying Information</small>
         <br><br>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label>BENEFICIARY GENERATED ID</label>
+                <input type="text" class="form-control" name="bene_uuid" value="{{ transaction.bene.unique_id_number }}" readonly>
+            </div>
+        </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
