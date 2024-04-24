@@ -138,8 +138,8 @@
                 {'data': 'is_validated',
                     'render': function(data, type, row, meta) {
                         if(data == 1) {
-                            return ['<i class="fa fa-circle txt-success"></i> Active']
-                        }else if (data == 0) {
+                            return '<i class="fa fa-circle txt-success"></i> Active'
+                        }else{
                             return '<i class="fa fa-circle txt-danger"></i> Inactive'
                         }
                     },
