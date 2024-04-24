@@ -448,7 +448,7 @@ def get_all_transaction(request):
 			Q(status__in=[3, 6]) &
 			Q(total_amount__isnull=False) &
 			Q(dv_number=None)
-		)[:8]
+		)[:6]
 
 		if transactions.exists():
 			json_data = list(transactions.values_list('id', 'tracking_number', named=True))
