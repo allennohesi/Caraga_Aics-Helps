@@ -452,10 +452,12 @@ def assessment(request):
 			modal_show = True  # Set modal_show to True if any transaction has a different date
 			break  # Exit the loop as soon as a transaction with a different date is found
 	swo_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
+	restriction = request.user.groups.filter(name__in=['Super Administrator']).exists()
 	context = {
 		'title': 'Assessment',
 		'modal_show': modal_show,
 		'swo_address':swo_address,
+		'restriction':restriction,
 	}
 	return render(request, 'requests/assessment.html', context)
 
