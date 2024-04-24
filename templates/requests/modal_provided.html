@@ -90,7 +90,7 @@
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <br>
         <div class="alert alert-light" role="alert">
-            Final total: <a href="#" class="alert-link"><span>&#8369;</span> <u>{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</u></a>. Confirm if you're set!
+            Final total: <a href="#" class="alert-link"><span>&#8369;</span> <u>{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}</u></a>. <p style="color:red;"> Note: final total is your confirmed amount</p>
         </div>
         <center>
             {% if calculate.total_payment%}

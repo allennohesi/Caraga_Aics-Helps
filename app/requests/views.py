@@ -911,7 +911,8 @@ def modal_provided(request,pk):
 							
 				else:
 					# Handle case where lengths are not equal
-					return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
+					handle_error(e, "ERROR IN DYNAMIC ENTRY MODAL PROVIDED")
+					return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 
 
 
