@@ -1,5 +1,5 @@
 import uuid
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
@@ -45,6 +45,22 @@ def client_beneficiary(request):
 	}
 	return render(request, 'client_bene/client_beneficiary.html', context)
 
+@csrf_exempt
+def activate_client(request):
+	if request.method == "POST":
+		ClientBeneficiary.objects.filter(id=request.POST.get('id')).update(
+			is_validated=True,
+		)
+	return JsonResponse({'data': 'success'})
+
+
+@csrf_exempt
+def deactivate_client(request):
+	if request.method == "POST":
+		ClientBeneficiary.objects.filter(id=request.POST.get('id')).update(
+			is_validated=False,
+		)
+	return JsonResponse({'data': 'success'})
 
 @login_required
 @groups_only('Verifier', 'Service Provider', 'Social Worker', 'Super Administrator')
