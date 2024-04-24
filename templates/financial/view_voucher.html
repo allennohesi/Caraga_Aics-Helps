@@ -1,6 +1,16 @@
 {% load tags %}
 {% load static %}
 {% load humanize %}
+<style>
+    .modal-xxl {
+        max-width: 75%;
+    }
+
+    .modal-xxl .modal-dialog {
+        max-width: 65%;
+        width: auto;
+    }
+</style>
 <div class="row" id="client_content">
     <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i>Back</a>
     <div class="tab-content" id="pills-icontabContent">
@@ -130,18 +140,18 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                     <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="close"><i class="fa fa-angle-double-left"></i>exit</a>
+                        <a href="javascript:void(0);" id="close">back</a>
                     </div>
                     <div class="modal-body" id="load_data">
                     </div>
                   </div>
                 </div>
             </div>
-            <div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
+            <div class="modal fade bd-example-modal-xxl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xxl">
                     <div class="modal-content">
                     <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="exit"><i class="fa fa-angle-double-left"></i>exit</a>
+                        <a href="javascript:void(0);" id="exit">back</a>
                     </div>
                     <div class="modal-body" id="load_data">
                     </div>
@@ -152,7 +162,7 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                     <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="close_voucher"><i class="fa fa-angle-double-left"></i>exit</a>
+                        <a href="javascript:void(0);" id="close_voucher">back</a>
                     </div>
                     <div class="modal-body" id="load_data">
                     </div>

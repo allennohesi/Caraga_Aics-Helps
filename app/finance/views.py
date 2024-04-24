@@ -660,6 +660,7 @@ def edit_outside_fo(request,pk):
 def finance_modal_provided(request,pk):
 	voucher_data = finance_voucherData.objects.filter(transactionStatus_id=pk).first()
 	transaction_id = Transaction.objects.filter(id=pk).first()
+	tracking_id = transaction_id.tracking_number
 	if request.method == "POST":
 		try:
 			with transaction.atomic():
@@ -673,30 +674,74 @@ def finance_modal_provided(request,pk):
 					transaction_id.save()
 					return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
 				else:
-					if request.POST.get('sid'):
-						transaction_description.objects.filter(id=request.POST.get('sid')).update(
-							provided_data=request.POST.get('provided'),
-							regular_price=request.POST.get('regprice'),
-							regular_quantity=request.POST.get('qty'),
-							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-							discount_quantity=request.POST.get('qty1'), #CHECKING
-							total=request.POST.get('tot'),	
-						)
-						return JsonResponse({'data': 'success',
-							'msg': 'The data provided to client, successfully updated'})
+					provided_to_client = request.POST.getlist('provided[]')
+					regular_price = request.POST.getlist('regprice[]')
+					regular_quantity = request.POST.getlist('qty[]')
+					discount = request.POST.getlist('dsc[]')
+					discount_price = request.POST.getlist('discounted_price[]')
+					discount_quantity = request.POST.getlist('qty1[]')
+					total = request.POST.getlist('tot[]')
+					
+					if not provided_to_client == [''] and not regular_price == [''] and not regular_quantity == [''] and not discount_price == [
+						''] and not discount_quantity == [''] and not total == ['']:
+						data = [
+							{'provided_to_client': fn, 'regular_price': mn, 'regular_quantity': ln,'discount': disc, 'discount_price': sx, 'discount_quantity': b, 'total': o}
+							for fn, mn, ln, disc, sx, b, o in
+							zip(provided_to_client, regular_price, regular_quantity, discount, discount_price, discount_quantity, total)
+						]
+						transaction_provided = transaction_description.objects.filter(tracking_number=tracking_id)
+						store = [row.id for row in transaction_provided]
+						if transaction_provided:
+							y = 1
+							x = 0
+							for row in data:
+								if y > len(transaction_provided):
+									transaction_description.objects.create(
+										tracking_number_id=transaction_id.tracking_number,
+										provided_data=row['provided_to_client'],
+										regular_price=row['regular_price'],
+										regular_quantity=row['regular_quantity'],
+										discount=row['discount'],
+										discount_price=row['discount_price'],
+										discount_quantity=row['discount_quantity'],
+										total=row['total'],
+										user_id=request.user.id,
+									)
+								else:
+									transaction_description.objects.filter(id=store[x]).update(
+										tracking_number_id=transaction_id.tracking_number,
+										provided_data=row['provided_to_client'],
+										regular_price=row['regular_price'],
+										regular_quantity=row['regular_quantity'],
+										discount=row['discount'],
+										discount_price=row['discount_price'],
+										discount_quantity=row['discount_quantity'],
+										total=row['total'],
+									)
+									y += 1
+									x += 1
+									
+							return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
+						else:
+							for row in data:
+								transaction_description.objects.create(
+									tracking_number_id=transaction_id.tracking_number,
+									provided_data=row['provided_to_client'],
+									regular_price=row['regular_price'],
+									regular_quantity=row['regular_quantity'],
+									discount=row['discount'],
+									discount_price=row['discount_price'],
+									discount_quantity=row['discount_quantity'],
+									total=row['total'],
+									user_id=request.user.id,
+								)
+							return JsonResponse({'data': 'success', 'msg': 'The data provided to client was successfully saved'})
+								
 					else:
-						transaction_description.objects.create(
-							tracking_number_id=transaction_id.tracking_number,
-							provided_data=request.POST.get('provided'),
-							regular_price=request.POST.get('regprice'),
-							regular_quantity=request.POST.get('qty'),
-							discount_price=request.POST.get('discounted_price'), #DISCOUNT_PRICE NA KUHAON
-							discount_quantity=request.POST.get('qty1'), #CHECKING
-							total=request.POST.get('tot'),
-							user_id=request.user.id,
-						)
-						return JsonResponse({'data': 'success',
-											'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(transaction_id.tracking_number)})
+						# Handle case where lengths are not equal
+						handle_error(e, "ERROR IN DYNAMIC ENTRY FINANCE")
+						return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+				
 		except RequestException as e:
 			handle_error(e, "REQUEST EXCEPTION ERROR IN finance_modal_provided")
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
@@ -714,7 +759,7 @@ def finance_modal_provided(request,pk):
 	finance = request.user.groups.filter(name__in=['Finance', 'Super Administrator']).exists()
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
-		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number).first(),
+		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number),
 		'viewProvidedData': transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).order_by('-id'),
 		'AssistanceProvided': AssistanceProvided.objects.filter(is_active=1),
 		'transaction': transaction_id,
