@@ -354,8 +354,16 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <b>
-                                        <label>On-site / Off-site <span class="txt-danger">*</span></label><br>
+                                        <label>Validation <span class="txt-danger">*</span></label><br>
                                         <input type="text" id="new" name="status" hidden> <!--THIS IS FOR NEW AND RETURNING FUNCTION-->
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="new_returning" id="new_client" value="1">
+                                            <label class="form-check-label" for="inlineRadio1">New</label>
+                                          </div>
+                                          <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="new_returning" id="returning_client" value="2">
+                                            <label class="form-check-label" for="inlineRadio2">Returning</label>
+                                        </div>
                                         &nbsp; &nbsp; &nbsp;<input type="radio" name="site" value="1" required checked> On-Site
                                         &nbsp; <input class="form-check-input" id="walkin" name="walkin" value="1" type="checkbox" checked> WALK-IN
                                         &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="referral" name="referral" value="1" type="checkbox"> REFERRAL
@@ -364,7 +372,7 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
+                                    {% comment %} <div class="col-md-4">
                                         <div class="form-group">
                                             <label>New/Returning <span class="txt-danger">*</span></label>
                                             <select class="form-control select" name="new_returning" required>
@@ -373,8 +381,8 @@
                                                 <option value="2">Returning</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-md-5">
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Priority <span class="txt-danger">*</span></label>
                                             <select class="form-control select" name="priority_name" required>
@@ -385,7 +393,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Case Study <span class="txt-danger">*</span></label>
                                             <select class="form-control select" name="case_study" required>
@@ -644,6 +652,13 @@
                     type: 'GET',
                     success: function(response){
                         $('#new').val(response.new);
+                        if((response.new) == 1){
+                            $('#new_client').prop('checked', true);
+                            $('#returning_client').prop('checked', false);
+                        }else{
+                            $('#new_client').prop('checked', false);
+                            $('#returning_client').prop('checked', true);
+                        }
                         $('#birthdate').val(response.birthdate);
                         $('#age').val(response.age);
                         $('#sex').val(response.sex);
