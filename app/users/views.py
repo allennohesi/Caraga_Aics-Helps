@@ -130,6 +130,7 @@ def edit_user(request, pk):
 def user_profile(request):
 	user_data = AuthUser.objects.filter(id=request.user.id).first()
 	check_if_details_exists = AuthuserDetails.objects.filter(user_id=request.user.id)
+	restriction = request.user.groups.filter(name__in=['Super Administrator']).exists()
 	if request.method == "POST":
 		if request.POST.get('verification') == "changepassword":
 			target_user = AuthUser.objects.filter(id=request.user.id).update(
@@ -162,5 +163,6 @@ def user_profile(request):
 		'province': Province.objects.filter(is_active=1).order_by('prov_name'),
 		'city': City.objects.filter(is_active=1).order_by('city_name'),
 		'barangay': Barangay.objects.filter(is_active=1).order_by('brgy_name'),
+		'restriction': restriction,
 	}
 	return render(request, 'users/user_profile.html', context)
