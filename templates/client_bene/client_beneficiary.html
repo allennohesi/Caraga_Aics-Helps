@@ -27,6 +27,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Action</th>
                                     <th>ID Number</th>
                                     <th>Last Name</th>
                                     <th>First Name</th>
@@ -38,6 +39,7 @@
                                     <th class="text-center">Address</th>
                                     <th class="text-end">Date of Registration</th>
                                     <th class="text-end">View Transaction</th>
+                                    <th class="text-end">Status</th>
                                 </tr>
                             </thead>
                         </table>
@@ -91,6 +93,14 @@
                     },
                     
                 },
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='activate', 'className': 'text-start', data-id="+ row['id'] + ">ACTIVATE</a>| " +
+                            "<a href='#' data-role='deactivate', 'className': 'text-start', data-id="+ row['id'] + ">DEACTIVATE</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
                 {'data': 'unique_id_number',
                     'render': function(data, type, row, meta) {
                         return "<a href='javascript:void(0);' data-role='details' data-title='"+ data + "'>"+ data +"</a>"
@@ -122,6 +132,18 @@
                     'sortable': false,
                     'searchable': false
                 },
+                {'data': 'is_validated',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-circle txt-success"></i> Active'
+                        }else if (data == 0) {
+                            return '<i class="fa fa-circle txt-danger"></i> Inactive'
+                        }
+                    },
+                    'className': 'text-end',
+                    'searchable': false,
+                    'sortable': false
+                },
             ]
 
         });
@@ -133,6 +155,82 @@
         });
         $(document).on('click', 'a[data-role=details]', function(){
             $('#client_content').load('/client-beneficiary/view/' + $(this).data('title'));
+        });
+        $(document).on('click', 'a[data-role=activate]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to activate this data?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'activate_client' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Client/Beneficiary Activated",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#client-beneficiary-list').DataTable().ajax.reload();
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on('click', 'a[data-role=deactivate]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to deactivate this data?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'deactivate_client' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Client/Beneficiary Deactivated",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#client-beneficiary-list').DataTable().ajax.reload();
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
     
