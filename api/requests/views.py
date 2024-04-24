@@ -19,6 +19,22 @@ class LargeResultsSetPagination(PageNumberPagination):
 	page_size_query_param = 'page_size'
 	max_page_size = 200
 
+class adminMonitoring(generics.ListAPIView):
+	serializer_class = TransactionSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	def get_queryset(self):
+		ongoing = self.request.query_params.get('ongoing')
+		if ongoing:
+			queryset = TransactionStatus1.objects.filter(
+				status__in=[1, 2, 3, 4, 7]
+			).order_by('-id')
+			return queryset
+		else:
+			queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE DONE EXCLUDE
+			return queryset
+
+
 class TransactionPerSession(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]

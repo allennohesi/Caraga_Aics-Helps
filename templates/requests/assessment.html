@@ -228,7 +228,7 @@
             'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/transaction/session/?format=datatables&user={{ request.user.id }}',
+                'url': '{% if restriction %}/api/requests/admin_monitoring/list/?format=datatables&ongoing=ongoing{% else %}/api/requests/transaction/session/?format=datatables&user={{ request.user.id }}{% endif %}',
                 'type': 'GET',
             },
             'fnCreatedRow': function (row, data, index) {
@@ -353,7 +353,7 @@
             'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/transaction/all/session/?format=datatables&user={{ request.user.id }}',
+                'url': '{% if restriction %}/api/requests/admin_monitoring/list/?format=datatables{% else %}/api/requests/transaction/all/session/?format=datatables&user={{ request.user.id }}{% endif %}',
                 'type': 'GET',
                 'data': function(d) {
                     d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
