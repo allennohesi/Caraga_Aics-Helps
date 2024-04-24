@@ -1,10 +1,13 @@
 from django.urls import path
 
 from api.requests.views import TransactionDescriptionViews, CompletedTransactionViews, TransactionPerSession, AdvanceFinanceFilterViews, FinanceVoucherViews, \
-    VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews
+    VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews, adminMonitoring
 
 
 urlpatterns = [
+    #admin_site
+    path('admin_monitoring/list/',adminMonitoring.as_view(), name='api_adminMonitoring'),
+
     # path('transaction/list/', TransactionViews.as_view(), name='api_transaction_list'), #filter only not assessed by swo
     path('transactionDescription/list/',TransactionDescriptionViews.as_view(), name='api_transaction_description'),
     path('completed/transaction/list/', CompletedTransactionViews.as_view(), name='api_completed_transaction_list'),
