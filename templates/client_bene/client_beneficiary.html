@@ -93,13 +93,16 @@
                     },
                     
                 },
-                {'data': 'id',
+                {'data': 'is_validated',
                     'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='activate', 'className': 'text-start', data-id="+ row['id'] + ">ACTIVATE</a>| " +
-                            "<a href='#' data-role='deactivate', 'className': 'text-start', data-id="+ row['id'] + ">DEACTIVATE</a>"
+                        if(data == 1) {
+                            return "<a href='#' data-role='deactivate', 'className': 'text-center', data-id="+ row['id'] + ">DEACTIVATE</a>"
+                        }else{
+                            return "<a href='#' data-role='activate', 'className': 'text-center', data-id="+ row['id'] + ">ACTIVATE</a>" 
+                        }
                     },
-                    'sortable': false,
-                    'searchable': false
+                    'searchable': false,
+                    'sortable': false
                 },
                 {'data': 'unique_id_number',
                     'render': function(data, type, row, meta) {
@@ -135,17 +138,15 @@
                 {'data': 'is_validated',
                     'render': function(data, type, row, meta) {
                         if(data == 1) {
-                            return '<i class="fa fa-circle txt-success"></i> Active'
+                            return ['<i class="fa fa-circle txt-success"></i> Active']
                         }else if (data == 0) {
                             return '<i class="fa fa-circle txt-danger"></i> Inactive'
                         }
                     },
-                    'className': 'text-end',
                     'searchable': false,
                     'sortable': false
                 },
             ]
-
         });
         $(document).on('click','a[data-role=view_transactions]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
@@ -180,7 +181,7 @@
                         if (data.data == 'success'){
                             Swal.fire({
                               title: "Good job!",
-                              text: "Client/Beneficiary Activated",
+                              text: "Client/Beneficiary activated",
                               icon: "success",
                               confirmButtonColor: "#3498DB",
                               allowOutsideClick: false,
@@ -218,7 +219,7 @@
                         if (data.data == 'success'){
                             Swal.fire({
                               title: "Good job!",
-                              text: "Client/Beneficiary Deactivated",
+                              text: "Client/Beneficiary deactivated",
                               icon: "success",
                               confirmButtonColor: "#3498DB",
                               allowOutsideClick: false,
