@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from app.libraries.models import CivilStatus, Suffix, Sex, Barangay, Relation, FundSource, ServiceProvider, FileType, \
     Category, SubCategory, Tribe, ModeOfAdmission, ModeOfAssistance,SubModeofAssistance, TypeOfAssistance, Purpose, \
     LibAssistanceType, PriorityLine, medicine, occupation_tbl, AssistanceProvided, presented_id
+from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MaxValueValidator
 from app.models import AuthUser
@@ -417,6 +418,13 @@ class SocialWorker_Status(models.Model):
     status = models.IntegerField(blank=True, null=True)
     table = models.CharField(max_length=255, blank=True, null=True)
     date_transaction = models.DateField()
+
+    @property
+    def get_address(self):
+        data = AuthuserDetails.objects.filter(user_id=self.user).first()
+        if data:
+            return data.barangay.city_code.prov_code.prov_name
+        return None
 
     @property
     def get_tracking(self):

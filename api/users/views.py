@@ -20,7 +20,10 @@ class UserViews(generics.ListAPIView):
 
 
 class ActiveSwoView(generics.ListAPIView):
-    queryset = SocialWorker_Status.objects.filter(status=2,date_transaction=today).order_by('-id')
     serializer_class = ActiveSwoSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        queryset = SocialWorker_Status.objects.filter(user__authuserdetails__barangay__city_code__prov_code__prov_name=self.request.query_params.get('address'),status=2,date_transaction=today).order_by('-id')
+        return queryset

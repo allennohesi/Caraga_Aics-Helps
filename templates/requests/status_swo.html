@@ -64,7 +64,7 @@
         'order': [[ 1, 'desc' ]],
         'bDestroy': true,
         'ajax': {
-            'url': '/api/user/active/swo/?format=datatables',
+            'url': '/api/user/active/swo/?format=datatables&address={{user_details.barangay.city_code.prov_code.prov_name}}',
             'type': 'GET',
             'data': function(d) {
                 d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
