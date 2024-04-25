@@ -15,7 +15,9 @@
                     <select class="form-control select" id="change_status" name="change_status" required>
                         <option></option>
                         <option value="5">CANCELLED</option>
+                        {% if transaction.total_amount %}
                         <option value="6">COMPLETED</option>
+                        {% endif %}
                     </select>
                 </div>
                 <br>

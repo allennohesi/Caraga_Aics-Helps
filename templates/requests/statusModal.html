@@ -18,15 +18,21 @@
                             {% if TransactionStatus.status == 4 %}
                             <option value="7">RESUME</option>
                             <option value="5">CANCELLED</option>
+                            {% if TransactionData.total_amount %}
                             <option value="6">COMPLETED</option>
+                            {% endif %}
                             {% elif TransactionStatus.status == 5 %}
                             <option value="7">RESUME</option>
+                            {% if TransactionData.total_amount %}
                             <option value="6">COMPLETED</option>
+                            {% endif %}
                             {% else %}
                             <option value="2">ASSESS</option>
                             <option value="4">HOLD</option>
                             <option value="5">CANCELLED</option>
+                            {% if TransactionData.total_amount %}
                             <option value="6">COMPLETED</option>
+                            {% endif %}
                             {% endif %}
                         </select>
                     </div>

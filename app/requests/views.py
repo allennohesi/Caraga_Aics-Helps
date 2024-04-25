@@ -1304,7 +1304,10 @@ def view_online_swo_data(request):
 @login_required
 @groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
 def view_online_swo(request):
-	return render(request, 'requests/status_swo.html')
+	context = {
+		'user_details': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
+	}
+	return render(request, 'requests/status_swo.html', context)
 
 
 
