@@ -322,9 +322,10 @@ def generate_csv_data(queryset):
 		status_str = (
 			smart_str("Completed") if transaction.status == 6 else
 			smart_str("Cancelled") if transaction.status == 5 else
-			smart_str("Ongoing") if transaction.status == 2 else
+			smart_str("Hold") if transaction.status == 4 else
 			smart_str("Completed") if transaction.status == 3 else
-			"Pending"
+			smart_str("Ongoing") if transaction.status == 2 else
+			smart_str("Pending")
 		)
 		client_street_str = smart_str(transaction.client.street).replace(",", "") if transaction.client.street else ""
 		
