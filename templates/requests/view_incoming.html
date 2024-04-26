@@ -17,33 +17,28 @@
     <div class="text-center">
     <div class="cardheader"></div>
     <div class="user-image">
-    {% if pict %}
-    <div>
-        <img class="avatar" alt="" src="{{pict.file_field1.url}}" alt="avatar" width="150" height="150">
-    </div>
-        <label>
-            <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
-        <label>
-    </div>
-    {% else %}
-        {% if transaction.client.sex.name == "Male" %}
         <div>
-            <img class="avatar" alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150">
+            <img class="avatar" alt="" 
+            src=
+                "
+                    {% if pict %}
+                        {{pict.file_field1.url}}
+                    {% else %}
+                        {% if transaction.client.sex.name == 'Male' %}
+                            {% static 'images/user/male.png' %}
+                        {% else %}
+                            {% static 'images/user/female.png' %}
+                        {% endif %}
+                    {% endif %}
+                "
+            alt="avatar" width = "150" height = "150">
         </div>
+        {% if transaction.total_amount %}
         <label>
             <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
         <label>
-        </div>
-        {% elif transaction.client.sex.name == "Female" %}
-        <div>
-            <img class="avatar" alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150">
-        </div>
-        <label>
-            <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
-        <label>
-        </div>
         {% endif %}
-    {% endif %}
+    </div>
     </div>
     <div class="info">
         <div class="row">

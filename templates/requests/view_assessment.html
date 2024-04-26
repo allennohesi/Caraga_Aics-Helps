@@ -22,15 +22,22 @@
         <div class="text-center">
           <div class="cardheader"></div>
           <div class="user-image">
-            {% if pict %}
-            <img class="avatar" src="{{pict.file_field1.url}}" width = "150" height = "150">
-            {% else %}
-                {% if transaction.client.sex.name == "Male" %}
-                <div><img class="avatar" alt="" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
-                {% elif transaction.client.sex.name == "Female" %}
-                <div><img class="avatar" alt="" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
-                {% endif %}
-            {% endif %}
+            <div>
+                <img class="avatar" alt="" 
+                src=
+                    "
+                        {% if pict %}
+                            {{pict.file_field1.url}}
+                        {% else %}
+                            {% if transaction.client.sex.name == 'Male' %}
+                                {% static 'images/user/male.png' %}
+                            {% else %}
+                                {% static 'images/user/female.png' %}
+                            {% endif %}
+                        {% endif %}
+                    "
+                alt="avatar" width = "150" height = "150">
+            </div>
           </div>
           <div class="info">
             <div class="row">
