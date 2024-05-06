@@ -151,6 +151,8 @@ def dashboard(request):
 		)
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
+	page = request.GET.get('page', 1)
+	rows = request.GET.get('rows', 8)
 	total_case_study = case_study_per_swo.aggregate(total_count=Sum('transaction_count'))['total_count']
 
 	context = {
@@ -177,7 +179,7 @@ def dashboard(request):
 		'total_transactions': total_count,
 
 		'transaction_per_verifier': transaction_per_verifier,
-		'case_study_status':case_study_per_swo,
+		'data': Paginator(case_study_per_swo, rows).page(page),
 		'total_case_study': total_case_study,
 		'fund_source': FundSource.objects.all(),
 		'today':today,
