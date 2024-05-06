@@ -951,10 +951,21 @@ def confirmAmount(request):
 				transaction_id = request.POST.get('transaction_id')
 				float_value = float(total)
 				integer_value = int(float_value)
-
+				areaofassignment = Transaction.objects.filter(id=transaction_id).first()
+				Signatories = ""
 				if integer_value <= 50000:
+					if areaofassignment.requested_in == "AGUSAN DEL NORTE":
+						Signatories = 17 #ANA T. SEMACIO
+					elif areaofassignment.requested_in == "SURIGAO DEL SUR":
+						Signatories = 81 #Arlene M. Ontua
+					elif areaofassignment.requested_in == "AGUSAN DEL SUR":
+						Signatories = 1 #Michael John ANDOHUYAN
+					elif areaofassignment.requested_in == "DINAGAT ISLANDS":
+						Signatories = 1 #
+					elif areaofassignment.requested_in == "SURIGAO DEL NORTE":
+						Signatories = 1 #THESA MUSA
 					data = Transaction.objects.filter(id=transaction_id).update(
-						signatories_id = 17, #ANA T. SEMACIO
+						signatories_id = Signatories, 
 					)
 				elif integer_value >= 50001 and integer_value <= 75000:
 					data = Transaction.objects.filter(id=transaction_id).update(
