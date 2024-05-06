@@ -156,6 +156,122 @@
       </div>
     </div>
   </div>
+  <div class="col-xl-12 xl-100 box-col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Case study summary <a href="">Print</a></h5>
+        <div class="card-header-right">
+          <ul class="list-unstyled card-option">
+            <li><i class="fa fa-spin fa-cog"></i></li>
+            <li><i class="view-html fa fa-code"></i></li>
+            <li><i class="icofont icofont-maximize full-card"></i></li>
+            <li><i class="icofont icofont-minus minimize-card"></i></li>
+            <li><i class="icofont icofont-refresh reload-card"></i></li>
+            <li><i class="icofont icofont-error close-card"></i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+        {% if request.GET.search and data.paginator.count == 0 %}
+        {% comment %} <div class="col-sm-12">
+            <div class="card" id="created_post_data">
+                <div class="card-body" >
+                    <h3 class="card-title">{{row.title}}</h3>
+                    <div class="col-xs-12">
+                        <a href="{% url 'createIECMaterial' %}" id="btn-back"></i> REFRESH</a>
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+        {% else %}
+        <div class="row">
+            <div class="col-xs-12">
+              <div class="pull-right">
+                  <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    Showing {{ data.start_index }} - {{ data.end_index }} of {{ data.paginator.count }} entries&emsp;
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                      {% if data.has_other_pages %}
+                          {% if data.has_previous %}
+                              <a class="btn btn-default" href="?page={{ data.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                          {% else %}
+                              <a class="btn btn-default disabled">Previous</a>
+                          {% endif %}
+                          {% for row in data.paginator.page_range %}
+                              {% if data.number == row %}
+                                  <a class="btn btn-primary" href="javascript:void(0);">{{ row }}</a>
+                              {% elif row > data.number|add:-3 and row < data.number|add:3 %}
+                                  <a class="btn btn-default" href="?page={{ row }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ row }}</a>
+                              {% endif %}
+                          {% endfor %}
+                          {% if data.has_next %}
+                              <a class="btn btn-default" href="?page={{ data.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                          {% else %}
+                              <a class="btn btn-default disabled">Next</a>
+                          {% endif %}
+                      {% endif %}
+                    </div>
+                    <a class="btn btn-default" href="{% url 'home' %}">Refresh</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+        {% if request.GET.search and data.paginator.count == 0 %}
+        <div style="padding:0px 15px !important; text-align:center;">
+            <div class="row" style="padding-bottom:15px">
+                <div class="" style="text-align:center;">
+                    <img src="" class="img-responsive" style="margin: 0 auto; object-fit: cover;">
+                </div>
+                    <a href="" id="btn-back"></i> REFRESH</a>
+                    <p>
+                        Sorry. We have not found any results matching the search keyword <i>'{% if request.GET.status and request.GET.search %}{{ request.GET.search }}{% else %}{% if request.GET.status %}{{ request.GET.status }}{% endif %}{% if request.GET.search %}{{ request.GET.search }}{% endif %}{% endif %}'</i>. Please try another keyword.
+                    </p>
+            </div>
+        </div>
+        {% else %}
+        <div class="user-status table-responsive">
+          <table class="table table-bordernone">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Total Case Study</th>
+                <th scope="col">Submitted Case Study</th>
+                <th scope="col">Pending Case Study</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                  <td class="bd-t-none u-s-tb">
+                      <div class="align-middle image-sm-size">
+                        {% with user_id=row.transaction__swo_id %}
+                        {% profile_picture_dashboard user_id as profile %}
+                        {% if profile %}
+                        <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" width="500" height="30">
+                        {% else %}
+                        <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}">
+                        {% endif %}
+                        {% endwith %}
+                          <div class="d-inline-block">
+                              <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
+                          </div>
+                      </div>
+                  </td>
+                  <td>{{ row.transaction_count }}</td>
+                  <td>{{ row.case_study_submitted }}</td>
+                  <td>{{ row.transaction_count|subtract:row.case_study_submitted }}</td>
+              </tr>
+              {% endfor %}
+              <td colspan="3" class="text-right f-w-600">TOTAL DATA</td>
+              <td colspan="1" class="f-w-600">{{total_case_study}}</td>
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
@@ -216,122 +332,6 @@
           <div class="card-body" id="">
             <canvas id="myChart2" style="width:100%"></canvas>
           </div>
-      </div>
-    </div>
-    <div class="col-xl-12 xl-100 box-col-12">
-      <div class="card">
-        <div class="card-header">
-          <h5>Case study summary <a href="">Print</a></h5>
-          <div class="card-header-right">
-            <ul class="list-unstyled card-option">
-              <li><i class="fa fa-spin fa-cog"></i></li>
-              <li><i class="view-html fa fa-code"></i></li>
-              <li><i class="icofont icofont-maximize full-card"></i></li>
-              <li><i class="icofont icofont-minus minimize-card"></i></li>
-              <li><i class="icofont icofont-refresh reload-card"></i></li>
-              <li><i class="icofont icofont-error close-card"></i></li>
-            </ul>
-          </div>
-        </div>
-        <div class="card-body">
-          {% if request.GET.search and data.paginator.count == 0 %}
-          {% comment %} <div class="col-sm-12">
-              <div class="card" id="created_post_data">
-                  <div class="card-body" >
-                      <h3 class="card-title">{{row.title}}</h3>
-                      <div class="col-xs-12">
-                          <a href="{% url 'createIECMaterial' %}" id="btn-back"></i> REFRESH</a>
-                      </div>
-                  </div>
-              </div>
-          </div> {% endcomment %}
-          {% else %}
-          <div class="row">
-              <div class="col-xs-12">
-                <div class="pull-right">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                      Showing {{ data.start_index }} - {{ data.end_index }} of {{ data.paginator.count }} entries&emsp;
-                      <div class="btn-group me-2" role="group" aria-label="First group">
-                        {% if data.has_other_pages %}
-                            {% if data.has_previous %}
-                                <a class="btn btn-default" href="?page={{ data.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
-                            {% else %}
-                                <a class="btn btn-default disabled">Previous</a>
-                            {% endif %}
-                            {% for row in data.paginator.page_range %}
-                                {% if data.number == row %}
-                                    <a class="btn btn-primary" href="javascript:void(0);">{{ row }}</a>
-                                {% elif row > data.number|add:-3 and row < data.number|add:3 %}
-                                    <a class="btn btn-default" href="?page={{ row }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ row }}</a>
-                                {% endif %}
-                            {% endfor %}
-                            {% if data.has_next %}
-                                <a class="btn btn-default" href="?page={{ data.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
-                            {% else %}
-                                <a class="btn btn-default disabled">Next</a>
-                            {% endif %}
-                        {% endif %}
-                      </div>
-                      <a class="btn btn-default" href="{% url 'home' %}">Refresh</a>
-                    </div>
-                  </div>
-              </div>
-          </div>
-          <br>
-          {% endif %}
-          {% if request.GET.search and data.paginator.count == 0 %}
-          <div style="padding:0px 15px !important; text-align:center;">
-              <div class="row" style="padding-bottom:15px">
-                  <div class="" style="text-align:center;">
-                      <img src="" class="img-responsive" style="margin: 0 auto; object-fit: cover;">
-                  </div>
-                      <a href="" id="btn-back"></i> REFRESH</a>
-                      <p>
-                          Sorry. We have not found any results matching the search keyword <i>'{% if request.GET.status and request.GET.search %}{{ request.GET.search }}{% else %}{% if request.GET.status %}{{ request.GET.status }}{% endif %}{% if request.GET.search %}{{ request.GET.search }}{% endif %}{% endif %}'</i>. Please try another keyword.
-                      </p>
-              </div>
-          </div>
-          {% else %}
-          <div class="user-status table-responsive">
-            <table class="table table-bordernone">
-              <thead>
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Total Case Study</th>
-                  <th scope="col">Submitted Case Study</th>
-                  <th scope="col">Pending Case Study</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in data %}
-                <tr>
-                    <td class="bd-t-none u-s-tb">
-                        <div class="align-middle image-sm-size">
-                          {% with user_id=row.transaction__swo_id %}
-                          {% profile_picture_dashboard user_id as profile %}
-                          {% if profile %}
-                          <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" width="500" height="30">
-                          {% else %}
-                          <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}">
-                          {% endif %}
-                          {% endwith %}
-                            <div class="d-inline-block">
-                                <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>{{ row.transaction_count }}</td>
-                    <td>{{ row.case_study_submitted }}</td>
-                    <td>{{ row.transaction_count|subtract:row.case_study_submitted }}</td>
-                </tr>
-                {% endfor %}
-                <td colspan="3" class="text-right f-w-600">TOTAL DATA</td>
-                <td colspan="1" class="f-w-600">{{total_case_study}}</td>
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
-        </div>
       </div>
     </div>
     <div class="col-sm-6">
