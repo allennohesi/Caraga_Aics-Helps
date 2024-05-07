@@ -218,6 +218,7 @@ $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provi
         // Display regPriceTotal in the console
         if (dsc === 0) {
             row.find('input[name="discounted_price[]"]').val("0");
+            row.find('input[name="qty1[]"]').val("0");
         } else {
             row.find('input[name="discounted_price[]"]').val(regPriceTotal.toFixed(2));
         }

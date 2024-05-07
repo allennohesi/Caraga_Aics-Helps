@@ -1,5 +1,6 @@
 {%  load static %}
 {% load humanize %}
+{% load tags %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -740,7 +741,18 @@
                 <label><br><br><u>{{data.swo.get_fullname}}</u><br>Social Worker<br><small>(Signature over Printed Name)</small></label>
               </td>
               <td width="150px" rowspan="2"><br><br><br>
-                <label><br><br><u>ANA T. SEMACIO</u><br>Approving Authority<br><small>(Signature over Printed Name)</small></label>
+                <label>
+                  <br><br><u>
+                    {% with get_signatories=data.requested_in %}
+                    {% get_signatories get_signatories as province %}
+                    {% if province %}
+                    {{ province }}
+                    {% endif %}
+                    {% endwith %}
+                  </u><br>
+                  Approving Authority<br>
+                  <small>(Signature over Printed Name)</small>
+                </label>
               </td>
             </tr>
             {% comment %} <tr>

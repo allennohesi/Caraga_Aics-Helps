@@ -49,9 +49,6 @@ def get_user_role(user_id):
 def get_transaction_service_assistance(transaction_id, sa_id):
 	return TransactionServiceAssistance.objects.filter(transaction_id=transaction_id, service_assistance_id=sa_id).first()
 
-
-
-
 @register.simple_tag
 def get_count_mail():
 	return TransactionStatus1.objects.filter(is_swo=None).count()
@@ -59,9 +56,6 @@ def get_count_mail():
 
 @register.simple_tag
 def count_pending():
-	# verifier = TransactionStatus1.objects.filter(is_verified=1).count()
-	# assessment = TransactionStatus1.objects.filter(is_swo=1).count()
-	# return abs(verifier - assessment)
 	return TransactionStatus1.objects.filter(is_verified=1).count()
 
 @register.simple_tag
@@ -71,7 +65,6 @@ def count_assessment_all():
 @register.simple_tag
 def count_ongoing():
 	return TransactionStatus1.objects.filter(status=2).count()
-
 
 
 @register.filter(name='number_to_words')
@@ -98,24 +91,16 @@ def number_to_words(value):
 		words = data + " Pesos"
 
 	return words
-	# value = str(value).replace(',', '')
-
-	# # Split the value into integer and decimal parts
-	# integer_part, _, decimal_part = str(value).partition('.')
-
-	# # Convert the integer part to words
-	# words = num2words(int(integer_part), lang='en').title()
-
-	# # Check if there is a decimal part
-	# if decimal_part and decimal_part != '00':
-	#     # Append a space and the decimal part as a fraction
-	#     words += f" Pesos {decimal_part} / 100"
-	# else:
-	#     # If no decimal part, append 'Pesos' directly
-	#     words += " Pesos"
-
-	# return words
 
 @register.filter
 def subtract(value, arg):
 	return value - arg
+
+@register.simple_tag
+def get_signatories(province):
+	signatories = ""
+	if province == "AGUSAN DEL NORTE":
+		signatories = "ANA T. SEMACIO"
+	elif province == "SURIGAO DEL SUR":
+		signatories = "ARLENE M. ONTUA"
+	return signatories
