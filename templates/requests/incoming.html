@@ -329,39 +329,6 @@
         });
         
         // Add individual search box for tracking_number column
-        var columnIndex = table.column('transaction.tracking_number:name').index();
-        var headerText = $(table.column(columnIndex).header()).text().trim();
-        
-        
-        var input = $('<input type="text" class="form-control" placeholder="Search Tracking"/>')
-            .appendTo($(table.column(columnIndex).header()))
-            .on('keyup change clear', function () {
-                if (table.column(columnIndex).search() !== this.value) {
-                    table.column(columnIndex).search(this.value).draw();
-                }
-            });
-
-        var columnIndexClient = table.column('transaction.client.client_bene_fullname:name').index();
-        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
-        
-        var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients"/>')
-            .appendTo($(table.column(columnIndexClient).header()))
-            .on('keyup change clear', function () {
-                if (table.column(columnIndexClient).search() !== this.value) {
-                    table.column(columnIndexClient).search(this.value).draw();
-                }
-            });
-
-        var columnIndexBene = table.column('transaction.bene.client_bene_fullname:name').index();
-        var headerTextBene = $(table.column(columnIndexBene).header()).text().trim();
-        
-        var inputBene = $('<input type="text" class="form-control" placeholder="Search Beneficiary"/>')
-            .appendTo($(table.column(columnIndexBene).header()))
-            .on('keyup change clear', function () {
-                if (table.column(columnIndexBene).search() !== this.value) {
-                    table.column(columnIndexBene).search(this.value).draw();
-                }
-            });
         
         $(document).on('click', 'a[data-role=details]', function(){
             var id = $(this).data('id');
