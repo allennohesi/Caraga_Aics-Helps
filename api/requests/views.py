@@ -59,24 +59,19 @@ class TransactionIncoming(generics.ListAPIView):
 		code = self.request.query_params.get("code")
 		
 		if year:
-			print("Year")
 			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
 		elif code:
-			print("Code")
 			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
 
 		elif dropdown:
-			print("dropdown")
 			if dropdown == "0":
 				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "1": #COMPLETED
 				queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "2": #CANCELLED
 				queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
-			elif dropdown == "3": #FOR CASE STUDY
-				queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
 			elif dropdown == "4": #SUBMITTED CASE STUDY
-				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "5": #WITH DV
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "6": #ALL TRANSACTION
