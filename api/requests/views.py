@@ -69,10 +69,6 @@ class TransactionIncoming(generics.ListAPIView):
 				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=6,transaction_id__requested_in=region).order_by('-id')
 			elif billed_param.lower() == "cancelled":
 				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=5,transaction_id__requested_in=region).order_by('-id')
-			elif billed_param.lower() == "for_case_study":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
-			elif billed_param.lower() == "submitted_case_study":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
 			elif billed_param.lower() == "all_transactions":
 				queryset = TransactionStatus1.objects.all().order_by('-id')
 		else:
