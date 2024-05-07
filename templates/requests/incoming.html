@@ -142,15 +142,6 @@
                         <input type="text" class="form-control" value="{{current_year}}" id="year" aria-describedby="button-addon2" autocomplete="off">
                         <button class="btn btn-outline-primary" type="button" id="filter-year">Filter</button>
                     </div>
-                    <div class="list-group">
-                        <a class="list-group-item active"  id="filter_billed-all" href="javascript:void(0);" data-role="filter_billed" data-filter="all">ONGOING</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="completed">COMPLETED</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="cancelled">CANCELLED</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="for_case_study">CASE STUDY</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="submitted_case_study">SUBMITTED CASE STUDY</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="True">BILLED/DV TRANSACTIONS</a>
-                        <a class="list-group-item"  id="filter_billed-6" href="javascript:void(0);" data-role="filter_billed" data-filter="all_transactions">ALL TRANSACTIONS</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -392,15 +383,6 @@
 				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
 			}
 		});
-        $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS
-            $('.list-group-item').removeClass('active');
-            $(this).addClass('active'); // Add 'active' class to the clicked element
-            if($(this).data('filter') == 'all'){
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}').load();
-            }else{
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}&billed='+$(this).data('filter')).load();
-            }
-        });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
             var id = $(this).data('id');
             Swal.fire({
