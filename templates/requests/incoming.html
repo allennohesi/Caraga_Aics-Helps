@@ -330,13 +330,18 @@
                 {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
             ]
         });
-        
+        $('.dataTables_filter input').attr('maxlength', 26);
+
+        // Limit individual column search inputs to 10 characters
+        $('input.form-control').each(function() {
+            $(this).attr('maxlength', 26);
+        });
         // Add individual search box for tracking_number column
         var columnIndex = table.column('transaction.tracking_number:name').index();
         var headerText = $(table.column(columnIndex).header()).text().trim();
         
         
-        var input = $('<input type="text" class="form-control" placeholder="Search Tracking"/>')
+        var input = $('<input type="text" class="form-control" placeholder="Search Tracking" maxlength="26" />')
             .appendTo($(table.column(columnIndex).header()))
             .on('keyup change clear', function () {
                 if (table.column(columnIndex).search() !== this.value) {
@@ -347,7 +352,7 @@
         var columnIndexClient = table.column('transaction.client.client_bene_fullname:name').index();
         var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
         
-        var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients"/>')
+        var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients" maxlength="26" />')
             .appendTo($(table.column(columnIndexClient).header()))
             .on('keyup change clear', function () {
                 if (table.column(columnIndexClient).search() !== this.value) {
@@ -358,7 +363,7 @@
         var columnIndexBene = table.column('transaction.bene.client_bene_fullname:name').index();
         var headerTextBene = $(table.column(columnIndexBene).header()).text().trim();
         
-        var inputBene = $('<input type="text" class="form-control" placeholder="Search Beneficiary"/>')
+        var inputBene = $('<input type="text" class="form-control" placeholder="Search Beneficiary" maxlength="26" />')
             .appendTo($(table.column(columnIndexBene).header()))
             .on('keyup change clear', function () {
                 if (table.column(columnIndexBene).search() !== this.value) {
