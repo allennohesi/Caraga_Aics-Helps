@@ -36,52 +36,93 @@ class adminMonitoring(generics.ListAPIView):
 
 
 class TransactionPerSession(generics.ListAPIView):
-	serializer_class = TransactionSerializer
-	permission_classes = [IsAuthenticated]
-	pagination_class = LargeResultsSetPagination
-	def get_queryset(self):
-		region = self.request.query_params.get('region')
-		if self.request.query_params.get('user'):
-			queryset = TransactionStatus1.objects.filter(
-				transaction_id__swo_id=self.request.query_params.get('user'),
-				status__in=[1, 2, 3, 4, 7]
-			).order_by('-id')
-			return queryset
-		else:
-			queryset = TransactionStatus1.objects.none()  # Initialize with an empty queryset
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
 
-			billed_param = self.request.query_params.get("billed")
-			year = self.request.query_params.get("year")
-			code = self.request.query_params.get("code")
-			current_year = self.request.query_params.get('current_year')
-			print(current_year)
-			
-			if billed_param is not None:
-				if billed_param.lower() == "true":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
-				elif billed_param.lower() == "false":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
-				elif billed_param.lower() == "completed":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=6,transaction_id__requested_in=region).order_by('-id')
-				elif billed_param.lower() == "cancelled":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=5,transaction_id__requested_in=region).order_by('-id')
-				elif billed_param.lower() == "for_case_study":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
-				elif billed_param.lower() == "submitted_case_study":
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
-				elif billed_param.lower() == "all_transactions":
-					queryset = TransactionStatus1.objects.all().order_by('-id')
-			else:
-				if year:
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
-					return queryset
-				elif code:
-					queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
-					return queryset
-				else:
-					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
+    def get_queryset(self):
+        # Retrieve common parameters
+        region = self.request.query_params.get('region')
+        user = self.request.query_params.get('user')
+        current_year = self.request.query_params.get('current_year')  # Default to current year
 
-			return queryset
+        # If 'user' is specified, return transactions for the user
+        if user:
+            return TransactionStatus1.objects.filter(
+                transaction_id__swo_id=user,
+                status__in=[1, 2, 3, 4, 7]
+            ).order_by('-id')
+
+        # Initialize an empty queryset
+        queryset = TransactionStatus1.objects.none()
+
+        # Check the 'billed' parameter and apply filters accordingly
+        billed_param = self.request.query_params.get("billed")
+        if billed_param:
+            billed_param = billed_param.lower()
+            if billed_param == "true":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    transaction__dv_number__isnull=False,
+                    transaction_id__requested_in=region
+                ).order_by('-id')
+
+            if billed_param == "false":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    transaction__dv_number__isnull=True,
+                    transaction_id__requested_in=region
+                ).order_by('-id')
+
+            if billed_param == "completed":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    status=6,
+                    transaction_id__requested_in=region
+                ).order_by('-id')
+
+            if billed_param == "cancelled":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    status=5,
+                    transaction_id__requested_in=region
+                ).order_by('-id')
+
+            if billed_param == "for_case_study":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    transaction__is_case_study=2,
+                    transaction_id__requested_in=region,
+                    status__in=[3, 6]
+                ).order_by('-id')
+
+            if billed_param == "submitted_case_study":
+                return TransactionStatus1.objects.filter(
+                    verified_time_start__year=current_year,
+                    case_study_status=1,
+                    transaction_id__requested_in=region,
+                    status__in=[3, 6]
+                ).order_by('-id')
+
+            if billed_param == "all_transactions":
+                return TransactionStatus1.objects.all().order_by('-id')
+
+        # If 'billed' parameter is not given, check 'year' or 'code'
+        year = self.request.query_params.get("year", current_year)
+        code = self.request.query_params.get("code")
+
+        if code:
+            return TransactionStatus1.objects.filter(
+                transaction__fund_source__name=code,
+                transaction_id__requested_in=region
+            ).order_by('-id')
+
+        # Default queryset if no other condition is met
+        return TransactionStatus1.objects.filter(
+            verified_time_start__year=year,
+            status__in=[1, 2, 3, 4],
+            transaction_id__requested_in=region
+        ).order_by('-id')
 
 
 class TransactionPerSessionAllViews(generics.ListAPIView):
