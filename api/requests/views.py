@@ -53,33 +53,17 @@ class TransactionIncoming(generics.ListAPIView):
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
 		region = self.request.query_params.get('region')
-		queryset = TransactionStatus1.objects.none()  # Initialize with an empty queryset
-
-		billed_param = self.request.query_params.get("billed")
 		year = self.request.query_params.get("year")
 		code = self.request.query_params.get("code")
-		current_year = self.request.query_params.get('current_year')
 		
-		if billed_param is not None:
-			if billed_param.lower() == "true":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
-			elif billed_param.lower() == "false":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
-			elif billed_param.lower() == "completed":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=6,transaction_id__requested_in=region).order_by('-id')
-			elif billed_param.lower() == "cancelled":
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=5,transaction_id__requested_in=region).order_by('-id')
-			elif billed_param.lower() == "all_transactions":
-				queryset = TransactionStatus1.objects.all().order_by('-id')
+		if year:
+			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
+			return queryset
+		elif code:
+			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
+			return queryset
 		else:
-			if year:
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif code:
-				queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			else:
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(transaction_id__requested_in=region).order_by('-id')
 
 		return queryset
 
