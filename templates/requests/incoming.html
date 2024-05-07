@@ -139,7 +139,7 @@
                         <button class="btn btn-outline-primary" type="button" id="filter-code">Filter</button>
                     </div> {% endcomment %}
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Year" id="year" aria-describedby="button-addon2" autocomplete="off">
+                        <input type="text" class="form-control" value="{{current_year}}" id="year" aria-describedby="button-addon2" autocomplete="off">
                         <button class="btn btn-outline-primary" type="button" id="filter-year">Filter</button>
                     </div>
                     <div class="list-group">
@@ -195,7 +195,7 @@
             'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}',
+                'url': '/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&current_year={{current_year}}',
                 'type': 'GET',
                 'data': function(d) {
                     d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
@@ -389,16 +389,16 @@
 			if($('#code').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
 			}
 		});
         $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS
             $('.list-group-item').removeClass('active');
             $(this).addClass('active'); // Add 'active' class to the clicked element
             if($(this).data('filter') == 'all'){
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}').load();
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}').load();
             }else{
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&billed='+$(this).data('filter')).load();
+                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/session/?format=datatables&current_year={{current_year}}&region={{user_address.barangay.city_code.prov_code.prov_name}}&billed='+$(this).data('filter')).load();
             }
         });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){

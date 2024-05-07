@@ -53,20 +53,22 @@ class TransactionPerSession(generics.ListAPIView):
 			billed_param = self.request.query_params.get("billed")
 			year = self.request.query_params.get("year")
 			code = self.request.query_params.get("code")
+			current_year = self.request.query_params.get('current_year')
+			print(current_year)
 			
 			if billed_param is not None:
 				if billed_param.lower() == "true":
-					queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
 				elif billed_param.lower() == "false":
-					queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
 				elif billed_param.lower() == "completed":
-					queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=6,transaction_id__requested_in=region).order_by('-id')
 				elif billed_param.lower() == "cancelled":
-					queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status=5,transaction_id__requested_in=region).order_by('-id')
 				elif billed_param.lower() == "for_case_study":
-					queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
 				elif billed_param.lower() == "submitted_case_study":
-					queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
 				elif billed_param.lower() == "all_transactions":
 					queryset = TransactionStatus1.objects.all().order_by('-id')
 			else:
@@ -77,8 +79,7 @@ class TransactionPerSession(generics.ListAPIView):
 					queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
 					return queryset
 				else:
-					print("--")
-					queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
+					queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
 
 			return queryset
 
