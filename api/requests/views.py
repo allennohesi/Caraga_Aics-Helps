@@ -52,44 +52,38 @@ class TransactionIncoming(generics.ListAPIView):
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
+		queryset = TransactionStatus1.objects.none() 
 		region = self.request.query_params.get('region')
-
-		billed_param = self.request.query_params.get("billed")
 		year = self.request.query_params.get("year")
+		dropdown = self.request.query_params.get("dropdown")
 		code = self.request.query_params.get("code")
 		
-		if billed_param is not None:
-			if billed_param.lower() == "true":
-				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "false":
-				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "completed":
-				queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "cancelled":
-				queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "for_case_study":
-				queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "submitted_case_study":
-				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
-				return queryset
-			elif billed_param.lower() == "all_transactions":
-				queryset = TransactionStatus1.objects.all().order_by('-id')
-				return queryset
-		else:
-			if year:
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			elif code:
-				queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
-				return queryset
-			else:
+		if year:
+			print("Year")
+			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
+		elif code:
+			print("Code")
+			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
+
+		elif dropdown:
+			print("dropdown")
+			if dropdown == "0":
 				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
-				return queryset
+			elif dropdown == "1": #COMPLETED
+				queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
+			elif dropdown == "2": #CANCELLED
+				queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
+			elif dropdown == "3": #FOR CASE STUDY
+				queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+			elif dropdown == "4": #SUBMITTED CASE STUDY
+				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+			elif dropdown == "5": #WITH DV
+				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
+			elif dropdown == "6": #ALL TRANSACTION
+				queryset = TransactionStatus1.objects.all().order_by('-id')
+			return queryset
+		else:
+			queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
 
 		return queryset
 
