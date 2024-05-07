@@ -68,14 +68,12 @@ class TransactionIncoming(generics.ListAPIView):
 				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "1": #COMPLETED
 				queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
-			elif dropdown == "2": #CANCELLED
-				queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "4": #SUBMITTED CASE STUDY
 				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "5": #WITH DV
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "6": #ALL TRANSACTION
-				queryset = TransactionStatus1.objects.all().order_by('-id')
+				queryset = TransactionStatus1.objects.filter(transaction_id__requested_in=region).order_by('-id')
 			return queryset
 		else:
 			queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
