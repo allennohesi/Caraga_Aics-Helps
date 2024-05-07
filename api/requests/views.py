@@ -53,7 +53,6 @@ class TransactionIncoming(generics.ListAPIView):
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
 		region = self.request.query_params.get('region')
-		queryset = TransactionStatus1.objects.none()  # Initialize with an empty queryset
 
 		billed_param = self.request.query_params.get("billed")
 		year = self.request.query_params.get("year")
@@ -62,18 +61,25 @@ class TransactionIncoming(generics.ListAPIView):
 		if billed_param is not None:
 			if billed_param.lower() == "true":
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "false":
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=True,transaction_id__requested_in=region).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "completed":
 				queryset = TransactionStatus1.objects.filter(status=6,transaction_id__requested_in=region).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "cancelled":
 				queryset = TransactionStatus1.objects.filter(status=5,transaction_id__requested_in=region).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "for_case_study":
 				queryset = TransactionStatus1.objects.filter(transaction__is_case_study=2,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "submitted_case_study":
 				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region, status__in=[3,6]).order_by('-id')
+				return queryset
 			elif billed_param.lower() == "all_transactions":
 				queryset = TransactionStatus1.objects.all().order_by('-id')
+				return queryset
 		else:
 			if year:
 				queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
@@ -83,6 +89,7 @@ class TransactionIncoming(generics.ListAPIView):
 				return queryset
 			else:
 				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
+				return queryset
 
 		return queryset
 
