@@ -273,7 +273,7 @@
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
-                {'data': 'verified_time_start', 'className': 'text-center', },
+                {'data': 'verified_time_start', 'className': 'text-center', 'searchable':false},
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
                 {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
                     'render': function(data,type,row,meta){
@@ -327,7 +327,7 @@
                         return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
-                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
+                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center', 'searchable': false, 'sortable': false},
             ]
         });
         $('.dataTables_filter input').attr('maxlength', 26);
