@@ -142,14 +142,17 @@
                         <input type="text" class="form-control" value="{{current_year}}" id="year" aria-describedby="button-addon2" autocomplete="off">
                         <button class="btn btn-outline-primary" type="button" id="filter-year">Filter</button>
                     </div>
-                    <div class="list-group">
-                        <a class="list-group-item active"  id="filter_billed-all" href="javascript:void(0);" data-role="filter_billed" data-filter="all">ONGOING</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="completed">COMPLETED</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="cancelled">CANCELLED</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="for_case_study">CASE STUDY</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="submitted_case_study">SUBMITTED CASE STUDY</a>
-                        <a class="list-group-item"  id="filter_billed-1" href="javascript:void(0);" data-role="filter_billed" data-filter="True">BILLED/DV TRANSACTIONS</a>
-                        <a class="list-group-item"  id="filter_billed-6" href="javascript:void(0);" data-role="filter_billed" data-filter="all_transactions">ALL TRANSACTIONS</a>
+                    <div class="input-group mb-3" style="height:180px;">
+                        <select class="form-select " multiple aria-label="multiple select example" id="dropdown">
+                            <option value="6">ALL</option>
+                            <option value="0">ONGOING</option>
+                            <option value="1">COMPLETED</option>
+                            <option value="2">CANCELLED</option>
+                            <option value="3">CASE STUDY</option>
+                            <option value="4">SUBMITTED CS</option>
+                            <option value="5">BILLED/DV</option>
+                        </select>
+                        <button class="btn btn-outline-primary" type="button" id="filter-dropdown">Filter</button>
                     </div>
                 </div>
             </div>
@@ -385,6 +388,14 @@
 				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&year=' + $('#year').val()).load();
 			}
 		});
+        
+		$('#filter-dropdown').on('click', function(){
+			if($('#dropdown').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&dropdown=' + $('#dropdown').val()).load();
+			}
+		});
         $('#filter-code').on('click', function(){
 			if($('#code').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
@@ -392,15 +403,6 @@
 				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
 			}
 		});
-        $(document).on('click', 'a[data-role=filter_billed]', function(){ //FILTER TRANSACTIONS
-            $('.list-group-item').removeClass('active');
-            $(this).addClass('active'); // Add 'active' class to the clicked element
-            if($(this).data('filter') == 'all'){
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}').load();
-            }else{
-                $('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&billed='+$(this).data('filter')).load();
-            }
-        });
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
             var id = $(this).data('id');
             Swal.fire({
