@@ -61,7 +61,7 @@ class TransactionPerSession(generics.ListAPIView):
 				queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
 				return queryset
 			else:
-				queryset = TransactionStatus1.objects.filter(verified_time_start__year=current_year,transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.all().order_by('-id')
 
 			return queryset
 
