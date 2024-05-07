@@ -310,11 +310,13 @@ def get_bene_info(request, pk):
 @groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def incoming(request):
 	user_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
+	current_year = today.year
 	# token = Token.objects.create(user_id=6)
 	# print(token.key)
 	context = {
 		'title': 'Incoming',
-		'user_address': user_address
+		'user_address': user_address,
+		'current_year':current_year,
 	}
 	return render(request, 'requests/incoming.html', context)
 

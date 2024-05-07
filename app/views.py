@@ -393,7 +393,7 @@ def personalData(request): #FOR GENERAL
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Purpose','Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Transaction Category','Case study status', 'Status of transaction'
+				   'Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Case Study Status','Case study status'
 				   ]) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
@@ -457,7 +457,6 @@ def personalData(request): #FOR GENERAL
 					"GL" if item.transaction.is_gl == 1 else "Cash",
 					"Referral" if item.transaction.is_referral else "Walk-in",
 					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
-					str(item.transaction.purpose),
 					str(item.transaction.swo_date_time_end),
 					swo_fullname_str,
 					service_provider,
