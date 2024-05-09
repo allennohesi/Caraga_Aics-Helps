@@ -1,7 +1,8 @@
 from django.urls import path
 
 from api.requests.views import TransactionDescriptionViews, CompletedTransactionViews, TransactionPerSession, AdvanceFinanceFilterViews, FinanceVoucherViews, \
-    VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews, adminMonitoring, TransactionIncoming
+    VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews, adminMonitoring, TransactionIncoming, \
+    kioskAPI
 
 
 urlpatterns = [
@@ -25,5 +26,8 @@ urlpatterns = [
     path('cash/transaction/', CashTransactionViews.as_view(), name='api_CashTransactionViews'),
 
     #SIGNATORIES
-    path('signatories/data/',SignatoriesTransactionsViews.as_view(), name='api_Signatories')
+    path('signatories/data/',SignatoriesTransactionsViews.as_view(), name='api_Signatories'),
+
+    #KIOSKAPI
+    path('transaction/kiosk/list/', kioskAPI.as_view(), name='api_kioskAPI'),
 ]
