@@ -19,6 +19,12 @@ class LargeResultsSetPagination(PageNumberPagination):
 	page_size_query_param = 'page_size'
 	max_page_size = 200
 
+class kioskAPI(generics.ListAPIView):
+	serializer_class = TransactionSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id')
+
 class adminMonitoring(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
@@ -31,7 +37,7 @@ class adminMonitoring(generics.ListAPIView):
 			).order_by('-id')
 			return queryset
 		else:
-			queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE DONE EXCLUDE
+			queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE PENDING
 			return queryset
 
 
