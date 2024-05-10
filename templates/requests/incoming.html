@@ -112,7 +112,6 @@
                                             <th>Social Worker</th>
                                             {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
                                             <th>Case study</th>
-                                            <th>Case study Status</th>
                                             <th class="text-center">Assistance type</th>
                                             <th>Service provider</th>
                                             <th>Mode of release</th>
@@ -285,15 +284,6 @@
                             }
                         }else{
                             return "Not Case Study"
-                        }
-                    }
-                },
-                {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
-                    'render': function(data,type,row,meta){
-                        if(row['case_study_status'] == 1){
-                            return "<span class='badge badge-dark'>Submitted</span>"
-                        }else{
-                            return "<span class='badge badge-dark'>N/a</span>"
                         }
                     }
                 },
