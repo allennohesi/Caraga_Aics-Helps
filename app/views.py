@@ -102,7 +102,7 @@ def dashboard(request):
 		).count()
 
 	pending = TransactionStatus1.objects.filter(status=1).count()
-	ongoing = TransactionStatus1.objects.filter(status=2).count()
+	ongoing = TransactionStatus1.objects.filter(status__in=[2,7]).count()
 	completed = TransactionStatus1.objects.filter(
 				Q(status=3) | Q(status=6)
 				).count()
@@ -119,14 +119,7 @@ def dashboard(request):
 
 	transaction_status_summary = (
 		TransactionStatus1.objects
-		.filter(status__in=[1, 2, 3, 4, 5, 6])  # Filter transactions with status 3 or 6
-		.values('status')
-		.annotate(transaction_count=Count('status'))
-		.order_by('-transaction_count')  # Order by transaction count in descending order
-	)
-	transaction_status_summary = (
-		TransactionStatus1.objects
-		.filter(status__in=[1, 2, 3, 4, 5, 6])  # Filter transactions with status 3 or 6
+		.filter(status__in=[1, 2, 3, 4, 5, 6, 7])  # Filter transactions with status 3 or 6
 		.values('status')
 		.annotate(transaction_count=Count('status'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
