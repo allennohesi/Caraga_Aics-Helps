@@ -63,6 +63,8 @@
                   <td class="f-w-600">
                     {% if row.status == 6 %}
                       Completed Transactions
+                    {% elif row.status == 7 %}
+                      Resumed/Pending Transactions
                     {% elif row.status == 5 %}
                       Cancelled Transactions
                     {% elif row.status == 4 %}
@@ -78,6 +80,8 @@
                   <td class="font-primary">
                     {% if row.status == 6 %}
                       Completed
+                    {% elif row.status == 7 %}
+                      Resumed/Pending Transactions
                     {% elif row.status == 5 %}
                       Cancelled
                     {% elif row.status == 4 %}
