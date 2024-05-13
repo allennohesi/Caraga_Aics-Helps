@@ -169,6 +169,7 @@ class ErrorLogData(models.Model):
     error_log = models.TextField(blank=True, null=True)
     location = models.TextField(blank=True, null=True)
     date_time = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False

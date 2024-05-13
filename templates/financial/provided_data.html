@@ -387,6 +387,8 @@ $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provi
                                         $('#table').DataTable().ajax.reload();
                                     }
                                 });
+                            }else{
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,

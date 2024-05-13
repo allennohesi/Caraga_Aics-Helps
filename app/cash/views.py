@@ -28,10 +28,11 @@ from requests.exceptions import RequestException
 today = date.today()
 
 
-def handle_error(error, location): #ERROR HANDLING
+def handle_error(error, location, user): #ERROR HANDLING
 	ErrorLogData.objects.create(
 		error_log=error,
-		location=location
+		location=location,
+		user_id=user,
 	)
 
 @login_required
@@ -64,13 +65,13 @@ def view_transaction(request, pk):
 					'msg': 'You have successfully updated the data for tracking number {}.'.format(check.first().tracking_number)})
 					
 	except ConnectionError as ce:
-		handle_error(ce, "CONNECTION ERROR IN CASH VIEW TRANSACTION")
+		handle_error(ce, "CONNECTION ERROR IN CASH VIEW TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
-		handle_error(re, "NETWORK RELATED ISSUE IN CASH VIEW TRANSACTION")
+		handle_error(re, "NETWORK RELATED ISSUE IN CASH VIEW TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
-		handle_error(e, "EXCEPTION ERROR IN CASH VIEW TRANSACTION")
+		handle_error(e, "EXCEPTION ERROR IN CASH VIEW TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 	
 	data = Transaction.objects.filter(id=pk).first()

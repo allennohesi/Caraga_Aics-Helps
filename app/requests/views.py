@@ -50,10 +50,11 @@ def generate_serial_string(oldstring, prefix=None):
 									str("1").zfill(4)).strip()
 
 
-def handle_error(error, location): #ERROR HANDLING
+def handle_error(error, location, user): #ERROR HANDLING
 	ErrorLogData.objects.create(
 		error_log=error,
-		location=location
+		location=location,
+		user_id=user,
 	)
 # def delete_from_error(data): #DELETE FROM ERROR HANDLING
 # 	if data and data.id:
@@ -123,16 +124,16 @@ def transaction_request(request):
 
 		
 	except RequestException as e:
-		handle_error(e, "REQUEST EXCEPTION ERROR IN REQUEST TRANSACTION")
+		handle_error(e, "REQUEST EXCEPTION ERROR IN REQUEST TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN REQUEST TRANSACTION")
+		handle_error(e, "VALIDATION ERROR IN REQUEST TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN REQUEST TRANSACTION")
+		handle_error(e, "INTEGRITY ERROR IN REQUEST TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except Exception as e:
-		handle_error(e, "EXCEPTION ERROR IN REQUEST TRANSACTION")
+		handle_error(e, "EXCEPTION ERROR IN REQUEST TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 		
@@ -197,22 +198,22 @@ def requests(request):
 					return submission
 			
 	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN REQUEST PAGE")
+		handle_error(e, "VALIDATION ERROR IN REQUEST PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN REQUEST PAGE")
+		handle_error(e, "INTEGRITY ERROR IN REQUEST PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN REQUEST PAGE")
+		handle_error(ce, "CONNECTION ERROR IN REQUEST PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN REQUEST PAGE")
+		handle_error(re, "NETWORK RELATED ISSUE IN REQUEST PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN REQUEST PAGE")
+		handle_error(e, "EXCEPTION ERROR IN REQUEST PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 	# active_sw = SocialWorker_Status.objects.filter(status=2,date_transaction=today)
@@ -481,15 +482,15 @@ def submitCaseStudy(request):
 					return JsonResponse({'data': 'success', 'msg': 'You successfully submitted the case study'})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN submitCaseStudy")
+		handle_error(ce, "CONNECTION ERROR IN submitCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN submitCaseStudy")
+		handle_error(re, "NETWORK RELATED ISSUE IN submitCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN submitCaseStudy")
+		handle_error(e, "EXCEPTION ERROR IN submitCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 @csrf_exempt
@@ -504,15 +505,15 @@ def removeCaseStudy(request):
 		return JsonResponse({'data': 'success'})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN removeCaseStudy")
+		handle_error(ce, "CONNECTION ERROR IN removeCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN removeCaseStudy")
+		handle_error(re, "NETWORK RELATED ISSUE IN removeCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN removeCaseStudy")
+		handle_error(e, "EXCEPTION ERROR IN removeCaseStudy", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 @login_required
@@ -645,21 +646,21 @@ def view_assessment(request, pk):
 		
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN VIEW ASSESSMENT")
+		handle_error(ce, "CONNECTION ERROR IN VIEW ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN VIEW ASSESSMENT")
+		handle_error(e, "VALIDATION ERROR IN VIEW ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN RVIEW ASSESSMENT")
+		handle_error(e, "INTEGRITY ERROR IN RVIEW ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN VIEW ASSESSMENT")
+		handle_error(re, "NETWORK RELATED ISSUE IN VIEW ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN VIEW ASSESSMENT")
+		handle_error(e, "EXCEPTION ERROR IN VIEW ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
@@ -714,15 +715,15 @@ def StartTime(request,pk):
 			return JsonResponse({'data': 'success', 'msg': 'You successfully start the transaction'})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN START TIME")
+		handle_error(ce, "CONNECTION ERROR IN START TIME", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN START TIME")
+		handle_error(re, "NETWORK RELATED ISSUE IN START TIME", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN START TIME")
+		handle_error(e, "EXCEPTION ERROR IN START TIME", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 @login_required
@@ -833,15 +834,15 @@ def save_assessment(request, pk):
 		
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN SAVE ASSESSMENT")
+		handle_error(ce, "CONNECTION ERROR IN SAVE ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN SAVE ASSESSMENT")
+		handle_error(re, "NETWORK RELATED ISSUE IN SAVE ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN SAVE ASSESSMENT")
+		handle_error(e, "EXCEPTION ERROR IN SAVE ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 def modal_provided(request,pk):
@@ -915,22 +916,22 @@ def modal_provided(request,pk):
 							
 				else:
 					# Handle case where lengths are not equal
-					handle_error(e, "ERROR IN DYNAMIC ENTRY MODAL PROVIDED")
+					handle_error(e, "ERROR IN DYNAMIC ENTRY MODAL PROVIDED", request.user.id)
 					return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 
 
 
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN MODAL PROVIDED")
+		handle_error(ce, "CONNECTION ERROR IN MODAL PROVIDED", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN MODAL PROVIDED")
+		handle_error(re, "NETWORK RELATED ISSUE IN MODAL PROVIDED", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN MODAL PROVIDED")
+		handle_error(e, "EXCEPTION ERROR IN MODAL PROVIDED", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error with your input, please review'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
@@ -996,15 +997,15 @@ def confirmAmount(request):
 								'msg': 'The total amount {} confirmed.'.format(total)})
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
-		handle_error(ce, "CONNECTION ERROR IN CONFIRM AMOUNT")
+		handle_error(ce, "CONNECTION ERROR IN CONFIRM AMOUNT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except RequestException as re:
 		# Handle other network-related errors (e.g., log the error)
-		handle_error(re, "NETWORK RELATED ISSUE IN CONFIRM AMOUNT")
+		handle_error(re, "NETWORK RELATED ISSUE IN CONFIRM AMOUNT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN CONFIRM AMOUNT")
+		handle_error(e, "EXCEPTION ERROR IN CONFIRM AMOUNT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 
