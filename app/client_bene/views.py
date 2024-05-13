@@ -14,10 +14,11 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, IntegrityError
 from requests.exceptions import RequestException
 
-def handle_error(error, location): #ERROR HANDLING
+def handle_error(error, location, user): #ERROR HANDLING
 	ErrorLogData.objects.create(
 		error_log=error,
-		location=location
+		location=location,
+		user_id=user,
 	)
 
 def generate_serial_string(oldstring, prefix=None):
@@ -294,19 +295,19 @@ def registration(request):
 			return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
 	
 	except ConnectionError as ce:
-		handle_error(ce, "CONNECTION ERROR IN REGISTRATION PAGE")
+		handle_error(ce, "CONNECTION ERROR IN REGISTRATION PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN REGISTRATION TRANSACTION")
+		handle_error(e, "VALIDATION ERROR IN REGISTRATION TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN REGISTRATION TRANSACTION")
+		handle_error(e, "INTEGRITY ERROR IN REGISTRATION TRANSACTION", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except RequestException as re:
-		handle_error(re, "NETWORK NETWORK ERROR IN REGISTRATION PAGE")
+		handle_error(re, "NETWORK NETWORK ERROR IN REGISTRATION PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
-		handle_error(e, "EXCEPTION ERROR IN REGISTRATION PAGE")
+		handle_error(e, "EXCEPTION ERROR IN REGISTRATION PAGE", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 	context = {
