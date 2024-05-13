@@ -34,10 +34,11 @@ class Echo:
 	def write(self, value):
 		return value
 
-def handle_error(error, location): #ERROR HANDLING
+def handle_error(error, location, user): #ERROR HANDLING
 	ErrorLogData.objects.create(
 		error_log=error,
-		location=location
+		location=location,
+		user_id=user,
 	)
 
 def generate_serial_string(oldstring, prefix=None):
@@ -105,16 +106,16 @@ def financial_transaction(request):
 					return JsonResponse({'error': True, 'msg': 'This Title/DV-name already exists, please double check.'})
 				
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST financial_transaction")
+			handle_error(e, "VALIDATION ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST financial_transaction")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 
@@ -393,16 +394,16 @@ def voucher_modal(request, pk):
 			)
 			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN voucher_modal")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN voucher_modal", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST voucher_modal")
+			handle_error(e, "VALIDATION ERROR IN REQUEST voucher_modal", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST voucher_modal")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST voucher_modal", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST voucher_modal")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST voucher_modal", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 	
 	test = finance_voucherData.objects.filter(voucher_id=pk)
@@ -427,16 +428,16 @@ def remove_voucherData(request):
 			data = finance_voucherData.objects.filter(id=request.POST.get('id')).delete()
 			return JsonResponse({'data': 'success'})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST remove_voucherData")
+			handle_error(e, "VALIDATION ERROR IN REQUEST remove_voucherData", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_voucherData")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_voucherData", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_voucherData")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_voucherData", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 @csrf_exempt
@@ -553,16 +554,16 @@ def view_dv_number(request,pk):
 				)
 				return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN view_dv_number FO")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST view_dv_number FO")
+			handle_error(e, "VALIDATION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST view_dv_number FO")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
 
 	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
@@ -610,16 +611,16 @@ def voucher_outside_fo(request, pk):
 				)
 				return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN VOUCHER OUTSIDE FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			handle_error(e, "VALIDATION ERROR IN REQUEST VOUCHER OUTSIDE FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST VOUCHER OUTSIDE FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST VOUCHER OUTSIDE FO")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST VOUCHER OUTSIDE FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 	context = {
 		'data': finance_voucher.objects.filter(id=pk).first(),
@@ -640,16 +641,16 @@ def edit_outside_fo(request,pk):
 			)
 			return JsonResponse({'data': 'success', 'msg': 'Voucher successfully updated'})
 	except RequestException as e:
-		handle_error(e, "REQUEST EXCEPTION ERROR IN EDIT OUTSIDE FO")
+		handle_error(e, "REQUEST EXCEPTION ERROR IN EDIT OUTSIDE FO", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except ValidationError as e:
-		handle_error(e, "VALIDATION ERROR IN REQUEST EDIT OUTSIDE FO")
+		handle_error(e, "VALIDATION ERROR IN REQUEST EDIT OUTSIDE FO", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 	except IntegrityError as e:
-		handle_error(e, "INTEGRITY ERROR IN REQUEST EDIT OUTSIDE FO")
+		handle_error(e, "INTEGRITY ERROR IN REQUEST EDIT OUTSIDE FO", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 	except Exception as e:
-		handle_error(e, "EXCEPTION ERROR IN REQUEST EDIT OUTSIDE FO")
+		handle_error(e, "EXCEPTION ERROR IN REQUEST EDIT OUTSIDE FO", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 	
 	context = {
@@ -740,20 +741,20 @@ def finance_modal_provided(request,pk):
 								
 					else:
 						# Handle case where lengths are not equal
-						handle_error(e, "ERROR IN DYNAMIC ENTRY FINANCE")
+						handle_error(e, "ERROR IN DYNAMIC ENTRY FINANCE", request.user.id)
 						return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 				
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN finance_modal_provided")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN finance_modal_provided", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST finance_modal_provided")
+			handle_error(e, "VALIDATION ERROR IN REQUEST finance_modal_provided", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST finance_modal_provided")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST finance_modal_provided", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST finance_modal_provided")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST finance_modal_provided", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
@@ -811,16 +812,16 @@ def update_amount(request,pk):
 						return JsonResponse({'data': 'success',
 											'msg': 'The data provided to client successfully added. With tracking number:  {}.'.format(check.first().tracking_number)})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN update_amount")
+			handle_error(e, "REQUEST EXCEPTION ERROR IN update_amount", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST update_amount")
+			handle_error(e, "VALIDATION ERROR IN REQUEST update_amount", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST update_amount")
+			handle_error(e, "INTEGRITY ERROR IN REQUEST update_amount", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST update_amount")
+			handle_error(e, "EXCEPTION ERROR IN REQUEST update_amount", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 		
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
