@@ -64,6 +64,7 @@ class ServiceProvider(models.Model):
     updated_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
     status = models.BooleanField(blank=True, null=True)
     date_updated = models.DateTimeField(default=timezone.now)
+    category = models.CharField(max_length=255, blank=True, null=True)
 
 
     class Meta:
