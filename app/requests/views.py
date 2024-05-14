@@ -1201,9 +1201,10 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
 	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
 	rows = count + 1
-
+	
 	context = {
 		'data': transaction,
+		'service_provider': ServiceProvider.objects.filter(name__icontains="Phar",status=1),
 		'data': transaction,
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
