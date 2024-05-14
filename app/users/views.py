@@ -166,3 +166,7 @@ def user_profile(request):
 		'restriction': restriction,
 	}
 	return render(request, 'users/user_profile.html', context)
+
+@login_required
+def error_logs(request):
+	return render(request, 'users/error_logs.html')

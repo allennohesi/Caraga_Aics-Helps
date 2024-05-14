@@ -1,0 +1,233 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Error logs</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">User</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-sm table-bordered table-hover w-100" id="error-logs">
+                        <thead>
+                            <th>#</th>
+                            <th>Error log</th>
+                            <th>Location</th>
+                            <th>User</th>
+                            <th>Date</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add-user-modal">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">REGISTER USER</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" oninput="this.value = this.value.toUpperCase()" aria-label="Close"></button>
+            </div>
+            <form id="submitForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="First name" id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Middle name" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Last name" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group mb-3">
+                        <input type="email" class="form-control" placeholder="Email" id="email" name="email" autocomplete="off" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Username" id="username" name="username" autocomplete="off" required>
+                        </div>
+                        <div class="col">
+                            <input type="password" placeholder="password" class="form-control" id="password" name="password" required>
+                            <p id="password-validation-message" style="color: red;"></p>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Group <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="group" required>
+                            <option></option>
+                            {% for row in group %}
+                            <option value="{{ row.id }}">{{ row.name|upper  }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <hr>
+                    <small>The address below, is your area of assignment.</small>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Region <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="region" id="region" required>
+                                    <option></option>
+                                    {% for row in region %}
+                                    <option value="{{ row.region_code }}">{{ row.region_name|upper  }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Province <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="province" id="province" required></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>City <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="city" id="city" required></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Barangay <span class="txt-danger">*</span></label>
+                                <select class="form-control select" name="barangay" id="barangay" required></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="is_superuser" id="is_superuser">
+                        <label class="form-check-label" for="inlineCheckbox1">Is Super User</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="is_staff" id="is_staff">
+                        <label class="form-check-label" for="inlineCheckbox2">Is Staff</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit-user-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header flex-column position-relative">
+                <h5 class="modal-title f-w-700">EDIT USER</h5>
+                <small class="modal-subtitle">Please fill out the form below.</small>
+                <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="edit-content"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="change_password" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="changepassword">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="staticBackdropLabel">Change password</small></h6>
+                    <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" value="{{ transaction.id }}" name="start_id" hidden>
+                    <div class="form-group">
+                        <div class="row mb-3">
+                            <div class="form-group">
+                                <label hidden>Client for this Assessment:</label>
+                                <input type="text" id="empid" class="form-control" name="empid" readonly hidden>
+                            </div>
+                            <div class="form-group">
+                                <label>New password</label>
+                                <input type="password" name="password" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" align="left">
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    document.getElementById("password").addEventListener("input", function() {
+      const password = this.value;
+      const passwordValidationMessage = document.getElementById("password-validation-message");
+
+      // Check if the password meets the criteria
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasSpecialCharacter = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
+      const isLengthValid = password.length >= 8;
+
+      if (hasUppercase && hasSpecialCharacter && isLengthValid) {
+        passwordValidationMessage.textContent = "Password is valid.";
+      } else {
+        passwordValidationMessage.textContent = "Password must have at least 1 uppercase letter, 1 special character, and be at least 8 characters long.";
+      }
+    });
+  </script>
+<script>
+    $(document).ready(function(){
+        $('#error-logs').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/user/ErrorViews/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {'data': 'error_log', 'sortable': false},
+                {'data': 'location', 'className': 'text-center', 'sortable': false},
+                {'data': 'fullname', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data, type, row, meta) {
+                        return data ? data : 'N/A';
+                    }
+                },
+                {'data': 'date_time', 'className': 'text-center', 'sortable': false, 'searchable': false},
+            ]
+        });
+
+    });
+</script>
+{% endblock %}
