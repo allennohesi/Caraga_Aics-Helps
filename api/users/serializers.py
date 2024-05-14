@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.models import AuthUser, AuthUserGroups
-from app.requests.models import SocialWorker_Status
+from app.requests.models import SocialWorker_Status, ErrorLogData
 
 class UserSerializer(serializers.ModelSerializer):
     fullname = serializers.CharField(source='get_fullname', read_only=True)
@@ -23,4 +23,12 @@ class ActiveSwoSerializer(serializers.ModelSerializer):
     datas = serializers.CharField(source='case_study', read_only=True)
     class Meta:
         model = SocialWorker_Status
+        fields = '__all__'
+
+class ErrorLogSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(source='user.get_fullname', read_only=True)
+    date_time = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
+
+    class Meta:
+        model = ErrorLogData
         fields = '__all__'
