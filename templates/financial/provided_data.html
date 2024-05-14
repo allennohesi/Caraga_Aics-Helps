@@ -96,20 +96,20 @@
                                     <input type="text" class="form-control" name="regprice[]" value="{{row.regular_price}}" onkeypress='validate(event)' id="reg_price" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="qty[]" id="qty" value="{{row.regular_quantity}}" onkeypress='validate(event)' required>
+                                    <input type="number" class="form-control" name="qty[]" id="qty" value="{{row.regular_quantity}}" onkeypress='validate(event)' step="any" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="dsc[]" id="dsc" value="{% if row.discount %}{{row.discount}}{% else %}0{% endif %}" onkeypress='validate(event)' required>
+                                    <input type="number" class="form-control" name="dsc[]" id="dsc" value="{% if row.discount %}{{row.discount}}{% else %}0{% endif %}" onkeypress='validate(event)' step="any" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="discounted_price[]" value="{{row.discount_price}}" id="discounted_price" onkeypress='validate(event)' required>
+                                    <input type="number" class="form-control" name="discounted_price[]" value="{{row.discount_price}}" id="discounted_price" onkeypress='validate(event)' step="any" required>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="qty1[]" id="qty1" value="{{row.discount_quantity}}" onkeypress='validate(event)' required>
+                                    <input type="number" class="form-control" name="qty1[]" id="qty1" value="{{row.discount_quantity}}" onkeypress='validate(event)' step="any" required>
                                     <div class="invalid-feedback"></div>
                                 </td>
                                 <td valign="middle">
-                                    <input type="text" class="form-control" name="tot[]" id="tot" value="{{row.total}}" onkeypress='validate(event)' required readonly>
+                                    <input type="number" class="form-control" name="tot[]" id="tot" value="{{row.total}}" onkeypress='validate(event)' step="any" required readonly>
                                     <div class="invalid-feedback"></div>
                                 </td>
                                 <td valign="middle">
@@ -161,20 +161,20 @@
             <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" required>
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' required>
+            <input type="number" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' step="any" required>
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' required>
+            <input type="number" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' step="any" required>
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' required>
+            <input type="number" class="form-control" name="discounted_price[]" id="discounted_price" step="any" onkeypress='validate(event)' required>
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' required>
+            <input type="number" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' step="any" required>
             <div class="invalid-feedback"></div>
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
+            <input type="number" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
             <div class="invalid-feedback"></div>
         </td>
         <td valign="middle">
