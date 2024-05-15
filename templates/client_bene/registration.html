@@ -36,6 +36,7 @@
                                         <th class="text-center">Middlename</th>
                                         <th class="text-center">Suffix</th>
                                         <th class="text-center">Date of Birth</th>
+                                        <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -603,7 +604,18 @@
                         }
                     }
                 },
-                {'data': 'birthdate','className': 'text-center'}
+                {'data': 'birthdate','className': 'text-center'},
+                {'data': 'is_validated',
+                    'render': function(data, type, row, meta) {
+                        if(data == 1) {
+                            return '<i class="fa fa-circle txt-success"></i> Active'
+                        }else{
+                            return '<i class="fa fa-circle txt-danger"></i> Inactive'
+                        }
+                    },
+                    'searchable': false,
+                    'sortable': false
+                },
             ],
         });
     }
