@@ -581,7 +581,7 @@
             'order': [[ 2, 'desc' ]],
             'lengthMenu': [5,10,15],
             'ajax': {
-                'url': '/api/client-beneficiary/AdvanceFilterViews/?format=datatables&fname=' + fname + '&lname=' + lname + '&bday=' + bday,
+                'url': '/api/client-beneficiary/AdvanceFilterViews/?format=datatables&fname=' + fname + '&lname=' + lname,
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("Authorization", "Token 82b88a7bdac1ea3868361448927035e93b0dc19d")

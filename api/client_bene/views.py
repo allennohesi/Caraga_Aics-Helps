@@ -21,7 +21,7 @@ class AdvanceFilterViews(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     #__startswith
     def get_queryset(self):
-        if self.request.query_params.get('fname') and self.request.query_params.get('lname') and self.request.query_params.get('bday'):
+        if self.request.query_params.get('fname') and self.request.query_params.get('lname'):
             queryset = ClientBeneficiary.objects.filter(last_name__icontains=self.request.query_params.get('lname'),
                                               first_name__icontains=self.request.query_params.get('fname'),
                                               )
