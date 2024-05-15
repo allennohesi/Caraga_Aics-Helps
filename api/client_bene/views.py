@@ -22,8 +22,7 @@ class AdvanceFilterViews(generics.ListAPIView):
     #__startswith
     def get_queryset(self):
         if self.request.query_params.get('fname') and self.request.query_params.get('lname') and self.request.query_params.get('bday'):
-            queryset = ClientBeneficiary.objects.filter(last_name=self.request.query_params.get('lname'),
-                                              first_name=self.request.query_params.get('fname'),
-                                              birthdate=self.request.query_params.get('bday'),
+            queryset = ClientBeneficiary.objects.filter(last_name__icontains=self.request.query_params.get('lname'),
+                                              first_name__icontains=self.request.query_params.get('fname'),
                                               )
             return queryset
