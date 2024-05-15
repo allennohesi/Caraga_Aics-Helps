@@ -97,6 +97,7 @@
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">CONFIRM</button>
                 {% if transaction.total_amount %}
+                {% if transaction.total_amount == calculate.total_payment|floatformat:2 %}
                 <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                   <span class="visually-hidden">Toggle Dropdown</span>
                 </button>
@@ -112,6 +113,7 @@
                     <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
                     {% endif %}
                 </ul>
+                {% endif %}
                 {% endif %}
             </div>
             {% endif %}
