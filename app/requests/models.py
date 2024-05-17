@@ -13,8 +13,8 @@ from app.models import AuthUser
 from django.db.models import Value, Sum, Count
 from django.db.models import Q
 import uuid
-today = date.today()
 
+today = date.today()
 
 class ClientBeneficiary(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -34,7 +34,7 @@ class ClientBeneficiary(models.Model):
     village = models.CharField(max_length=255, blank=True, null=True)
     is_4ps = models.BooleanField(blank=True)
     number_4ps_id_number = models.CharField(db_column='4ps_id_number', max_length=50, blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
-    unique_id_number = models.CharField(max_length=50, blank=True, null=True)
+    unique_id_number = models.CharField(max_length=50, unique=True)
     updated_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
     is_validated = models.BooleanField(blank=True)
     registered_by = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='registered_by')
@@ -103,6 +103,18 @@ class ClientBeneficiary(models.Model):
     class Meta:
         managed = False
         db_table = 'tbl_client_beneficiary_information'
+
+class client_beneficiary_update_history(models.Model):
+    unique_id_number = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING, to_field='unique_id_number')
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    middle_name = models.CharField(max_length=255, blank=True, null=True)
+    date_updated = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        managed = False
+        db_table = 'tbl_client_beneficiary_update_history'
+
 
 def get_file_path(instance, filename):
     ext = filename.split('.')[-1]
