@@ -82,7 +82,7 @@ class TransactionIncoming(generics.ListAPIView):
 				queryset = TransactionStatus1.objects.filter(transaction_id__requested_in=region).order_by('-id')
 			return queryset
 		else:
-			queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4,7],transaction_id__requested_in=region).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__requested_in=region).order_by('-id')
 
 		return queryset
 
