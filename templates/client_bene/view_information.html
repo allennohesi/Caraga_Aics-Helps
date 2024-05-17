@@ -15,21 +15,21 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label>Last Name <span class="txt-danger">*</span></label>
-                <input type="text" class="form-control" name="last_name" required autocomplete="off" value="{{ information.last_name }}">
+                <input type="text" class="form-control" name="last_name" required autocomplete="off" value="{{ information.last_name }}" oninput="this.value = this.value.toUpperCase()">
                 <div class="invalid-feedback"></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label>First Name <span class="txt-danger">*</span></label>
-                <input type="text" class="form-control" name="first_name" required autocomplete="off" value="{{ information.first_name }}">
+                <input type="text" class="form-control" name="first_name" required autocomplete="off" value="{{ information.first_name }}" oninput="this.value = this.value.toUpperCase()">
                 <div class="invalid-feedback"></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label>Middle Name (Optional)</label>
-                <input type="text" class="form-control" name="middle_name" autocomplete="off" value="{{ information.middle_name }}">
+                <input type="text" class="form-control" name="middle_name" autocomplete="off" value="{{ information.middle_name }}" oninput="this.value = this.value.toUpperCase()">
                 <div class="invalid-feedback"></div>
             </div>
         </div>
@@ -333,6 +333,40 @@
     </div>
     <button type="submit" class="btn btn-primary btn-lg">Save changes</button>
     </form>
+    {% if client_history %}
+    <div class="mx-auto" style="width: 200px;">
+        <hr>
+    </div>
+    <div class="card">
+        <h6 class="card-header">Recent information of client/beneficiary</h6>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="table-responsive">
+                    <table class="table table-bordered w-100 table-sm" id="">
+                        <thead>
+                            <th>#</th>
+                            <th>Recent last name</th>
+                            <th>Recent first name</th>
+                            <th>Recent middle name</th>
+                            <th>Date Updated</th>
+                        </thead>
+                        <tbody>
+                            {% for row in client_history %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{row.last_name}}</td>
+                                <td>{{row.first_name}}</td>
+                                <td>{{row.middle_name}}</td>
+                                <td>{{row.date_updated}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% block script %}
 <script>
