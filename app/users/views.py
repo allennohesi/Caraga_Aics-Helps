@@ -170,3 +170,7 @@ def user_profile(request):
 @login_required
 def error_logs(request):
 	return render(request, 'users/error_logs.html')
+
+@login_required
+def clientupdatehistory(request):
+	return render(request, 'client_bene/clientupdatehistory.html')
