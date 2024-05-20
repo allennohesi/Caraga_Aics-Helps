@@ -36,7 +36,7 @@
         <div class="col-md-2">
             <div class="form-group">
                 <label>Suffix (Optional)</label>
-                <select class="form-control select" name="suffix">
+                <select class="form-control suffix-select" name="suffix">
                     <option></option>
                     {% for row in suffix %}
                     {% if row.id == information.suffix_id %}
@@ -380,7 +380,8 @@
         $('.suffix-select').select2({
             width: '100%',
             placeholder: 'Choose',
-            containerCssClass: 'select'
+            containerCssClass: 'select',
+            allowClear: true
         });
 
         $('#back').on('click', function(){
@@ -475,7 +476,7 @@
             $('.suffix-select').select2({
                 width: "100%",
                 containerCssClass: 'select',
-
+                allowClear: true,
                 placeholder: 'Choose Suffix',
             });
             $('.compo-select').select2({
