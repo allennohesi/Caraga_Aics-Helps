@@ -9,7 +9,7 @@ from datetime import timedelta, date, datetime
 from app.global_variable import groups_only
 from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id
 from app.requests.models import ClientBeneficiaryFamilyComposition, ClientBeneficiary, Transaction, uploadfile, TransactionStatus1, SocialWorker_Status, \
-	FileType,Category,SubCategory,ServiceProvider,TypeOfAssistance,SubModeofAssistance,LibAssistanceType,PriorityLine, ErrorLogData, client_beneficiary_update_history
+	FileType,Category,SubCategory,ServiceProvider,TypeOfAssistance,SubModeofAssistance,LibAssistanceType,PriorityLine, ErrorLogData, ClientBeneficiaryUpdateHistory
 from django.core.exceptions import ValidationError
 from django.db import transaction, IntegrityError
 from requests.exceptions import RequestException
@@ -84,12 +84,14 @@ def view_client_bene_info(request, pk):
 				client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name')
 
 		updated_client = ClientBeneficiary.objects.get(unique_id_number=pk)
-		if updated_client.last_name != request.POST.get('last_name') or updated_client.first_name != request.POST.get('first_name') or updated_client.middle_name != request.POST.get('middle_name'):
-			client_beneficiary_update_history.objects.create(
+		if updated_client.last_name != request.POST.get('last_name') or updated_client.first_name != request.POST.get('first_name') or updated_client.middle_name != request.POST.get('middle_name') or str(updated_client.suffix_id) != request.POST.get('suffix'):
+			ClientBeneficiaryUpdateHistory.objects.create(
 				unique_id_number_id=pk,
 				last_name=updated_client.last_name,
 				first_name=updated_client.first_name,
-				middle_name=updated_client.middle_name
+				middle_name=updated_client.middle_name,
+				suffix_id=updated_client.suffix_id,
+				updated_by_id=request.user.id
 			)
 
 		client = ClientBeneficiary.objects.filter(unique_id_number=pk)
@@ -198,7 +200,7 @@ def view_client_bene_info(request, pk):
 		'occupation': occupation_tbl.objects.filter(is_active=1).order_by('id'),
 		'Relation': Relation.objects.filter(status=1),
 		'Presented': presented_id.objects.all(),
-		'client_history': client_beneficiary_update_history.objects.filter(unique_id_number=pk)
+		'client_history': ClientBeneficiaryUpdateHistory.objects.filter(unique_id_number=pk)
 	}
 	return render(request, 'client_bene/view_information.html', context)
 
@@ -480,7 +482,10 @@ def InsertDirectRequests(request):
 				)
 				return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
 					'tracking_number': track_num})  
- 
+
+def update_history(request):
+	return render(request,"client_bene/update_history.html")
+
 
 def filter_search(request):
 	search = request.GET.get('search','')

@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from api.client_bene.serializers import ClientBeneficiarySerializer
-from app.requests.models import ClientBeneficiary
+from api.client_bene.serializers import ClientBeneficiarySerializer, ClientBeneficiaryUpdateHistorySerializer
+from app.requests.models import ClientBeneficiary, ClientBeneficiaryUpdateHistory
 from rest_framework.pagination import PageNumberPagination
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -13,6 +13,12 @@ class LargeResultsSetPagination(PageNumberPagination):
 class ClientBeneficiaryViews(generics.ListAPIView):
     queryset = ClientBeneficiary.objects.all()
     serializer_class = ClientBeneficiarySerializer
+    pagination_class = LargeResultsSetPagination
+    permission_classes = [IsAuthenticated]
+
+class ClientBeneficiaryUpdateHistoryViews(generics.ListAPIView):
+    queryset = ClientBeneficiaryUpdateHistory.objects.all()
+    serializer_class = ClientBeneficiaryUpdateHistorySerializer
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
 
