@@ -483,9 +483,6 @@ def InsertDirectRequests(request):
 				return JsonResponse({'data': 'success', 'msg': 'New requests has been created. Please wait for the reviewal of your requests and copy the generated reference number.',
 					'tracking_number': track_num})  
 
-def update_history(request):
-	return render(request,"client_bene/update_history.html")
-
 
 def filter_search(request):
 	search = request.GET.get('search','')

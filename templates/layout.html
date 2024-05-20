@@ -171,7 +171,6 @@
                                         <ul class="sidebar-submenu">
                                             <li><a href="{% url 'client_beneficiary' %}" id="list-link">List</a></li>
                                             <li><a href="{% url 'client_bene_registration' %}" id="registration-link">Registration</a></li>
-                                            <li><a href="{% url 'update_history' %}" id="update-link">Update history</a></li>
                                         </ul>
                                     </li>
                                     {% endif %}
@@ -263,6 +262,9 @@
                                     </li>
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'error_logs' %}"><i data-feather="git-pull-request"></i><span>Error logs</span></a>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'clientupdatehistory' %}"><i data-feather="server"></i><span>Client Update history</span></a>
                                     </li>
                                     {% endif %}
                                     <li class="sidebar-main-title">
