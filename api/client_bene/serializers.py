@@ -14,6 +14,7 @@ class ClientBeneficiarySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ClientBeneficiaryUpdateHistorySerializer(serializers.ModelSerializer):
+    unique_id = serializers.CharField(source='unique_id_number.unique_id_number', read_only=True)
     suffix = serializers.CharField(source='suffix.name', read_only=True)
     updated_by = serializers.CharField(source='updated_by.get_fullname', read_only=True, default=None)
     date_updated = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
