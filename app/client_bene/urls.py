@@ -1,7 +1,7 @@
 from django.urls import path
 
 from app.client_bene.views import client_beneficiary, view_client_bene_info, registration, modal_transaction, Modal_DirectRequest, \
-    InsertDirectRequests, deactivate_client, activate_client
+    InsertDirectRequests, deactivate_client, activate_client, update_history
 
 urlpatterns = [
     path('', client_beneficiary, name='client_beneficiary'),
@@ -11,5 +11,6 @@ urlpatterns = [
     path('direct_requests/modal_direct/<int:pk>', Modal_DirectRequest, name='Modal_DirectRequest'),
     path('InsertDirectRequests/', InsertDirectRequests,name='InsertDirectRequests'),
     path('activate_client/', activate_client, name='activate_client'),
-    path('deactivate/', deactivate_client, name='deactivate_client')
+    path('deactivate/', deactivate_client, name='deactivate_client'),
+    path('update_history/', update_history, name='update_history')
 ]

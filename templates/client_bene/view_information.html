@@ -348,6 +348,8 @@
                             <th>Recent last name</th>
                             <th>Recent first name</th>
                             <th>Recent middle name</th>
+                            <th>Recent suffix</th>
+                            <th>Updated by</th>
                             <th>Date Updated</th>
                         </thead>
                         <tbody>
@@ -357,6 +359,8 @@
                                 <td>{{row.last_name}}</td>
                                 <td>{{row.first_name}}</td>
                                 <td>{{row.middle_name}}</td>
+                                <td>{{row.suffix.name}}</td>
+                                <td>{{row.updated_by.get_fullname}}</td>
                                 <td>{{row.date_updated}}</td>
                             </tr>
                             {% endfor %}
