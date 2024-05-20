@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Client / Beneficiary update history</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">Client</li>
+                    <li class="breadcrumb-item active">History</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-sm table-bordered table-hover w-100" id="update-history">
+                        <thead>
+                            <th>#</th>
+                            <th>Client / Beneficiary ID</th>
+                            <th>Recent last name</th>
+                            <th>Recent first name</th>
+                            <th>Recent middle name</th>
+                            <th>Recent suffix</th>
+                            <th>Updated by</th>
+                            <th>Date Updated</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#update-history').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/client-beneficiary/ClientBeneficiaryUpdateHistoryViews/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {'data': 'unique_id_number'},
+                {'data': 'last_name'},
+                {'data': 'first_name'},
+                {'data': 'middle_name'},
+                {
+                    'data': 'suffix',
+                    'name': 'suffix.name',
+                    'className': 'text-start',
+                    'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        return data && data.trim() !== '' ? data : '';
+                    }
+                },
+                {'data': 'updated_by', 'className': 'text-center', 'sortable': false},
+                {'data': 'date_updated', 'className': 'text-center', 'sortable': false},
+
+            ]
+        });
+    });
+</script>
+{% endblock %}

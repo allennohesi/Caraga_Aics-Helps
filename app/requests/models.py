@@ -104,13 +104,15 @@ class ClientBeneficiary(models.Model):
         managed = False
         db_table = 'tbl_client_beneficiary_information'
 
-class client_beneficiary_update_history(models.Model):
+class ClientBeneficiaryUpdateHistory(models.Model):
     unique_id_number = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING, to_field='unique_id_number')
     last_name = models.CharField(max_length=255, blank=True, null=True)
     first_name = models.CharField(max_length=255, blank=True, null=True)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
+    suffix = models.ForeignKey(Suffix, models.DO_NOTHING, blank=True, null=True)
     date_updated = models.DateTimeField(default=timezone.now)
-    
+    updated_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
     class Meta:
         managed = False
         db_table = 'tbl_client_beneficiary_update_history'
