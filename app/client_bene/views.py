@@ -84,7 +84,7 @@ def view_client_bene_info(request, pk):
 				client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name')
 
 		updated_client = ClientBeneficiary.objects.get(unique_id_number=pk)
-		if updated_client.last_name != request.POST.get('last_name') or updated_client.first_name != request.POST.get('first_name') or updated_client.middle_name != request.POST.get('middle_name') or str(updated_client.suffix_id) != request.POST.get('suffix'):
+		if updated_client.client_bene_fullname != client_bene_fullname:
 			ClientBeneficiaryUpdateHistory.objects.create(
 				unique_id_number_id=pk,
 				last_name=updated_client.last_name,
