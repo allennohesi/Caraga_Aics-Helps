@@ -8,16 +8,19 @@
 </style>
 <form id="update_emp_assistance">
     <center>
-      {% if pict %}
-      <img alt="" src="{{pict.file_field1.url}}" class="avatar" alt="avatar" width = "150" height = "150">
-      {% else %}
-          {% if transaction.sex.name == "Male" %}
-          <div class="avatar"><img alt="" class="avatar" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
-          {% elif transaction.sex.name == "Female" %}
-          <div class="avatar"><img alt="" class="avatar" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
-          {% else %}
-          {% endif %}
-      {% endif %}
+    <img alt="" src=
+        "
+            {% if pict %}
+                {{pict.file_field1.url}}
+            {% else %}
+                {% if data.sex.name == 'Male' %}
+                    {% static 'images/user/male.png' %}
+                {% else %}
+                    {% static 'images/user/female.png' %}
+                {% endif %}
+            {% endif %}
+        "
+        class="avatar" alt="avatar" width = "150" height = "150">
     </center>
     <br>
     <div class="input-group">
