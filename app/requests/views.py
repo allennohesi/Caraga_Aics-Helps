@@ -332,44 +332,64 @@ def get_file_path(instance, filename):
 @groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
 def view_incoming(request, pk):
 	if request.method == "POST":
-		image_data_url = request.POST.get('image_data_url')
-		if image_data_url:
-			# Extract the image data from the URL
-			_, encoded = image_data_url.split(",", 1)
-			# Decode base64 data
-			image_data = base64.b64decode(encoded)
+		try:
+			image_data_url = request.POST.get('image_data_url')
+			if image_data_url:
+				# Extract the image data from the URL
+				_, encoded = image_data_url.split(",", 1)
+				# Decode base64 data
+				image_data = base64.b64decode(encoded)
+				
+				# Generate file path using the get_file_path function
+				filename = 'image_from_canvas.jpg'  # Example filename
+				file_path = get_file_path(None, filename)  # Pass None as instance for now
+
+				# Ensure the directory exists before saving
+				os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+				# Save the image data to a file in the 'CIS' directory within the 'media' directory
+				with open(file_path, 'wb') as file:
+					file.write(image_data)
+
+				# Construct the database file path
+				db_file_path = file_path.replace('media/', '')  # Remove 'media/' prefix
+
+				# Now the image is saved in the 'CIS' directory within the 'media' directory
+				client_b_id = Transaction.objects.filter(id=pk).first()
+				delete = uploadfile.objects.filter(client_bene_id=client_b_id.client_id).delete()
+				insert2 = uploadfile.objects.create(
+					file_field1=db_file_path,  # Store the database file path
+					client_bene_id=client_b_id.client_id,
+				)
+				update = TransactionStatus1.objects.filter(transaction_id=pk).update(
+					is_upload_photo=1,
+					uploader_verifier_id=request.user.id,
+					upload_time_end=datetime.now(),
+					status=6
+				)
+				update_transaction = Transaction.objects.filter(id=pk).update(
+					status=6
+				)
+				return JsonResponse({'data': 'success', 'msg': 'You successfully uploaded a picture.'})
 			
-			# Generate file path using the get_file_path function
-			filename = 'image_from_canvas.jpg'  # Example filename
-			file_path = get_file_path(None, filename)  # Pass None as instance for now
-
-			# Ensure the directory exists before saving
-			os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-			# Save the image data to a file in the 'CIS' directory within the 'media' directory
-			with open(file_path, 'wb') as file:
-				file.write(image_data)
-
-			# Construct the database file path
-			db_file_path = file_path.replace('media/', '')  # Remove 'media/' prefix
-
-			# Now the image is saved in the 'CIS' directory within the 'media' directory
-			client_b_id = Transaction.objects.filter(id=pk).first()
-			delete = uploadfile.objects.filter(client_bene_id=client_b_id.client_id).delete()
-			insert2 = uploadfile.objects.create(
-				file_field1=db_file_path,  # Store the database file path
-				client_bene_id=client_b_id.client_id,
-			)
-			update = TransactionStatus1.objects.filter(transaction_id=pk).update(
-				is_upload_photo=1,
-				uploader_verifier_id=request.user.id,
-				upload_time_end=datetime.now(),
-				status=6
-			)
-			update_transaction = Transaction.objects.filter(id=pk).update(
-				status=6
-			)
-			return JsonResponse({'data': 'success', 'msg': 'You successfully uploaded a picture.'})
+		except ConnectionError as ce:
+			# Handle loss of connection (e.g., log the error)
+			handle_error(ce, "CONNECTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except RequestException as re:
+			# Handle other network-related errors (e.g., log the error)
+			handle_error(re, "NETWORK RELATED ISSUE IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+		except Exception as e:
+			# Handle other unexpected errors (e.g., log the error)
+			handle_error(e, "EXCEPTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
 	data = Transaction.objects.filter(id=pk).first()
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
@@ -395,7 +415,6 @@ def view_incoming(request, pk):
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
 		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first(),
 		'service_provider': ServiceProvider.objects.filter(status=1),
-
 	}
 	return render(request, 'requests/view_incoming.html', context)
 
