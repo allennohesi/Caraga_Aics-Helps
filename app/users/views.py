@@ -4,9 +4,9 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id, City, Barangay
+from app.libraries.models import Province, region, City, Barangay
 from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile, AuthFeedback
-from app.requests.models import TransactionStatus1, ErrorLogData
+from app.requests.models import ErrorLogData, ClientBeneficiary, uploadfile, ClientBeneficiaryUpdateHistory
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -165,6 +165,7 @@ def user_profile(request):
 						barangay_id=request.POST.get('barangay')
 					)
 				return JsonResponse({'data': 'success','msg':'Information has been updated'})
+			
 		except ConnectionError as ce:
 			# Handle loss of connection (e.g., log the error)
 			handle_error(ce, "CONNECTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
@@ -204,3 +205,16 @@ def error_logs(request):
 @login_required
 def clientupdatehistory(request):
 	return render(request, 'client_bene/clientupdatehistory.html')
+
+@login_required
+def clienthistorymodal(request, pk):
+	information = ClientBeneficiaryUpdateHistory.objects.filter(id=pk).first()
+	data = ClientBeneficiary.objects.filter(unique_id_number=information.unique_id_number_id).first()
+	picture = uploadfile.objects.filter(client_bene_id=data.id).first()
+
+	context = {
+		'pict': picture,
+		'data': data,
+		'update_history': ClientBeneficiaryUpdateHistory.objects.filter(unique_id_number_id=information.unique_id_number_id)
+	}
+	return render(request, 'client_bene/clientupdatehistorymodal.html', context)
