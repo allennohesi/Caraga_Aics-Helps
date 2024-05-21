@@ -25,7 +25,8 @@
                     <table class="table table-sm table-bordered table-hover w-100" id="update-history">
                         <thead>
                             <th>#</th>
-                            <th>Client / Beneficiary ID</th>
+                            <th>DETAILS</th>
+                            <th>UNIQUE ID</th>
                             <th>Recent last name</th>
                             <th>Recent first name</th>
                             <th>Recent middle name</th>
@@ -37,6 +38,18 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modal_history" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h6 class="modal-title" id="modalProvidedLabel">Update history</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="load_data">
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
@@ -67,7 +80,14 @@
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
                 },
-                {'data': 'unique_id','name':'unique_id_number.unique_id_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'unique_id', 'className': 'text-center', 
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='update_history' data-id="+ row['id'] + ">VIEW</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false,
+                },
+                {'data': 'unique_id','name':'unique_id_number.unique_id_number', 'className': 'text-start', 'sortable': false},
                 {'data': 'last_name'},
                 {'data': 'first_name'},
                 {'data': 'middle_name'},
@@ -85,6 +105,11 @@
 
             ]
         });
+    });
+    $(document).on('click','a[data-role=update_history]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+        var pk = $(this).data('id');
+        $('#empid').val(pk)
+        $('#modal_history').modal('show').find('#load_data').load('/users/clienthistorymodal/modal/' + pk);
     });
 </script>
 {% endblock %}

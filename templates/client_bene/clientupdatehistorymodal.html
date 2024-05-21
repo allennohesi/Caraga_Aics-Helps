@@ -1,0 +1,61 @@
+{% load tags %}
+{% load static %}
+<style>
+  .avatar {
+    border-radius: 50%; /* Make the canvas circular */
+    overflow: hidden; /* Ensure content outside the border-radius is hidden */
+}
+</style>
+<form id="update_emp_assistance">
+    <center>
+      {% if pict %}
+      <img alt="" src="{{pict.file_field1.url}}" class="avatar" alt="avatar" width = "150" height = "150">
+      {% else %}
+          {% if transaction.sex.name == "Male" %}
+          <div class="avatar"><img alt="" class="avatar" src="{% static 'images/user/male.png' %}" alt="avatar" width = "150" height = "150"></div>
+          {% elif transaction.sex.name == "Female" %}
+          <div class="avatar"><img alt="" class="avatar" src="{% static 'images/user/female.png' %}" alt="avatar" width = "150" height = "150"></div>
+          {% else %}
+          {% endif %}
+      {% endif %}
+    </center>
+    <br>
+    <div class="input-group">
+        <span class="input-group-text">Last name</span>
+        <input type="text" aria-label="First name" value="{{data.last_name}}" class="form-control">
+        <span class="input-group-text">First name</span>
+        <input type="text" aria-label="Last name" value="{{data.first_name}}" class="form-control">
+        <span class="input-group-text">Middle name</span>
+        <input type="text" aria-label="Last name" value="{{data.middle_name}}" class="form-control">
+        <span class="input-group-text">Suffix</span>
+        <input type="text" aria-label="Last name" value="{{data.suffix.name}}" class="form-control">
+    </div>
+    <hr>
+    <br>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Recent last name</th>
+            <th scope="col">Recent first name</th>
+            <th scope="col">Recent middle name</th>
+            <th scope="col">Recent suffix</th>
+            <th scope="col">updated by</th>
+            <th scope="col">Date Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for row in update_history %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{row.last_name}}</td>
+            <td>{{row.first_name}}</td>
+            <td>{{row.middle_name}}</td>
+            <td>{{row.suffix.name}}</td>
+            <td>{{row.updated_by.get_fullname}}</td>
+            <td>{{row.date_updated}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+</form>
