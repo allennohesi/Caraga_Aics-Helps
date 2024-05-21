@@ -6,13 +6,23 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.libraries.models import Suffix, Sex, CivilStatus, Province, Tribe, region, occupation_tbl, Relation, presented_id, City, Barangay
 from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile, AuthFeedback
-from app.requests.models import TransactionStatus1
+from app.requests.models import TransactionStatus1, ErrorLogData
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.hashers import make_password
+from django.db import transaction, IntegrityError
+from django.core.exceptions import ValidationError
+from requests.exceptions import RequestException
+
+def handle_error(error, location, user): #ERROR HANDLING
+	ErrorLogData.objects.create(
+		error_log=error,
+		location=location,
+		user_id=user,
+	)
 
 @login_required
 def user_list(request):
@@ -132,28 +142,48 @@ def user_profile(request):
 	check_if_details_exists = AuthuserDetails.objects.filter(user_id=request.user.id)
 	restriction = request.user.groups.filter(name__in=['Super Administrator']).exists()
 	if request.method == "POST":
-		if request.POST.get('verification') == "changepassword":
-			target_user = AuthUser.objects.filter(id=request.user.id).update(
-				password = make_password(request.POST.get('password'))
-			)
-			return JsonResponse({'data': 'success','msg':'Password has been updated'})
-		elif request.POST.get('verification') == "changeprofile":
-			AuthuserProfile.objects.filter(user_id=request.user.id).delete()
-			AuthuserProfile.objects.create(
-				profile_pict=request.FILES.get('file_name'),
-				user_id=request.user.id,
-			)
-		else:
-			if check_if_details_exists:
-				AuthuserDetails.objects.filter(user_id=request.user.id).update(
-					barangay_id=request.POST.get('barangay')
+		try:
+			if request.POST.get('verification') == "changepassword":
+				target_user = AuthUser.objects.filter(id=request.user.id).update(
+					password = make_password(request.POST.get('password'))
+				)
+				return JsonResponse({'data': 'success','msg':'Password has been updated'})
+			elif request.POST.get('verification') == "changeprofile":
+				AuthuserProfile.objects.filter(user_id=request.user.id).delete()
+				AuthuserProfile.objects.create(
+					profile_pict=request.FILES.get('file_name'),
+					user_id=request.user.id,
 				)
 			else:
-				AuthuserDetails.objects.create(
-					user_id=request.user.id,
-					barangay_id=request.POST.get('barangay')
-				)
-			return JsonResponse({'data': 'success','msg':'Information has been updated'})
+				if check_if_details_exists:
+					AuthuserDetails.objects.filter(user_id=request.user.id).update(
+						barangay_id=request.POST.get('barangay')
+					)
+				else:
+					AuthuserDetails.objects.create(
+						user_id=request.user.id,
+						barangay_id=request.POST.get('barangay')
+					)
+				return JsonResponse({'data': 'success','msg':'Information has been updated'})
+		except ConnectionError as ce:
+			# Handle loss of connection (e.g., log the error)
+			handle_error(ce, "CONNECTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except RequestException as re:
+			# Handle other network-related errors (e.g., log the error)
+			handle_error(re, "NETWORK RELATED ISSUE IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+		except Exception as e:
+			# Handle other unexpected errors (e.g., log the error)
+			handle_error(e, "EXCEPTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+			
 		
 	context = {
 		'user_data': user_data,
