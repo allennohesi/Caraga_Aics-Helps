@@ -11,7 +11,21 @@ class ClientBeneficiarySerializer(serializers.ModelSerializer):
     suffix = serializers.CharField(source='suffix.name', read_only=True)
     class Meta:
         model = ClientBeneficiary
-        fields = '__all__'
+        fields = [
+            'id',
+            'unique_id_number',
+            'address',
+            'suffix',
+            'sex',
+            'date_of_registration',
+            'birthdate',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'client_bene_fullname',
+            'contact_number',
+            'is_validated',
+        ]
 
 class ClientBeneficiaryUpdateHistorySerializer(serializers.ModelSerializer):
     unique_id = serializers.CharField(source='unique_id_number.unique_id_number', read_only=True)
@@ -21,4 +35,13 @@ class ClientBeneficiaryUpdateHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientBeneficiaryUpdateHistory
-        fields = '__all__'
+        fields = [
+            'id',
+            'unique_id',
+            'last_name',
+            'first_name',
+            'middle_name',
+            'suffix',
+            'updated_by',
+            'date_updated',
+        ]
