@@ -23,7 +23,7 @@ class kioskAPI(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
-	queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4,7]).order_by('-id')
+	queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7]).order_by('-id')
 
 class adminMonitoring(generics.ListAPIView):
 	serializer_class = TransactionSerializer
