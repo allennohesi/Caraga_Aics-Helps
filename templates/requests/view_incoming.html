@@ -15,30 +15,30 @@
 <hr>
 <div class="col-sm-12">
     <div class="text-center">
-    <div class="cardheader"></div>
-    <div class="user-image">
-        <div>
-            <img class="avatar" alt="" 
-            src=
-                "
-                    {% if pict %}
-                        {{pict.file_field1.url}}
-                    {% else %}
-                        {% if transaction.client.sex.name == 'Male' %}
-                            {% static 'images/user/male.png' %}
+        <div class="cardheader"></div>
+        <div class="user-image">
+            <div>
+                <img class="avatar" alt="" 
+                src=
+                    "
+                        {% if pict %}
+                            {{pict.file_field1.url}}
                         {% else %}
-                            {% static 'images/user/female.png' %}
+                            {% if transaction.client.sex.name == 'Male' %}
+                                {% static 'images/user/male.png' %}
+                            {% else %}
+                                {% static 'images/user/female.png' %}
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                "
-            alt="avatar" width = "150" height = "150">
+                    "
+                alt="avatar" width = "150" height = "150">
+            </div>
+            {% if transaction.total_amount %}
+            <label>
+                <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
+            <label>
+            {% endif %}
         </div>
-        {% if transaction.total_amount %}
-        <label>
-            <a class="btn btn-light btn-xs" data-bs-toggle="modal" data-bs-target="#capturingimage">Take picture</a>
-        <label>
-        {% endif %}
-    </div>
     </div>
     <div class="info">
         <div class="row">
