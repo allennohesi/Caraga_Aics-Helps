@@ -1,8 +1,40 @@
+{% load static %}
+<style>
+    #canvas {
+        border-radius: 50%; /* Make the canvas circular */
+        overflow: hidden; /* Ensure content outside the border-radius is hidden */
+    }
+    .avatar {
+        border-radius: 50%; /* Make the canvas circular */
+        overflow: hidden; /* Ensure content outside the border-radius is hidden */
+    }
+</style>
 <div class="row" id="client_details">
     <form id="updateInformationForm">
     {% csrf_token %}
     <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Back</a>
     <hr>
+    <div class="text-center">
+        <div class="cardheader"></div>
+        <div class="user-image">
+            <div>
+                <img class="avatar" alt="" 
+                src=
+                    "
+                        {% if pict %}
+                            {{pict.file_field1.url}}
+                        {% else %}
+                            {% if transaction.client.sex.name == 'Male' %}
+                                {% static 'images/user/male.png' %}
+                            {% else %}
+                                {% static 'images/user/female.png' %}
+                            {% endif %}
+                        {% endif %}
+                    "
+                alt="avatar" width = "150" height = "150">
+            </div>
+        </div>
+    </div>
     <small>Note: Please fill in the form below and indicate 'N/A' if not applicable and leave blank if field is optional.</small>
     <br><br>
     <div class="row mb-3">

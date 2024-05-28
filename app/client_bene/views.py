@@ -66,6 +66,7 @@ def deactivate_client(request):
 @login_required
 @groups_only('Verifier', 'Service Provider', 'Social Worker', 'Super Administrator')
 def view_client_bene_info(request, pk):
+	updated_client = ClientBeneficiary.objects.get(unique_id_number=pk)
 	if request.method == "POST":
 		if request.POST.get('suffix'):
 			suffix = Suffix.objects.filter(id=request.POST.get('suffix')).first()
@@ -83,7 +84,6 @@ def view_client_bene_info(request, pk):
 			else:
 				client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name')
 
-		updated_client = ClientBeneficiary.objects.get(unique_id_number=pk)
 		if updated_client.client_bene_fullname != client_bene_fullname:
 			ClientBeneficiaryUpdateHistory.objects.create(
 				unique_id_number_id=pk,
@@ -189,7 +189,10 @@ def view_client_bene_info(request, pk):
 		else:
 			return JsonResponse({'error': True, 'msg': 'You have provided information in Family Composistion. Please fill in or leave the form blank if not applicable. Thank you!'})
 		return JsonResponse({'data': 'success','msg': 'A client / beneficiary with ID Number: {} has been updated successfully.'.format(pk)})
+	
+	picture = uploadfile.objects.filter(client_bene_id=updated_client.id).first()
 	context = {
+		'pict':picture,
 		'information': ClientBeneficiary.objects.filter(unique_id_number=pk).first(),
 		'family_composistion': ClientBeneficiaryFamilyComposition.objects.filter(clientbene__unique_id_number=pk),
 		'suffix': Suffix.objects.filter(status=1).order_by('name'),
