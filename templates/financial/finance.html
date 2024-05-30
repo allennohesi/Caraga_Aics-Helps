@@ -291,6 +291,7 @@
         check($('#provider').val());
     });
     $(document).ready(function(){
+        var printUrl = "{% url 'printStateofAccount' 0 %}".replace("/0/", "/");
         $('#voucher-title').DataTable({
             'serverSide': true,
             'processing': true,
@@ -309,7 +310,8 @@
             {'data': 'id',
                 'render': function(data, type, row, meta) {
                         return "<a href='#' data-role='view_dv' data-id="+ data + ">Details</a> | " +
-                        "<a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a>"
+                        "<a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a> | " +
+                        "<a href='" + printUrl + data + "' data-role='print' data-id=" + data + "' target='_blank'>Print</a>";
                     }
             },
             {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
@@ -368,7 +370,7 @@
                                     allowOutsideClick: false,
                                 }).then((result) => {
                                     if (result.isConfirmed){
-                                        location.reload()
+                                        $('#voucher-title').DataTable().ajax.reload();
                                     }
                                 });
                             } else {
