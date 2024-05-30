@@ -30,11 +30,11 @@
         <table class="title table table-bordered" style="margin-top: 0px;margin-bottom: 0px;border-color: white;">
           <thead style="line-height: 20px;">
               <td colspan="2" style="text-align: center;font-family: Arial, sans-serif">
-                <label style="font-size: 18px;">SERVICE PROVIDER <br><b style="color:blue;">{{service_provider.transaction.service_provider.name}}</b></label><br>
-                <label style="font-size: 19px;">Summary report list<u></u></label><br>
-                <label style="font-size: 19px;">This date is as of: <u>{{date_filtered}}</u> - <u>{{date_end_filtered}}</u></label>
+                <label style="font-size: 18px;">STATEMENT OF ACCOUNT <br>
+                <label style="font-size: 19px;"><u>{{soa.voucher_title}}</u></label><br>
+                <label style="font-size: 19px;">This date is as of: <u>{{soa.date}}</u></label>
                 <br>
-                <small style="color:red;font-size:11px;">Caraga-AICSHelpSystem generated report</small>
+                <small style="color:red;font-size:11px;">Caraga-AICSHelp System generated report</small>
               </td>
           </thead>  
         </table>
@@ -71,23 +71,23 @@
           </tr>
           {% for row in datas %}
           <tr style="font-size:12px;">
-            <td>{{row.tracking_number}}</td>
-            <td>{{row.service_provider.name}}</td>
-            <td>{{row.swo.get_client_fullname}}</td>
-            <td>{{row.client.get_client_fullname}}</td>
-            <td>{{row.bene.get_client_fullname}}</td>
-            <td>{{row.lib_assistance_category.name}}</td>
-            <td>{{row.dv_number}}</td>
-            <td>{{row.dv_date}}</td>
-            <td>{{row.total_amount|intcomma}}</td>
+            <td>{{row.transactionStatus.tracking_number}}</td>
+            <td>{{row.transactionStatus.service_provider.name}}</td>
+            <td>{{row.transactionStatus.swo.get_client_fullname}}</td>
+            <td>{{row.transactionStatus.client.get_client_fullname}}</td>
+            <td>{{row.transactionStatus.bene.get_client_fullname}}</td>
+            <td>{{row.transactionStatus.lib_assistance_category.name}}</td>
+            <td>{{row.transactionStatus.dv_number}}</td>
+            <td>{{row.transactionStatus.dv_date}}</td>
+            <td>{{row.transactionStatus.total_amount|intcomma}}</td>
           </tr>
           {% endfor %}
           <td colspan="8" class="table-active text-right">TOTAL DATA</td>
-          <td colspan="1" class="table-active">{{total|floatformat:2|intcomma}}</td>
+          <td colspan="1" class="table-active">{{total_values|floatformat:2|intcomma}}</td>
         </table>
         {% if outside_fo%}
         <div class="alert alert-warning" role="alert">
-          Data below are billed here but outside the FO Transactions
+          Data below are statement of account outside the Field Office
         </div>
         <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: black;text-align: center;border: 2px solid;">
           <tr style="font-weight:bold;">
@@ -122,51 +122,9 @@
           </tr>
           {% endfor %}
           <td colspan="5" class="table-active text-right">TOTAL DATA</td>
-          <td colspan="1" class="table-active">{{outside_fo_total_values|floatformat:2|intcomma}}</td>
+          <td colspan="1" class="table-active">{{outside_total_values|floatformat:2|intcomma}}</td>
         </table>
         {% endif %}
-        <div class="alert alert-warning" role="alert">
-          Data below are the unbilled transactions
-        </div>
-        <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:0px;;border-top-color: black;border-color: black;text-align: center;border: 2px solid;">
-          <tr style="font-weight:bold;">
-            <td>
-              Tracking Number<br>
-              <label style="color: gray;">(AICS-Transaction)</label>
-            </td>
-            <td>
-              Service Provider
-            </td>
-            <td>
-              Social worker officer
-            </td>
-            <td>
-              Client Name
-            </td>
-            <td>
-              Bene Name
-            </td>
-            <td>
-              Type of Assistance
-            </td>
-            <td>
-              Total
-            </td>
-          </tr>
-          {% for row in unbilled %}
-          <tr style="font-size:12px;">
-            <td>{{row.tracking_number}}</td>
-            <td>{{row.service_provider.name}}</td>
-            <td>{{row.swo.get_client_fullname}}</td>
-            <td>{{row.client.get_client_fullname}}</td>
-            <td>{{row.bene.get_client_fullname}}</td>
-            <td>{{row.lib_assistance_category.name}}</td>
-            <td>{{row.total_amount|intcomma}}</td>
-          </tr>
-          {% endfor %}
-          <td colspan="6" class="table-active text-right">TOTAL DATA</td>
-          <td colspan="1" class="table-active">{{unbilled_final_values|floatformat:2|intcomma}}</td>
-        </table>
         </div>
       </div>
     </div>
