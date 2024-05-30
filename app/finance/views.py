@@ -57,6 +57,27 @@ def generate_serial_string(oldstring, prefix=None):
 		return "{}-{}-{}-{}-{}".format(str(prefix), str(current_year).zfill(4), str(current_month).zfill(2), str(current_day).zfill(2),
 									str("1").zfill(4)).strip()
 
+def printStateofAccount(request,pk):
+	soa = finance_voucher.objects.filter(id=pk).first()
+	data = finance_voucherData.objects.filter(voucher_id=soa.id)
+
+	total_values_data = data.values_list('transactionStatus__total_amount', flat=True)
+	total_values = sum(float(value.replace(',', '')) for value in total_values_data)
+	
+	outside_fo = finance_outsideFo.objects.filter(voucher=soa.id)
+	outisde_total_values_data = outside_fo.values_list('amount', flat=True)
+	outside_total_values = sum(float(value.replace(',', '')) for value in outisde_total_values_data)
+
+	context = {
+		'datas': data,
+		'soa': soa,
+		'outside_fo': outside_fo,
+
+		'total_values':total_values,
+		'outside_total_values':outside_total_values,
+	}
+	return render(request,'financial/printsoa.html',context)
+
 
 @login_required
 @groups_only('Super Administrator', 'Biller','Finance')
