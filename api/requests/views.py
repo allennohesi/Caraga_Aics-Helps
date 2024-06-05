@@ -144,7 +144,15 @@ class AdvanceFinanceFilterViews(generics.ListAPIView):
 class FinanceVoucherViews(generics.ListAPIView):
 	serializer_class = FinanceVoucherSerializer
 	permission_class = [IsAuthenticated]
-	queryset = finance_voucher.objects.all().order_by('-id')
+	def get_queryset(self):
+		queryset = finance_voucher.objects.none()
+		dropdown = self.request.query_params.get("dropdown")
+		print(dropdown)
+		if dropdown:
+			queryset = finance_voucher.objects.filter(with_without_dv=dropdown).order_by('-id')
+		else:
+			queryset = finance_voucher.objects.all().order_by('-id')
+		return queryset
 
 
 class VoucherDataViews(generics.ListAPIView):
