@@ -164,41 +164,27 @@ $(document).on('click', 'button[data-role=remove]', function(){
     calculateTotal();
 });
 function calculateTotal() {
-    var total = 0; // Initialize total variable
-
+    var total = 0;
     $('#provided-table tbody tr').each(function() {
         var regPrice = parseFloat($(this).find('input[name="regprice[]"]').val());
         var qty = parseFloat($(this).find('input[name="qty[]"]').val());
         var dsc = parseFloat($(this).find('input[name="dsc[]"]').val());
         var discountedPrice = parseFloat($(this).find('input[name="discounted_price[]"]').val());
         var qty1 = parseFloat($(this).find('input[name="qty1[]"]').val());
-    
+
         if (!isNaN(regPrice) && !isNaN(qty) && !isNaN(dsc) && !isNaN(discountedPrice) && !isNaN(qty1)) {
-            // Calculate the main price
             var main = regPrice * qty;
-    
-            // Calculate the discount amount
             var dec = dsc / 100;
-            var discountAmount = regPrice * dec;
-    
-            // Calculate the discounted total
-            var discountedTotal = main - (main * dec);
-    
-            // Calculate the total for qty1 using discounted price
-            var total2 = qty1 * discountedPrice;
-    
-            // Final total for this row
-            var finalTotal = discountedTotal + total2;
-    
-            // Add to the overall total
+            var mult = main * dec;
+            var discount = main - mult;
+            var regPriceTotal = regPrice - (regPrice * dec);
+            var total2 = qty1 * regPriceTotal;
+            var finalTotal = main + total2;
             total += finalTotal;
-    
-            // Update the total value for this row
+
             $(this).find('input[name="tot[]"]').val(finalTotal.toFixed(2));
         }
     });
-    
-    // Update the total label
     $('#pre_total_label').text(total.toFixed(2));
 }
 
