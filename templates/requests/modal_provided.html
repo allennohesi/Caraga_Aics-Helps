@@ -171,18 +171,18 @@ function calculateTotal() {
         var dsc = parseFloat($(this).find('input[name="dsc[]"]').val());
         var discountedPrice = parseFloat($(this).find('input[name="discounted_price[]"]').val());
         var qty1 = parseFloat($(this).find('input[name="qty1[]"]').val());
-
+    
         if (!isNaN(regPrice) && !isNaN(qty) && !isNaN(dsc) && !isNaN(discountedPrice) && !isNaN(qty1)) {
-            var main = regPrice * qty;
-            var dec = dsc / 100;
-            var mult = main * dec;
-            var discount = main - mult;
-            var regPriceTotal = regPrice - (regPrice * dec);
-            var total2 = qty1 * regPriceTotal;
-            var finalTotal = main + total2;
-            total += finalTotal;
-
-            $(this).find('input[name="tot[]"]').val(finalTotal.toFixed(2));
+            var main = (regPrice * qty).toFixed(2);
+            var dec = (dsc / 100).toFixed(2);
+            var mult = (main * dec).toFixed(2);
+            var discount = (main - mult).toFixed(2);
+            var regPriceTotal = (regPrice - (regPrice * dec)).toFixed(2);
+            var total2 = (qty1 * regPriceTotal).toFixed(2);
+            var finalTotal = (parseFloat(main) + parseFloat(total2)).toFixed(2);
+            total += parseFloat(finalTotal);
+    
+            $(this).find('input[name="tot[]"]').val(finalTotal);
         }
     });
     $('#pre_total_label').text(total.toFixed(2));
