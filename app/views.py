@@ -115,7 +115,7 @@ def dashboard(request):
 		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(transaction_count=Count('transaction__swo'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
-	)[:5]
+	)[:6]
 
 	transaction_status_summary = (
 		TransactionStatus1.objects
@@ -145,7 +145,8 @@ def dashboard(request):
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)
 	page = request.GET.get('page', 1)
-	rows = request.GET.get('rows', 5)
+	rows = request.GET.get('rows', 6)
+
 	total_case_study = case_study_per_swo.aggregate(total_count=Sum('transaction_count'))['total_count']
 
 	context = {
@@ -167,7 +168,7 @@ def dashboard(request):
 		'hold':hold,
 		'cancelled':cancelled,
 
-		'transaction_per_swo':transactions_per_swo, #COUNT THE TOP 5 SERVING CLIENTS
+		'transaction_per_swo':transactions_per_swo,#COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
 		'total_transactions': total_count,
 
