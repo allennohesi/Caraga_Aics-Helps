@@ -273,8 +273,8 @@
                   <input type="checkbox" name="sector"> Death Summary <br>
                   <input type="checkbox" name="sector"> Referral Letter <br>
                   <input type="checkbox" name="sector"> Social Case Study Report <br>
-                  <input type="checkbox" name="sector"> Others:<br><br>
-                  <input type="text" placeholder="Input here if others.. " size="35">
+                  <input type="checkbox" name="sector" {% if purpose_assessment.other_requirements%} checked {% endif %}> Others:<br><br>
+                  <p><u>{{purpose_assessment.other_requirements}}</u></p>
               </td>
             </tr>
           </table>
