@@ -386,6 +386,7 @@ class TransactionStatus1(models.Model):
 class AssessmentProblemPresented(models.Model):
     problem_presented = models.TextField(blank=True, null=True)
     sw_assessment = models.TextField(blank=True, null=True)
+    other_requirements = models.TextField(blank=True, null=True)
     transaction = models.ForeignKey('Transaction', models.DO_NOTHING)
 
     class Meta:
