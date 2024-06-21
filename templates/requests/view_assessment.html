@@ -681,12 +681,6 @@
                         </select>
                     </div>
                 </div>
-                {% comment %} <div class="row mb-3">
-                    <div class="form-group">
-                        <label>Purpose</label>
-                        <textarea class="form-control" name="sw_purpose" rows="6" cols="40"> {% if Problem_Assessment.problem_presented == None %}{% else %}{{ Problem_Assessment.problem_presented|upper }}{% endif %}</textarea>
-                    </div>
-                </div> {% endcomment %}
                 <div class="row mb-3">
                     <div class="form-group">
                         <label>Social Worker's Assessment</label>
@@ -705,7 +699,6 @@
                 </div>
                 <small>Recommended Services and Assistance</small>
                 <hr>
-                <br>
                 <div class="row mb-3">
                     <div class="col-md-7">
                         <div class="form-group">
@@ -764,6 +757,15 @@
                                 {% endfor %}
                             </select>
                         </div>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" {% if Problem_Assessment.other_requirements %} checked {% endif %}>
+                    <label class="form-check-label" for="flexCheckIndeterminate">
+                      Other requirements
+                    </label>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="exampleFormControlTextarea1" name="other_requirements" rows="2" {% if Problem_Assessment.other_requirements == None %} disabled="true" {% endif%}>{% if Problem_Assessment.other_requirements %}{{Problem_Assessment.other_requirements}}{% endif %}</textarea>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -958,6 +960,17 @@
     </div>
 </div>
 {% block script %}
+<script>
+    
+    document.getElementById('flexCheckIndeterminate').addEventListener('change', function() {
+        const textarea = document.getElementById('exampleFormControlTextarea1');
+        if (this.checked) {
+            textarea.removeAttribute('disabled');
+        } else {
+            textarea.setAttribute('disabled', 'true');
+        }
+    });
+</script>
 <script>
     var select2options = {
         width: "100%",
