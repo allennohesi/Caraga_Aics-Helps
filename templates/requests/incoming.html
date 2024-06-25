@@ -373,6 +373,17 @@
                 }
             });
         
+        var columnIndexClient = table.column('transaction.swo.last_name:name').index();
+        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
+        
+        var inputClient = $('<input type="text" class="form-control" placeholder="Search Social Worker" maxlength="26" />')
+            .appendTo($(table.column(columnIndexClient).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexClient).search() !== this.value) {
+                    table.column(columnIndexClient).search(this.value).draw();
+                }
+            });       
+            
         $(document).on('click', 'a[data-role=details]', function(){
             var id = $(this).data('id');
             $('#transaction_content').load('/requests/incoming/view/' + id);
