@@ -10,6 +10,8 @@ class TransactionSerializer(serializers.ModelSerializer):
     beneficiary = serializers.CharField(source='transaction.bene.client_bene_fullname', read_only=True, default=None)
     verified_time_start = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
     swo = serializers.CharField(source='transaction.swo.get_fullname', read_only=True, default=None)
+    swo_lastname = serializers.CharField(source='transaction.swo.last_name', read_only=True, default=None)
+    swo_firstname = serializers.CharField(source='transaction.swo.first_name', read_only=True, default=None)
     #swo_lastname = serializers.CharField(source='transaction.swo.last_name', read_only=True, default=None)
     priority = serializers.CharField(source='transaction.priority.priority_name', read_only=True)
     action = serializers.CharField(source='transaction.get_action_action', read_only=True)
@@ -25,7 +27,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionStatus1
-        fields = ['tracking_number','status', 'client', 'beneficiary', 'verified_time_start', 'swo', 'priority', 'action', 'transaction', 'total_amount', 'dv_number', 'service_provider','case_study_status','case_study',
+        fields = ['tracking_number','status', 'client', 'beneficiary', 'verified_time_start', 'swo','swo_lastname','swo_firstname','priority', 'action', 'transaction', 'total_amount', 'dv_number', 'service_provider','case_study_status','case_study',
                   'mode_of_release', 'assistance_type', 'get_picture']
         
 class Transaction_DescriptionSerializer(serializers.ModelSerializer):
