@@ -306,9 +306,55 @@
     </div>
     <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
-          <div class="card-body" id="">
-            <canvas id="myChart2" style="width:100%"></canvas>
+        <div class="card-header">
+          <h5>Requested transaction by verifiers</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
           </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Encoded</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in requested_by_verifier %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                    <div class="align-middle image-sm-size">
+                      {% with user_id=row.verifier__id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      <img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="30" height="30">
+                      {% else %}
+                      <img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
+                      <div class="d-inline-block">
+                        <div class="span badge rounded-pill pill-badge-primary">{{ row.verifier__first_name }} {{ row.verifier__last_name }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Verifier</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
     <div class="col-sm-6">
