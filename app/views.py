@@ -132,7 +132,7 @@ def dashboard(request):
 		.values('registered_by__id', 'registered_by__first_name', 'registered_by__last_name')
 		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
 		.order_by('-transaction_count')
-	)[:5]
+	)
 
 	requested_by_verifier = (
 		TransactionStatus1.objects
