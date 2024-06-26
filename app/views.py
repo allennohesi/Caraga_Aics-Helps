@@ -134,6 +134,15 @@ def dashboard(request):
 		.order_by('-transaction_count')
 	)[:5]
 
+	requested_by_verifier = (
+		TransactionStatus1.objects
+		.filter(verifier__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"))
+		.values('verifier__id', 'verifier__first_name', 'verifier__last_name')
+		.annotate(transaction_count=Count('verifier'))  # Count updates made by each user
+		.order_by('-transaction_count')
+	)[:5]
+
+
 	case_study_per_swo = (
 		TransactionStatus1.objects
 		.filter(transaction__is_case_study=2, status__in=[3, 6])  # Filter transactions with status 3 or 6
@@ -173,6 +182,7 @@ def dashboard(request):
 		'total_transactions': total_count,
 
 		'transaction_per_verifier': transaction_per_verifier,
+		'requested_by_verifier':requested_by_verifier,
 		'data': Paginator(case_study_per_swo, rows).page(page),
 		'total_case_study': total_case_study,
 		'fund_source': FundSource.objects.all(),
