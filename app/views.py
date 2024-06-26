@@ -76,7 +76,7 @@ def dashboard(request):
 	# url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
 	# client = Client(url)
 	# result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
-	# 									MobileNo="09567114086", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
+	# 									MobileNo="09487418673", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
 
 	am = AuthUserGroups.objects.all().filter(group_id=3).count() #adminCount
 	swo = AuthUserGroups.objects.all().filter(group_id=2).count() #SwoCount
@@ -140,7 +140,7 @@ def dashboard(request):
 		.values('verifier__id', 'verifier__first_name', 'verifier__last_name')
 		.annotate(transaction_count=Count('verifier'))  # Count updates made by each user
 		.order_by('-transaction_count')
-	)[:5]
+	)
 
 
 	case_study_per_swo = (
