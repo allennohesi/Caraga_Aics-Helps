@@ -114,6 +114,7 @@
                                             <th>Case study</th>
                                             <th>Case study status</th>
                                             <th class="text-center">Assistance type</th>
+                                            <th>Service provider</th>
                                             <th>Mode of release</th>
                                             <th>Amount</th>
                                             <th class="text-center">DV - Title</th>
@@ -305,6 +306,7 @@
                     }
                 },
                 {'data': 'assistance_type', 'className': 'text-center', 'searchable': false, 'sortable': false },
+                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false, 'searchable': false},
                 {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false, 'searchable': false,
                     'render': function(data,type,row,meta){
                         if(row['mode_of_release'] == 0){
