@@ -95,7 +95,7 @@
                     </ul>
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
-                            <small>Client Pending Transaction</small>
+                            <small>Requested by clients</small>
                             <hr>
                             <div class="table-responsive text-nowrap table-scroll">
                                 <table class="table table-responsive table-sm table-bordered" id="incoming-table">
@@ -279,7 +279,7 @@
                 {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', 'searchable':false},
                 {'data': 'swo_lastname', 'name': 'transaction.swo.last_name', 'className': 'text-center', 'sortable': false},
-                {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false, 
+                {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false,  'sortable': false,
                     'render': function(data,type,row,meta){
                         if(row['case_study'] == '2'){
                             if(row['status'] == 6){
