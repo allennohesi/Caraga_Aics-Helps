@@ -480,6 +480,37 @@
         <script src="{% static 'js/script.js' %}"></script>
         <script src="{% static 'js/Chart.min.js' %}"></script>
         <script>
+            let inactivityTime = function () {
+                let time;
+                // Reset timer on activity
+                window.onload = resetTimer;
+                window.onmousemove = resetTimer;
+                window.onmousedown = resetTimer; // catches touchscreen presses
+                window.ontouchstart = resetTimer;
+                window.ontouchmove = resetTimer;
+                window.onclick = resetTimer; // catches touchpad clicks
+                window.onkeypress = resetTimer;
+        
+                function logout() {
+                    Swal.fire({
+                        title: 'Inactive!',
+                        text: 'You have been inactive for 60 seconds.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();  // Reload the page after alert is dismissed
+                    });
+                }
+        
+                function resetTimer() {
+                    clearTimeout(time);
+                    time = setTimeout(logout, 5400000);  // 5400000 milliseconds = 1.5 hours (5400 seconds)
+                }
+            };
+        
+            inactivityTime();
+        </script>
+        <script>
             window.onload = function() {
                 history.pushState(null, document.title, location.href);
                 window.addEventListener('popstate', function () {
