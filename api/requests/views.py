@@ -79,7 +79,7 @@ class TransactionIncoming(generics.ListAPIView):
 			elif dropdown == "5": #WITH DV
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "6": #ALL TRANSACTION
-				queryset = TransactionStatus1.objects.filter(transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.all().order_by('-id')
 			return queryset
 		else:
 			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__requested_in=region).order_by('-id')
