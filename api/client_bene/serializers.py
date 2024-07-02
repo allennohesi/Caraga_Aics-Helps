@@ -25,6 +25,7 @@ class ClientBeneficiarySerializer(serializers.ModelSerializer):
             'client_bene_fullname',
             'contact_number',
             'is_validated',
+            'get_picture'
         ]
 
 class ClientBeneficiaryUpdateHistorySerializer(serializers.ModelSerializer):

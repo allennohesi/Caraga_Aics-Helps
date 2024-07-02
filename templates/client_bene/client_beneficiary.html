@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
+{% load static %}
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
@@ -29,6 +30,7 @@
                                     <th>#</th>
                                     <th>Action</th>
                                     <th>ID Number</th>
+                                    <th>Picture</th>
                                     <th>Last Name</th>
                                     <th>First Name</th>
                                     <th>Middle Name</th>
@@ -109,6 +111,32 @@
                         return "<a href='javascript:void(0);' data-role='details' data-title='"+ data + "'>"+ data +"</a>"
                     },
                     'sortable': false
+                },
+                {'data': 'get_picture',
+                    'render': function(data, type, row, meta) {
+                        if (data) {
+                            return `<div class="image-container">
+                                <img loading="lazy" class="rounded-circle img-radius align-top m-r-15" 
+                                    data-toggle="popover" data-trigger="hover" 
+                                    data-html="true" loading="lazy" 
+                                    style="object-fit:cover; width: 40px; height: 40px;" 
+                                    data-placement="right" 
+                                    data-content="<img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'>" 
+                                    src='`+ data + `'>
+                            </div>`;
+                        }else{
+                            return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
+                                data-html="true"
+                                loading="lazy"
+                                style="object-fit:cover; width: 40px; height: 40px;"
+                                data-placement="right"
+                                data-content="<center><img loading='lazy' src='{% static 'images/dashboard/profile.jpg' %}' style='width: 250px; height: 250px; object-fit:cover;'></center>" src="{% static 'images/dashboard/profile.jpg' %}">
+                            </center>`;
+                        }
+                    },
+                    searchable:'false',
+                    sortable:'false',
+                    className: 'text-center'
                 },
                 {'data': 'last_name'  },
                 {'data': 'first_name' },
