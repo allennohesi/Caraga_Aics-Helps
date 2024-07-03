@@ -975,7 +975,6 @@ def get_barangay_name(request, pk):
     return JsonResponse(json, safe=False)
 
 @login_required
-@groups_only('Super Administrator')
 def occupation(request):
     if request.method == "POST":
         name = request.POST.get('name')
