@@ -147,7 +147,6 @@ class FinanceVoucherViews(generics.ListAPIView):
 	def get_queryset(self):
 		queryset = finance_voucher.objects.none()
 		dropdown = self.request.query_params.get("dropdown")
-		print(dropdown)
 		if dropdown:
 			queryset = finance_voucher.objects.filter(with_without_dv=dropdown).order_by('-id')
 		else:
