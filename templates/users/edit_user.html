@@ -132,7 +132,6 @@
         processBrgy.then( function(parent, child, items) {
             $('#edit_barangay').val('{{ information.barangay_id }}').trigger('change');
         });
-        console.log("TEST", {{ information.barangay_id }})
         function clearValidation(){
             $('.form-control').each(function() {
                 $(this).removeClass('is-invalid');
