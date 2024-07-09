@@ -403,6 +403,7 @@ def edit_service_provider(request, pk):
         acronym = request.POST.get('edit-acronym')
         address = request.POST.get('address')
         contact_number = request.POST.get('contactnumber')
+        category = request.POST.get('category')
         check = ServiceProvider.objects.filter(id=pk)
         if check: # If no changes only status
             ServiceProvider.objects.filter(id=pk).update(
@@ -412,6 +413,7 @@ def edit_service_provider(request, pk):
                 contact_number=contact_number,
                 updated_by_id=request.user.id,
                 date_updated=datetime.now(),
+                category=category if category else "",
                 status=True if request.POST.get('edit-status') else False
             )
             return JsonResponse({'error': False, 'msg': "Service Provider '{}' has been updated successfully.".format(name)})
