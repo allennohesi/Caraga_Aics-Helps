@@ -19,53 +19,37 @@
      
   <section>
     <br>
-    <table style="width: 600;border: 1px solid black; border-collapse: collapse; margin: 0 auto;font-size:12px;">
+    <table style="width: 600;border: 1px solid black; border-collapse: collapse; margin: 0 auto;font-size:10px;">
         <tbody>
             <tr>
                 <td style="width: 59px;">&nbsp;</td>
                 <td style="width: 60px;" colspan="2">&nbsp;</td>
                 <td style="width: 58px;" colspan="2">&nbsp;</td>
                 <td style="width: 170px;" colspan="3">
-                    <p><strong>PAGPAMATUOD</strong></p>
+                    <p><strong><center>PAGPAMATUOD</center></strong></p>
                 </td>
                 <td style="width: 53px;">&nbsp;</td>
                 <td style="width: 53px;">&nbsp;</td>
                 <td style="width: 109.734px;">&nbsp;</td>
             </tr>
-            <tr>
+            <tr style="font-size:11px;">
                 <td style="width: 59px;">&nbsp;</td>
                 <td style="width: 60px;" colspan="2">
-                    <p>Ako si</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ako si</p>
                 </td>
-                <td style="width: 181px;" colspan="4">
+                <td style="width: 150px;" colspan="4">
                     <p><u>{{data.client.get_client_fullname}}</u></p>
                 </td>
                 <td style="width: 262.734px;" colspan="4">
-                    <p>&nbsp;, usa ka kliyente sa AICS nga programa</p>
+                    <p>&nbsp;, usa ka kliyente sa AICS nga programa, </p>
                 </td>
             </tr>
-            <tr>
+            <tr style="font-size:11px;">
                 <td style="width: 562.734px;" colspan="11">
-                    <p>programa nga mangayo ug MEDICAL ASSISTANCE para sa akoang tambal o tambal</p>
+                    <p>programa nga mangayo ug MEDICAL ASSISTANCE para sa akoang tambal o tambal sa akoang <u>{{data.relation.name|upper}}</u> nga si, <u>{{data.bene.get_client_fullname}}</u></p>
                 </td>
             </tr>
-            <tr>
-                <td style="width: 59px;">
-                    <p>sa akoang</p>
-                </td>
-                <td style="width: 118px;" colspan="4">
-                    <p><u>{{data.relation.name|upper}}</u></p>
-                </td>
-                <td style="width: 76px;">
-                    <p>nga si,</p>
-                </td>
-                <td style="width: 200px;" colspan="4">
-                    <p><u>{{data.bene.get_client_fullname}}</u></p>
-                </td>
-                <td style="width: 109.734px;">
-                    <p>.</p>
-                </td>
-            </tr>
+
             <tr>
                 <td style="width: 253px;" colspan="6">
                     <p>Kabahin niini, ako mutugot nga:</p>
@@ -108,8 +92,6 @@
                     <p>dinhi sa syudad sa Butuan:</p>
                 </td>
             </tr>
-            {% for row in service_provider%}
-            {% if row.id == data.service_provider.id %}
             <tr>
                 <td style="width: 253px;" colspan="6">
                     <p>( / ) <span style="background-color:#FFFAA0;">{{data.service_provider.name}}</span> <br> {% if row.address %}{{row.address}}{% endif %}</p>
@@ -118,6 +100,8 @@
                     <p><hr></p>
                 </td>
             </tr>
+            {% for row in service_provider%}
+            {% if row.id == data.service_provider.id %}
             {% else %}
             <tr>
                 <td style="width: 253px;" colspan="6">
