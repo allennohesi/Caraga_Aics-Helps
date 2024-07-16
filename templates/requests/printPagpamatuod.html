@@ -11,15 +11,35 @@
 
 </head>
 <style>
+    @media print {
+        html, body {
+          height:100%; 
+          margin: 0 !important; 
+          padding: 0 !important;
+          overflow: hidden;
+        }
+      
+      }
+      @page{
+        size: A4 portrait;
+  
+      }
+      .print-clean {
+        border: 0;
+        outline: 0;
+        background: transparent;
+        border-bottom: 1px solid black;
+      }
+      input {border:0;outline:0;}
+      input:focus {outline:none!important
     td, th {
         border: none; /* No border for individual cells */
     }
 </style>
-<body class="portrait" style="background-color:white;">
-     
-  <section>
+<body class="legal portrait">
+  <section class="sheet page">
     <br>
-    <table style="width: 600;border: 1px solid black; border-collapse: collapse; margin: 0 auto;font-size:10px;">
+    <table style="width: 600;border: 1px solid black; border-collapse: collapse; margin: 0 auto;font-size:9px;">
         <tbody>
             <tr>
                 <td style="width: 59px;">&nbsp;</td>
@@ -35,18 +55,18 @@
             <tr style="font-size:11px;">
                 <td style="width: 59px;">&nbsp;</td>
                 <td style="width: 60px;" colspan="2">
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ako si</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ako si</p>
                 </td>
                 <td style="width: 150px;" colspan="4">
-                    <p><u>{{data.client.get_client_fullname}}</u></p>
+                    <p><u><strong>{{data.client.get_client_fullname}}</strong></u></p>
                 </td>
                 <td style="width: 262.734px;" colspan="4">
-                    <p>&nbsp;, usa ka kliyente sa AICS nga programa, </p>
+                    <p>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usa ka kliyente sa AICS nga programa, </p>
                 </td>
             </tr>
             <tr style="font-size:11px;">
                 <td style="width: 562.734px;" colspan="11">
-                    <p>programa nga mangayo ug MEDICAL ASSISTANCE para sa akoang tambal o tambal sa akoang <u>{{data.relation.name|upper}}</u> nga si, <u>{{data.bene.get_client_fullname}}</u></p>
+                    <p>programa nga mangayo ug <strong>MEDICAL ASSISTANCE</strong> para sa akoang tambal o tambal sa akoang <u><strong>{{data.relation.name|upper}}</strong></u> nga si, <u><strong>{{data.bene.get_client_fullname}}</strong></u></p>
                 </td>
             </tr>
 
@@ -128,23 +148,13 @@
             </tr>
             <tr>
                 <td style="width: 2230px;" colspan="6">
-                    <p style="background-color:#FFFAA0;width:210px;"><u>{{data.client.get_client_fullname}}</u></p>
+                    <p><u style="background-color:#FFFAA0;width:210px;"><strong>{{data.client.get_client_fullname}}</strong></u><br>Pangalan ug Perma sa Kliyente</p>
                 </td>
                 <td style="width: 47px;">&nbsp;</td>
                 <td style="width: 262.734px;" colspan="4">
-                    <p><u>{{data.swo.get_fullname|upper}},RSW</u></p>
+                    <p><u><strong>{{data.swo.get_fullname|upper}},RSW</strong></u><br>Pangalan ug Perma sa Saksi (SWO)</p>
                 </td>
             </tr>
-            <tr>
-                <td style="width: 253px;" colspan="6">
-                    <p>Pangalan ug Perma sa Kliyente</p>
-                </td>
-                <td style="width: 47px;">&nbsp;</td>
-                <td style="width: 262.734px;" colspan="4">
-                    <p>Pangalan ug Perma sa Saksi (SWO)</p>
-                </td>
-            </tr>
-
         </tbody>
     </table>
     <p>&nbsp;</p>
