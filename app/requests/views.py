@@ -1142,8 +1142,8 @@ def printGL(request, pk):
 @groups_only('Social Worker', 'Super Administrator')
 def printGLHead(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
-	EndDate = transaction.date_entried.date() + timedelta(days=3)
 	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
+	EndDate = transactionStartEnd.verified_time_start.date() + timedelta(days=3)
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).all()
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
