@@ -1143,6 +1143,7 @@ def printGL(request, pk):
 def printGLHead(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
 	EndDate = transaction.date_entried.date() + timedelta(days=3)
+	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).all()
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
@@ -1154,6 +1155,7 @@ def printGLHead(request, pk):
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
 		'display_provider': display_provider,
+		'transactionStartEnd':transactionStartEnd,
 		'calculate': calculate,
 		'validity':EndDate,
 		'ct':rows,
