@@ -5,7 +5,7 @@ from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
 from app.views import login, dashboard, mail, layout_404, status_activation, landingpage, media_access, generate_testXLS, print_ProvidedBYSWO, generateByUser, \
-                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData
+                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD
 
 urlpatterns = [
     path('', landingpage, name='landingpage'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('print_ProvidedBYSWO', print_ProvidedBYSWO, name='print_ProvidedBYSWO'),
 
     path('personalData/', personalData,name='personalData'),
+    path('generatePWD/', generatePWD, name='generatePWD'),
     path('generateTransactions/', generateTransactions, name='generateTransactions'),
     path('generateAICSData/',generateAICSData, name='generateAICSData'),
     path('generate_case_study',generate_case_study,name='generate_case_study'),
