@@ -11,6 +11,18 @@
             <input type="text" class="form-control" id="edit-acronym" name="edit-acronym" value="{{ service_provider.acronym }}" autocomplete="off">
             <div class="invalid-feedback"></div>
         </div>
+        <div class="form-group mb-3">
+            <label>Category</label>
+            <select class="form-select form-select-lg mb-3 select-pharmacy" name="category" aria-label=".form-select-lg example">
+                {% if service_provider.pharmacy == "" %}
+                <option selected></option>
+                <option value="PHARMACY">PHARMACY</option>
+                {% else %}
+                <option></option>
+                <option value="PHARMACY" selected>PHARMACY</option>
+                {% endif %}
+            </select>
+        </div>
         <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Address</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" name="address" rows="3">{% if service_provider.address %}{{ service_provider.address }}{% endif %}</textarea>
@@ -37,6 +49,12 @@
 </form>
 {% block script %}
 <script>
+    $('.select-pharmacy').select2({
+        width: '100%',
+        placeholder: 'Choose',
+        containerCssClass: 'select',
+        allowClear: true
+    });
     function validationForm(){
         var invalid = false;
         $('.form-control').each(function() {
