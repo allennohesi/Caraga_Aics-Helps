@@ -44,8 +44,13 @@ def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
 					verified_time_start__date=today,
 					status__in=[2, 7],
 					swo_time_start=None
-				).exclude(transaction__priority__priority_name="N/A").order_by('id')
+				).order_by('id')
 
+				# transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
+				# 	verified_time_start__date=today,
+				# 	status__in=[2, 7],
+				# 	swo_time_start=None
+				# ).exclude(transaction__priority__priority_name="N/A").order_by('id')
 				# Prepare data including the custom swo_table property
 				data = []
 				for transaction_status in transactions_status:
