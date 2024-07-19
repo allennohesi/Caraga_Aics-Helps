@@ -33,52 +33,52 @@ month = today.strftime("%m")
 year = today.strftime("%Y")
 
 
-def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
-	def event_stream():
-		while True:
-			try:
-				today = timezone.now().date()
+# def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
+# 	def event_stream():
+# 		while True:
+# 			try:
+# 				today = timezone.now().date()
 
-				# Fetch TransactionStatus1 with related Transaction and Client models
-				transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
-					verified_time_start__date=today,
-					status__in=[2, 7],
-					swo_time_start=None
-				).order_by('id')
+# 				# Fetch TransactionStatus1 with related Transaction and Client models
+# 				transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
+# 					verified_time_start__date=today,
+# 					status__in=[2, 7],
+# 					swo_time_start=None
+# 				).order_by('id')
 
-				# transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
-				# 	verified_time_start__date=today,
-				# 	status__in=[2, 7],
-				# 	swo_time_start=None
-				# ).exclude(transaction__priority__priority_name="N/A").order_by('id')
-				# Prepare data including the custom swo_table property
-				data = []
-				for transaction_status in transactions_status:
-					transaction = transaction_status.transaction
-					que_number = transaction_status.queu_number
-					# Access swo_table property from Transaction
-					swo_table = transaction.swo_table if transaction.swo_table else 'No Data'  # Handle None case
-					data.append({
-						'first_name': transaction.client.first_name,
-						'middle_name': transaction.client.middle_name,
-						'last_name': transaction.client.last_name,
-						'queu_number': que_number,
-						'table_no': swo_table
-					})
+# 				# transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
+# 				# 	verified_time_start__date=today,
+# 				# 	status__in=[2, 7],
+# 				# 	swo_time_start=None
+# 				# ).exclude(transaction__priority__priority_name="N/A").order_by('id')
+# 				# Prepare data including the custom swo_table property
+# 				data = []
+# 				for transaction_status in transactions_status:
+# 					transaction = transaction_status.transaction
+# 					que_number = transaction_status.queu_number
+# 					# Access swo_table property from Transaction
+# 					swo_table = transaction.swo_table if transaction.swo_table else 'No Data'  # Handle None case
+# 					data.append({
+# 						'first_name': transaction.client.first_name,
+# 						'middle_name': transaction.client.middle_name,
+# 						'last_name': transaction.client.last_name,
+# 						'queu_number': que_number,
+# 						'table_no': swo_table
+# 					})
 
-				# Yield data in SSE format
-				yield f"data: {json.dumps(data)}\n\n"
-				time.sleep(10)  # Adjust frequency as needed
+# 				# Yield data in SSE format
+# 				yield f"data: {json.dumps(data)}\n\n"
+# 				time.sleep(10)  # Adjust frequency as needed
 
-			except Exception as e:
-				# Log exception and yield an empty message to keep the connection alive
-				print(f"Error in event stream: {e}")
-				yield "data: {}\n\n"
-				time.sleep(10)  # Adjust frequency to avoid rapid errors
+# 			except Exception as e:
+# 				# Log exception and yield an empty message to keep the connection alive
+# 				print(f"Error in event stream: {e}")
+# 				yield "data: {}\n\n"
+# 				time.sleep(10)  # Adjust frequency to avoid rapid errors
 
-	response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-	response['Cache-Control'] = 'no-cache'
-	return response
+# 	response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+# 	response['Cache-Control'] = 'no-cache'
+# 	return response
 
 def queuing(request):
 	transactions = TransactionStatus1.objects.filter(verified_time_start__date=today)
