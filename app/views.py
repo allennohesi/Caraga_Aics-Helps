@@ -15,6 +15,7 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from openpyxl import Workbook
 from datetime import datetime
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl.styles import Font, PatternFill
@@ -23,14 +24,68 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
 from django.http import StreamingHttpResponse
+import time
 # from suds.client import Client
-
+import json
 currentDateAndTime = datetime.now()
 today = date.today()
 month = today.strftime("%m")
 year = today.strftime("%Y")
 
 
+# def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
+# 	def event_stream():
+# 		while True:
+# 			try:
+# 				today = timezone.now().date()
+
+# 				# Fetch TransactionStatus1 with related Transaction and Client models
+# 				transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
+# 					verified_time_start__date=today,
+# 					status__in=[2, 7],
+# 					swo_time_start=None
+# 				).order_by('id')
+
+# 				# transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
+# 				# 	verified_time_start__date=today,
+# 				# 	status__in=[2, 7],
+# 				# 	swo_time_start=None
+# 				# ).exclude(transaction__priority__priority_name="N/A").order_by('id')
+# 				# Prepare data including the custom swo_table property
+# 				data = []
+# 				for transaction_status in transactions_status:
+# 					transaction = transaction_status.transaction
+# 					que_number = transaction_status.queu_number
+# 					# Access swo_table property from Transaction
+# 					swo_table = transaction.swo_table if transaction.swo_table else 'No Data'  # Handle None case
+# 					data.append({
+# 						'first_name': transaction.client.first_name,
+# 						'middle_name': transaction.client.middle_name,
+# 						'last_name': transaction.client.last_name,
+# 						'queu_number': que_number,
+# 						'table_no': swo_table
+# 					})
+
+# 				# Yield data in SSE format
+# 				yield f"data: {json.dumps(data)}\n\n"
+# 				time.sleep(10)  # Adjust frequency as needed
+
+# 			except Exception as e:
+# 				# Log exception and yield an empty message to keep the connection alive
+# 				print(f"Error in event stream: {e}")
+# 				yield "data: {}\n\n"
+# 				time.sleep(10)  # Adjust frequency to avoid rapid errors
+
+# 	response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+# 	response['Cache-Control'] = 'no-cache'
+# 	return response
+
+def queuing(request):
+	transactions = TransactionStatus1.objects.filter(verified_time_start__date=today)
+	context = {
+		'transaction':transactions
+	}
+	return render(request, 'queuing.html', context)
 
 def send_notification(message, contact_number):
 	url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
@@ -470,6 +525,100 @@ def personalData(request): #FOR GENERAL
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
+		return response
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
+def generatePWD(request): #FOR GENERAL
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = TransactionStatus1.objects.filter(transaction__client_sub_category__acronym="Disability"
+				).select_related(
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
+				)
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
+				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
+				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
+				   
+				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
+
+				   'Relationship', 'Type of Assistance', 'Amount', 
+				   'Mode of Assistance','Source of referral','Source of Fund',
+				   'Date Interviewed', 'Interviewer/Swo','Service Provider',
+				   ]) + '\n'
+			for item in data:
+				total_amount_str = str(item.transaction.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
+				swo_fullname_str = str(item.transaction.swo.first_name) + " " + str(item.transaction.swo.last_name)
+
+				status_str = (
+					str("Completed") if item.status == 6 else
+					str("Cancelled") if item.status == 5 else
+					str("Ongoing") if item.status == 2 else
+					str("Completed") if item.status == 3 else
+					"N/a"
+				)
+
+				case_study_str = str(item.transaction.is_case_study)
+				if case_study_str == "2":
+					category_of_study_str = "CASE STUDY"
+				else:
+					category_of_study_str = "NOT CASE STUDY"
+
+				case_study_status = str(item.case_study_status)
+				if case_study_status == "1":
+					case_study_result_str = "SUBMITTED"
+				else:
+					case_study_result_str = ""
+
+				yield ','.join([
+					str(item.transaction.tracking_number),
+					str(item.transaction.client.unique_id_number),
+					str(item.swo_time_end),
+					str(item.transaction.client.last_name),
+					str(item.transaction.client.first_name),
+					str(item.transaction.client.middle_name),
+					str(item.transaction.client.suffix.name if item.transaction.client.suffix else ""),
+					str(item.transaction.client.sex.name),
+					str(item.transaction.client.civil_status.name),
+					str(item.transaction.client.birthdate),
+					str(item.transaction.client.age),
+					str(item.transaction.client.is_4ps if item.transaction.client.number_4ps_id_number else "N/a"),
+					str(item.transaction.client.number_4ps_id_number if item.transaction.client.number_4ps_id_number else "N/a"),
+					str(item.transaction.client_category.name),
+					str(item.transaction.client_sub_category.name),
+					str(item.transaction.bene.unique_id_number),
+					str(item.transaction.bene.last_name),
+					str(item.transaction.bene.first_name),
+					str(item.transaction.bene.middle_name),
+					str(item.transaction.bene.suffix.name if item.transaction.bene.suffix else ""),
+					str(item.transaction.bene.sex.name),
+					str(item.transaction.bene.civil_status.name),
+					str(item.transaction.bene.birthdate),
+					str(item.transaction.bene.age),
+					str(item.transaction.bene.is_4ps if item.transaction.bene.number_4ps_id_number else "N/a"),
+					str(item.transaction.bene.number_4ps_id_number if item.transaction.bene.number_4ps_id_number else "N/a"),
+					str(item.transaction.bene_category.name),
+					str(item.transaction.bene_sub_category.name),
+					str(item.transaction.relation.name),
+					str(item.transaction.lib_assistance_category.name),
+					total_amount_str,
+					"GL" if item.transaction.is_gl == 1 else "Cash",
+					"Referral" if item.transaction.is_referral else "Walk-in",
+					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
+					str(item.transaction.swo_date_time_end),
+					swo_fullname_str,
+					service_provider,
+				]) + '\n'
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="PWD_REPORT.csv"'
 		return response
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed

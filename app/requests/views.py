@@ -1142,7 +1142,8 @@ def printGL(request, pk):
 @groups_only('Social Worker', 'Super Administrator')
 def printGLHead(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
-	EndDate = transaction.date_entried.date() + timedelta(days=3)
+	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
+	EndDate = transactionStartEnd.verified_time_start.date() + timedelta(days=3)
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).all()
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
@@ -1154,6 +1155,7 @@ def printGLHead(request, pk):
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
 		'display_provider': display_provider,
+		'transactionStartEnd':transactionStartEnd,
 		'calculate': calculate,
 		'validity':EndDate,
 		'ct':rows,
@@ -1224,7 +1226,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 	
 	context = {
 		'data': transaction,
-		'service_provider': ServiceProvider.objects.filter(category="PHARMACY",status=1),
+		'service_provider': ServiceProvider.objects.filter(category="PHARMACY",status=1)[:17],
 		'data': transaction,
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
