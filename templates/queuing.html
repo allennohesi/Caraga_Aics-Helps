@@ -90,7 +90,7 @@
     }
 
     if (typeof(EventSource) !== "undefined") {
-        var source = new EventSource("/sse/");
+        var source = new EventSource("");
         source.onmessage = function(event) {
             var data = JSON.parse(event.data);
             var tbody = document.getElementById("result").getElementsByTagName("tbody")[0];
