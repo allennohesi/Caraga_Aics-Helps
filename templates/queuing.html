@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% load static %}
+{% load tags %}
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Assistance to Individuals in Crisis Situation Harmonized Electronic Processing System." />
+    <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+    <title>AICS HELPS {% if title %}| {{ title }}{% endif %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/icofont.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/themify.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/flag-icon.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/feather-icon.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/scrollbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/datatables.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/sweetalert2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <link id="color" rel="stylesheet" href="{% static 'css/color-1.css' %}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/adjustments.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/view_assessment.css' %}" />
+</head>
+<style>
+    body {
+        font-family: Helvetica , sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+    }
+    tbody {
+        font-weight: bold;
+    }
+</style>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <thead style="line-height:15px;">
+                <th>
+                  <img src="{% static 'lp_assets/images/final.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="330px" height="70px">
+                </th>       
+              </thead>
+            <center>
+                <br>
+                <br>
+                <br>
+                <br>
+                <h2><b>DSWD CARAGA QUEUING SYSTEM</b></h2>
+            </center>
+        </div>
+        <div class="card-body">
+            <table id="result" class="table table-responsive table-sm" style="font-size:25px;">
+                <thead>
+                    <tr>
+                        <th>QUEUING NUMBER</th>
+                        <th>FIRST NAME</th>
+                        <th>MIDDLE NAME</th>
+                        <th>LAST NAME</th>
+                        <th>TABLE NO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<script>
+    // Counters and state variables
+    var speechCount = 0;
+    var maxSpeechCount = 4; // Maximum number of times to speak before holding
+    var holdDuration = 25000; // 20 seconds hold duration
+    var speakingAllowed = true; // Flag to control speaking behavior
+
+    // Function to handle the delay and reset speech count
+    function manageSpeechCycle() {
+        if (speechCount >= maxSpeechCount) {
+            speakingAllowed = false;
+            setTimeout(function() {
+                speechCount = 0;
+                speakingAllowed = true; // Allow speaking again after hold
+            }, holdDuration);
+        }
+    }
+
+    if (typeof(EventSource) !== "undefined") {
+        var source = new EventSource("/sse/");
+        source.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var tbody = document.getElementById("result").getElementsByTagName("tbody")[0];
+
+            console.log("Received data:", data); // Log received data for debugging
+
+            // Clear existing rows and insert new data
+            tbody.innerHTML = "";
+            data.forEach(function(item, index) {
+                var row = tbody.insertRow();
+                var queuingCell = row.insertCell(0);
+                var firstNameCell = row.insertCell(1);
+                var middleNameCell = row.insertCell(2);
+                var lastNameCell = row.insertCell(3);
+                var tablenumberCell = row.insertCell(4);
+
+                queuingCell.textContent = item.queu_number;
+                firstNameCell.textContent = item.first_name;
+                middleNameCell.textContent = item.middle_name;
+                lastNameCell.textContent = item.last_name;
+                tablenumberCell.textContent = item.table_no;
+
+                // Text-to-speech for each person's full name with delay
+                if (speakingAllowed) {
+                    setTimeout(function() {
+                        speak(`NOW CALLING ${item.first_name} ${item.middle_name} ${item.last_name} ON TABLE NUMBER ${item.table_no}`);
+                        speechCount++;
+                        manageSpeechCycle(); // Manage the speech cycle
+                    }, index * 500); // Adjust delay as needed
+                }
+            });
+        };
+    } else {
+        document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+    }
+
+    // Function to speak text
+    function speak(text) {
+        if ('speechSynthesis' in window && window.speechSynthesis) {
+            var voices = speechSynthesis.getVoices();
+            var utterance = new SpeechSynthesisUtterance(text);
+            
+            // Select a suitable female voice
+            utterance.voice = voices.find(voice => 
+                voice.name.includes('Google US English') || 
+                voice.name.includes('Microsoft Zira') || 
+                voice.name.includes('Samantha')
+            );
+    
+            // Adjust these values for clearer speech
+            utterance.rate = 0.9; // Slightly slower for clarity
+            utterance.pitch = 1.1; // Slightly higher for a pleasant tone
+    
+            speechSynthesis.speak(utterance);
+        } else {
+            console.error('Speech synthesis not supported or speechSynthesis object not available.');
+        }
+    }
+</script>
+</html>

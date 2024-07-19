@@ -207,7 +207,7 @@ class Transaction(models.Model):
     bene = models.ForeignKey('ClientBeneficiary', models.DO_NOTHING, related_name='beneficiary',blank=False, null=False)
     swo = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=False, null=False)
     is_case_study = models.CharField(max_length=255, null=True)
-    priority = models.ForeignKey('PriorityLine',models.DO_NOTHING, blank=True, null=True)
+    priority = models.ForeignKey(PriorityLine,models.DO_NOTHING, blank=True, null=True)
     is_return_new = models.CharField(max_length=255, blank=True, null=True)
     is_gl = models.CharField(max_length=255, blank=True, null=True)
     is_cv = models.CharField(max_length=255, blank=True, null=True)
@@ -286,6 +286,11 @@ class Transaction(models.Model):
                 status_data = "Ongoing"
         return status_data
     
+    @property
+    def swo_table(self):
+        data = SocialWorker_Status.objects.filter(user_id=self.swo_id).first()
+        return data.table
+
     @property
     def get_sp_data(self):#SERVICE PROVIDER DATA
         data = transaction_description.objects.filter(tracking_number_id=self.tracking_number).all()
