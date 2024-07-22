@@ -156,6 +156,59 @@ def dashboard(request):
 		(Q(status=3) | Q(status=6))
 		).count()
 
+
+
+	client_categories = [
+		"FHONA",
+		"WEDC",
+		"YNSP",
+		"PWD",
+		"SC",
+		"PLHIV",
+		"CNSP",
+		"SA",
+		"YTH",
+		"PSN",
+		"N/a",
+		"Child",
+		# Add more categories here
+	]
+
+	summary_data = []
+	for category in client_categories:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_category_id__acronym=category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		summary_data.append({'category': category, 'count': count})
+
+	client_sub_category = [
+		"SP",
+		"IP",
+		"RPWUD",
+		"4ps",
+		"SD",
+		"Disability",
+		"Others",
+		"N/A",
+		"CNSP-Abandoned",
+		"CNSP-Neglected",
+		"CNSP-Voluntary Committed/Surrendered",
+		"CNSP-Sexually-Abused",
+		"CNSP-Sexually-Exploited",
+		"CNSP-Physically-abused/maltreated/battered",
+		"CNSP-Children in Situations of Armed Conflict",
+		# Add more categories here
+	]
+
+	sub_category = []
+	for client_sub_category in client_sub_category:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_sub_category_id__acronym=client_sub_category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		sub_category.append({'category': client_sub_category, 'count': count})
+
 	pending = TransactionStatus1.objects.filter(status=1).count()
 	ongoing = TransactionStatus1.objects.filter(status__in=[2,7]).count()
 	completed = TransactionStatus1.objects.filter(
@@ -234,6 +287,8 @@ def dashboard(request):
 
 		'transaction_per_swo':transactions_per_swo,#COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
+		'summary_data': summary_data,
+		'sub_category': sub_category,
 		'total_transactions': total_count,
 
 		'transaction_per_verifier': transaction_per_verifier,
