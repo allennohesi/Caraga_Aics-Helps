@@ -375,9 +375,10 @@
 </div>
 {% endblock %}
 {% block script %}
+<script src="{% static 'js/datalabels.min.js' %}"></script>
 <script>
-  var xValues = ["COMPLETED", "CANCELLED", "UPLOADING", "PENDING", "ONGOING", "HOLD"];
-  var yValues = [{% for row in summary_transactions %}{{row.transaction_count}},{% endfor %}];
+  var xValues = [{% for row in summary_data %}"{{ row.category }}",{% endfor %}];
+  var yValues = [{% for row in summary_data  %}{{row.count}},{% endfor %}];
   var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
   
   new Chart("counttransaction", {
@@ -393,15 +394,15 @@
       legend: {display: false},
       title: {
         display: true,
-        text: "Client Transaction History"
+        text: "Client Category"
       }
     }
   });
 </script>
 <script>
-  var xValues = ["Service Provider", "Social Worker", "Super Administrator", "Verifier"];
-  var yValues = [{{sp}},{{swo}}, {{am}}, {{vr}}];
-  var barColors = ["#AED8E6", "#BED1DF","#CECBD8","#DFC4D1","#EFBECA"];
+  var xValues = [{% for row in sub_category %}"{{ row.category }}",{% endfor %}];
+  var yValues = [{% for row in sub_category  %}{{row.count}},{% endfor %}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
   
   new Chart("countstaff", {
     type: "bar",
@@ -416,35 +417,9 @@
       legend: {display: false},
       title: {
         display: true,
-        text: "User Summary Report"
+        text: "Client Sub Category"
       }
     }
   });
 </script>
-<script>
-  var xValues = ["Financial Assistance", "Material Assistance", "Psychosocial"];
-  var yValues = [{{financial}}, {{material}}, {{psychological}}];
-  var barColors = [
-    "#B1B2FF",
-    "#AAC4FF",
-    "#D2DAFF",
-  ];
-  
-  new Chart("myChart2", {
-    type: "doughnut",
-    data: {
-      labels: xValues,
-      datasets: [{
-        backgroundColor: barColors,
-        data: yValues,
-      }]
-    },
-    options: {
-      title: {
-        display: true,
-        text: "Assistance Summary"
-      }
-    }
-  });  
-  </script>
 {% endblock %}
