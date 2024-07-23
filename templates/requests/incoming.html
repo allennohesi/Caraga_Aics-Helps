@@ -243,7 +243,7 @@
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', 'searchable':false, 'sortable':false},
-                {'data': 'swo_lastname', 'name': 'transaction.swo.last_name', 'className': 'text-center', 'sortable': false},
+                {'data': 'swo_fullname', 'name': 'transaction.swo.fullname', 'className': 'text-center', 'sortable': false},
                 {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false,  'sortable': false,
                     'render': function(data,type,row,meta){
                         if(row['case_study'] == '2'){
@@ -340,7 +340,7 @@
                 }
             });
         
-        var columnIndexClient = table.column('transaction.swo.last_name:name').index();
+        var columnIndexClient = table.column('transaction.swo.fullname:name').index();
         var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
         
         var inputClient = $('<input type="text" class="form-control" placeholder="Search Social Worker" maxlength="23" />')
