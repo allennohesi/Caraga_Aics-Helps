@@ -49,6 +49,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey('AuthUser', models.DO_NOTHING)
     date_updated = models.DateTimeField(default=timezone.now)
+    fullname = models.CharField(max_length=150)
 
     @property
     def get_fullname(self):

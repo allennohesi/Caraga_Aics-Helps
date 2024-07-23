@@ -34,6 +34,9 @@ def user_list(request):
 		else:
 			if not check_username:
 				with transaction.atomic():
+					middle_initial = request.POST.get('middle_name', '')
+					mi = middle_initial[0].upper() if middle_initial else ''  # Default to empty string if middle_name is not provided
+					user_fullname = request.POST.get('first_name') + " " + (mi + ". " if mi else '') + request.POST.get('last_name')
 					user = AuthUser(
 						first_name=request.POST.get('first_name'),
 						middle_name=request.POST.get('middle_name'),
@@ -44,7 +47,8 @@ def user_list(request):
 						is_superuser=True if request.POST.get('is_superuser') else False,
 						is_staff=True if request.POST.get('is_staff') else False,
 						is_active=1,
-						updated_by_id=request.user.id
+						updated_by_id=request.user.id,
+						fullname=user_fullname
 					)
 					user.save()
 					AuthuserDetails.objects.create(
@@ -97,6 +101,9 @@ def edit_user(request, pk):
 		check_if_details_exists = AuthuserDetails.objects.filter(user_id=pk)
 		if check:
 			with transaction.atomic():
+				middle_initial = request.POST.get('middle_name', '')
+				mi = middle_initial[0].upper() if middle_initial else ''  # Default to empty string if middle_name is not provided
+				user_fullname = request.POST.get('first_name') + " " + (mi + ". " if mi else '') + request.POST.get('last_name')
 				AuthUser.objects.filter(id=pk).update(
 					first_name=request.POST.get('first_name'),
 					middle_name=request.POST.get('middle_name'),
@@ -107,7 +114,8 @@ def edit_user(request, pk):
 					is_staff=True if request.POST.get('is_staff') else False,
 					is_active=True if request.POST.get('is_active') else False,
 					updated_by_id=request.user.id,
-					date_updated=datetime.now()
+					date_updated=datetime.now(),
+					fullname=user_fullname
 				)
 				if check_if_details_exists:
 					AuthuserDetails.objects.filter(user_id=pk).update(
