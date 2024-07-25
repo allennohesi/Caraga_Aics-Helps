@@ -141,7 +141,10 @@
                                         <th>Finance DV-number</th>
                                         <th>Status</th>
                                         <th>Date</th>
-                                        <th>Voucher Created By</th>
+                                        <th>Created by</th>
+                                        <th>Updated by</th>
+                                        <th>Date Created</th>
+                                        <th>Date Updated</th>
                                         <th>Remarks</th>
                                     </tr>
                                 </thead>
@@ -345,7 +348,10 @@
             {'data': 'voucher_title','className': 'text-start', 'sortable': false },
             {'data': 'with_without_dv','className': 'text-start'},
             {'data': 'date', 'className': 'text-start', 'sortable': false },
+            {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
             {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
+            {'data': 'date_added', 'className': 'text-start', 'sortable': false },
+            {'data': 'date_updated', 'className': 'text-start', 'sortable': false },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
             ]
         });

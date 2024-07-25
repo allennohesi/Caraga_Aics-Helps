@@ -102,6 +102,7 @@ def financial_transaction(request):
 							user_id=request.user.id,
 							with_without_dv=request.POST.get('with_without_dv'),
 							status=1,
+							date_updated=today
 						)
 						data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
 						voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
@@ -118,9 +119,9 @@ def financial_transaction(request):
 							voucher_title=voucher,
 							date=date,
 							remarks=remarks,
-							user_id=request.user.id,
 							with_without_dv=request.POST.get('with_without_dv'),
 							status=1,
+							added_by_id=request.user.id
 						)
 						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
