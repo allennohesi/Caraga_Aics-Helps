@@ -24,6 +24,7 @@ from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyCompos
 	uploadfile, TransactionStatus1, SocialWorker_Status
 from django.core.paginator import Paginator
 from django.http import StreamingHttpResponse
+from calendar import month_name
 import time
 # from suds.client import Client
 import json
@@ -156,6 +157,18 @@ def dashboard(request):
 		(Q(status=3) | Q(status=6))
 		).count()
 
+	monthly_transactions = []
+
+	for month in range(1, 13):
+		count = (
+			TransactionStatus1.objects
+			.filter(status__in=[3, 6], verified_time_start__month=month)
+			.count()
+		)
+		monthly_transactions.append({
+			'name': month_name[month],
+			'count': count
+		})
 
 
 	client_categories = [
@@ -297,6 +310,8 @@ def dashboard(request):
 		'total_case_study': total_case_study,
 		'fund_source': FundSource.objects.all(),
 		'today':today,
+
+		'monthly_transactions': monthly_transactions
 	}
 	return render(request, 'home.html', context)
 
