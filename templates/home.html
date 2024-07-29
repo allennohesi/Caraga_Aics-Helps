@@ -32,6 +32,13 @@
 </div>
 <div class="container-fluid">
   <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+          <div class="card-body" id="">
+            <canvas id="countransaction" style="width:100%"></canvas>
+          </div>
+      </div>
+    </div>
     <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
         <div class="card-header">
@@ -107,7 +114,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-6 xl-100 box-col-12">
+    <div class="col-xl-12 xl-100 box-col-12">
       <div class="card">
         <div class="card-header">
           <h5>Most completed transactions</h5>
@@ -418,6 +425,29 @@
       title: {
         display: true,
         text: "Client Sub Category"
+      }
+    }
+  });
+</script>
+<script>
+  var xValues = [{% for row in monthly_transactions  %}"{{ row.name  }}",{% endfor %}];
+  var yValues = [{% for row in monthly_transactions  %}{{row.count}},{% endfor %}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+  new Chart("countransaction", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Client Transaction by Month"
       }
     }
   });
