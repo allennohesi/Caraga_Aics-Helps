@@ -177,7 +177,46 @@
       </div>
     </div>
   </div>
-
+  <div id="services" class="services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+          <div class="section-heading  wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">
+            <h4>DASHBOARD</h4>
+            <img src="" alt="">
+            {% comment %} <p>[System Description with Introduction]</p> {% endcomment %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="counttransaction" style="width:100%"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="countstaff" style="width:100%"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="countransaction" style="width:100%"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="services" class="services section">
     <div class="container">
       <div class="row">
@@ -236,209 +275,6 @@
       </div>
     </div>
   </div>
-
-  {% comment %} <div id="about" class="about-us section">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6 align-self-center">
-          <div class="section-heading">
-            <h4>About <em>What We Do</em> &amp; Who We Are</h4>
-            <img src="{% static 'lp_assets/images/heading-line-dec.png' %}" alt="">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor incididunt ut labore et dolore magna.</p>
-          </div>
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="box-item">
-                <h4><a href="#">Maintance Problems</a></h4>
-                <p>Lorem Ipsum Text</p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="box-item">
-                <h4><a href="#">24/7 Support &amp; Help</a></h4>
-                <p>Lorem Ipsum Text</p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="box-item">
-                <h4><a href="#">Fixing Issues About</a></h4>
-                <p>Lorem Ipsum Text</p>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="box-item">
-                <h4><a href="#">Co. Development</a></h4>
-                <p>Lorem Ipsum Text</p>
-              </div>
-            </div>
-            <div class="col-lg-12">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor idunte ut labore et dolore adipiscing  magna.</p>
-              <div class="gradient-button">
-                <a href="#">AICS is free transaction</a>
-              </div>
-              <span>No money involved</span>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="right-image">
-            <img src="{% static 'lp_assets/images/about-right-dec.png' %}" alt="">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> {% endcomment %}
-
-  {% comment %} <div id="pricing" class="pricing-tables">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-          <div class="section-heading">
-            <h4>The <em>Developers Team</em> who created the System</h4>
-            <img src="" alt="">
-            <p>[Developers Profile Introduction Here.]</p>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="pricing-item-pro">
-            <span class="price">Dev</span>
-            <h4>CMT II</h4>
-            <div class="icon">
-              <img src="{% static 'lp_assets/images/Kim.jpg' %}" width="250px" height="40px">
-            </div>
-            <ul>
-              <li>Kim Jay A. Aro</li>
-              <li>Regional Information Communication Technology Management Section</li>
-              <li>Policy and Plans Division</li>
-              <li>Premium Add-Ons</li>
-            </ul>
-            <div class="border-button">
-              <a href="#">Just keep moving forward.</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="pricing-item-pro">
-            <span class="price">Dev</span>
-            <h4>CMT II</h4>
-            <div class="icon">
-              <img src="{% static 'lp_assets/images/allen.jpg' %}" width="250px" height="140px">
-            </div>
-            <ul>
-              <li>Allen Efren O. Hilado</li>
-              <li>Regional Information Communication Technology Management Section</li>
-              <li>Policy and Plans Division</li>
-              <li>Premium Add-Ons</li>
-            </ul>
-            <div class="border-button">
-              <a href="#">Stoic.</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="pricing-item-pro">
-            <span class="price">Dev</span>
-            <h4>AO II</h4>
-            <div class="icon">
-              <img src="{% static 'lp_assets/images/phillipe.jpg' %}" width="250px" height="140px">
-            </div>
-            <ul>
-              <li>Phillipe Monares</li>
-              <li>Personnel Section</li>
-              <li>Human Resource Management Division</li>
-              <li>Premium Add-Ons</li>
-            </ul>
-            <div class="border-button">
-              <a href="#">With great power comes with great responsibility.</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> {% endcomment %}
-  {% comment %} <footer id="newsletter">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-          <div class="section-heading">
-            <h4>Do you have any concerns &amp; issues? Contact Us.</h4>
-          </div>
-        </div>
-        <div class="col-lg-6 offset-lg-3">
-          <form id="search" action="#" method="GET">
-            <div class="row">
-              <div class="col-lg-6 col-sm-6">
-                <fieldset>
-                  <input type="address" name="address" class="email" placeholder="Email Address..." autocomplete="on" required>
-                </fieldset>
-              </div>
-              <div class="col-lg-6 col-sm-6">
-                <fieldset>
-                  <button type="submit" class="main-button">Subscribe Now <i class="fa fa-angle-right"></i></button>
-                </fieldset>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="footer-widget">
-            <h4>Contact Us</h4>
-            <p>Allen Efren O. Hilado</p>
-            <p><a href="#">09487418673</a></p>
-            <p><a href="#">aeohilado@dswd.gov.ph</a></p>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="footer-widget">
-            <h4>About Us</h4>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Team</a></li>
-              <li><a href="#">Contact Us</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="footer-widget">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><a href="#">Free Apps</a></li>
-              <li><a href="#">App Engine</a></li>
-              <li><a href="#">Programming</a></li>
-              <li><a href="#">Development</a></li>
-              <li><a href="#">App News</a></li>
-            </ul>
-            <ul>
-              <li><a href="#">App Dev Team</a></li>
-              <li><a href="#">Digital Web</a></li>
-              <li><a href="#">Normal Apps</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="footer-widget">
-            <h4>About Our Company</h4>
-            <div class="logo">
-              <img src="{% static 'lp_assets/images/logo-medium.png' %}" alt="">
-            </div>
-            <p>[System Description Here]</p>
-          </div>
-        </div>
-        <div class="col-lg-12">
-          <div class="copyright-text">
-            <p>Copyright © 2022 AICS-HELPS. All Rights Reserved. </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer> {% endcomment %}
-
-
-  <!-- Scripts -->
   <script src="{% static 'lp_vendor/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'lp_vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'lp_assets/js/owl-carousel.js' %}"></script>
@@ -446,5 +282,77 @@
   <script src="{% static 'lp_assets/js/imagesloaded.js' %}"></script>
   <script src="{% static 'lp_assets/js/popup.js' %}"></script>
   <script src="{% static 'lp_assets/js/custom.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/datalabels.min.js' %}"></script>
+  <script>
+    var xValues = [{% for row in summary_data %}"{{ row.category }}",{% endfor %}];
+    var yValues = [{% for row in summary_data  %}{{row.count}},{% endfor %}];
+    var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+    
+    new Chart("counttransaction", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Client Category"
+        }
+      }
+    });
+  </script>
+  <script>
+    var xValues = [{% for row in sub_category %}"{{ row.category }}",{% endfor %}];
+    var yValues = [{% for row in sub_category  %}{{row.count}},{% endfor %}];
+    var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+    
+    new Chart("countstaff", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Client Sub Category"
+        }
+      }
+    });
+  </script>
+  
+  <script>
+    var xValues = [{% for row in monthly_transactions  %}"{{ row.name  }}",{% endfor %}];
+    var yValues = [{% for row in monthly_transactions  %}{{row.count}},{% endfor %}];
+    var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+    
+    new Chart("countransaction", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Client Transaction by Month"
+        }
+      }
+    });
+  </script>
 </body>
 </html>
