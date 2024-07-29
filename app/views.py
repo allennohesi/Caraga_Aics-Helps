@@ -98,8 +98,74 @@ def send_notification(message, contact_number):
 		pass
 
 def landingpage(request):
+	monthly_transactions = []
+
+	for month in range(1, 13):
+		count = (
+			TransactionStatus1.objects
+			.filter(status__in=[3, 6], verified_time_start__month=month)
+			.count()
+		)
+		monthly_transactions.append({
+			'name': month_name[month],
+			'count': count
+		})
+	client_categories = [
+		"FHONA",
+		"WEDC",
+		"YNSP",
+		"PWD",
+		"SC",
+		"PLHIV",
+		"CNSP",
+		"SA",
+		"YTH",
+		"PSN",
+		"N/a",
+		"Child",
+		# Add more categories here
+	]
+
+	summary_data = []
+	for category in client_categories:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_category_id__acronym=category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		summary_data.append({'category': category, 'count': count})
+
+	client_sub_category = [
+		"SP",
+		"IP",
+		"RPWUD",
+		"4ps",
+		"SD",
+		"Disability",
+		"Others",
+		"N/A",
+		"CNSP-Abandoned",
+		"CNSP-Neglected",
+		"CNSP-Voluntary Committed/Surrendered",
+		"CNSP-Sexually-Abused",
+		"CNSP-Sexually-Exploited",
+		"CNSP-Physically-abused/maltreated/battered",
+		"CNSP-Children in Situations of Armed Conflict",
+		# Add more categories here
+	]
+
+	sub_category = []
+	for client_sub_category in client_sub_category:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_sub_category_id__acronym=client_sub_category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		sub_category.append({'category': client_sub_category, 'count': count})
+	
 	context = {
-		'title': 'Home'
+		'title': 'Landingpage',
+		'monthly_transactions': monthly_transactions,
+		'summary_data': summary_data,
+		'sub_category': sub_category,
 	}
 	return render(request, 'landingpage.html', context)
 
