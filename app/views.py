@@ -296,6 +296,17 @@ def dashboard(request):
 	hold = TransactionStatus1.objects.filter(status=4).count()
 	cancelled = TransactionStatus1.objects.filter(status=5).count()
 	
+	# Count male transactions
+	count_male = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="MALE", status__in=[3, 6]
+	).count()
+
+	# Count female transactions
+	count_female = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="FEMALE", status__in=[3, 6]
+	).count()
+
+
 	transactions_per_swo = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
@@ -377,7 +388,10 @@ def dashboard(request):
 		'fund_source': FundSource.objects.all(),
 		'today':today,
 
-		'monthly_transactions': monthly_transactions
+		'monthly_transactions': monthly_transactions,
+
+		'count_male': count_male,
+		'count_female': count_female,
 	}
 	return render(request, 'home.html', context)
 
