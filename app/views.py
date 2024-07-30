@@ -161,11 +161,22 @@ def landingpage(request):
 		).count()
 		sub_category.append({'category': client_sub_category, 'count': count})
 	
+	# Count male transactions
+	count_male = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="MALE", status__in=[3, 6]
+	).count()
+
+	# Count female transactions
+	count_female = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="FEMALE", status__in=[3, 6]
+	).count()
 	context = {
 		'title': 'Landingpage',
 		'monthly_transactions': monthly_transactions,
 		'summary_data': summary_data,
 		'sub_category': sub_category,
+		'count_male': count_male,
+		'count_female': count_female,
 	}
 	return render(request, 'landingpage.html', context)
 
