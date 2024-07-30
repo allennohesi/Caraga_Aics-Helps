@@ -819,6 +819,8 @@ def save_assessment(request, pk):
 					is_return_new=request.POST.get('new_returning'),
 					service_provider=request.POST.get('service_provider'),
 					is_referral=1 if request.POST.get('is_referral') else None,
+					is_pfa=request.POST.get('pfa') if request.POST.get('pfa') else 0,
+					is_swc=request.POST.get('swc') if request.POST.get('swc') else 0
 				)
 				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 					sw_assessment=request.POST.get('sw_asessment'),
