@@ -692,9 +692,9 @@
                 &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.lib_assistance_category_id == 10 %} checked {% else %} {% endif %}> Assistive Device & Technologies
               </td>
               <td width="151px">
-                <input type="checkbox" name="material-assistance" {% if data.is_pfa == 1 or data.is_swc == 1 %} checked {% else %} {% endif %}> Psychosocial Support: <br>
-                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.is_pfa == 1 %} checked {% else %} {% endif %}> Psychological <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First Aid (PFA) <br>
-                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.ls_swc == 1 %} checked {% else %} {% endif %}> Social Work <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Counseling <br>
+                <input type="checkbox" name="material-assistance" {% if data.is_pfa == 1 or data.is_swc == 1 %} checked {% else %} disabled {% endif %}> Psychosocial Support: <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.is_pfa == 1 %} checked {% else %} disabled {% endif %}> Psychological <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First Aid (PFA) <br>
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="sub-material-assistance" {% if data.ls_swc == 1 %} checked {% else %} disabled {% endif %}> Social Work <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Counseling <br>
               </td>
               <td width="100px" style="border-right-color: black;">
                 <input type="checkbox" name="material-assistance"> Referral: <br><br>
