@@ -206,10 +206,17 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-12">
+          <div class="col-sm-6">
             <div class="card">
               <div class="card-body">
                 <canvas id="countransaction" style="width:100%"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="sexdata" style="width:100%;max-width:600px"></canvas>
               </div>
             </div>
           </div>
@@ -353,6 +360,33 @@
         }
       }
     });
+  </script>
+  <script>
+    (function() {
+      const xValues = ["Male", "Female",];
+      const yValues = [{{count_male}}, {{count_female}}];
+      const barColors = [
+        "#FDFDBD",
+        "#C8FFD4",
+      ];
+  
+      new Chart("sexdata", {
+        type: "doughnut",
+        data: {
+          labels: xValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: "CLIENTS SEX DISAGGREGATED DATA"
+          }
+        }
+      });
+    })();
   </script>
 </body>
 </html>
