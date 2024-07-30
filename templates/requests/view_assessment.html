@@ -692,6 +692,18 @@
                 <div class="row mb-3">
                     <div class="col-md-7">
                         <div class="form-group">
+                            <label>Psychosocial Support</label><br>
+                            &nbsp; <input class="form-check-input" id="pfa" name="pfa" value="1" type="checkbox" {% if transaction.is_pfa %} checked {% else %} {% endif %}> Psychological
+                            First Aid (PFA)
+                            &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="swc" name="swc" value="1" type="checkbox" {% if transaction.is_swc %} checked {% else %} {% endif %}> Social Work
+                            Counseling
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="form-group">
                             <label>Provided with</label><br>
                             &nbsp; <input class="form-check-input" id="gl" name="hot_meals" value="1" type="checkbox" {% if transaction.provided_hotmeal %} checked {% else %} {% endif %}> HOT MEALS
                             &nbsp; &nbsp; &nbsp;<input class="form-check-input" id="cv" name="food_packs" value="1" type="checkbox" {% if transaction.provided_foodpack %} checked {% else %} {% endif %}> FOOD PACKS
