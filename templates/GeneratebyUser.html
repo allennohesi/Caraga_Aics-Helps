@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-body" id="client_content">
                     <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i> Generate All</a>
-                    <form action="{% url 'generateByUser' %}" method="POST">
+                    <form action="" method="POST">
                         {% csrf_token %}
                         <hr>
                         <small>Note: This will only generate the category of the client.</small>
