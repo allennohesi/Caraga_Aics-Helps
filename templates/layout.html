@@ -281,13 +281,14 @@
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     <li><a href="{% url 'personalData' %}">My data</a></li>
+                                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                                    <li><a href="{% url 'withDvTransactions' %}">My DV data</a></li>
+                                                    {% endif %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
                                                     <li><a href="{% url 'generatePWD' %}">PWD Report</a></li>
-                                                    {% comment %} <li><a href="{% url 'generate_testXLS' request.user.id %}" target="_blank">My transaction</a></li>
-                                                    <li><a href="{% url 'generateByUser' %}">Users choice</a></li> {% endcomment %}
                                                 </ul>
                                             </li>
                                         </ul>
