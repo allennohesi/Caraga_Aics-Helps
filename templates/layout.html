@@ -280,7 +280,9 @@
                                                 <ul class="nav-sub-childmenu submenu-content">
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
+                                                    {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                                                     <li><a href="{% url 'personalData' %}">My data</a></li>
+                                                    {% endif %}
                                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
                                                     <li><a href="{% url 'withDvTransactions' %}">My DV data</a></li>
                                                     {% endif %}

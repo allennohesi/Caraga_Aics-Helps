@@ -596,11 +596,9 @@ def generateAICSData(request): #FOR GENERAL
 @api_view(['GET'])
 def personalData(request): #FOR GENERAL
 	if request.method == "GET":
-		start_date_str = request.GET.get("start_date")
-		end_date_str = request.GET.get("end_date")
 		data = TransactionStatus1.objects.filter(transaction__swo_id=request.user.id
 				).select_related(
-					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo' 
 				)
 
 		# Create a generator function to yield CSV rows
@@ -614,22 +612,35 @@ def personalData(request): #FOR GENERAL
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Case Study Status','Case study status'
+				   'Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Case Study Status','Transaction Status',
+				   'Is_PFA', 'Is_SWC'
 				   ]) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
 				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
-				swo_fullname_str = str(item.transaction.swo.first_name) + " " + str(item.transaction.swo.last_name)
 
 				status_str = (
+					str("Resumed") if item.status == 7 else
 					str("Completed") if item.status == 6 else
 					str("Cancelled") if item.status == 5 else
+					str("Pending") if item.status == 1 else
 					str("Ongoing") if item.status == 2 else
 					str("Completed") if item.status == 3 else
 					"N/a"
 				)
+				is_pfa_str = item.transaction.is_pfa
+				if is_pfa_str == 1:
+					is_pfa_str = "PROVIDED WITH PFA"
+				else:
+					is_pfa_str = "N/A"
+
+				is_swc_str = item.transaction.is_swc
+				if is_swc_str == 1:
+					is_swc_str = "PROVIDED WITH SWC"
+				else:
+					is_swc_str = "N/A"
 
 				case_study_str = str(item.transaction.is_case_study)
 				if case_study_str == "2":
@@ -679,11 +690,13 @@ def personalData(request): #FOR GENERAL
 					"Referral" if item.transaction.is_referral else "Walk-in",
 					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
 					str(item.transaction.swo_date_time_end),
-					swo_fullname_str,
+					str(item.transaction.swo.fullname),
 					service_provider,
 					category_of_study_str,
 					case_study_result_str,
 					status_str,
+					is_pfa_str,
+					is_swc_str,
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
@@ -718,7 +731,6 @@ def generatePWD(request): #FOR GENERAL
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
 				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
-				swo_fullname_str = str(item.transaction.swo.first_name) + " " + str(item.transaction.swo.last_name)
 
 				status_str = (
 					str("Completed") if item.status == 6 else
@@ -776,7 +788,7 @@ def generatePWD(request): #FOR GENERAL
 					"Referral" if item.transaction.is_referral else "Walk-in",
 					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
 					str(item.transaction.swo_date_time_end),
-					swo_fullname_str,
+					str(item.transaction.swo.fullname),
 					service_provider,
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
@@ -854,12 +866,13 @@ def withDvTransactions(request): #FOR GENERAL
 		data = finance_voucher.objects.filter(user_id=request.user.id,with_without_dv="WITH-DV") #USER_ID IS UPDATED BY
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['VOUCHER CODE','VOUCHER TITLE', 'DATE']) + '\n'
+			yield ','.join(['VOUCHER CODE','VOUCHER TITLE', 'DATE', 'UPDATED BY']) + '\n'
 			for item in data:
 				yield ','.join([
 					str(item.voucher_code),
 					str(item.voucher_title),
 					str(item.date),
+					str(item.user.fullname)
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
