@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ActiveSwoSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(source='user.fullname', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     middle_name = serializers.CharField(source='user.middle_name', read_only=True)
