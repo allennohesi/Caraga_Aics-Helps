@@ -5,7 +5,8 @@ from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
 from app.views import login, dashboard, mail, layout_404, status_activation, landingpage, media_access, print_ProvidedBYSWO, \
-                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, withDvTransactions
+                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, withDvTransactions, \
+                    transactionDashboard
 
 urlpatterns = [
     path('', landingpage, name='landingpage'),
@@ -14,7 +15,10 @@ urlpatterns = [
     path('404/', layout_404, name='layout_404'),
     path('login/', login, name='login'),
     path('logout/', log_out, name='logout'),
-    path('home/', dashboard, name='home'),
+
+    path('dashboard/', dashboard, name='home'),
+    path('transaction/dashboard/', transactionDashboard, name='transactionDashboard'),
+
     path('mail/', mail, name='mail'),
     path('activate/<int:pk>', status_activation, name='status_activation'),
     path('print_ProvidedBYSWO', print_ProvidedBYSWO, name='print_ProvidedBYSWO'),

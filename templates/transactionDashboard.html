@@ -1,0 +1,461 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% load tags %}
+{% load static %}
+{% load humanize %}
+<style>
+#assessment-table {
+    text-transform: uppercase;
+    }
+
+#completed-table {
+    text-transform: uppercase;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Dashboard</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-6 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Most completed transactions</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in transaction_per_swo %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                      {% with user_id=row.transaction__swo_id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      <div class="align-middle image-sm-size"><img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="500" height="30"> 
+                      {% else %}
+                      <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
+                      <div class="d-inline-block">
+                        <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>SOCIAL WORKER OFFICER</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Summary of Transactions</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Details</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in summary_transactions %}
+                <tr>
+                  <td class="f-w-600">
+                    {% if row.status == 6 %}
+                      Completed Transactions
+                    {% elif row.status == 7 %}
+                      Resumed/Pending Transactions
+                    {% elif row.status == 5 %}
+                      Cancelled Transactions
+                    {% elif row.status == 4 %}
+                      Hold Transactions
+                    {% elif row.status == 3 %}
+                      For uploading Transactions
+                    {% elif row.status == 2 %}
+                      Ongoing Transactions
+                    {% elif row.status == 1 %}
+                      Pending Transactions
+                    {% endif %}
+                  </td>
+                  <td class="font-primary">
+                    {% if row.status == 6 %}
+                      Completed
+                    {% elif row.status == 7 %}
+                      Resumed/Pending Transactions
+                    {% elif row.status == 5 %}
+                      Cancelled
+                    {% elif row.status == 4 %}
+                      Hold
+                    {% elif row.status == 3 %}
+                      Uploading of picture
+                    {% elif row.status == 2 %}
+                      Ongoing
+                    {% elif row.status == 1 %}
+                      Pending
+                    {% endif %}              
+                  </td>
+                  <td>
+                    <div class="span badge rounded-pill pill-badge-secondary">{{row.transaction_count}}</div>
+                  </td>
+                </tr>
+                {% endfor %}
+                <td colspan="2" class="text-right f-w-600">TOTAL DATA</td>
+                <td colspan="1" class="f-w-600"><div class="span badge rounded-pill pill-badge-secondary">{{total_transactions}}</div></td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-12 xl-100 box-col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Case study summary <a href="">Print</a></h5>
+        <div class="card-header-right">
+          <ul class="list-unstyled card-option">
+            <li><i class="fa fa-spin fa-cog"></i></li>
+            <li><i class="view-html fa fa-code"></i></li>
+            <li><i class="icofont icofont-maximize full-card"></i></li>
+            <li><i class="icofont icofont-minus minimize-card"></i></li>
+            <li><i class="icofont icofont-refresh reload-card"></i></li>
+            <li><i class="icofont icofont-error close-card"></i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+            <div class="col-xs-12">
+              <div class="pull-right">
+                  <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    Showing {{ data.start_index }} - {{ data.end_index }} of {{ data.paginator.count }} entries&emsp;
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                      {% if data.has_other_pages %}
+                          {% if data.has_previous %}
+                              <a class="btn btn-default" href="?page={{ data.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                          {% else %}
+                              <a class="btn btn-default disabled">Previous</a>
+                          {% endif %}
+                          {% for row in data.paginator.page_range %}
+                              {% if data.number == row %}
+                                  <a class="btn btn-primary" href="javascript:void(0);">{{ row }}</a>
+                              {% elif row > data.number|add:-3 and row < data.number|add:3 %}
+                                  <a class="btn btn-default" href="?page={{ row }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ row }}</a>
+                              {% endif %}
+                          {% endfor %}
+                          {% if data.has_next %}
+                              <a class="btn btn-default" href="?page={{ data.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                          {% else %}
+                              <a class="btn btn-default disabled">Next</a>
+                          {% endif %}
+                      {% endif %}
+                    </div>
+                    <a class="btn btn-default" href="{% url 'home' %}">Refresh</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="user-status table-responsive">
+          <table class="table table-bordernone">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Total Case Study</th>
+                <th scope="col">Submitted Case Study</th>
+                <th scope="col">Pending Case Study</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                  <td class="bd-t-none u-s-tb">
+                      <div class="align-middle image-sm-size">
+                        {% with user_id=row.transaction__swo_id %}
+                        {% profile_picture_dashboard user_id as profile %}
+                        {% if profile %}
+                        <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" width="500" height="30">
+                        {% else %}
+                        <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}">
+                        {% endif %}
+                        {% endwith %}
+                          <div class="d-inline-block">
+                              <h6>{{ row.transaction__swo__first_name }} {{ row.transaction__swo__last_name }}</h6>
+                          </div>
+                      </div>
+                  </td>
+                  <td>{{ row.transaction_count }}</td>
+                  <td>{{ row.case_study_submitted }}</td>
+                  <td>{{ row.transaction_count|subtract:row.case_study_submitted }}</td>
+              </tr>
+              {% endfor %}
+              <td colspan="3" class="text-right f-w-600">TOTAL DATA</td>
+              <td colspan="1" class="f-w-600">{{total_case_study}}</td>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Encoded by verifiers</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Encoded</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in transaction_per_verifier %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                    <div class="align-middle image-sm-size">
+                      {% with user_id=row.registered_by__id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      {% comment %} <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{{ profile.profile_pict.url }}" alt=""> {% endcomment %}
+                      <img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="500" height="30"> 
+                      {% else %}
+                      <img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
+                      <div class="d-inline-block">
+                        <div class="span badge rounded-pill pill-badge-primary">{{ row.registered_by__first_name }} {{ row.registered_by__last_name }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Verifier</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Requested transaction by verifiers</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Encoded</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in requested_by_verifier %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                    <div class="align-middle image-sm-size">
+                      {% with user_id=row.verifier__id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      <img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="30" height="30">
+                      {% else %}
+                      <img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/dashboard/profile.jpg' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
+                      <div class="d-inline-block">
+                        <div class="span badge rounded-pill pill-badge-primary">{{ row.verifier__first_name }} {{ row.verifier__last_name }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Verifier</td>
+                  <td>{{ row.transaction_count }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/datalabels.min.js' %}"></script>
+<script>
+  var xValues = [{% for row in summary_data %}"{{ row.category }}",{% endfor %}];
+  var yValues = [{% for row in summary_data  %}{{row.count}},{% endfor %}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+  new Chart("counttransaction", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Client Category"
+      }
+    }
+  });
+</script>
+<script>
+  var xValues = [{% for row in sub_category %}"{{ row.category }}",{% endfor %}];
+  var yValues = [{% for row in sub_category  %}{{row.count}},{% endfor %}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+  new Chart("countstaff", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Client Sub Category"
+      }
+    }
+  });
+</script>
+<script>
+  var xValues = [{% for row in monthly_transactions  %}"{{ row.name  }}",{% endfor %}];
+  var yValues = [{% for row in monthly_transactions  %}{{row.count}},{% endfor %}];
+  var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+  new Chart("countransaction", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Client Transaction by Month"
+      }
+    }
+  });
+</script>
+<script>
+  (function() {
+    const xValues = ["Male", "Female",];
+    const yValues = [{{count_male}}, {{count_female}}];
+    const barColors = [
+      "#FDFDBD",
+      "#C8FFD4",
+    ];
+
+    new Chart("sexdata", {
+      type: "doughnut",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: "CLIENTS SEX DISAGGREGATED DATA"
+        }
+      }
+    });
+  })();
+</script>
+{% endblock %}
