@@ -115,7 +115,7 @@
                                     </li>
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'home' %}"><i data-feather="home"></i><span>Dashboard</span></a>
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactionDashboard' %}"><i data-feather="zap"></i><span>Transactions Dashboard</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactionDashboard' %}"><i data-feather="zap"></i><span>Transactions Overview</span></a>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'user_profile' %}"><i data-feather="user-check"></i><span>Profile</span></a>
                                     </li>
                                     {% if user|check_group_permission:"Client" or user|check_group_permission:"Super Administrator" %}
