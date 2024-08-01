@@ -300,6 +300,150 @@ def dashboard(request):
 		).count()
 		sub_category.append({'category': client_sub_category, 'count': count})
 
+
+	# Count male transactions
+	count_male = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="MALE", status__in=[3, 6]
+	).count()
+
+	# Count female transactions
+	count_female = TransactionStatus1.objects.filter(
+		transaction__client__sex__name="FEMALE", status__in=[3, 6]
+	).count()
+
+
+	disability = [
+		"Deaf or Hard of Hearing",
+		"INTELLECTUAL DISABILITY",
+		"LEARNING DISABILITY",
+		"MENTAL DISABILITY",
+		"PHYSICAL DISABILITY",
+		"PSYCHOSOCIAL DISABILITY",
+		"SPEECH AND LANGUAGE IMPAIRMENT",
+		"CANCER (RA11215)",
+		"RARE DISEASE (RA10747)",
+		"Visual Disability",
+		"Psychosocial/Mental/Learning Disability"
+		# Add more categories here
+	]
+
+	disability_storage = []
+	for disability in disability:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_sub_category_id__name=disability) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		disability_storage.append({'disability': disability, 'count': count})
+
+	context = {
+		'title': 'Home',
+		'summary_data': summary_data,
+		'sub_category': sub_category,
+
+		'monthly_transactions': monthly_transactions,
+		'disability_storage': disability_storage,
+
+		'count_male': count_male,
+		'count_female': count_female,
+	}
+	return render(request, 'home.html', context)
+
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def transactionDashboard(request):
+	# url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
+	# client = Client(url)
+	# result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
+	# 									MobileNo="09487418673", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
+
+	am = AuthUserGroups.objects.all().filter(group_id=3).count() #adminCount
+	swo = AuthUserGroups.objects.all().filter(group_id=2).count() #SwoCount
+	sp = AuthUserGroups.objects.all().filter(group_id=4).count() #ServiceProvider
+	vr = AuthUserGroups.objects.all().filter(group_id=1).count() #verifier
+
+	active_emp = AuthUser.objects.filter(is_active=1).count()
+	inactive_emp = AuthUser.objects.filter(is_active=0).count()
+
+	# active_emp = AuthUser.objects.filter(is_active=1).count()
+
+	fa = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Financial Assistance") &
+		(Q(status=3) | Q(status=6))
+		).count()
+	ma = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Material Assistance") &
+		(Q(status=3) | Q(status=6))
+		).count()
+	psych = TransactionStatus1.objects.filter(
+		Q(transaction_id__lib_type_of_assistance_id__type_name="Psychosocial") &
+		(Q(status=3) | Q(status=6))
+		).count()
+
+	monthly_transactions = []
+
+	for month in range(1, 13):
+		count = (
+			TransactionStatus1.objects
+			.filter(status__in=[3, 6], verified_time_start__month=month)
+			.count()
+		)
+		monthly_transactions.append({
+			'name': month_name[month],
+			'count': count
+		})
+
+
+	client_categories = [
+		"FHONA",
+		"WEDC",
+		"YNSP",
+		"PWD",
+		"SC",
+		"PLHIV",
+		"CNSP",
+		"SA",
+		"YTH",
+		"PSN",
+		"N/a",
+		"Child",
+		# Add more categories here
+	]
+
+	summary_data = []
+	for category in client_categories:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_category_id__acronym=category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		summary_data.append({'category': category, 'count': count})
+
+	client_sub_category = [
+		"SP",
+		"IP",
+		"RPWUD",
+		"4ps",
+		"SD",
+		"Disability",
+		"Others",
+		"N/A",
+		"CNSP-Abandoned",
+		"CNSP-Neglected",
+		"CNSP-Voluntary Committed/Surrendered",
+		"CNSP-Sexually-Abused",
+		"CNSP-Sexually-Exploited",
+		"CNSP-Physically-abused/maltreated/battered",
+		"CNSP-Children in Situations of Armed Conflict",
+		# Add more categories here
+	]
+
+	sub_category = []
+	for client_sub_category in client_sub_category:
+		count = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_sub_category_id__acronym=client_sub_category) &
+			(Q(status=3) | Q(status=6))
+		).count()
+		sub_category.append({'category': client_sub_category, 'count': count})
+
 	pending = TransactionStatus1.objects.filter(status=1).count()
 	ongoing = TransactionStatus1.objects.filter(status__in=[2,7]).count()
 	completed = TransactionStatus1.objects.filter(
@@ -370,22 +514,8 @@ def dashboard(request):
 
 	context = {
 		'title': 'Home',
-		'am':am,
-		'swo':swo,
-		'sp':sp,
-		'vr':vr,
-		'active_emp':active_emp,
-		'inactive_emp':inactive_emp,
 
-		'financial': fa,
-		'material': ma,
-		'psychological':psych,
 
-		'pending':pending,
-		'ongoing':ongoing,
-		'completed':completed,
-		'hold':hold,
-		'cancelled':cancelled,
 
 		'transaction_per_swo':transactions_per_swo,#COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
@@ -397,15 +527,10 @@ def dashboard(request):
 		'requested_by_verifier':requested_by_verifier,
 		'data': Paginator(case_study_per_swo, rows).page(page),
 		'total_case_study': total_case_study,
-		'fund_source': FundSource.objects.all(),
 		'today':today,
 
-		'monthly_transactions': monthly_transactions,
-
-		'count_male': count_male,
-		'count_female': count_female,
 	}
-	return render(request, 'home.html', context)
+	return render(request, 'transactionDashboard.html', context)
 
 @login_required
 def status_activation(request,pk):
