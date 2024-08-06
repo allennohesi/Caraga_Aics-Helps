@@ -6,7 +6,7 @@ from django.contrib.auth.views import LogoutView
 
 from app.views import login, dashboard, mail, layout_404, status_activation, landingpage, media_access, print_ProvidedBYSWO, \
                     log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, withDvTransactions, \
-                    transactionDashboard
+                    transactionDashboard, ExportBilledUnbilled
 
 urlpatterns = [
     path('', landingpage, name='landingpage'),
@@ -29,6 +29,7 @@ urlpatterns = [
     path('generateTransactions/', generateTransactions, name='generateTransactions'),
     path('generateAICSData/',generateAICSData, name='generateAICSData'),
     path('generate_case_study',generate_case_study,name='generate_case_study'),
+    path('generate/billed/unbilled', ExportBilledUnbilled, name='ExportBilledUnbilled'),
 
     path('media/cis/<str:path>', media_access, name='media'),
 
