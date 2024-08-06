@@ -285,8 +285,8 @@
                                                     <li><a href="{% url 'personalData' %}">My data</a></li>
                                                     {% endif %}
                                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
-                                                    <li><a href="{% url 'withDvTransactions' %}">My DV data</a></li>
-                                                    <li><a href="{% url 'ExportBilledUnbilled' %}">Billed/Unbilled</a></li>
+                                                    <li><a href="{% url 'withDvTransactions' %}" target="_blank">My DV data</a></li>
+                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     {% endif %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
