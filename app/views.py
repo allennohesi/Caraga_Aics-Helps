@@ -865,30 +865,35 @@ def withDvTransactions(request): #FOR GENERAL
 	
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
-def ExportBilledUnbilled(request): #FOR GENERAL
-	if request.method == "GET":
-		data = Transaction.objects.filter(Q(status=3) | Q(status=6)
-				).select_related(
-					'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
-				)
+def ExportBilledUnbilled(request):  # FOR GENERAL
+    if request.method == "GET":
+        # Select only the required fields
+        data = Transaction.objects.filter(
+            Q(status=3) | Q(status=6)
+        ).select_related(
+            'fund_source', 'swo'
+        ).values(
+            'tracking_number', 'total_amount', 'fund_source__name', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
+        )
 
-		# Create a generator function to yield CSV rows
-		def generate_csv():
-			yield ','.join(['Tracking number', 'Amount of Assistance', 'Source of Fund','Billed/Unbilled','Interviewer/Swo', 'Date Accomplished'
-				   ]) + '\n'
-			for item in data:
-				total_amount_str = str(item.total_amount) if item.total_amount is not None else '0'
-				if ',' in total_amount_str:
-					total_amount_str = total_amount_str.replace(',', '')
-				yield ','.join([
-					str(item.tracking_number),
-					total_amount_str,
-					str(item.fund_source.name if item.fund_source else ""),
-					str("Billed" if item.dv_number else "Unbilled"),
-					str(item.swo.fullname),
-					str(item.swo_date_time_end),
-				]) + '\n'
+        # Create a generator function to yield CSV rows
+        def generate_csv():
+            yield 'Tracking number,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
+            for item in data.iterator():  # Using iterator to efficiently handle large querysets
+                total_amount_str = str(item['total_amount']) if item['total_amount'] is not None else '0'
+                total_amount_str = total_amount_str.replace(',', '')
+                swo_fullname_str = f"{item['swo__first_name']} {item['swo__last_name']}" if item['swo__first_name'] and item['swo__last_name'] else ''
+                swo_date_time_end_str = str(item['swo_date_time_end']) if item['swo_date_time_end'] else ''
 
-		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="Billed/unbilled.csv"'
-		return response
+                yield ','.join([
+                    str(item['tracking_number']),
+                    total_amount_str,
+                    str(item['fund_source__name']) if item['fund_source__name'] else "",
+                    "Billed" if item['dv_number'] else "Unbilled",
+                    swo_fullname_str,
+                    swo_date_time_end_str,
+                ]) + '\n'
+
+        response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="billed_unbilled.csv"'
+        return response
