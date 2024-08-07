@@ -136,20 +136,26 @@ def dashboard(request):
 	# 									MobileNo="09487418673", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
 
 
-	monthly_transactions = []
+	# Get the count of transactions for each month in a single query
+	transaction_counts = (
+		TransactionStatus1.objects
+		.filter(status__in=[3, 6])
+		.values('verified_time_start__month')
+		.annotate(count=Count('id'))
+		.order_by('verified_time_start__month')
+	)
 
-	for month in range(1, 13):
-		count = (
-			TransactionStatus1.objects
-			.filter(status__in=[3, 6], verified_time_start__month=month)
-			.count()
-		)
-		monthly_transactions.append({
-			'name': month_name[month],
-			'count': count
-		})
+	# Initialize a dictionary to hold the counts for each month
+	monthly_transactions = {month: {'name': month_name[month], 'count': 0} for month in range(1, 13)}
 
+	# Update the dictionary with the actual counts from the query
+	for transaction in transaction_counts:
+		month = transaction['verified_time_start__month']
+		monthly_transactions[month]['count'] = transaction['count']
 
+	# Convert the dictionary to a list
+	monthly_transactions = list(monthly_transactions.values())
+	
 	client_categories = [
 		"FHONA",
 		"WEDC",
@@ -166,13 +172,25 @@ def dashboard(request):
 		# Add more categories here
 	]
 
-	summary_data = []
-	for category in client_categories:
-		count = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_category_id__acronym=category) &
-			(Q(status=3) | Q(status=6))
-		).count()
-		summary_data.append({'category': category, 'count': count})
+	# Get the count of transactions for each client category in a single query
+	transaction_counts = (
+		TransactionStatus1.objects
+		.filter(Q(status=3) | Q(status=6))
+		.values('transaction_id__client_category_id__acronym')
+		.annotate(count=Count('id'))
+	)
+
+	# Initialize a dictionary to hold the counts for each client category
+	summary_data_dict = {category: {'category': category, 'count': 0} for category in client_categories}
+
+	# Update the dictionary with the actual counts from the query
+	for transaction in transaction_counts:
+		category = transaction['transaction_id__client_category_id__acronym']
+		if category in summary_data_dict:
+			summary_data_dict[category]['count'] = transaction['count']
+
+	# Convert the dictionary to a list
+	summary_data = list(summary_data_dict.values())
 
 	client_sub_category = [
 		"SP",
