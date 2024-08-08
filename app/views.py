@@ -192,6 +192,7 @@ def dashboard(request):
 	# Convert the dictionary to a list
 	summary_data = list(summary_data_dict.values())
 
+	# Define the list of client sub-categories
 	client_sub_category = [
 		"SP",
 		"IP",
@@ -200,7 +201,7 @@ def dashboard(request):
 		"SD",
 		"Disability",
 		"Others",
-		"N/A",
+		"N/a",
 		"CNSP-Abandoned",
 		"CNSP-Neglected",
 		"CNSP-Voluntary Committed/Surrendered",
@@ -211,26 +212,41 @@ def dashboard(request):
 		# Add more categories here
 	]
 
-	sub_category = []
-	for client_sub_category in client_sub_category:
-		count = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_sub_category_id__acronym=client_sub_category) &
-			(Q(status=3) | Q(status=6))
-		).count()
-		sub_category.append({'category': client_sub_category, 'count': count})
+	# Create a queryset that annotates the count of transactions for each sub-category
+	transaction_counts = TransactionStatus1.objects.filter(
+		Q(status=3) | Q(status=6)
+	).values('transaction_id__client_sub_category_id__acronym').annotate(
+		count=Count('id')
+	).filter(
+		transaction_id__client_sub_category_id__acronym__in=client_sub_category
+	)
+
+	# Convert the queryset to a dictionary for easier processing
+	transaction_counts_dict = {
+		item['transaction_id__client_sub_category_id__acronym']: item['count']
+		for item in transaction_counts
+	}
+
+	# Generate the sub_category list
+	sub_category = [
+		{'category': category, 'count': transaction_counts_dict.get(category, 0)}
+		for category in client_sub_category
+	]
 
 
-	# Count male transactions
-	count_male = TransactionStatus1.objects.filter(
-		transaction__client__sex__name="MALE", status__in=[3, 6]
-	).count()
+	# Count male and female transactions in a single query
+	transaction_counts = TransactionStatus1.objects.filter(
+		status__in=[3, 6]
+	).aggregate(
+		count_male=Count('id', filter=Q(transaction__client__sex__name="MALE")),
+		count_female=Count('id', filter=Q(transaction__client__sex__name="FEMALE"))
+	)
 
-	# Count female transactions
-	count_female = TransactionStatus1.objects.filter(
-		transaction__client__sex__name="FEMALE", status__in=[3, 6]
-	).count()
+	count_male = transaction_counts['count_male']
+	count_female = transaction_counts['count_female']
 
 
+	# Define the list of disabilities
 	disability = [
 		"Deaf or Hard of Hearing",
 		"INTELLECTUAL DISABILITY",
@@ -246,13 +262,26 @@ def dashboard(request):
 		# Add more categories here
 	]
 
-	disability_storage = []
-	for disability in disability:
-		count = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_sub_category_id__name=disability) &
-			(Q(status=3) | Q(status=6))
-		).count()
-		disability_storage.append({'disability': disability, 'count': count})
+	# Create a queryset that annotates the count of transactions for each disability
+	disability_counts = TransactionStatus1.objects.filter(
+		Q(status=3) | Q(status=6)
+	).values('transaction_id__client_sub_category_id__name').annotate(
+		count=Count('id')
+	).filter(
+		transaction_id__client_sub_category_id__name__in=disability
+	)
+
+	# Convert the queryset to a dictionary for easier processing
+	disability_counts_dict = {
+		item['transaction_id__client_sub_category_id__name']: item['count']
+		for item in disability_counts
+	}
+
+	# Generate the disability_storage list
+	disability_storage = [
+		{'disability': item, 'count': disability_counts_dict.get(item, 0)}
+		for item in disability
+	]
 
 	context = {
 		'title': 'Home',
@@ -270,77 +299,6 @@ def dashboard(request):
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def transactionDashboard(request):
-	# url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
-	# client = Client(url)
-	# result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
-	# 									MobileNo="09487418673", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
-
-	monthly_transactions = []
-
-	for month in range(1, 13):
-		count = (
-			TransactionStatus1.objects
-			.filter(status__in=[3, 6], verified_time_start__month=month)
-			.count()
-		)
-		monthly_transactions.append({
-			'name': month_name[month],
-			'count': count
-		})
-
-
-	client_categories = [
-		"FHONA",
-		"WEDC",
-		"YNSP",
-		"PWD",
-		"SC",
-		"PLHIV",
-		"CNSP",
-		"SA",
-		"YTH",
-		"PSN",
-		"N/a",
-		"Child",
-		# Add more categories here
-	]
-
-	summary_data = []
-	for category in client_categories:
-		count = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_category_id__acronym=category) &
-			(Q(status=3) | Q(status=6))
-		).count()
-		summary_data.append({'category': category, 'count': count})
-
-	client_sub_category = [
-		"SP",
-		"IP",
-		"RPWUD",
-		"4ps",
-		"SD",
-		"Disability",
-		"Others",
-		"N/A",
-		"CNSP-Abandoned",
-		"CNSP-Neglected",
-		"CNSP-Voluntary Committed/Surrendered",
-		"CNSP-Sexually-Abused",
-		"CNSP-Sexually-Exploited",
-		"CNSP-Physically-abused/maltreated/battered",
-		"CNSP-Children in Situations of Armed Conflict",
-		# Add more categories here
-	]
-
-	sub_category = []
-	for client_sub_category in client_sub_category:
-		count = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_sub_category_id__acronym=client_sub_category) &
-			(Q(status=3) | Q(status=6))
-		).count()
-		sub_category.append({'category': client_sub_category, 'count': count})
-
-
 	transactions_per_swo = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
@@ -374,7 +332,6 @@ def transactionDashboard(request):
 		.order_by('-transaction_count')
 	)
 
-
 	case_study_per_swo = (
 		TransactionStatus1.objects
 		.filter(transaction__is_case_study=2, status__in=[3, 6])  # Filter transactions with status 3 or 6
@@ -393,12 +350,8 @@ def transactionDashboard(request):
 	context = {
 		'title': 'Home',
 
-
-
 		'transaction_per_swo':transactions_per_swo,#COUNT THE TOP 5 SERVING CLIENTS
 		'summary_transactions':transaction_status_summary, # COUNT OF SUMMARY PER TRANSACTIONS
-		'summary_data': summary_data,
-		'sub_category': sub_category,
 		'total_transactions': total_count,
 
 		'transaction_per_verifier': transaction_per_verifier,
