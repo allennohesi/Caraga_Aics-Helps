@@ -559,16 +559,16 @@ def personalData(request): #FOR GENERAL
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
+			yield ','.join(['Tracking number',  'Date Accomplished',
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
-				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
+				   'Client Category','Client Sub-Category',
 				   
-				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
-				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
+				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene Category','Bene Sub-Category',
 
 				   'Relationship', 'Type of Assistance', 'Amount', 
-				   'Mode of Assistance','Source of referral','Source of Fund',
-				   'Date Interviewed', 'Interviewer/Swo','Service Provider','For case study','Case Study Status','Transaction Status',
+				   'Mode of Assistance','Source of referral',
+				   'Date Interviewed','For case study','Case Study Status','Transaction Status',
 				   'Is_PFA', 'Is_SWC'
 				   ]) + '\n'
 			for item in data:
@@ -612,7 +612,6 @@ def personalData(request): #FOR GENERAL
 
 				yield ','.join([
 					str(item.transaction.tracking_number),
-					str(item.transaction.client.unique_id_number),
 					str(item.swo_time_end),
 					str(item.transaction.client.last_name),
 					str(item.transaction.client.first_name),
@@ -622,11 +621,8 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.client.civil_status.name),
 					str(item.transaction.client.birthdate),
 					str(item.transaction.client.age),
-					str(item.transaction.client.is_4ps if item.transaction.client.number_4ps_id_number else "N/a"),
-					str(item.transaction.client.number_4ps_id_number if item.transaction.client.number_4ps_id_number else "N/a"),
 					str(item.transaction.client_category.name),
 					str(item.transaction.client_sub_category.name),
-					str(item.transaction.bene.unique_id_number),
 					str(item.transaction.bene.last_name),
 					str(item.transaction.bene.first_name),
 					str(item.transaction.bene.middle_name),
@@ -635,8 +631,6 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.bene.civil_status.name),
 					str(item.transaction.bene.birthdate),
 					str(item.transaction.bene.age),
-					str(item.transaction.bene.is_4ps if item.transaction.bene.number_4ps_id_number else "N/a"),
-					str(item.transaction.bene.number_4ps_id_number if item.transaction.bene.number_4ps_id_number else "N/a"),
 					str(item.transaction.bene_category.name),
 					str(item.transaction.bene_sub_category.name),
 					str(item.transaction.relation.name),
@@ -644,10 +638,7 @@ def personalData(request): #FOR GENERAL
 					total_amount_str,
 					"GL" if item.transaction.is_gl == 1 else "Cash",
 					"Referral" if item.transaction.is_referral else "Walk-in",
-					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
 					str(item.transaction.swo_date_time_end),
-					str(item.transaction.swo.fullname),
-					service_provider,
 					category_of_study_str,
 					case_study_result_str,
 					status_str,
