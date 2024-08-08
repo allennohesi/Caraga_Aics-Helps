@@ -284,15 +284,19 @@
                                                     {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                                                     <li><a href="{% url 'personalData' %}">My data</a></li>
                                                     {% endif %}
-                                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                                    {% if user|check_group_permission:"Biller" %}
                                                     <li><a href="{% url 'withDvTransactions' %}" target="_blank">My DV data</a></li>
-                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     {% endif %}
+                                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
+                                                    {% endif %}
+                                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
                                                     <li><a href="{% url 'generatePWD' %}">PWD Report</a></li>
+                                                    {% endif %}
                                                 </ul>
                                             </li>
                                         </ul>
