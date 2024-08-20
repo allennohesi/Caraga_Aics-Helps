@@ -34,112 +34,11 @@ today = date.today()
 month = today.strftime("%m")
 year = today.strftime("%Y")
 
-
-# def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
-# 	def event_stream():
-# 		while True:
-# 			try:
-# 				today = timezone.now().date()
-
-# 				# Fetch TransactionStatus1 with related Transaction and Client models
-# 				transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
-# 					verified_time_start__date=today,
-# 					status__in=[2, 7],
-# 					swo_time_start=None
-# 				).order_by('id')
-
-# 				# transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
-# 				# 	verified_time_start__date=today,
-# 				# 	status__in=[2, 7],
-# 				# 	swo_time_start=None
-# 				# ).exclude(transaction__priority__priority_name="N/A").order_by('id')
-# 				# Prepare data including the custom swo_table property
-# 				data = []
-# 				for transaction_status in transactions_status:
-# 					transaction = transaction_status.transaction
-# 					que_number = transaction_status.queu_number
-# 					# Access swo_table property from Transaction
-# 					swo_table = transaction.swo_table if transaction.swo_table else 'No Data'  # Handle None case
-# 					data.append({
-# 						'first_name': transaction.client.first_name,
-# 						'middle_name': transaction.client.middle_name,
-# 						'last_name': transaction.client.last_name,
-# 						'queu_number': que_number,
-# 						'table_no': swo_table
-# 					})
-
-# 				# Yield data in SSE format
-# 				yield f"data: {json.dumps(data)}\n\n"
-# 				time.sleep(10)  # Adjust frequency as needed
-
-# 			except Exception as e:
-# 				# Log exception and yield an empty message to keep the connection alive
-# 				print(f"Error in event stream: {e}")
-# 				yield "data: {}\n\n"
-# 				time.sleep(10)  # Adjust frequency to avoid rapid errors
-
-# 	response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-# 	response['Cache-Control'] = 'no-cache'
-# 	return response
-
-def queuing(request):
-	transactions = TransactionStatus1.objects.filter(verified_time_start__date=today)
-	context = {
-		'transaction':transactions
-	}
-	return render(request, 'queuing.html', context)
-
-def send_notification(message, contact_number):
-	url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
-	try:
-		client = Client(url)
-		result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
-											MobileNo=contact_number, Message=message)
-	except Exception:
-		pass
-
-def landingpage(request):
-	context = {
-		'title': 'Landingpage',
-	}
-	return render(request, 'landingpage.html', context)
-
-
-def login(request):
-	if request.user.is_authenticated:
-		return redirect('home')
-	if request.method == "POST":
-		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'), request=request)
-		if user is not None and user.is_active:
-			auth_login(request, user)
-			return JsonResponse({'data': 'success'})
-		else:
-			return JsonResponse({'msg': 'Invalid username and password.'})
-	return render(request, 'login.html') 
-
-def log_out(request):
-	logout(request)
-	request.session.flush()  # Clear session data
-	return redirect('login')
-
-
-def media_access(request, path):    
-	return render(request, '404.html')
-
-
-@login_required
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def dashboard(request):
-	# url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
-	# client = Client(url)
-	# result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
-	# 									MobileNo="09487418673", Message="Serving our clients gently is like tending to a delicate flower; with patience and tenderness, we nurture their needs and watch them bloom with satisfaction. - AICS-Helps")
-
-
-	# Get the count of transactions for each month in a single query
+def get_transaction_summary():
+	print(year)
 	transaction_counts = (
 		TransactionStatus1.objects
-		.filter(status__in=[3, 6])
+		.filter(status__in=[3, 6], verified_time_start__year=year)
 		.values('verified_time_start__month')
 		.annotate(count=Count('id'))
 		.order_by('verified_time_start__month')
@@ -175,7 +74,7 @@ def dashboard(request):
 	# Get the count of transactions for each client category in a single query
 	transaction_counts = (
 		TransactionStatus1.objects
-		.filter(Q(status=3) | Q(status=6))
+		.filter(Q(status=3) | Q(status=6),verified_time_start__year=year)
 		.values('transaction_id__client_category_id__acronym')
 		.annotate(count=Count('id'))
 	)
@@ -214,7 +113,7 @@ def dashboard(request):
 
 	# Create a queryset that annotates the count of transactions for each sub-category
 	transaction_counts = TransactionStatus1.objects.filter(
-		Q(status=3) | Q(status=6)
+		Q(status=3) | Q(status=6), verified_time_start__year=year
 	).values('transaction_id__client_sub_category_id__acronym').annotate(
 		count=Count('id')
 	).filter(
@@ -235,12 +134,12 @@ def dashboard(request):
 
 	# Count male and female transactions in a single query
 	transaction_counts = TransactionStatus1.objects.filter(
-		status__in=[3, 6]
+		status__in=[3, 6], verified_time_start__year=year
 	).aggregate(
-		count_male=Count('id', filter=Q(transaction__client__sex__name="MALE")),
-		count_female=Count('id', filter=Q(transaction__client__sex__name="FEMALE")),
-		total_clients=Count('transaction__client__id', distinct=True), #DISTINCT CLIENT COUNT AS ONE
-		total_bene=Count('transaction__bene__id', distinct=True),
+    count_male=Count('transaction__client__id', filter=Q(transaction__client__sex__name="MALE"), distinct=True),
+    count_female=Count('transaction__client__id', filter=Q(transaction__client__sex__name="FEMALE"), distinct=True),
+    total_clients=Count('transaction__client__id', distinct=True),  # DISTINCT CLIENT COUNT AS ONE
+    total_bene=Count('transaction__bene__id', distinct=True),
 	)
 
 	count_male = transaction_counts['count_male']
@@ -267,7 +166,7 @@ def dashboard(request):
 
 	# Create a queryset that annotates the count of transactions for each disability
 	disability_counts = TransactionStatus1.objects.filter(
-		Q(status=3) | Q(status=6)
+		Q(status=3) | Q(status=6), verified_time_start__year=year
 	).values('transaction_id__client_sub_category_id__name').annotate(
 		count=Count('id')
 	).filter(
@@ -286,26 +185,104 @@ def dashboard(request):
 		for item in disability
 	]
 
-	summary = Transaction.objects.aggregate(
-		total_amount=Sum('total_amount'),
+	# Get the total amount for transactions in the specified year
+	summary = TransactionStatus1.objects.filter(verified_time_start__year=year).aggregate(
+		total_amount=Sum('transaction__total_amount')
 	)
-	formatted_total_amount = "{:,.2f}".format(summary['total_amount'])
 
-	context = {
-		'title': 'Home',
+	# Format the total amount
+	formatted_total_amount = "{:,.2f}".format(summary['total_amount'] if summary['total_amount'] else 0)
+
+	return {
+		'monthly_transactions': monthly_transactions,
 		'summary_data': summary_data,
 		'sub_category': sub_category,
-
-		'monthly_transactions': monthly_transactions,
-		'disability_storage': disability_storage,
-
 		'count_male': count_male,
 		'count_female': count_female,
 		'count_client': count_client,
 		'count_bene': count_bene,
+		'disability_storage': disability_storage,
 		'formatted_total_amount': formatted_total_amount,
 	}
-	return render(request, 'home.html', context)
+
+
+def queuing(request):
+	transactions = TransactionStatus1.objects.filter(verified_time_start__date=today)
+	context = {
+		'transaction':transactions
+	}
+	return render(request, 'queuing.html', context)
+
+def send_notification(message, contact_number):
+	url = 'https://wiserv.dswd.gov.ph/soap/?wsdl'
+	try:
+		client = Client(url)
+		result = client.service.sendMessage(UserName='crgwiservuser', PassWord='#w153rvcr9!', WSID='0',
+											MobileNo=contact_number, Message=message)
+	except Exception:
+		pass
+
+def landingpage(request):
+	transaction_summary = get_transaction_summary()
+
+	context = {
+		'title': 'Landingpage',
+		'summary_data': transaction_summary['summary_data'],
+        'sub_category': transaction_summary['sub_category'],
+        'monthly_transactions': transaction_summary['monthly_transactions'],
+        'disability_storage': transaction_summary['disability_storage'],
+        'count_male': transaction_summary['count_male'],
+        'count_female': transaction_summary['count_female'],
+        'count_client': transaction_summary['count_client'],
+        'count_bene': transaction_summary['count_bene'],
+        'formatted_total_amount': transaction_summary['formatted_total_amount'],
+	}
+	return render(request, 'landingpage.html', context)
+
+
+def login(request):
+	if request.user.is_authenticated:
+		return redirect('home')
+	if request.method == "POST":
+		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'), request=request)
+		if user is not None and user.is_active:
+			auth_login(request, user)
+			return JsonResponse({'data': 'success'})
+		else:
+			return JsonResponse({'msg': 'Invalid username and password.'})
+	return render(request, 'login.html') 
+
+def log_out(request):
+	logout(request)
+	request.session.flush()  # Clear session data
+	return redirect('login')
+
+
+def media_access(request, path):    
+	return render(request, '404.html')
+
+
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def dashboard(request):
+    # Call the get_transaction_summary function to get the summary data
+    transaction_summary = get_transaction_summary()
+
+    # Build the context using the data returned from the function
+    context = {
+        'title': 'Dashboard',
+        'summary_data': transaction_summary['summary_data'],
+        'sub_category': transaction_summary['sub_category'],
+        'monthly_transactions': transaction_summary['monthly_transactions'],
+        'disability_storage': transaction_summary['disability_storage'],
+        'count_male': transaction_summary['count_male'],
+        'count_female': transaction_summary['count_female'],
+        'count_client': transaction_summary['count_client'],
+        'count_bene': transaction_summary['count_bene'],
+        'formatted_total_amount': transaction_summary['formatted_total_amount'],
+    }
+
+    return render(request, 'home.html', context)
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -839,34 +816,34 @@ def withDvTransactions(request): #FOR GENERAL
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
 def ExportBilledUnbilled(request):  # FOR GENERAL
-    if request.method == "GET":
-        # Select only the required fields
-        data = Transaction.objects.filter(
-            Q(status=3) | Q(status=6)
-        ).select_related(
-            'fund_source', 'swo'
-        ).values(
-            'tracking_number', 'total_amount', 'fund_source__name', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
-        )
+	if request.method == "GET":
+		# Select only the required fields
+		data = Transaction.objects.filter(
+			Q(status=3) | Q(status=6)
+		).select_related(
+			'fund_source', 'swo'
+		).values(
+			'tracking_number', 'total_amount', 'fund_source__name', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
+		)
 
-        # Create a generator function to yield CSV rows
-        def generate_csv():
-            yield 'Tracking number,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
-            for item in data.iterator():  # Using iterator to efficiently handle large querysets
-                total_amount_str = str(item['total_amount']) if item['total_amount'] is not None else '0'
-                total_amount_str = total_amount_str.replace(',', '')
-                swo_fullname_str = f"{item['swo__first_name']} {item['swo__last_name']}" if item['swo__first_name'] and item['swo__last_name'] else ''
-                swo_date_time_end_str = str(item['swo_date_time_end']) if item['swo_date_time_end'] else ''
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield 'Tracking number,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
+			for item in data.iterator():  # Using iterator to efficiently handle large querysets
+				total_amount_str = str(item['total_amount']) if item['total_amount'] is not None else '0'
+				total_amount_str = total_amount_str.replace(',', '')
+				swo_fullname_str = f"{item['swo__first_name']} {item['swo__last_name']}" if item['swo__first_name'] and item['swo__last_name'] else ''
+				swo_date_time_end_str = str(item['swo_date_time_end']) if item['swo_date_time_end'] else ''
 
-                yield ','.join([
-                    str(item['tracking_number']),
-                    total_amount_str,
-                    str(item['fund_source__name']) if item['fund_source__name'] else "",
-                    "Billed" if item['dv_number'] else "Unbilled",
-                    swo_fullname_str,
-                    swo_date_time_end_str,
-                ]) + '\n'
+				yield ','.join([
+					str(item['tracking_number']),
+					total_amount_str,
+					str(item['fund_source__name']) if item['fund_source__name'] else "",
+					"Billed" if item['dv_number'] else "Unbilled",
+					swo_fullname_str,
+					swo_date_time_end_str,
+				]) + '\n'
 
-        response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="billed_unbilled.csv"'
-        return response
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="billed_unbilled.csv"'
+		return response
