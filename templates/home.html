@@ -98,7 +98,6 @@
     <div class="col-xl-6">
       <div class="card">
         <div class="card-body">
-          <label for="filter">Filter by Category:</label>
           <select id="filter" class="form-control select2">
             <option value="all">All</option>
             {% for row in sub_category %}
@@ -246,10 +245,6 @@
     });
   });
 </script>
-
-
-
-
 <script>
   var allXValues = [{% for row in monthly_transactions  %}"{{ row.name  }}",{% endfor %}];
   var allYValues = [{% for row in monthly_transactions  %}{{row.count}},{% endfor %}];
