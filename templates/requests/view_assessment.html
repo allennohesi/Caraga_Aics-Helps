@@ -106,7 +106,7 @@
               </div>
         </li>
         {% endif %} {% endcomment %}
-        {% if transaction.fund_source_id %}
+        {% if Problem_Assessment.sw_assessment %}
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalProvided" data-role='add_provided' data-id="{{ transaction.id }}" role="tab">
                 <i class="fa fa-id-card-o"></i> Provided to client
@@ -744,7 +744,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Fund Source <span class="txt-danger">*</span></label>
-                            <select class="form-control select" name="fund_source" id="fund_source" required>
+                            <select class="form-control select" name="fund_source" id="fund_source">
                                 <option></option>
                                 {% for row in fund_source %}
                                 {% if row.id == transaction.fund_source_id %}
