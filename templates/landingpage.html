@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load humanize %}
 <html lang="en">
 
   <head>
@@ -151,7 +152,6 @@
         </div>
     </section>
 </div>
-
   <div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
     <div class="container">
       <div class="row">
@@ -172,6 +172,95 @@
                 <img src="{% static 'lp_assets/images/slider-dec.png' %}" alt="">
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="services" class="services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+          <div class="section-heading  wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">
+            <h4>Look our <em>Transaction &amp; Summary</em> for you</h4>
+            <img src="" alt="">
+            {% comment %} <p>[System Description with Introduction]</p> {% endcomment %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="service-item third-service">
+            <div class="icon"></div>
+            <h4>Total Cash Disbursed</h4>
+            <h4>{{formatted_total_amount}}</h4>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="service-item third-service">
+            <div class="icon"></div>
+            <h4>Total Client</h4>
+            <h4>{{count_client|intcomma}}</h4>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="service-item third-service">
+            <div class="icon"></div>
+            <h4>Total Beneficiary</h4>
+            <h4>{{count_bene|intcomma}}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="service-item third-service">
+            <select id="monthFilter" onchange="filterTransactions()" class="form-control">
+              <option value="All">All</option>
+              {% for row in monthly_transactions %}
+                <option value="{{ row.name }}">{{ row.name }}</option>
+              {% endfor %}
+            </select>
+            <canvas id="countransaction" style="width:100%"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="service-item third-service">
+            <canvas id="sexdata" style="width:100%"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="service-item third-service">
+            <select id="clientCategoryDropdown" onchange="filterClientCategoryChart()" class="form-control">
+              <option value="All">All</option>
+              {% for row in summary_data %}
+                <option value="{{ row.category }}">{{ row.category }}</option>
+              {% endfor %}
+            </select>
+            <canvas id="clientCategoryChart" style="width:100%"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="service-item third-service">
+            <select id="filter" class="form-control">
+              <option value="all">All</option>
+              {% for row in sub_category %}
+                <option value="{{ row.category|escapejs }}">{{ row.category }}</option>
+              {% endfor %}
+            </select>
+            <canvas id="clientsubcategory" style="width:100%"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="service-item third-service">
+            <select id="disabilityDropdown" onchange="filterDisabilityChart()" class="form-control">
+              <option value="All">All</option>
+              {% for row in disability_storage %}
+                <option value="{{ row.disability }}">{{ row.disability }}</option>
+              {% endfor %}
+            </select>
+            <canvas id="disabilitydata" style="width:100%"></canvas>
           </div>
         </div>
       </div>
@@ -244,6 +333,243 @@
   <script src="{% static 'lp_assets/js/custom.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/datalabels.min.js' %}"></script>
+  {% block script %}
+  <script src="{% static 'js/datalabels.min.js' %}"></script>
+  <script>
 
+    // Initialize data arrays from Django context
+    var categoryLabels = [{% for row in summary_data %}"{{ row.category }}",{% endfor %}];
+    var categoryCounts = [{% for row in summary_data %}{{ row.count }},{% endfor %}];
+    var chartColors = ["#FDFDBD", "#FF8787", "#CCD6A6", "#B8E8FC", "#C8FFD4"];
+    
+    // Initialize the Client Category chart
+    var clientCategoryChart = new Chart("clientCategoryChart", {
+      type: "bar",
+      data: {
+        labels: categoryLabels,
+        datasets: [{
+          backgroundColor: chartColors,
+          data: categoryCounts
+        }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Client Category"
+        }
+      }
+    });
+  
+    // Function to update the Client Category chart based on dropdown selection
+    function filterClientCategoryChart() {
+      var selectedCategory = document.getElementById("clientCategoryDropdown").value;
+  
+      if (selectedCategory === "All") {
+        // Show all data if "All" is selected
+        clientCategoryChart.data.labels = categoryLabels;
+        clientCategoryChart.data.datasets[0].data = categoryCounts;
+        clientCategoryChart.data.datasets[0].backgroundColor = chartColors;
+      } else {
+        // Filter to show only the selected category
+        var filteredIndex = categoryLabels.indexOf(selectedCategory);
+  
+        if (filteredIndex !== -1) {
+          clientCategoryChart.data.labels = [categoryLabels[filteredIndex]];
+          clientCategoryChart.data.datasets[0].data = [categoryCounts[filteredIndex]];
+          clientCategoryChart.data.datasets[0].backgroundColor = [chartColors[filteredIndex]];
+        } else {
+          // Handle case where the category is not found
+          clientCategoryChart.data.labels = [];
+          clientCategoryChart.data.datasets[0].data = [];
+          clientCategoryChart.data.datasets[0].backgroundColor = [];
+        }
+      }
+  
+      // Update the chart with the filtered data
+      clientCategoryChart.update();
+    }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var allXValues = [{% for row in sub_category %}"{{ row.category|escapejs }}",{% endfor %}];
+      var allYValues = [{% for row in sub_category %}{{ row.count }},{% endfor %}];
+      var barColors = ["#FDFDBD", "#FF8787", "#CCD6A6", "#B8E8FC", "#C8FFD4", "#FDFDBD", "#FF8787", "#CCD6A6", "#B8E8FC", "#C8FFD4", "#FDFDBD", "#FF8787", "#CCD6A6", "#B8E8FC", "#C8FFD4"];
+  
+      // Create chart instance
+      var ctx = document.getElementById("clientsubcategory").getContext('2d');
+      var countstaffChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: allXValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: allYValues
+          }]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: "Client Sub Category"
+          }
+        }
+      });
+  
+      // Function to update chart data
+      function updateChart(category) {
+        var xValues = [];
+        var yValues = [];
+  
+        if (category === "all") {
+          xValues = allXValues;
+          yValues = allYValues;
+        } else {
+          for (var i = 0; i < allXValues.length; i++) {
+            if (allXValues[i] === category) {
+              xValues.push(allXValues[i]);
+              yValues.push(allYValues[i]);
+            }
+          }
+        }
+  
+        // Update chart data
+        countstaffChart.data.labels = xValues;
+        countstaffChart.data.datasets[0].data = yValues;
+        countstaffChart.update();
+      }
+  
+      // Handle filter change
+      $('#filter').on('change', function() {
+        var selectedCategory = $(this).val();
+        updateChart(selectedCategory);
+      });
+    });
+  </script>
+  <script>
+    var allXValues = [{% for row in monthly_transactions  %}"{{ row.name  }}",{% endfor %}];
+    var allYValues = [{% for row in monthly_transactions  %}{{row.count}},{% endfor %}];
+    var originalBarColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+    var chart = new Chart("countransaction", {
+      type: "bar",
+      data: {
+        labels: allXValues, // Start by displaying all months
+        datasets: [{
+          backgroundColor: originalBarColors,
+          data: allYValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Client Transactions by Month (No distinction)"
+        }
+      }
+    });
+  
+    function filterTransactions() {
+      var selectedMonth = document.getElementById("monthFilter").value;
+  
+      if (selectedMonth === "All") {
+        // Show all data if "All" is selected
+        chart.data.labels = allXValues;
+        chart.data.datasets[0].data = allYValues;
+        chart.data.datasets[0].backgroundColor = originalBarColors;
+      } else {
+        // Filter to show only the selected month
+        var filteredIndex = allXValues.indexOf(selectedMonth);
+        chart.data.labels = [allXValues[filteredIndex]];
+        chart.data.datasets[0].data = [allYValues[filteredIndex]];
+        chart.data.datasets[0].backgroundColor = [originalBarColors[filteredIndex]];
+      }
+  
+      // Update the chart with the filtered data
+      chart.update();
+    }
+  </script>
+  <script>
+    (function() {
+      const xValues = ["Male", "Female",];
+      const yValues = [{{count_male}}, {{count_female}}];
+      const barColors = [
+        "#FDFDBD",
+        "#C8FFD4",
+      ];
+  
+      new Chart("sexdata", {
+        type: "doughnut",
+        data: {
+          labels: xValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: "CLIENTS SEX DISAGGREGATED DATA (Distinct applied)"
+          }
+        }
+      });
+    })();
+  </script>
+  <script>
+    // Initialize data arrays from Django context
+    var xValues = [{% for row in disability_storage %}"{{ row.disability|escapejs }}",{% endfor %}];
+    var yValues = [{% for row in disability_storage %}{{ row.count }},{% endfor %}];
+    var barColors = ["#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4","#FDFDBD", "#FF8787","#CCD6A6","#B8E8FC","#C8FFD4"];
+  
+    // Initialize the chart
+    var disabilityChart = new Chart("disabilitydata", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Disability Data"
+        }
+      }
+    });
+  
+    // Function to update the chart based on dropdown selection
+    function filterDisabilityChart() {
+      var selectedDisability = document.getElementById("disabilityDropdown").value;
+  
+      if (selectedDisability === "All") {
+        // Show all data if "All" is selected
+        disabilityChart.data.labels = xValues;
+        disabilityChart.data.datasets[0].data = yValues;
+        disabilityChart.data.datasets[0].backgroundColor = barColors;
+      } else {
+        // Filter to show only the selected category
+        var filteredIndex = xValues.indexOf(selectedDisability);
+  
+        if (filteredIndex !== -1) {
+          disabilityChart.data.labels = [xValues[filteredIndex]];
+          disabilityChart.data.datasets[0].data = [yValues[filteredIndex]];
+          disabilityChart.data.datasets[0].backgroundColor = [barColors[filteredIndex]];
+        } else {
+          // Handle case where the category is not found
+          disabilityChart.data.labels = [];
+          disabilityChart.data.datasets[0].data = [];
+          disabilityChart.data.datasets[0].backgroundColor = [];
+        }
+      }
+  
+      // Update the chart with the filtered data
+      disabilityChart.update();
+    }
+  </script>
+  {% endblock %}
 </body>
 </html>
