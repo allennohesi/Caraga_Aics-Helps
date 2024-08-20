@@ -807,7 +807,7 @@ def save_assessment(request, pk):
 					bene_sub_category_id=bene_sub_category,
 					lib_type_of_assistance_id=request.POST.get('assistance_type'),
 					lib_assistance_category_id=request.POST.get('assistance_category'),
-					fund_source_id=request.POST.get('fund_source'),
+					fund_source_id=request.POST.get('fund_source') if request.POST.get('fund_source') else None,
 					is_gl=request.POST.get('guarantee_letter') if request.POST.get('guarantee_letter') else 0,
 					is_cv=request.POST.get('cash_voucher') if request.POST.get('cash_voucher') else 0,
 					is_pcv=request.POST.get('petty_cash') if request.POST.get('petty_cash') else 0,
