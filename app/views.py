@@ -233,17 +233,20 @@ def dashboard(request):
 		for category in client_sub_category
 	]
 
-
 	# Count male and female transactions in a single query
 	transaction_counts = TransactionStatus1.objects.filter(
 		status__in=[3, 6]
 	).aggregate(
 		count_male=Count('id', filter=Q(transaction__client__sex__name="MALE")),
-		count_female=Count('id', filter=Q(transaction__client__sex__name="FEMALE"))
+		count_female=Count('id', filter=Q(transaction__client__sex__name="FEMALE")),
+		total_clients=Count('transaction__client__id', distinct=True), #DISTINCT CLIENT COUNT AS ONE
+		total_bene=Count('transaction__bene__id', distinct=True),
 	)
 
 	count_male = transaction_counts['count_male']
 	count_female = transaction_counts['count_female']
+	count_client = transaction_counts['total_clients']
+	count_bene = transaction_counts['total_bene']
 
 
 	# Define the list of disabilities
@@ -283,6 +286,11 @@ def dashboard(request):
 		for item in disability
 	]
 
+	summary = Transaction.objects.aggregate(
+		total_amount=Sum('total_amount'),
+	)
+	formatted_total_amount = "{:,.2f}".format(summary['total_amount'])
+
 	context = {
 		'title': 'Home',
 		'summary_data': summary_data,
@@ -293,6 +301,9 @@ def dashboard(request):
 
 		'count_male': count_male,
 		'count_female': count_female,
+		'count_client': count_client,
+		'count_bene': count_bene,
+		'formatted_total_amount': formatted_total_amount,
 	}
 	return render(request, 'home.html', context)
 
