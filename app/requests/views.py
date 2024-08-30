@@ -1056,6 +1056,7 @@ def printAttestation(request, pk):
 	esig = SignatoriesTbl.objects.filter(signatories_id=transaction.signatories, status=1).first()
 	context = {
 		'data': transaction,
+		'information': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
 		'roster': display_family_roster,
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
