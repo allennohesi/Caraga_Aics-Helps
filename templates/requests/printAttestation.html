@@ -1,0 +1,118 @@
+{%  load static %}
+{% load humanize %}
+{% load tags %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attestation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+  <link rel="icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{% static 'images/logo/logo-icon.png' %}" type="image/x-icon" />
+  <style>
+    @media print {
+      html, body {
+        height:100%; 
+        margin: 0 !important; 
+        padding: 0 !important;
+        overflow: hidden;
+      }
+    
+    }
+    @page{
+      size: legal portrait;
+
+    }
+    .print-clean {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid black;
+  }
+  input {border:0;outline:0;}
+  input:focus {outline:none!important;}
+  
+  @media print {
+    ::-webkit-input-placeholder { /* WebKit browsers */
+        color: transparent;
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color: transparent;
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color: transparent;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10+ */
+        color: transparent;
+    }
+  }
+  .right-align {
+    text-align: right;
+    }
+  </style>
+</head>
+<body class="legal portrait">
+     
+  <section class="sheet page">
+    <div class="container-fluid">
+      <table class="title table table-bordered" style="margin-top: 17px;margin-bottom: 0px;border-color: white;">
+        <thead style="line-height:15px;">
+          <th>
+            <img src="{% static 'lp_assets/images/attestment.png' %}" style="margin-top: 0px;" class="mx-auto d-block float-start" width="220px" height="40px">
+          </th>      
+        </thead>          
+      </table>
+      <p><strong><center>CERTIFICATE OF ATTESTATION</center></strong></p>
+      <p><strong>&nbsp;</strong></p>
+      <p>&nbsp;</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        This is to certify that Mr./Ms. <u>{{data.client.full_name|upper}}</u> <u>,</u> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.client.get_age}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+      <p>residing at <u>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+        is currently working or has employment history as <u>&nbsp;&nbsp;{{data.client.occupation.occupation_name|upper}}&nbsp;&nbsp;&nbsp; </u>in ___________________________________,earning <u>{{data.client.salary}}</u>&nbsp;per month.</p>
+      <p>&nbsp;</p>
+      <p>Based on the assessment and validation conducted by the undersigned, the above-mentioned income remains insufficient to meet the family&rsquo;s daily sustenance for <u>{{data.lib_assistance_category.name}}</u> / <u>{{purpose_assessment.problem_presented|upper}}</u> and currently experiencing financial difficulties due to rising inflation.</p>
+      <p>&nbsp;</p>
+      <p>Issued this <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{transactionStartEnd.verified_time_start|date:"M. d, Y"}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>&nbsp;at <u>&nbsp;&nbsp;&nbsp;&nbsp;Butuan City&nbsp;&nbsp;&nbsp;</u>.</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p class="right-align"><strong><u>{{data.swo.get_fullname}}</u></strong></p>
+      <p class="right-align">Social Worker&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-10px;border-top-color: black;border-color: white;text-align: center;">
+        <tr style="font-size: 8px;border-bottom: 1px solid black;">
+        <td colspan="4"></td>
+        <td colspan="4">
+            <label>Page 1 of 1</label>
+        </td>
+        <td colspan="4">
+        </td>
+        </tr>          
+    </table>
+    <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-25px;border-top-color: black;border-color: white;text-align: center;">
+        <tr style="font-size: 8px;font-weight: bold;">
+        <td colspan="4"></td>
+        <td  colspan="4">
+            <br>
+            <img height="45px" style="float:right;" src="{% static 'lp_assets/images/socotec.png' %}">
+            <label>DSWD Field Office Caraga. R. Palma. Brgy. Dagohoy. Butuan City. Philippines 8600  </label><br><label>Website: http://www.dswd.gov.ph  Email: cis.focrg@dswd.gov.ph   Tel Nos.: 303-8620</label>
+        </td>
+        </tr>
+    </table>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
