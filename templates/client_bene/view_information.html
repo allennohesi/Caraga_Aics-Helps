@@ -24,7 +24,8 @@
                         {% if pict %}
                             {{pict.file_field1.url}}
                         {% else %}
-                            {% if transaction.client.sex.name == 'Male' %}
+                        
+                            {% if information.sex.name == 'Male' %}
                                 {% static 'images/user/male.png' %}
                             {% else %}
                                 {% static 'images/user/female.png' %}
