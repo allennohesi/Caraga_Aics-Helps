@@ -1044,6 +1044,31 @@ def removeTransactionData(request):
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
+def printAttestation(request, pk):
+	transaction = Transaction.objects.filter(id=pk).first()
+	transaction_data = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
+	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
+	display_family_roster = ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=transaction.bene_id)[:2]
+	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number)
+	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
+	purpose_assessment = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
+	
+	esig = SignatoriesTbl.objects.filter(signatories_id=transaction.signatories, status=1).first()
+	context = {
+		'data': transaction,
+		'roster': display_family_roster,
+		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
+		'provided_data': display_provided_data,
+		'transactionStartEnd':transactionStartEnd,
+		'transaction_data': transaction_data,
+		'calculate': calculate,
+		'purpose_assessment': purpose_assessment,
+		'esignature':esig,
+	}
+	return render(request,"requests/printAttestation.html", context)
+
+@login_required
+@groups_only('Social Worker', 'Super Administrator')
 def printGIS(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
 	transaction_data = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()

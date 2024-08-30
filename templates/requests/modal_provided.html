@@ -112,6 +112,7 @@
                     <li><a class="dropdown-item" href="{% url 'printCECASH' transaction.id %}" target="_blank">Certificate of Eligibility (Financial Assistance)</a></li>
                     <li><a class="dropdown-item" href="{% url 'printPettyCashVoucher' transaction.id %}" target="_blank">Petty Cash Voucher</a></li>
                     {% endif %}
+                    <li><a class="dropdown-item" href="{% url 'printAttestation' transaction.id %}" target="_blank">Attestation</a></li>
                 </ul>
                 {% endif %}
                 {% endif %}
