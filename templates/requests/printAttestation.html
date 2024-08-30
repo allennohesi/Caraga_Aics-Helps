@@ -64,23 +64,24 @@
           </th>      
         </thead>          
       </table>
-      <p><strong><center>CERTIFICATE OF ATTESTATION</center></strong></p>
+      <br>
+      <h5><strong><center>CERTIFICATE OF ATTESTATION</center></strong></h5>
       <p><strong>&nbsp;</strong></p>
       <p>&nbsp;</p>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        This is to certify that Mr./Ms. <u>{{data.client.full_name|upper}}</u> <u>,</u> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.client.get_age}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
-      <p>residing at <u>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
-        is currently working or has employment history as <u>&nbsp;&nbsp;{{data.client.occupation.occupation_name|upper}}&nbsp;&nbsp;&nbsp; </u>in ___________________________________,earning <u>{{data.client.salary}}</u>&nbsp;per month.</p>
+        This is to certify that Mr./Ms. <u><strong>{{data.client.full_name|upper}}</strong></u> <u>,</u> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{data.client.get_age}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+      <p>residing at <u><strong>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</strong>&nbsp;&nbsp;</u>
+        is currently working or has employment history as <u>&nbsp;&nbsp;<strong>{{data.client.occupation.occupation_name|upper}}</strong>&nbsp;</u>in ___________________________________,earning <u><strong>{{data.client.salary}}</strong></u>&nbsp;per month.</p>
       <p>&nbsp;</p>
-      <p>Based on the assessment and validation conducted by the undersigned, the above-mentioned income remains insufficient to meet the family&rsquo;s daily sustenance for <u>{{data.lib_assistance_category.name}}</u> / <u>{{purpose_assessment.problem_presented|upper}}</u> and currently experiencing financial difficulties due to rising inflation.</p>
+      <p>Based on the assessment and validation conducted by the undersigned, the above-mentioned income remains insufficient to meet the family&rsquo;s daily sustenance for <u><strong>{{data.lib_assistance_category.name}}</u> / <u>{{purpose_assessment.problem_presented|upper}}</strong></u> and currently experiencing financial difficulties due to rising inflation.</p>
       <p>&nbsp;</p>
-      <p>Issued this <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{transactionStartEnd.verified_time_start|date:"M. d, Y"}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>&nbsp;at <u>&nbsp;&nbsp;&nbsp;&nbsp;Butuan City&nbsp;&nbsp;&nbsp;</u>.</p>
+      <p>Issued this <strong><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{transactionStartEnd.verified_time_start|date:"M. d, Y"}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></u>&nbsp;at <u>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Butuan City</strong>&nbsp;&nbsp;&nbsp; </u>.</p>
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <p class="right-align"><strong><u>{{data.swo.get_fullname}}</u></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-      <p class="right-align">Social Worker: License no. <u>{{information.license_no}}</u></p>
+      <p class="right-align">Social Worker: License no. <u><strong>{{information.license_no}}</strong></u></p>
     <br>
     <br>
     <br>
