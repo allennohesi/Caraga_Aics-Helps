@@ -165,12 +165,14 @@ def user_profile(request):
 			else:
 				if check_if_details_exists:
 					AuthuserDetails.objects.filter(user_id=request.user.id).update(
-						barangay_id=request.POST.get('barangay')
+						barangay_id=request.POST.get('barangay'),
+						license_no=request.POST.get('license_no')
 					)
 				else:
 					AuthuserDetails.objects.create(
 						user_id=request.user.id,
-						barangay_id=request.POST.get('barangay')
+						barangay_id=request.POST.get('barangay'),
+						license_no=request.POST.get('license_no')
 					)
 				return JsonResponse({'data': 'success','msg':'Information has been updated'})
 			

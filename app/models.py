@@ -104,6 +104,7 @@ class AuthuserDetails(models.Model):
 
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     barangay = models.ForeignKey(Barangay, models.DO_NOTHING, to_field='brgy_code')
+    license_no = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
