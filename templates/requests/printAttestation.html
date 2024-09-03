@@ -68,37 +68,53 @@
       <h5><strong><center>CERTIFICATE OF ATTESTATION</center></strong></h5>
       <p><strong>&nbsp;</strong></p>
       <p>&nbsp;</p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        This is to certify that Mr./Ms. <u><strong>{{data.client.full_name|upper}}</strong></u> <u>,</u> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{data.client.get_age}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
-      <p>residing at <u><strong>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</strong>&nbsp;&nbsp;</u>
-        is currently working or has employment history as <u>&nbsp;&nbsp;<strong>{{data.client.occupation.occupation_name|upper}}</strong>&nbsp;</u>in ___________________________________,earning <u><strong>{{data.client.salary}}</strong></u>&nbsp;per month.</p>
-      <p>&nbsp;</p>
-      <p>Based on the assessment and validation conducted by the undersigned, the above-mentioned income remains insufficient to meet the family&rsquo;s daily sustenance for <u><strong>{{data.lib_assistance_category.name}}</u> / <u>{{purpose_assessment.problem_presented|upper}}</strong></u> and currently experiencing financial difficulties due to rising inflation.</p>
-      <p>&nbsp;</p>
-      <p>Issued this <strong><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{transactionStartEnd.verified_time_start|date:"M. d, Y"}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></u>&nbsp;at <u>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Butuan City</strong>&nbsp;&nbsp;&nbsp; </u>.</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p class="right-align"><strong><u>{{data.swo.get_fullname}}</u></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-      <p class="right-align">Social Worker: <strong>{{information.license_no}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>    
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+      <p class="text-sm-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        This is to certify that Mr./Ms. <u><strong>{{data.client.full_name|upper}}</strong></u>, <strong><u>{{data.client.get_age}}</u></strong> 
+        residing at <u><strong>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</strong>
+        </u> is currently working or has employment history as <strong>{{data.client.occupation.occupation_name|upper}}</strong> in ___________________________________,earning 
+        <strong><u>{{data.client.salary}}</u></strong></u>&nbsp;per month.
+      </p>
+      <br>
+      <p class="text-sm-left">
+      Based on the assessment and validation conducted by the undersigned, the above-mentioned income remains insufficient to meet the family&rsquo;s daily sustenance for <u><strong>{{data.lib_assistance_category.name}}</u> / <u>{{purpose_assessment.problem_presented|upper}}</strong></u> 
+      and currently experiencing financial difficulties due to rising inflation.
+      </p>
+      <br>
+      <p class="text-sm-left">
+      Issued this <strong><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{transactionStartEnd.verified_time_start|date:"M. d, Y"}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></u>&nbsp;at <u>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Butuan City</strong>&nbsp;&nbsp;&nbsp; </u>.
+      </p>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <p class="right-align"><strong><u>{{data.swo.get_fullname}}</u></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Social Worker Officer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <br>License No.: <strong>{{information.license_no}}</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </p>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br> 
+      <br>
+      <br>
+      <br> 
+      <br>
+      <br>
+      <br> 
+      <br>
+      <br>
+      <br> 
+      <br>
+      <br>
+      <br>    
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
     <table class="beneficiary-info table table-bordered" style="font-size: 12px;margin-top:-10px;border-top-color: black;border-color: white;text-align: center;">
         <tr style="font-size: 8px;border-bottom: 1px solid black;">
         <td colspan="4"></td>
