@@ -75,7 +75,7 @@ def feedback(request):
 		feedback = AuthFeedback.objects.create(
 			subject=request.POST.get('subject'),
 			message=request.POST.get('message'),
-            mood=request.POST.get('mood'),
+			mood=request.POST.get('mood'),
 			user_id=request.user.id
 		)
 		return JsonResponse({'data': 'success','msg':'You successfully submitted your feedback'})
@@ -151,11 +151,14 @@ def user_profile(request):
 	restriction = request.user.groups.filter(name__in=['Super Administrator']).exists()
 	if request.method == "POST":
 		try:
+			#CHANGE THE PASSWORD ONLY
 			if request.POST.get('verification') == "changepassword":
 				target_user = AuthUser.objects.filter(id=request.user.id).update(
 					password = make_password(request.POST.get('password'))
 				)
 				return JsonResponse({'data': 'success','msg':'Password has been updated'})
+
+			#CHANGE THE PROFILE PICTURE
 			elif request.POST.get('verification') == "changeprofile":
 				AuthuserProfile.objects.filter(user_id=request.user.id).delete()
 				AuthuserProfile.objects.create(
@@ -163,17 +166,30 @@ def user_profile(request):
 					user_id=request.user.id,
 				)
 			else:
-				if check_if_details_exists:
-					AuthuserDetails.objects.filter(user_id=request.user.id).update(
-						barangay_id=request.POST.get('barangay'),
-						license_no=request.POST.get('license_no')
-					)
-				else:
-					AuthuserDetails.objects.create(
-						user_id=request.user.id,
-						barangay_id=request.POST.get('barangay'),
-						license_no=request.POST.get('license_no')
-					)
+				#CHANGING OF FULL NAME AND DETAILS
+				first_name = request.POST.get('first_name', '')
+				middle_name = request.POST.get('middle_name', '')
+				last_name = request.POST.get('last_name', '')
+    
+				# Get the first letter of each part of the first name and middle name
+				first_initials = ''.join([name[0] for name in first_name.split()]) if first_name else ''
+				middle_initials = ''.join([name[0] for name in middle_name.split()]) if middle_name else ''
+				last_initials = last_name if last_name else ''
+
+				username = (first_initials + middle_initials + last_initials).lower()
+				AuthUser.objects.filter(id=request.user.id).update(
+					first_name = first_name,
+					middle_name = middle_name,
+					last_name = last_name,
+					username = username,
+				)
+				AuthuserDetails.objects.update_or_create(
+					user_id=request.user.id, #FILTERING ONLY
+					defaults={
+						'barangay_id': request.POST.get('barangay'),
+						'license_no': request.POST.get('license_no')
+					}
+				)
 				return JsonResponse({'data': 'success','msg':'Information has been updated'})
 			
 		except ConnectionError as ce:
