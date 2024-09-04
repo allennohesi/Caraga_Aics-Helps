@@ -12,6 +12,7 @@ urlpatterns = [
     path('', landingpage, name='landingpage'),
     path('queuing/', queuing, name='queuing'),
     # path('sse/', sse_view, name='sse_view'),
+    path('oidc/', include('mozilla_django_oidc.urls')),
     path('404/', layout_404, name='layout_404'),
     path('login/', login, name='login'),
     path('logout/', log_out, name='logout'),
