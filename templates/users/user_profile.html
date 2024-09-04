@@ -81,7 +81,7 @@
               <form id="changepassword">
                 {% csrf_token %}
                 <div class="mb-3">
-                  <label class="form-label">Email-Address</label>
+                  <label class="form-label">Email Address</label>
                   <input class="form-control" value="{{user_data.email}}" placeholder="your-email@domain.com">
                 </div>
                 <div class="mb-3">
@@ -109,9 +109,9 @@
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Company</label>
+                    <label class="form-label">Agency</label>
                     <input class="form-control" type="text" value="Department of Social Welfare and Development" placeholder="Company" readonly>
                   </div>
                 </div>
@@ -120,19 +120,19 @@
                 <div class="col-sm-4 col-md-4">
                   <div class="mb-3">
                     <label class="form-label">First Name</label>
-                    <input class="form-control" type="text" value="{{user_data.first_name}}">
+                    <input class="form-control" type="text" name="first_name" value="{{user_data.first_name}}">
                   </div>
                 </div>
                 <div class="col-sm-4 col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Middle Name</label>
-                    <input class="form-control" type="text" value="{{user_data.middle_name}}">
+                    <input class="form-control" type="text" name="middle_name" value="{{user_data.middle_name}}">
                   </div>
                 </div>
                 <div class="col-sm-4 col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Last Name</label>
-                    <input class="form-control" type="text" value="{{user_data.last_name}}">
+                    <input class="form-control" type="text" name="last_name" value="{{user_data.last_name}}">
                   </div>
                 </div>
                 <hr>
