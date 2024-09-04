@@ -41,7 +41,16 @@ def get_user_info(user_id):
 
 @register.simple_tag
 def get_user_role(user_id):
-	return AuthUserGroups.objects.filter(user_id=user_id).first().group.name
+    # Fetch the first AuthUserGroups object for the given user_id
+    user_group = AuthUserGroups.objects.filter(user_id=user_id).first()
+    
+    # Check if user_group is None
+    if user_group is None:
+        return None  # or return a default value, e.g., 'No Role Assigned'
+    
+    # Return the group name
+    return user_group.group.name
+
 
 
 
