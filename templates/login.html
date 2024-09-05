@@ -52,9 +52,25 @@
                                         <button type="submit" id="submitBtn" class="btn btn-primary btn-block btn-lg w-100" type="submit">Sign in</button>
                                     </div>
                                 </form>
-                                <a href="{% url 'oidc_authentication_init' %}">
-                                    <button>Login with Keycloak</button>
-                                </a>
+                                <p class="mt-2 text-sm text-center leading-5 text-gray-600 max-w">
+                                    or login with
+                                </p>
+                                <center>
+                                    <div class="mt-4">
+                                        <span class="block w-full rounded-md shadow-sm">
+                                            <a
+                                                href="{% url 'oidc_authentication_init' %}"
+                                                type="submit"
+                                                class="w-full flex justify-center py-2 px-4 g-white hover:bg-gray-100 text-gray-600 font-semibold py-2 px-4 border border-gray-400 rounded shadow transition duration-150 ease-in-out"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                &emsp;<strong>ISSSO</strong>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </center>
                                 <p class="mt-4 mb-0">© Copyright 2022 <strong>AICS-HELPS</strong>. All Rights Reserved</p>
                             </div>
                         </div>
