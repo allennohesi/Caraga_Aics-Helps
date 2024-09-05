@@ -117,17 +117,17 @@ def edit_user(request, pk):
 					date_updated=datetime.now(),
 					fullname=user_fullname
 				)
-				if check_if_details_exists:
-					AuthuserDetails.objects.filter(user_id=pk).update(
-						barangay_id=request.POST.get('barangay')
-					)
-				else:
-					AuthuserDetails.objects.create(
-						user_id=pk,
-						barangay_id=request.POST.get('barangay')
-					)
-				AuthUserGroups.objects.filter(user_id=pk).update(
-					group_id=request.POST.get('group')
+				AuthuserDetails.objects.update_or_create(
+					user_id=pk,  # Lookup field (find by user_id)
+					defaults={
+						'barangay_id': request.POST.get('barangay')  # Update or set this field
+					}
+				)
+				AuthUserGroups.objects.update_or_create(
+					user_id=pk,  # This is the lookup field
+					defaults={
+						'group_id': request.POST.get('group')  # This will be updated or set when creating
+					}
 				)
 				return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(
 					request.POST.get('username'))})
