@@ -60,13 +60,13 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="First name" id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                            <input type="text" class="form-control" placeholder="First name" oninput="generateUsername()" id="first_name" name="first_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Middle name" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                            <input type="text" class="form-control" placeholder="Middle name" oninput="generateUsername()" id="middle_name" name="middle_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off">
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Last name" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+                            <input type="text" class="form-control" placeholder="Last name" oninput="generateUsername()" id="last_name" name="last_name" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
                         </div>
                     </div>
                     <br>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Username" id="username" name="username" autocomplete="off" required>
+                            <input type="text" class="form-control" placeholder="Username" id="username_id" name="username" autocomplete="off" required readonly>
                         </div>
                         <div class="col">
                             <input type="password" placeholder="password" class="form-control" id="password" name="password" required>
@@ -204,7 +204,23 @@
         passwordValidationMessage.textContent = "Password must have at least 1 uppercase letter, 1 special character, and be at least 8 characters long.";
       }
     });
-  </script>
+</script>
+<script>
+    function generateUsername() {
+        let firstName = document.getElementById('first_name').value;
+        let middleName = document.getElementById('middle_name').value;
+        let lastName = document.getElementById('last_name').value;
+
+        let firstInitials = firstName ? firstName.split(' ').map(name => name[0]).join('') : '';
+        let middleInitials = middleName ? middleName.split(' ').map(name => name[0]).join('') : '';
+        let lastInitials = lastName || '';
+
+        let username = (firstInitials + middleInitials + lastInitials).toLowerCase();
+
+        document.getElementById('username_id').value = username;
+        console.log(username)
+    }
+</script>
 <script>
     $(document).ready(function(){
         $('#user-table').DataTable({
@@ -241,7 +257,16 @@
                 {'data': 'username'},
                 {'data': 'fullname', 'name': 'first_name, middle_name, last_name'},
                 {'data': 'email', 'className': 'text-center', 'sortable': false},
-                {'data': 'role', 'className': 'text-center', 'searchable': false, 'sortable': false },
+                {
+                    'data': 'role',
+                    'render': function(data, type, row, meta) {
+                        // Check if role is empty or null, return "No Role" if it is
+                        return data ? data : "No Role";
+                    },
+                    'className': 'text-center',
+                    'searchable': false,
+                    'sortable': false
+                },
                 {'data': 'is_staff',
                     'render': function(data, type, row, meta) {
                         if(data == 1) {
