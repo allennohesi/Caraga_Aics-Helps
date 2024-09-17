@@ -35,7 +35,6 @@ month = today.strftime("%m")
 year = today.strftime("%Y")
 
 def get_transaction_summary():
-	print(year)
 	transaction_counts = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6], verified_time_start__year=year)
@@ -136,10 +135,10 @@ def get_transaction_summary():
 	transaction_counts = TransactionStatus1.objects.filter(
 		status__in=[3, 6], verified_time_start__year=year
 	).aggregate(
-    count_male=Count('transaction__client__id', filter=Q(transaction__client__sex__name="MALE"), distinct=True),
-    count_female=Count('transaction__client__id', filter=Q(transaction__client__sex__name="FEMALE"), distinct=True),
-    total_clients=Count('transaction__client__id', distinct=True),  # DISTINCT CLIENT COUNT AS ONE
-    total_bene=Count('transaction__bene__id', distinct=True),
+	count_male=Count('transaction__client__id', filter=Q(transaction__client__sex__name="MALE"), distinct=True),
+	count_female=Count('transaction__client__id', filter=Q(transaction__client__sex__name="FEMALE"), distinct=True),
+	total_clients=Count('transaction__client__id', distinct=True),  # DISTINCT CLIENT COUNT AS ONE
+	total_bene=Count('transaction__bene__id', distinct=True),
 	)
 
 	count_male = transaction_counts['count_male']
@@ -228,14 +227,14 @@ def landingpage(request):
 	context = {
 		'title': 'Landingpage',
 		'summary_data': transaction_summary['summary_data'],
-        'sub_category': transaction_summary['sub_category'],
-        'monthly_transactions': transaction_summary['monthly_transactions'],
-        'disability_storage': transaction_summary['disability_storage'],
-        'count_male': transaction_summary['count_male'],
-        'count_female': transaction_summary['count_female'],
-        'count_client': transaction_summary['count_client'],
-        'count_bene': transaction_summary['count_bene'],
-        'formatted_total_amount': transaction_summary['formatted_total_amount'],
+		'sub_category': transaction_summary['sub_category'],
+		'monthly_transactions': transaction_summary['monthly_transactions'],
+		'disability_storage': transaction_summary['disability_storage'],
+		'count_male': transaction_summary['count_male'],
+		'count_female': transaction_summary['count_female'],
+		'count_client': transaction_summary['count_client'],
+		'count_bene': transaction_summary['count_bene'],
+		'formatted_total_amount': transaction_summary['formatted_total_amount'],
 	}
 	return render(request, 'landingpage.html', context)
 
@@ -261,28 +260,40 @@ def log_out(request):
 def media_access(request, path):    
 	return render(request, '404.html')
 
+# def has_role(user, role_name):
+# 	return user.groups.filter(name=role_name).exists()
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def dashboard(request):
-    # Call the get_transaction_summary function to get the summary data
-    transaction_summary = get_transaction_summary()
 
-    # Build the context using the data returned from the function
-    context = {
-        'title': 'Dashboard',
-        'summary_data': transaction_summary['summary_data'],
-        'sub_category': transaction_summary['sub_category'],
-        'monthly_transactions': transaction_summary['monthly_transactions'],
-        'disability_storage': transaction_summary['disability_storage'],
-        'count_male': transaction_summary['count_male'],
-        'count_female': transaction_summary['count_female'],
-        'count_client': transaction_summary['count_client'],
-        'count_bene': transaction_summary['count_bene'],
-        'formatted_total_amount': transaction_summary['formatted_total_amount'],
-    }
+	no_role = False
+	user = request.user
+	
+	# Check if the user has the 'Admin' role
+	if not user.groups.exists():
+		no_role = True
 
-    return render(request, 'home.html', context)
+	# Call the get_transaction_summary function to get the summary data
+	transaction_summary = get_transaction_summary()
+
+
+	# Build the context using the data returned from the function
+	context = {
+		'title': 'Dashboard',
+		'summary_data': transaction_summary['summary_data'],
+		'sub_category': transaction_summary['sub_category'],
+		'monthly_transactions': transaction_summary['monthly_transactions'],
+		'disability_storage': transaction_summary['disability_storage'],
+		'count_male': transaction_summary['count_male'],
+		'count_female': transaction_summary['count_female'],
+		'count_client': transaction_summary['count_client'],
+		'count_bene': transaction_summary['count_bene'],
+		'formatted_total_amount': transaction_summary['formatted_total_amount'],
+		'no_role': no_role,
+	}
+
+	return render(request, 'home.html', context)
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
