@@ -128,6 +128,17 @@
 {% block script %}
 <script src="{% static 'js/datalabels.min.js' %}"></script>
 <script>
+  $(document).ready(function(){
+    {% if no_role %}
+      Swal.fire({
+          title: "Please update your profile",
+          text: "Contact the Administrator for User Permission/Roles ",
+          icon: "question"
+          });
+    {% endif %}
+  })
+</script>
+<script>
   // Initialize data arrays from Django context
   var categoryLabels = [{% for row in summary_data %}"{{ row.category }}",{% endfor %}];
   var categoryCounts = [{% for row in summary_data %}{{ row.count }},{% endfor %}];
