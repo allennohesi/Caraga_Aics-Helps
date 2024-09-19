@@ -686,7 +686,7 @@
                 <div class="row mb-3">
                     <div class="form-group">
                         <label>Social Worker's Assessment</label>
-                        <textarea class="form-control" name="sw_asessment" rows="10" cols="40" required>{% if Problem_Assessment.sw_assessment == None %}{% else %}{{ Problem_Assessment.sw_assessment|upper }}{% endif %}</textarea>
+                        <textarea class="form-control" name="sw_asessment" id="sw_assessment" rows="10" cols="40" required>{% if Problem_Assessment.sw_assessment == None %}{% else %}{{ Problem_Assessment.sw_assessment|upper }}{% endif %}</textarea>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -998,6 +998,31 @@
     </div>
 </div>
 {% block script %}
+<script>
+    // Use a self-contained function to avoid conflicts
+    (function() {
+        // Ensure no other scripts are declaring `textarea` in the same scope
+        const textarea = document.getElementById('sw_assessment');
+
+        // Add an event listener for input changes
+        textarea.addEventListener('input', function() {
+            let value = textarea.value;
+
+            // Remove $ and ₱ from the input
+            textarea.value = value.replace(/[$₱]/g, '');
+
+            // Show an alert if the symbol was entered and removed
+            if (value !== textarea.value) {
+                Swal.fire({
+                    title: 'Oops...',
+                    text: 'Special characters are not allowed. Please use only letters, numbers, and spaces.',
+                    icon: 'warning',
+                    confirmButtonText: 'Got it!',
+                });
+            }
+        });
+    })();
+</script>
 <script>
     
     document.getElementById('flexCheckIndeterminate').addEventListener('change', function() {
