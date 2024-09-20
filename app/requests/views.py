@@ -953,8 +953,8 @@ def modal_provided(request,pk):
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "EXCEPTION ERROR IN MODAL PROVIDED", request.user.id)
-		return JsonResponse({'error': True, 'msg': 'There was an unexpected error with your input, please review'})
+		handle_error(e, "ERROR IN INPUT FIELD", request.user.id)
+		return JsonResponse({'error': True, 'msg': 'There is an error in your input field, please review'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
 	context = {
