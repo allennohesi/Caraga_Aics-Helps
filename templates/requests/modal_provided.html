@@ -70,7 +70,7 @@
                             </tr>
                             {% endfor %}
                         {% endif %}
-                        <tr>
+                        <tr id="nothing-follows-row">
                             <td>*nothing follows*</td>
                             <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
                             <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
@@ -126,26 +126,26 @@
     var template_provided = `
     <tr>
         <td>
-            <input type="text" class="form-control" name="provided[]" id="provided" required>
+            <input type="text" class="form-control" name="provided[]" id="provided" >
         </td>
         <td valign="middle">
-            <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" required>
+            <input type="text" class="form-control" name="regprice[]" onkeypress='validate(event)' id="reg_price" >
         </td>
         <td valign="middle">
-            <input type="number" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' step="any" required>
+            <input type="number" class="form-control" name="qty[]" id="qty" onkeypress='validate(event)' step="any" >
         </td>
         <td valign="middle">
-            <input type="number" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' step="any" required>
+            <input type="number" class="form-control" name="dsc[]" id="dsc" onkeypress='validate(event)' step="any" >
         </td>
         <td valign="middle">
-            <input type="number" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' step="any" required>
+            <input type="number" class="form-control" name="discounted_price[]" id="discounted_price" onkeypress='validate(event)' step="any" >
         </td>
         <td valign="middle">
-            <input type="number" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' step="any" required>
+            <input type="number" class="form-control" name="qty1[]" id="qty1" onkeypress='validate(event)' step="any" >
             <div class="invalid-feedback"></div>
         </td>
         <td valign="middle">
-            <input type="number" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' required readonly>
+            <input type="number" class="form-control" name="tot[]" id="tot" onkeypress='validate(event)' readonly >
             <div class="invalid-feedback"></div>
         </td>
         <td valign="middle">
@@ -155,9 +155,15 @@
         </td>
     </tr>
 `;
+// Add 6 default rows on page load
+$(document).ready(function() {
+    for (let i = 0; i < 6; i++) {
+        $('#nothing-follows-row').before(template_provided);
+    }
+});
 
-$('#add-provided').on('click', function(){
-    $('#provided-table tbody').prepend(template_provided);
+$('#add-provided').on('click', function() {
+    $('#nothing-follows-row').before(template_provided);
 });
 
 $(document).on('click', 'button[data-role=remove]', function(){
@@ -226,6 +232,29 @@ $(document).on('change keyup', '#provided-table input[name="regprice[]"], #provi
             row.find('input[name="discounted_price[]"]').val(regPriceTotal.toFixed(2));
         }
     }
+});
+$('#submitformProvided').on('submit', function(e) {
+    e.preventDefault(); // Prevent the form from submitting immediately
+
+    // Remove rows where all input fields are empty, except the last row
+    $('#provided-table tbody tr').each(function() {
+        // Skip the last row (Pre total row)
+        if ($(this).find('td').first().text().trim() === '*nothing follows*') {
+            return; // Continue to the next row
+        }
+
+        var isEmpty = true;
+        $(this).find('input').each(function() {
+            if ($(this).val().trim() !== '') {
+                isEmpty = false;
+                return false; // Exit the loop if any input has a value
+            }
+        });
+        
+        if (isEmpty) {
+            $(this).remove(); // Remove empty rows
+        }
+    });
 });
 </script>
 <script>
