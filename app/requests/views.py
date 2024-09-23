@@ -953,10 +953,20 @@ def modal_provided(request,pk):
 		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
 	except Exception as e:
 		# Handle other unexpected errors (e.g., log the error)
-		handle_error(e, "ERROR IN INPUT FIELD", request.user.id)
+		handle_error(e, "ERROR IN INPUT FIELD IN MODAL PROVIDED", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There is an error in your input field, please review'})
 
 	total_amount = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(total_payment=Sum('total'))
+	regular_quantity = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(regular_quantity=Sum('regular_quantity'))
+	discount_quantity = transaction_description.objects.filter(tracking_number_id=transaction_id.tracking_number).aggregate(discount_quantity=Sum('discount_quantity'))
+
+	# Extract the values from the dictionaries, defaulting to 0 if None
+	regular_quantity_value = regular_quantity['regular_quantity'] or 0
+	discount_quantity_value = discount_quantity['discount_quantity'] or 0
+
+	# Calculate the total quantity
+	total_quantity = regular_quantity_value + discount_quantity_value
+
 	context = {
 		'service_provider': ServiceProvider.objects.filter(status=1),
 		'transactionProvided': transaction_description.objects.filter(tracking_number=transaction_id.tracking_number),
@@ -965,6 +975,7 @@ def modal_provided(request,pk):
 		'transaction': transaction_id,
 		'calculate': total_amount,
 		'medicine': medicine.objects.filter(is_active=1),
+		'total_quantity': total_quantity,
 	}
 	return render(request,"requests/modal_provided.html",context)
 

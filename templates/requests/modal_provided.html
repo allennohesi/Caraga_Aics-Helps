@@ -72,8 +72,9 @@
                         {% endif %}
                         <tr id="nothing-follows-row">
                             <td>*nothing follows*</td>
-                            <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
-                            <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
+                            <td colspan="4" style="text-align: right;"></td>
+                            <td colspan="1" style="border-bottom: 1px solid black"><b>Pre Quantity</b> <br><label id="pre_quantity" style="color:red;">{% if total_quantity %}{{total_quantity}}{% else %}0{% endif %}</label></td>
+                            <td colspan="1" style="border-bottom: 1px solid black"><b>Pre total</b> <br><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
                             <td><button type="submit" id="submit_button" class="btn btn-primary" disabled>Submit</button></td>
                         </tr>
                     </tbody>
@@ -90,7 +91,8 @@
         <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
         <br>
         <div class="alert alert-light" role="alert">
-            Final total: <a href="#" class="alert-link"><span>&#8369;</span> <u>{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}</u></a>. <p style="color:red;"> Note: final total is your confirmed amount</p>
+            Final Quantity: <b>{% if transaction.total_amount %}{{total_quantity}}{% else %}0{% endif %}</b> |
+            Final total: <a href="#" class="alert-link"><span>&#8369;</span><u>{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}</u></a>. <p style="color:red;"> Note: Always press confirm to reflect final quantity & final total </p>
         </div>
         <center>
             {% if calculate.total_payment%}
@@ -172,6 +174,7 @@ $(document).on('click', 'button[data-role=remove]', function(){
 });
 function calculateTotal() {
     var total = 0;
+    var totalQuantity = 0;
     $('#provided-table tbody tr').each(function() {
         var regPrice = parseFloat($(this).find('input[name="regprice[]"]').val());
         var qty = parseFloat($(this).find('input[name="qty[]"]').val());
@@ -185,6 +188,12 @@ function calculateTotal() {
             var mult = (main * dec).toFixed(2);
             var discount = (main - mult).toFixed(2);
             var regPriceTotal = (regPrice - (regPrice * dec)).toFixed(2);
+
+            var totalQty = qty + qty1;
+            totalQuantity += totalQty;
+            // Print totalQty to the console
+            console.log("Total Quantity (qty + qty1):", totalQty);
+
             var total2 = (qty1 * regPriceTotal).toFixed(2);
             var finalTotal = (parseFloat(main) + parseFloat(total2)).toFixed(2);
             total += parseFloat(finalTotal);
@@ -192,6 +201,7 @@ function calculateTotal() {
             $(this).find('input[name="tot[]"]').val(finalTotal);
         }
     });
+    $('#pre_quantity').text(totalQuantity);
     $('#pre_total_label').text(total.toFixed(2));
 }
 
