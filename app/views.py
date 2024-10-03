@@ -300,7 +300,7 @@ def dashboard(request):
 def transactionDashboard(request):
 	transactions_per_swo = (
 		TransactionStatus1.objects
-		.filter(status__in=[3, 6])  # Filter transactions with status 3 or 6
+		.filter(status__in=[3, 6],verified_time_end__year=year)  # Filter transactions with status 3 or 6
 		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(transaction_count=Count('transaction__swo'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
@@ -308,7 +308,7 @@ def transactionDashboard(request):
 
 	transaction_status_summary = (
 		TransactionStatus1.objects
-		.filter(status__in=[1, 2, 3, 4, 5, 6, 7])  # Filter transactions with status 3 or 6
+		.filter(status__in=[1, 2, 3, 4, 5, 6, 7],verified_time_end__year=year)  # Filter transactions with status 3 or 6
 		.values('status')
 		.annotate(transaction_count=Count('status'))
 		.order_by('-transaction_count')  # Order by transaction count in descending order
@@ -317,7 +317,7 @@ def transactionDashboard(request):
 
 	transaction_per_verifier = (
 		ClientBeneficiary.objects
-		.filter(registered_by__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"))
+		.filter(registered_by__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"),date_of_registration__year=year)
 		.values('registered_by__id', 'registered_by__first_name', 'registered_by__last_name')
 		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
 		.order_by('-transaction_count')
@@ -325,7 +325,7 @@ def transactionDashboard(request):
 
 	requested_by_verifier = (
 		TransactionStatus1.objects
-		.filter(verifier__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"))
+		.filter(verifier__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"),verified_time_end__year=year)
 		.values('verifier__id', 'verifier__first_name', 'verifier__last_name')
 		.annotate(transaction_count=Count('verifier'))  # Count updates made by each user
 		.order_by('-transaction_count')
@@ -333,7 +333,7 @@ def transactionDashboard(request):
 
 	case_study_per_swo = (
 		TransactionStatus1.objects
-		.filter(transaction__is_case_study=2, status__in=[3, 6])  # Filter transactions with status 3 or 6
+		.filter(transaction__is_case_study=2, status__in=[3, 6],verified_time_end__year=year)  # Filter transactions with status 3 or 6
 		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
 		.annotate(
 			transaction_count=Count('transaction__swo'),
