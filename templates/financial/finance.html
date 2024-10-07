@@ -429,7 +429,7 @@
     $(document).on('click','a[data-role=edit_data]', function(){ // For assessmentStatus
         var id = $(this).data('id');
         var dv_number = $('#'+id).children('td:eq(2)').text();
-        var remarks = $('#'+id).children('td:eq(6)').text();
+        var remarks = $('#'+id).children('td:eq(9)').text();
         $('#dv_id').val(id)
         $('#voucher_title').val(dv_number)
         $('#remarks').val(remarks)

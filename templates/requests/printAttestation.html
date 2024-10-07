@@ -71,7 +71,7 @@
       <p class="text-sm-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         This is to certify that Mr./Ms. <u><strong>{{data.client.full_name|upper}}</strong></u>, <strong><u>{{data.client.get_age}}</u></strong> 
         residing at <u><strong>{{data.client.house_no|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}}</strong>
-        </u> is currently working or has employment history as <strong>{{data.client.occupation.occupation_name|upper}}</strong>, earning 
+        </u> is currently working or has employment history as <strong><u>{{data.client.occupation.occupation_name|upper}}<u></strong>, earning 
         <strong>₱<u>{{data.client.salary|intcomma}}</u></strong></u>&nbsp;per month.
       </p>
       <br>
