@@ -132,13 +132,14 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'requestsOnline' %}"><i data-feather="cast"></i><span>Request assistance</span></a>
                                     </li>
                                     {% endif %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>On-site Transaction</h6>
                                             <p>On-site transaction</p>
                                         </div>
                                     </li>
-                                    
+                                    {% endif %}
                                     {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-primary">Click me !</label>
