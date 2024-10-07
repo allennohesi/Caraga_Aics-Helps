@@ -191,25 +191,32 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
           <div class="service-item third-service">
             <div class="icon"></div>
             <h4>Total Cash Disbursed</h4>
             <h4>{{formatted_total_amount}}</h4>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-3">
           <div class="service-item third-service">
             <div class="icon"></div>
             <h4>Total Client</h4>
             <h4>{{count_client|intcomma}}</h4>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-3">
           <div class="service-item third-service">
             <div class="icon"></div>
             <h4>Total Beneficiary</h4>
             <h4>{{count_bene|intcomma}}</h4>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="service-item third-service">
+            <div class="icon"></div>
+            <h4>Billed / Unbilled </h4>
+            <h4>{{with_dv}} / {{without_dv}}</h4>
           </div>
         </div>
       </div>

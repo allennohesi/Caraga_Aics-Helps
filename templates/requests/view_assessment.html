@@ -999,6 +999,37 @@
 </div>
 {% block script %}
 <script>
+    // Convert the swo_time_start to a JavaScript Date object
+    let swoTimeStart = "{{ transaction_status.swo_time_start|date:'Y-m-d H:i:s' }}";
+    let transactionStartTime = new Date(swoTimeStart.replace(' ', 'T')); // ISO format
+    
+    // Get the current time
+    let currentTime = new Date();
+    
+    // Function to check if 15 minutes have passed
+    function checkTransactionTime() {
+        // Update current time on each check
+        currentTime = new Date();
+        
+        let diffInMs = currentTime - transactionStartTime;
+        let diffInMinutes = Math.floor(diffInMs / 1000 / 60);
+
+        if (diffInMinutes >= 15) {
+            Swal.fire({
+                title: "Reminder!",
+                text: "The transaction has already exceeded 15 minutes. If you have a problem, please contact the administrator.",
+                imageUrl: "{% static 'images/faq/learning-1.png' %}",
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: "Time alert"
+            });
+            clearInterval(transactionChecker); // Stop checking once the alert is triggered
+        }
+    }
+    // Check every minute if 15 minutes have passed
+    let transactionChecker = setInterval(checkTransactionTime, 10000);
+</script>
+<script>
     // Use a self-contained function to avoid conflicts
     (function() {
         // Ensure no other scripts are declaring `textarea` in the same scope
@@ -1024,7 +1055,6 @@
     })();
 </script>
 <script>
-    
     document.getElementById('flexCheckIndeterminate').addEventListener('change', function() {
         const textarea = document.getElementById('exampleFormControlTextarea1');
         if (this.checked) {
@@ -1401,7 +1431,6 @@
         });
         $(document).on('click', 'a[data-role=delete_fam_composition]', function(){
             var id = $(this).data('id');
-            console.log(id)
             Swal.fire({
               title: "Are you sure",
               text: "You want to this data?",

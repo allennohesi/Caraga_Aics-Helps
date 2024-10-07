@@ -33,7 +33,7 @@
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <div class="card" style="width: 30rem;">
         <div class="card-body">
           <h5 class="card-title">Total Cash disbursed</h5>
@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <div class="card" style="width: 30rem;">
         <div class="card-body">
           <h5 class="card-title">Total Client</h5>
@@ -51,12 +51,21 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <div class="card" style="width: 30rem;">
         <div class="card-body">
           <h5 class="card-title">Total Beneficiary</h5>
           <p class="card-text">Total Beneficiary that are registered to system.</p>
           <h4>{{count_bene|intcomma}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card" style="width: 30rem;">
+        <div class="card-body">
+          <h5 class="card-title">Billed / Unbilled transactions</h5>
+          <p class="card-text">DSWD Caraga transactions</p>
+          <h4>Billed: {{with_dv}} / Unbilled: {{without_dv}}</h4>
         </div>
       </div>
     </div>
