@@ -19,7 +19,8 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>DV name/Temporary name: <u>{{finance_datas.voucher_title}} </u> <br> DV date/Temporary date: <u>{{finance_datas.date}}</u></label>
+                        <label>{% if finance_datas.with_without_dv == "WITHOUT-DV" %} Temporary name: {% else %} DV-name: {% endif %}<u>{{finance_datas.voucher_title}} </u> 
+                            <br>{% if finance_datas.with_without_dv == "WITHOUT-DV" %} Temporary date: {% else %} DV-date: {% endif %}<u>{{finance_datas.date}}</u></label>
                     </div>
                 </div>
             </div>
