@@ -33,6 +33,8 @@ currentDateAndTime = datetime.now()
 today = date.today()
 month = today.strftime("%m")
 year = today.strftime("%Y")
+from django.db.models import Count, Case, When, IntegerField
+
 
 def get_transaction_summary():
 	transaction_counts = (
@@ -192,6 +194,11 @@ def get_transaction_summary():
 	# Format the total amount
 	formatted_total_amount = "{:,.2f}".format(summary['total_amount'] if summary['total_amount'] else 0)
 
+	billed_transactions = finance_voucher.objects.aggregate(
+		with_dv=Count(Case(When(with_without_dv="WITH-DV", then=1), output_field=IntegerField())),
+		without_dv=Count(Case(When(with_without_dv="WITHOUT-DV", then=1), output_field=IntegerField()))
+	)
+
 	return {
 		'monthly_transactions': monthly_transactions,
 		'summary_data': summary_data,
@@ -202,6 +209,7 @@ def get_transaction_summary():
 		'count_bene': count_bene,
 		'disability_storage': disability_storage,
 		'formatted_total_amount': formatted_total_amount,
+		'billed_transactions': billed_transactions,
 	}
 
 
@@ -221,9 +229,8 @@ def send_notification(message, contact_number):
 	except Exception:
 		pass
 
-def landingpage(request):
+def landingpage(request): #LANDING PAGE
 	transaction_summary = get_transaction_summary()
-
 	context = {
 		'title': 'Landingpage',
 		'summary_data': transaction_summary['summary_data'],
@@ -235,6 +242,8 @@ def landingpage(request):
 		'count_client': transaction_summary['count_client'],
 		'count_bene': transaction_summary['count_bene'],
 		'formatted_total_amount': transaction_summary['formatted_total_amount'],
+		'with_dv': transaction_summary['billed_transactions']['with_dv'],
+		'without_dv': transaction_summary['billed_transactions']['without_dv']
 	}
 	return render(request, 'landingpage.html', context)
 
@@ -260,12 +269,10 @@ def log_out(request):
 def media_access(request, path):    
 	return render(request, '404.html')
 
-# def has_role(user, role_name):
-# 	return user.groups.filter(name=role_name).exists()
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def dashboard(request):
+def dashboard(request): #DASHBOARD AFTER LOGGED IN
 
 	no_role = False
 	user = request.user
@@ -276,7 +283,6 @@ def dashboard(request):
 
 	# Call the get_transaction_summary function to get the summary data
 	transaction_summary = get_transaction_summary()
-
 
 	# Build the context using the data returned from the function
 	context = {
@@ -291,6 +297,8 @@ def dashboard(request):
 		'count_bene': transaction_summary['count_bene'],
 		'formatted_total_amount': transaction_summary['formatted_total_amount'],
 		'no_role': no_role,
+		'with_dv': transaction_summary['billed_transactions']['with_dv'],
+		'without_dv': transaction_summary['billed_transactions']['without_dv']
 	}
 
 	return render(request, 'home.html', context)
