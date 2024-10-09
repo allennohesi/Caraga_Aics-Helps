@@ -829,8 +829,18 @@
                             <div class="timeline left">
                                 <div class="card">
                                     <div class="card-body p-4">
-                                        <h3>Transaction Ended</h3>
-                                        <p class="mb-0">Transaction Start: {{transaction_status.verified_time_start}} and Transaction End: {{transaction_status.swo_time_end}}.</p>
+                                        <h3>Uploading of picture</h3>
+                                        <p class="mb-0">Transaction Start: {{transaction_status.swo_time_end}} and Transaction End: {% if transaction_status.upload_time_end %} {{transaction_status.upload_time_end}} {% else %} {{transaction_status.swo_time_end}} {% endif %}.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if transaction_status.swo_time_end %}
+                            <div class="timeline right">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                    <h3>Overall transactions time</h3>
+                                    <p class="mb-0">Time Start: {{transaction_status.verified_time_start}} Time End: {% if transaction_status.upload_time_end %} {{transaction_status.upload_time_end}} {% else %} {{transaction_status.swo_time_end}} {% endif %}.</p>
                                     </div>
                                 </div>
                             </div>
