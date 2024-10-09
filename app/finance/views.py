@@ -126,7 +126,11 @@ def financial_transaction(request):
 						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
 					return JsonResponse({'error': True, 'msg': 'This Title/DV-name already exists, please double check.'})
-				
+
+		except ConnectionError as ce:
+			# Handle loss of connection (e.g., log the error)
+			handle_error(ce, "CONNECTION ERROR IN VIEW ASSESSMENT", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
 		except RequestException as e:
 			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
