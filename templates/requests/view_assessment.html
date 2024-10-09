@@ -1000,7 +1000,7 @@
 {% block script %}
 <script>
     // Convert the swo_time_start to a JavaScript Date object
-    let swoTimeStart = "{{ transaction_status.swo_time_start|date:'Y-m-d H:i:s' }}";
+    let swoTimeStart = "{{ alert_the_swo.swo_time_start|date:'Y-m-d H:i:s' }}";
     let transactionStartTime = new Date(swoTimeStart.replace(' ', 'T')); // ISO format
     
     // Get the current time
