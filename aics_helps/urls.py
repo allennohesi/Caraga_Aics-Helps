@@ -6,12 +6,12 @@ from django.contrib.auth.views import LogoutView
 
 from app.views import login, dashboard, mail, layout_404, status_activation, landingpage, media_access, print_ProvidedBYSWO, \
                     log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, withDvTransactions, \
-                    transactionDashboard, ExportBilledUnbilled
+                    transactionDashboard, ExportBilledUnbilled, sse_view
 
 urlpatterns = [
     path('', landingpage, name='landingpage'),
     path('queuing/', queuing, name='queuing'),
-    # path('sse/', sse_view, name='sse_view'),
+    path('sse/', sse_view, name='sse_view'),
     path('oidc/', include('mozilla_django_oidc.urls')),
     path('404/', layout_404, name='layout_404'),
     path('login/', login, name='login'),

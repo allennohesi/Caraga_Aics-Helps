@@ -132,6 +132,20 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'requestsOnline' %}"><i data-feather="cast"></i><span>Request assistance</span></a>
                                     </li>
                                     {% endif %}
+                                    {% if user|check_group_permission:"Super Administrator" %}
+                                    <li class="sidebar-main-title">
+                                        <div>
+                                            <h6>Service Provider</h6>
+                                            <p>Trannsactions</p>
+                                        </div>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'requestsOnline' %}"><i data-feather="home"></i><span>Request assistance</span></a>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'requestsOnline' %}"><i data-feather="cast"></i><span>All transactions</span></a>
+                                    </li>
+                                    {% endif %}
                                     {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" %}
                                     <li class="sidebar-main-title">
                                         <div>
@@ -440,7 +454,7 @@
                                     <div class="modal-body">
                                         <input type="text" value="{{request.user.id}}" name="User_id" hidden>
                                         <div class="form-group">
-                                            <label>Change Status</label>
+                                            <label>Update Activity</label>
                                             <select class="form-control select" id="status" name="status" required>
                                                 <option value="2">Active</option>
                                                 <option value="1">Deactivate</option>
