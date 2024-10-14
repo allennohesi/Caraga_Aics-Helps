@@ -25,6 +25,12 @@ class kioskAPI(generics.ListAPIView):
 	pagination_class = LargeResultsSetPagination
 	queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7]).order_by('-id')
 
+class queuingAPI(generics.ListAPIView):
+	serializer_class = TransactionSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[2,7],transaction_id__requested_in="AGUSAN DEL NORTE").order_by('-id')
+
 class adminMonitoring(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
