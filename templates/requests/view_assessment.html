@@ -1006,8 +1006,7 @@
 {% block script %}
 <script>
     $(document).ready(function() {
-        var callStatus = {{ transaction_status.queuing_call }}; // Get the current call status from your backend
-
+        var callStatus = {{ transaction_status.queuing_call|default:0 }}; // Get the current call status from your backend
         // Check the call status on page load
         if (callStatus == 1) {
             // Automatically prompt to stop the call
@@ -1071,7 +1070,6 @@
             // If callStatus is not 1, set up the click event for the callClient link
             $(document).on('click', 'a[data-role=callClient]', function() {
                 var id = $(this).data('id'); // Assuming the ID is stored in the link
-
                 Swal.fire({
                     title: "Are you sure?",
                     text: "You want to call this client?",
