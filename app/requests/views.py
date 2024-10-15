@@ -724,7 +724,6 @@ def view_assessment(request, pk):
 
 @csrf_exempt
 def queuingCall(request, pk):
-	print(pk)
 	try:
 		if request.method == "POST":
 			updated_rows = TransactionStatus1.objects.filter(transaction_id=pk).update(
