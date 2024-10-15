@@ -378,6 +378,7 @@ class TransactionStatus1(models.Model):
     transaction_status = models.IntegerField(blank=True, null=True)
     case_study_status = models.IntegerField()
     case_study_date = models.DateField()
+    queuing_call = models.IntegerField()
 
     @property
     def get_total(self):
