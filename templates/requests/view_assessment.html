@@ -93,7 +93,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" data-role="callClient" href="javascript:void(0);">
-                <i class="fa fa-phone"></i>{% if transaction_status.queuing_call == 1 %} STOP CALLING {% else %} CALL CLIENT {% endif %}
+                <i class="fa fa-phone"></i>{% if transaction_status.queuing_call == 1 %} STOP CALL {% else %} CALL CLIENT {% endif %}
             </a>
         </li>
         &nbsp;&nbsp;
@@ -787,9 +787,7 @@
                 {% endif %}
                 <br>
                 {% if transaction_status.queuing_call == 1 %}
-                <div class="alert alert-danger" role="alert">
-                    You need to stop the call in order to continue with the assessment.
-                </div>
+
                 <button type="submit" class="btn btn-primary btn-lg" disabled>{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
                 {% else %} 
                 <button type="submit" class="btn btn-primary btn-lg">{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
@@ -1007,36 +1005,123 @@
 </div>
 {% block script %}
 <script>
-    // Convert the swo_time_start to a JavaScript Date object
-    let swoTimeStart = "{{ alert_the_swo.swo_time_start|date:'Y-m-d H:i:s' }}";
-    let transactionStartTime = new Date(swoTimeStart.replace(' ', 'T')); // ISO format
-    
-    // Get the current time
-    let currentTime = new Date();
-    
-    // Function to check if 15 minutes have passed
-    function checkTransactionTime() {
-        // Update current time on each check
-        currentTime = new Date();
-        
-        let diffInMs = currentTime - transactionStartTime;
-        let diffInMinutes = Math.floor(diffInMs / 1000 / 60);
+    $(document).ready(function() {
+        var callStatus = {{ transaction_status.queuing_call }}; // Get the current call status from your backend
 
-        if (diffInMinutes >= 25) {
-            Swal.fire({
-                title: "Reminder!",
-                text: "The transaction has exceeded 25 minutes. If you are experiencing any issues, please contact the administrator.",
-                imageUrl: "{% static 'images/faq/learning-1.png' %}",
-                imageWidth: 400,
-                imageHeight: 200,
-                imageAlt: "Time alert"
+        // Check the call status on page load
+        if (callStatus == 1) {
+            // Automatically prompt to stop the call
+            function promptStopCall() {
+                Swal.fire({
+                    title: "Stop Call?",
+                    text: "You have an active call. Do you want to stop this call?",
+                    icon: "warning",
+                    showCancelButton: false,
+                    confirmButtonColor: "#3498DB",
+                    confirmButtonText: "Yes, stop it",
+                    allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.showLoading();
+                        // Assume you have the client ID available in a hidden input or similar
+                        var id = $('#clientId').val(); // Example of retrieving the client ID
+
+                        $.ajax({
+                            url: "{% url 'queuingCall' transaction.id %}",  // Update this URL for stopping the call
+                            data: {
+                                id: id
+                            },
+                            type: "POST"
+                        })
+                        .done(function(data) {
+                            if (data.data == 'success') {
+                                Swal.fire({
+                                    title: "Stopped!",
+                                    text: "The call has been stopped.",
+                                    icon: "success",
+                                    confirmButtonColor: "#3498DB",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $("#check").modal('hide');
+                                        $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                    }
+                                });
+                            } else {
+                                // Handle error response
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "There was a problem stopping the call.",
+                                    icon: "error",
+                                    confirmButtonColor: "#3498DB",
+                                    allowOutsideClick: false,
+                                });
+                            }
+                        });
+                    } else {
+                        // If the user clicks cancel, show the prompt again
+                        promptStopCall();
+                    }
+                });
+            }
+
+            // Call the prompt function initially
+            promptStopCall();
+        } else {
+            // If callStatus is not 1, set up the click event for the callClient link
+            $(document).on('click', 'a[data-role=callClient]', function() {
+                var id = $(this).data('id'); // Assuming the ID is stored in the link
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You want to call this client?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3498DB",
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.showLoading();
+                        $.ajax({
+                            url: "{% url 'queuingCall' transaction.id %}",
+                            data: {
+                                id: id
+                            },
+                            type: "POST"
+                        })
+                        .done(function(data) {
+                            if (data.data == 'success') {
+                                Swal.fire({
+                                    title: "Good job!",
+                                    text: "The queuing will be updated",
+                                    icon: "success",
+                                    confirmButtonColor: "#3498DB",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $("#check").modal('hide');
+                                        $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                    }
+                                });
+                            } else {
+                                // Handle error response
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: "There was a problem with the call.",
+                                    icon: "error",
+                                    confirmButtonColor: "#3498DB",
+                                    allowOutsideClick: false,
+                                });
+                            }
+                        });
+                    }
+                });
             });
-            clearInterval(transactionChecker); // Stop checking once the alert is triggered
         }
-    }
-    // Check every minute if 15 minutes have passed
-    let transactionChecker = setInterval(checkTransactionTime, 10000);
+    });
 </script>
+
 <script>
     // Use a self-contained function to avoid conflicts
     (function() {
@@ -1314,45 +1399,7 @@
                 });
             }
         });
-        $(document).on('click', 'a[data-role=callClient]', function(){
-            var id = $(this).data('id');
-            Swal.fire({
-              title: "Are you sure",
-              text: "You want to call this client?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3498DB",
-              confirmButtonText: "Yes",
-              allowOutsideClick: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.showLoading()
-                    $.ajax({
-                        url: "{% url 'queuingCall' transaction.id %}",
-                        data: {
-                            id: id
-                        },
-                        type: "POST"
-                    })
-                    .done(function(data){
-                        if (data.data == 'success'){
-                            Swal.fire({
-                              title: "Good job!",
-                              text: "The queuing will be updated",
-                              icon: "success",
-                              confirmButtonColor: "#3498DB",
-                              allowOutsideClick: false,
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $("#check").modal('hide');
-                                    $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
-                                  }
-                            });
-                        }
-                    });
-                }
-            });
-        });
+
         $('#submitFamilyComposition').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
