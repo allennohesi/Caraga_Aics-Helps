@@ -44,8 +44,9 @@ def sse_view(request): #SERVER SENT EVENTS FUNCTION TO BE SENT IN EVENT LISTENER
 				# Fetch TransactionStatus1 with related Transaction and Client models
 				transactions_status = TransactionStatus1.objects.select_related('transaction', 'transaction__client').filter(
 					verified_time_start__date=today,
-					status__in=[2, 7],
-					swo_time_start=None
+					queuing_call=1
+					#status__in=[2, 7],
+					#swo_time_start=None
 				).order_by('id')
 				data = []
 				for transaction_status in transactions_status:

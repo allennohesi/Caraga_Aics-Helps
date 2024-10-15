@@ -91,21 +91,12 @@
                 <i class="fa fa-calendar-o"></i> Timelines
             </a>
         </li>
-        &nbsp;&nbsp;
-        {% comment %} {% if Problem_Assessment.sw_assessment != None %}
         <li class="nav-item">
-            <div class="btn-group">
-                <a type="button" style="align-right:400px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  Print
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'printGIS' transaction.id %}" target="_blank">General Intake Sheet</a></li>
-                  {% if transaction.service_provider %}<li><a class="dropdown-item" href="{% url 'printGL' transaction.id %}" target="_blank">Guarantee Letter</a></li>{% endif %}
-                  <li><a class="dropdown-item" href="{% url 'printCEGL' transaction.id %}" target="_blank">Certificate of Elibility(Guarantee Letter)</a></li>
-                </ul>
-              </div>
+            <a class="nav-link" data-role="callClient" href="javascript:void(0);">
+                <i class="fa fa-calendar-o"></i>{% if transaction_status.queuing_call == 1 %} STOP CALLING {% else %} CALL CLIENT {% endif %}
+            </a>
         </li>
-        {% endif %} {% endcomment %}
+        &nbsp;&nbsp;
         {% if Problem_Assessment.sw_assessment %}
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalProvided" data-role='add_provided' data-id="{{ transaction.id }}" role="tab">
@@ -1315,6 +1306,45 @@
                     },
                 });
             }
+        });
+        $(document).on('click', 'a[data-role=callClient]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "You want to call this client?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'queuingCall' transaction.id %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "The queuing will be updated",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $("#check").modal('hide');
+                                    $('#client_content').load('/requests/assessment/view/{{ transaction.id }}');
+                                  }
+                            });
+                        }
+                    });
+                }
+            });
         });
         $('#submitFamilyComposition').on('submit', function(e){
             e.preventDefault();

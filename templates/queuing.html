@@ -52,11 +52,11 @@
                 <br>
                 <br>
                 <br>
-                <h1><b>DSWD CARAGA QUEUING SYSTEM</b></h1>
+                <h1 style="font-size:70px;"><b>DSWD CARAGA QUEUING</b></h1>
             </center>
         </div>
         <div class="card-body">
-            <table id="result" class="table table-responsive table-xl" style="font-size:70px;">
+            <table id="result" class="table table-responsive table-xl" style="font-size:60px;">
                 <thead>
                     <tr>
                         <th>FULL NAME</th>
@@ -113,7 +113,7 @@
                 // Text-to-speech for each person's full name
                 if (speakingAllowed) {
                     setTimeout(function() {
-                        speak(`NOW CALLING ${item.first_name} ${item.middle_name} ${item.last_name} ON TABLE NUMBER ${item.table_no}`);
+                        speak(`NOW SERVING ${item.first_name} ${item.middle_name} ${item.last_name} ON TABLE NUMBER ${item.table_no}`);
                         speechCount++;
                         manageSpeechCycle(); // Manage the speech cycle
                     }, index * 400); // Adjust delay as needed
