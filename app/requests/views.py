@@ -722,7 +722,28 @@ def view_assessment(request, pk):
 	}
 	return render(request, 'requests/view_assessment.html', context)
 
-
+@csrf_exempt
+def queuingCall(request, pk):
+	print(pk)
+	try:
+		if request.method == "POST":
+			updated_rows = TransactionStatus1.objects.filter(transaction_id=pk).update(
+				queuing_call=2 if TransactionStatus1.objects.filter(transaction_id=pk, queuing_call=1).exists() else 1
+			)
+			return JsonResponse({'data': 'success'})
+	except ConnectionError as ce:
+		# Handle loss of connection (e.g., log the error)
+		handle_error(ce, "CONNECTION ERROR IN QUEUINGCALL", request.user.id)
+		return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+	except RequestException as re:
+		# Handle other network-related errors (e.g., log the error)
+		handle_error(re, "NETWORK RELATED ISSUE IN QUEUINGCALL", request.user.id)
+		return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+	except Exception as e:
+		# Handle other unexpected errors (e.g., log the error)
+		handle_error(e, "EXCEPTION ERROR IN QUEUINGCALL", request.user.id)
+		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+	
 def StartTime(request,pk):
 	try:
 		if request.method == "POST":

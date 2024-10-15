@@ -7,7 +7,7 @@ from app.requests.views import requests, get_client_info, incoming, view_incomin
     printQueueing, queueIngDisplay, printPettyCashVoucher, assessmentStatusModal, confirmAmount, \
     transactions, viewSignatoriesTransactions, approveTransactions, remove_family_composition, \
     printPagPamatuod, view_online_swo, all_transactions, submitCaseStudy, removeCaseStudy, view_online_swo_data, \
-    printAttestation
+    printAttestation, queuingCall
 
 urlpatterns = [
     path('new/', requests, name='new_requests'),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('get-beneficiary-information/<int:pk>', get_bene_info, name='get_bene_info'),
     path('incoming/', incoming, name='incoming'),
     path('incoming/view/<int:pk>', view_incoming, name='view_incoming'),
+    path('call/<int:pk>', queuingCall, name='queuingCall'),
     path('assessment/', assessment, name='assessment'),
     path('assessment/view/<int:pk>', view_assessment, name='view_assessment'),
     path('assessment/save/<int:pk>', save_assessment, name='save_assessment'),
