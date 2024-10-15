@@ -786,7 +786,14 @@
                 </div>
                 {% endif %}
                 <br>
+                {% if transaction_status.queuing_call == 1 %}
+                <div class="alert alert-danger" role="alert">
+                    You need to stop the call in order to continue with the assessment.
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" disabled>{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
+                {% else %} 
                 <button type="submit" class="btn btn-primary btn-lg">{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
+                {% endif %}
             </form>
         </div>
         <div class="tab-pane fade m-t-30" id="for-action" role="tabpanel">
@@ -1015,10 +1022,10 @@
         let diffInMs = currentTime - transactionStartTime;
         let diffInMinutes = Math.floor(diffInMs / 1000 / 60);
 
-        if (diffInMinutes >= 15) {
+        if (diffInMinutes >= 25) {
             Swal.fire({
                 title: "Reminder!",
-                text: "The transaction has exceeded 15 minutes. If you are experiencing any issues, please contact the administrator.",
+                text: "The transaction has exceeded 25 minutes. If you are experiencing any issues, please contact the administrator.",
                 imageUrl: "{% static 'images/faq/learning-1.png' %}",
                 imageWidth: 400,
                 imageHeight: 200,
