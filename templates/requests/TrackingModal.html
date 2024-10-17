@@ -317,7 +317,7 @@
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
       <div class="col-lg-12">
         <br>
-        <p class="text-center">Timeline</p>
+        <p class="text-center">Timeline <p id="totalMinutes" class="text-center"></p></p>
         <section style="background-color: #F0F2F5;">
             <div class="container py-5">
                 <div class="main-timeline">
@@ -465,6 +465,49 @@
   </div>
   {% comment %} <a href="{% url 'printQueueing' transaction_status.id %}" target="_blank" align="center">Print</a> {% endcomment %}
 </div>
+<script>
+  // Ensure these variables are declared only once
+  if (typeof verifiedTimeStart === "undefined" && typeof swoTimeEnd === "undefined") {
+      // Get the datetime values from Django template
+      const verifiedTimeStart = "{{ transaction_status.verified_time_start }}";
+      const swoTimeEnd = "{{ transaction_status.swo_time_end }}";
+  
+      // Get the element where we want to display the result
+      const totalMinutesElement = document.getElementById("totalMinutes");
+  
+      // Check if swoTimeEnd is None or empty (if None is passed as an empty string)
+      if (!swoTimeEnd || swoTimeEnd === "None") {
+          totalMinutesElement.innerText = "Transaction is ongoing.";
+      } else {
+          // Function to parse the datetime string into a JavaScript Date object
+          function parseDateTime(datetimeString) {
+              // Remove "a.m." or "p.m." and clean up spaces
+              let cleanedString = datetimeString.replace("a.m.", "AM").replace("p.m.", "PM").trim();
+              return new Date(cleanedString);
+          }
+  
+          // Convert the strings into Date objects
+          const startTime = parseDateTime(verifiedTimeStart);
+          const endTime = parseDateTime(swoTimeEnd);
+  
+          // Check if parsing was successful
+          if (isNaN(startTime) || isNaN(endTime)) {
+              totalMinutesElement.innerText = "Failed to parse the datetime strings.";
+          } else {
+              // Calculate the time difference in milliseconds
+              const timeDifference = endTime - startTime; // difference in milliseconds
+  
+              // Convert milliseconds to minutes and seconds
+              const totalMinutes = Math.floor(timeDifference / (1000 * 60)); // Convert to minutes
+  
+              // Display the result
+              totalMinutesElement.innerText = `Total time: ${totalMinutes} minutes.`;
+          }
+      }
+  }
+  
+  </script>
+
 <script>
   $('.client_beneficiary').select2({
       width: '100%',
