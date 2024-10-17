@@ -150,13 +150,13 @@ def requests(request):
 				(
 					Q(transaction_id__client_id=request.POST.get('client')) &
 					Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
-					(Q(status=6))
+					(Q(status__in=[3, 6]))
 				)
 			).last()
 			check_beneficiary = TransactionStatus1.objects.filter(
 				Q(transaction_id__bene_id=request.POST.get('beneficiary')) &
 				Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
-				Q(status__in=[1, 2, 6])
+				Q(status__in=[1, 2, 3, 6])
 			).last()
 			if request.POST.get('justification'): #Whatever the condition is as long as nay justification proceed
 				submission=transaction_request(request)
