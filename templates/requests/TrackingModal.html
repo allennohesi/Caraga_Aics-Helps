@@ -144,6 +144,11 @@
                     <input type="text" class="form-control" id="trackingNumber" value="{{datas.tracking_number}}" readonly>
                  </div>
               </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                   <input type="text" class="form-control" id="trackingNumber" value="{{transaction_status.verifier.fullname}}" readonly>
+                </div>
+              </div>
            </div>
            <div class="row mb-3">
               <div class="col-md-3">
@@ -506,7 +511,7 @@
       }
   }
   
-  </script>
+</script>
 
 <script>
   $('.client_beneficiary').select2({
