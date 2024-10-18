@@ -686,7 +686,39 @@ def view_assessment(request, pk):
 	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
 	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
 	
-	alert_the_swo = TransactionStatus1.objects.filter(transaction_id=pk,swo_time_end__isnull=True).first() # THIS IS TO ALERT IF TRANSACTION LAPAS NAG 15 MINUTES
+	#alert_the_swo = TransactionStatus1.objects.filter(transaction_id=pk,swo_time_end__isnull=True).first() # THIS IS TO ALERT IF TRANSACTION LAPAS NAG 15 MINUTES
+	client_warning = False
+	beneficiary_warning = False
+	check_client = TransactionStatus1.objects.filter(
+		(
+			Q(transaction_id__client_id=data.client_id) &
+			Q(verified_time_start__isnull=False) &
+			Q(transaction_id__lib_assistance_category_id=data.lib_assistance_category) &
+			(Q(status__in=[3, 6]))
+		)
+	).last()
+	check_beneficiary = TransactionStatus1.objects.filter(
+		Q(transaction_id__bene_id=data.bene.id) &
+		Q(verified_time_start__isnull=False) &
+		Q(transaction_id__lib_assistance_category_id=data.lib_assistance_category) &
+		Q(status__in=[1, 2, 3, 6])
+	).last()
+	if data.client_id == data.bene.id:
+		if check_client:
+			time_difference = timezone.now() - check_client.verified_time_start
+			three_months = timedelta(days=90)  # 3 months is approximately 90 days
+			if time_difference <= three_months:
+				client_warning = True
+	else:
+		if check_client:
+			time_difference = timezone.now() - check_client.verified_time_start
+			three_months = timedelta(days=90)  # 3 months is approximately 90 days
+			if time_difference <= three_months:
+				client_warning = True
+		if check_beneficiary:
+			time_difference_beneficiary = timezone.now() - check_beneficiary.verified_time_start
+			if time_difference_beneficiary <= three_months:
+				beneficiary_warning = True
 
 	context = {
 		'transaction': data,
@@ -718,7 +750,9 @@ def view_assessment(request, pk):
 		'suffix': Suffix.objects.filter(status=1).order_by('name'),
 		'sex': Sex.objects.filter(status=1).order_by('name'),
 		'occupation': occupation_tbl.objects.filter(is_active=1).order_by('id'),
-		'alert_the_swo': alert_the_swo,
+		'client_warning': client_warning,
+		'beneficiary_warning': beneficiary_warning,
+		#'alert_the_swo': alert_the_swo,
 	}
 	return render(request, 'requests/view_assessment.html', context)
 
