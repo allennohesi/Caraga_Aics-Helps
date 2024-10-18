@@ -689,6 +689,7 @@ def view_assessment(request, pk):
 	#alert_the_swo = TransactionStatus1.objects.filter(transaction_id=pk,swo_time_end__isnull=True).first() # THIS IS TO ALERT IF TRANSACTION LAPAS NAG 15 MINUTES
 	client_warning = False
 	beneficiary_warning = False
+	three_months = timedelta(days=90)  # 3 months is approximately 90 days
 	check_client = TransactionStatus1.objects.filter(
 		(
 			Q(transaction_id__client_id=data.client_id) &
@@ -706,13 +707,11 @@ def view_assessment(request, pk):
 	if data.client_id == data.bene.id:
 		if check_client:
 			time_difference = timezone.now() - check_client.verified_time_start
-			three_months = timedelta(days=90)  # 3 months is approximately 90 days
 			if time_difference <= three_months:
 				client_warning = True
 	else:
 		if check_client:
 			time_difference = timezone.now() - check_client.verified_time_start
-			three_months = timedelta(days=90)  # 3 months is approximately 90 days
 			if time_difference <= three_months:
 				client_warning = True
 		if check_beneficiary:
