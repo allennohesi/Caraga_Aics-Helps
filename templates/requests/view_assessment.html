@@ -786,8 +786,17 @@
                 </div>
                 {% endif %}
                 <br>
+                {% if client_warning or beneficiary_warning %}
+                <div class="alert alert-danger" role="alert">
+                    {% if client_warning %}
+                        This client has received assistance in the same category within the last three months and has provided justification to proceed. If you have any questions, please contact the grievance officer.<br>
+                    {% endif %}
+                    {% if beneficiary_warning %}
+                        This beneficiary has received assistance in the same category within the last three months and has provided justification to proceed. If you have any questions, please contact the grievance officer.<br>
+                    {% endif %}
+                </div>
+                {% endif %}
                 {% if transaction_status.queuing_call == 1 %}
-
                 <button type="submit" class="btn btn-primary btn-lg" disabled>{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
                 {% else %} 
                 <button type="submit" class="btn btn-primary btn-lg">{% if Problem_Assessment.sw_assessment %} UPDATE {% else %} SUBMIT {% endif  %}</button>
