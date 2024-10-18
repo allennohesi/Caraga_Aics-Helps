@@ -350,6 +350,9 @@
                                             <input class="form-check-input" id="justification" name="justification" value="1" type="checkbox"> Justification
                                         </div>
                                     </div>
+                                    <div class="mb-3">
+                                        <textarea class="form-control" id="justification_field" name="justification_field" rows="2" required placeholder="Details of Justification"></textarea>
+                                    </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -584,6 +587,23 @@
 </div>
 {% endblock %}
 {% block script %}
+<script>
+    const justificationField = document.getElementById('justification_field');
+    justificationField.setAttribute('disabled', 'true');
+    justificationField.removeAttribute('required');
+    justificationField.style.display = 'none'; 
+    document.getElementById('justification').addEventListener('change', function() {
+        if (this.checked) {
+            justificationField.removeAttribute('disabled');
+            justificationField.setAttribute('required', 'true');  // Add 'required' attribute
+            justificationField.style.display = 'block'; 
+        } else {
+            justificationField.setAttribute('disabled', 'true');
+            justificationField.removeAttribute('required');       // Remove 'required' attribute
+            justificationField.style.display = 'none'; 
+        }
+    });    
+</script>
 <script>
     $("#sub_type_of_assistance").on("change", function(e) {
         var reg_price = $("#sub_type_of_assistance").val()
