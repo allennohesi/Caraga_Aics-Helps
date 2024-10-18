@@ -105,7 +105,8 @@ def transaction_request(request):
 			data.save()
 			AssessmentProblemPresented.objects.create(
 				problem_presented=request.POST.get('problem'),
-				transaction_id=data.id
+				transaction_id=data.id,
+				justification=request.POST.get('justification_field')
 			)
 			TransactionStatus1.objects.create(
 				transaction_id=data.id,
