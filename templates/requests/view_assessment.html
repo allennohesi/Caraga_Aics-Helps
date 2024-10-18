@@ -786,14 +786,15 @@
                 </div>
                 {% endif %}
                 <br>
-                {% if client_warning or beneficiary_warning %}
-                <div class="alert alert-danger" role="alert">
-                    {% if client_warning %}
-                        This client has received assistance in the same category within the last three months and has provided justification to proceed. If you have any questions, please contact the grievance officer.<br>
-                    {% endif %}
-                    {% if beneficiary_warning %}
-                        This beneficiary has received assistance in the same category within the last three months and has provided justification to proceed. If you have any questions, please contact the grievance officer.<br>
-                    {% endif %}
+                {% if Problem_Assessment.justification %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="justification" {% if Problem_Assessment.justification %} checked {% endif %}>
+                    <label class="form-check-label" for="justification">
+                      Provided Justification (Context)
+                    </label>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="justification_context" name="justification_context" rows="2">{{Problem_Assessment.justification}}</textarea>
+                    </div>
                 </div>
                 {% endif %}
                 {% if transaction_status.queuing_call == 1 %}
