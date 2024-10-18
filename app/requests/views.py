@@ -695,14 +695,17 @@ def view_assessment(request, pk):
 			Q(transaction_id__client_id=data.client_id) &
 			Q(verified_time_start__isnull=False) &
 			Q(transaction_id__lib_assistance_category_id=data.lib_assistance_category) &
-			(Q(status__in=[3, 6]))
+			(Q(status__in=[3, 6])) &
+			~Q(verified_time_start__date=today)
 		)
 	).last()
 	check_beneficiary = TransactionStatus1.objects.filter(
-		Q(transaction_id__bene_id=data.bene.id) &
-		Q(verified_time_start__isnull=False) &
-		Q(transaction_id__lib_assistance_category_id=data.lib_assistance_category) &
-		Q(status__in=[3, 6])
+			Q(transaction_id__bene_id=data.bene.id) &
+			Q(verified_time_start__isnull=False) &
+			Q(transaction_id__lib_assistance_category_id=data.lib_assistance_category) &
+			Q(status__in=[3, 6]) &
+        	~Q(verified_time_start__date=today)
+			
 	).last()
 	if data.client_id == data.bene.id:
 		if check_client:
