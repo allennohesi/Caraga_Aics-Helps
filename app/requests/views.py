@@ -101,6 +101,7 @@ def transaction_request(request):
 				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
 				transaction_status=1,
 				requested_in=request.POST.get('requested_in'),
+				office_station_in=request.POST.get('office_station')
 			)
 			data.save()
 			AssessmentProblemPresented.objects.create(

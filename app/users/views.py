@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from app.libraries.models import Province, region, City, Barangay
+from app.libraries.models import Province, region, City, Barangay, OfficeStation
 from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails, AuthuserProfile, AuthFeedback
 from app.requests.models import ErrorLogData, ClientBeneficiary, uploadfile, ClientBeneficiaryUpdateHistory
 from django.contrib.auth.hashers import make_password
@@ -187,7 +187,8 @@ def user_profile(request):
 					user_id=request.user.id, #FILTERING ONLY
 					defaults={
 						'barangay_id': request.POST.get('barangay'),
-						'license_no': request.POST.get('license_no')
+						'license_no': request.POST.get('license_no'),
+						'OfficeStationLib_id': request.POST.get('OfficeStation')
 					}
 				)
 				return JsonResponse({'data': 'success','msg':'Information has been updated'})
@@ -214,6 +215,7 @@ def user_profile(request):
 		
 	context = {
 		'user_data': user_data,
+		'OfficeStation': OfficeStation.objects.filter(is_active=1),
 		'profile_picture':AuthuserProfile.objects.filter(user_id=request.user.id).first(),
 		'information': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
 		'region': region.objects.filter(is_active=1).order_by('region_name'),

@@ -233,6 +233,13 @@ class City(models.Model):
         managed = False
         db_table = 'lib_location_citymun'
 
+class OfficeStation(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    is_active = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'lib_office_station'
 
 class Barangay(models.Model):
     brgy_name = models.CharField(max_length=128)
