@@ -170,10 +170,27 @@
                         </div>
                     </div>
                 </div>
+                {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
-                    <label class="form-label">License No.</label>
+                    <label class="form-label">SWO License No.</label>
                     <input class="form-control" type="text" name='license_no' value="{{information.license_no}}">
+                  </div>
+                </div>
+                {% endif %}
+                <div class="col-sm-4 col-md-3">
+                  <div class="mb-3">
+                    <label>Office / Station <span class="txt-danger">*</span></label>
+                    <select class="form-control select" name="OfficeStation" id="OfficeStation" required>
+                        <option></option>
+                        {% for row in OfficeStation %}
+                        {% if row.id == information.OfficeStationLib_id %}
+                        <option value="{{ row.id }}" selected>{{ row.name|upper  }}</option>
+                        {% else %}
+                        <option value="{{ row.id }}">{{ row.name|upper  }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
                   </div>
                 </div>
               </div>
