@@ -8,7 +8,12 @@ from datetime import datetime, timedelta, time, date
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.pagination import PageNumberPagination
+from django.utils import timezone
+from datetime import timedelta
+now = timezone.now()
 today = date.today()
+
+seven_months_ago = now - timedelta(days=30 * 7)
 # class TransactionViews(generics.ListAPIView):
 #     serializer_class = TransactionSerializer
 #     permission_classes = [IsAuthenticated]
@@ -43,7 +48,7 @@ class adminMonitoring(generics.ListAPIView):
 			).order_by('-id')
 			return queryset
 		else:
-			queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE PENDING
+			queryset = TransactionStatus1.objects.filter(verified_time_start__gte=seven_months_ago).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE PENDING
 			return queryset
 
 
@@ -60,6 +65,7 @@ class TransactionPerSession(generics.ListAPIView):
 			return queryset
 
 class TransactionIncoming(generics.ListAPIView):
+
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
@@ -85,7 +91,7 @@ class TransactionIncoming(generics.ListAPIView):
 			elif dropdown == "5": #WITH DV
 				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
 			elif dropdown == "6": #ALL TRANSACTION
-				queryset = TransactionStatus1.objects.all().order_by('-id')
+				queryset = TransactionStatus1.objects.filter(verified_time_start__gte=seven_months_ago).order_by('-id')
 			return queryset
 		else:
 			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__requested_in=region).order_by('-id')
