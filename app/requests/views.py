@@ -268,8 +268,8 @@ def get_client_info(request, pk):
 		is_indi = 'Yes' if data.is_indi else 'No'
 		tribe = data.tribu.name if data.tribu_id else 'N/A'
 		
-		transaction_history = [dict(tracking_number=row.transaction.tracking_number,type_of_assitance=row.transaction.lib_type_of_assistance.type_name,assistance_category=row.transaction.lib_assistance_category.name,date_assessment=row.end_assessment,social_worker=row.transaction.swo.get_fullname,status="Completed") for row in
-							TransactionStatus1.objects.filter(Q(transaction_id__client_id=pk,status=6) | Q(transaction_id__client_id=pk,status=3)).order_by('-id')]
+		transaction_history = [dict(tracking_number=row.transaction.tracking_number,type_of_assitance=row.transaction.lib_type_of_assistance.type_name,assistance_category=row.transaction.lib_assistance_category.name,client=row.transaction.client.client_bene_fullname,date_assessment=row.end_assessment,social_worker=row.transaction.swo.get_fullname,status="Completed") for row in
+							TransactionStatus1.objects.filter(Q(transaction_id__client_id=pk,status__in=[3, 6])).order_by('-id')[:2]]
 
 		return JsonResponse({'new': new, 'birthdate': birthdate, 'age': age, 'sex': sex, 'contact_number': contact_number,
 							 'civil_status': civil_status,'region': region, 'province': province, 'city': city, 'barangay': barangay,
@@ -298,6 +298,10 @@ def get_bene_info(request, pk):
 	tribe = data.tribu.name if data.tribu_id else 'N/A'
 	id_presented = data.presented.presented
 	id_presentedNo = data.presented_id_no if data.presented_id_no else 'N/A'
+
+	bene_transaction_history = [dict(tracking_number=row.transaction.tracking_number,type_of_assitance=row.transaction.lib_type_of_assistance.type_name,assistance_category=row.transaction.lib_assistance_category.name,beneficiary=row.transaction.bene.client_bene_fullname,date_assessment=row.end_assessment,social_worker=row.transaction.swo.get_fullname,status="Completed") for row in
+						TransactionStatus1.objects.filter(Q(transaction_id__bene_id=pk,status__in=[3, 6])).order_by('-id')[:2]]
+	
 	family_composistion = [dict(fullname=row.get_family_fullname_formatted,sex=row.sex.name, birthdate=row.birthdate, relation=row.relation.name, age=row.get_age,
 								occupation=row.occupation.occupation_name, salary=row.salary) for row in
 						   ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=pk)]
@@ -305,7 +309,7 @@ def get_bene_info(request, pk):
 						 'civil_status': civil_status, 'region': region, 'province': province, 'city': city, 'barangay': barangay,
 						 'village': village, 'house_no': house_no, 'street': street, 'is_4ps': is_4ps,
 						 'id_number_4ps': id_number_4ps, 'is_indi': is_indi, 'tribe': tribe,
-						 'family_composistion': family_composistion, 'id_presented':id_presented, 'id_presentedNo': id_presentedNo})
+						 'family_composistion': family_composistion, 'id_presented':id_presented, 'id_presentedNo': id_presentedNo, 'bene_transaction_history': bene_transaction_history})
 
 
 @login_required
