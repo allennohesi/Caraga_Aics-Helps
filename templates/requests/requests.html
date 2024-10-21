@@ -455,13 +455,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <small>Recommended Services and Assistance</small>
+                                <small>Transaction History of Client/Beneficiary</small>
                                 <hr>
                                 <br>
                                 <div class="card" id="display_transaction">
                                     <div class="card-body">
                                         <div class="row mb-3">
-                                            <label>Client's Transaction History</label>
+                                            <label>Clients Transaction History</label>
                                             <br>
                                             <div class="table table-responsive">
                                                 <table class="table table-bordered table-hover" id="transaction-table">
@@ -469,6 +469,7 @@
                                                         <th>Tracking Number</th>
                                                         <th class="text-center">Type of Assistance</th>
                                                         <th class="text-center">Assistance Category</th>
+                                                        <th class="text-center">Client Name</th>
                                                         <th class="text-center">Social Worker</th>
                                                         <th class="text-center">Date of Transaction Assessment</th>
                                                         <th class="text-center">Status</th>
@@ -481,6 +482,32 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card" id="beneficiary_transaction">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <label>Beneficiary Transaction History</label>
+                                            <br>
+                                            <div class="table table-responsive">
+                                                <table class="table table-bordered table-hover" id="beneficiary-table">
+                                                    <thead>
+                                                        <th>Tracking Number</th>
+                                                        <th class="text-center">Type of Assistance</th>
+                                                        <th class="text-center">Assistance Category</th>
+                                                        <th class="text-center">Beneficiary Name</th>
+                                                        <th class="text-center">Social Worker</th>
+                                                        <th class="text-center">Date of Transaction Assessment</th>
+                                                        <th class="text-center">Status</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <td colspan="7" class="text-center">No data available.</td>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small>Recommended Services and Assistance</small>
+                                <hr>
                                 <div class="row mb-3">
                                     <div class="col-md-7">
                                         <b>
@@ -610,6 +637,7 @@
     });
 
     $('#display_transaction').hide();
+    $('#beneficiary_transaction').hide();
     $(document).ready(function(){
         $('.select').select2({
             width: '100%',
@@ -705,6 +733,7 @@
                                     <td class="f-w-900 upper">`+ transaction_history[i]['tracking_number'] +`</td>
                                     <td class="text-center f-w-900 upper">`+ transaction_history[i]['type_of_assitance'] +`</td>
                                     <td class="text-center f-w-900 upper">`+ transaction_history[i]['assistance_category'] +`</td>
+                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['client'] +`</td>
                                     <td class="text-center f-w-900 upper">`+ transaction_history[i]['social_worker'] +`</td>
                                     <td class="text-center f-w-900 upper">`+ transaction_history[i]['date_assessment'] +`</td>
                                     <td class="text-center f-w-900 upper">`+ transaction_history[i]['status'] +`</td>
@@ -817,8 +846,30 @@
                             </tr>
                         `
                     }
-
                     $('#family-composition-table tbody').html(template)
+
+                    var bene_transaction_history = response.bene_transaction_history
+                    var template_beneficiary = "";
+                    for(var i=0; i < bene_transaction_history.length; i++) {
+                        template_beneficiary += `
+                            <tr class="table-primary">
+                                <td class="f-w-900 upper">`+ bene_transaction_history[i]['tracking_number'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['type_of_assitance'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['assistance_category'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['beneficiary'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['social_worker'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['date_assessment'] +`</td>
+                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['status'] +`</td>
+                            </tr>
+                        `
+                    }
+                    if(template_beneficiary){
+                        $('#beneficiary_transaction').show();
+                        $('#beneficiary-table tbody').html(template_beneficiary)
+                    }else{
+                        $('#beneficiary-table tbody').html(template_beneficiary)
+                        $('#beneficiary_transaction').hide();
+                    }
                 }
            });
         }
