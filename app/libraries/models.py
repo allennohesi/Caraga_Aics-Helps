@@ -293,6 +293,7 @@ class FundSource(models.Model):
     updated_by = models.ForeignKey('AuthUser', models.DO_NOTHING)
     status = models.IntegerField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
