@@ -502,7 +502,7 @@ def generateTransactions(request):
 					"WALK-in / Referral" if item.is_referral else "Walk-in",
 					str(item.lib_assistance_category.name),
 					total_amount_str,
-					str(item.fund_source.name if item.fund_source else ""),
+					str(item.fund_source.description if item.fund_source else ""),
 					str(item.client_category.name),
 					str(item.client_sub_category.name),
 					"GL" if item.is_gl == 1 else "Cash"
@@ -591,7 +591,7 @@ def generateAICSData(request): #FOR GENERAL
 					total_amount_str,
 					"GL" if item.is_gl == 1 else "Cash",
 					"Referral" if item.is_referral else "Walk-in",
-					str(item.fund_source.name if item.fund_source else ""),
+					str(item.fund_source.description if item.fund_source else ""),
 					str(item.swo_date_time_end),
 					swo_fullname_str,
 					service_provider,
@@ -786,7 +786,7 @@ def generatePWD(request): #FOR GENERAL
 					total_amount_str,
 					"GL" if item.transaction.is_gl == 1 else "Cash",
 					"Referral" if item.transaction.is_referral else "Walk-in",
-					str(item.transaction.fund_source.name if item.transaction.fund_source else ""),
+					str(item.transaction.fund_source.description if item.transaction.fund_source else ""),
 					str(item.transaction.swo_date_time_end),
 					str(item.transaction.swo.fullname),
 					service_provider,
@@ -888,7 +888,7 @@ def ExportBilledUnbilled(request):  # FOR GENERAL
 		).select_related(
 			'fund_source', 'swo'
 		).values(
-			'tracking_number', 'total_amount', 'fund_source__name', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
+			'tracking_number', 'total_amount', 'fund_source__description', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
 		)
 
 		# Create a generator function to yield CSV rows
@@ -903,7 +903,7 @@ def ExportBilledUnbilled(request):  # FOR GENERAL
 				yield ','.join([
 					str(item['tracking_number']),
 					total_amount_str,
-					str(item['fund_source__name']) if item['fund_source__name'] else "",
+					str(item['fund_source__description']) if item['fund_source__description'] else "",
 					"Billed" if item['dv_number'] else "Unbilled",
 					swo_fullname_str,
 					swo_date_time_end_str,
