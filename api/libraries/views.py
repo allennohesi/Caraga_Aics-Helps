@@ -4,9 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from api.libraries.serializers import CategorySerializer, MOASerializer, MOASSSerializer, ServiceProviderSerializer, \
     SubCategorySerializer, TypeOfAssistanceSerializer, RelationSerializer, SexSerializer, SuffixSerializer, \
     ProvinceSerializer, CitySerializer, BarangaySerializer, TribeSerializer, SignatoriesSerializer, FundSourceSerializer, \
-    OccupationSerializer
+    OccupationSerializer, PurposeSerializer
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
-    TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource, occupation_tbl
+    TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource, occupation_tbl, \
+    Purpose
 
 class FundSourceViews(generics.ListAPIView):
     queryset = FundSource .objects.all()
@@ -98,4 +99,9 @@ class BarangayViews(generics.ListAPIView):
 class OccupationViews(generics.ListAPIView):
     queryset = occupation_tbl.objects.all().order_by('id')
     serializer_class = OccupationSerializer
+    permission_classes = [IsAuthenticated]
+
+class PurposeViews(generics.ListAPIView):
+    queryset = Purpose.objects.all().order_by('id')
+    serializer_class = PurposeSerializer
     permission_classes = [IsAuthenticated]

@@ -2,7 +2,7 @@ from django.urls import path
 
 from api.libraries.views import CategoryViews, MOAViews, MOASSViews, ServiceProviderViews, SubCategoryViews, \
     TypeOfAssistanceViews, RelationViews, SexViews, SuffixViews, ProvinceViews, CityViews, BarangayViews, TribeViews, \
-    SignatoriesViews, FundSourceViews, OccupationViews
+    SignatoriesViews, FundSourceViews, OccupationViews, PurposeViews
 
 urlpatterns = [
     path('category/', CategoryViews.as_view(), name='api_category'),
@@ -21,4 +21,5 @@ urlpatterns = [
     path('signatories/', SignatoriesViews.as_view(), name='api_signatories'),
     path('fund-source/',FundSourceViews.as_view(), name='api_fundsource'),
     path('occupation/', OccupationViews.as_view(), name='api_occupation'),
+    path('purpose/', PurposeViews.as_view(), name='api_purpose'),
 ]

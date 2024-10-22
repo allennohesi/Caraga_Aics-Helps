@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
-    TypeOfAssistance, Relation, Sex, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource, occupation_tbl
+    TypeOfAssistance, Relation, Sex, Province, City, Barangay, Tribe, SignatoriesTbl, FundSource, occupation_tbl, \
+    Purpose
 
 
 class FundSourceSerializer(serializers.ModelSerializer):
@@ -144,4 +145,12 @@ class OccupationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = occupation_tbl
+        fields = '__all__'
+
+class PurposeSerializer(serializers.ModelSerializer):
+    updated_by = serializers.CharField(source='updated_by.fullname', read_only=True, default=None)
+    date_updated = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
+
+    class Meta:
+        model = Purpose
         fields = '__all__'
