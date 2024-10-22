@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.dispatch import receiver
 from app.libraries.models import CivilStatus, Suffix, Sex, Barangay, Relation, FundSource, ServiceProvider, FileType, \
     Category, SubCategory, Tribe, ModeOfAdmission, ModeOfAssistance,SubModeofAssistance, TypeOfAssistance, Purpose, \
-    LibAssistanceType, PriorityLine, medicine, occupation_tbl, AssistanceProvided, presented_id
+    LibAssistanceType, PriorityLine, medicine, occupation_tbl, AssistanceProvided, presented_id, OfficeStation
 from app.models import AuthUser, AuthUserGroups, AuthGroup, AuthuserDetails
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MaxValueValidator
@@ -231,7 +231,7 @@ class Transaction(models.Model):
     dv_date = models.DateField()
     transaction_status = models.IntegerField(blank=True, null=True)
     requested_in = models.CharField(max_length=255, blank=True, null=True)
-    office_station_in = models.CharField(max_length=255, blank=True, null=True)
+    office_station_in = models.ForeignKey(OfficeStation, models.DO_NOTHING, blank=False, null=False)
     is_pfa = models.SmallIntegerField(blank=True, null=True)
     is_swc = models.SmallIntegerField(blank=True, null=True)
 
