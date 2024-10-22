@@ -739,7 +739,7 @@
                                 <option></option>
                                 {% for row in fund_source %}
                                 {% if row.id == transaction.fund_source_id %}
-                                <option value="{{ row.id }}" selected>{{ row.description|upper }} - {{ row.description|upper }}</option>
+                                <option value="{{ row.id }}" selected>{{ row.name|upper }} - {{ row.description|upper }}</option>
                                 {% else %}
                                 <option value="{{ row.id }}">{{ row.name|upper }} - {{ row.description|upper }}</option>
                                 {% endif %}
