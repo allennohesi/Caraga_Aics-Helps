@@ -52,7 +52,8 @@ def fund_source(request):
                 name=name,
                 updated_by_id=request.user.id,
                 status=True,
-                date_updated=datetime.now()
+                date_updated=datetime.now(),
+                description=request.POST.get('description')
             )
             return JsonResponse({'error': False, 'msg': "New Fund Source '{}' has been added successfully.".format(name)})
         else:
@@ -69,7 +70,8 @@ def edit_fund_source(request):
         FundSource.objects.filter(id=request.POST.get('edit-id')).update(
             name=name,
             updated_by_id=request.user.id,
-            status=True if request.POST.get('edit-status') else False
+            description=request.POST.get('description'),
+            status=True if request.POST.get('edit-status') else False,
         )
         return JsonResponse({'error': False, 'msg': "Fund source has '{}' has been added successfully.".format(name)})
 

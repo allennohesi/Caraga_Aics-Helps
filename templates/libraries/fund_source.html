@@ -29,6 +29,7 @@
                         <thead>
                             <th>Action</th>
                             <th>Name</th>
+                            <th>Description</th>
                             <th>Updated by</th>
                             <th>date updated</th>
                             <th>Status</th>
@@ -55,6 +56,11 @@
                         <input type="text" class="form-control" id="name" name="fund_source" autocomplete="off" required>
                         <div class="invalid-feedback" id="alert-on-name"></div>
                     </div>
+                    <div class="form-group mb-3">
+                        <label>Description <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="description" name="description" autocomplete="off" required>
+                        <div class="invalid-feedback" id="alert-on-description"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" type="button" data-bs-dismiss="modal">Close</button>
@@ -80,6 +86,11 @@
                         <label>Name <span class="txt-danger">*</span></label>
                         <input type="text" class="form-control" id="edit-name" name="edit-name" autocomplete="off" required>
                         <div class="invalid-feedback" id="alert-on-edit-name"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Description <span class="txt-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-description" name="description" autocomplete="off" required>
+                        <div class="invalid-feedback" id="alert-on-description"></div>
                     </div>
                     <div class="form-group">
                         <input type="checkbox" class="form-check-input" name="edit-status" id="edit-status"> Status
@@ -118,6 +129,7 @@
                     }
                 },
                 {'data': 'name', 'className': 'text-start' },
+                {'data': 'description', 'className': 'text-start' },
                 {'data': 'updated_by',
                     'name': 'updated_by.last_name, updated_by.first_name',
                     'className': 'text-center'
@@ -141,10 +153,12 @@
         $(document).on('click', 'a[data-role=edit]', function(){
             var id = $(this).data('id');
             var name = $('#'+id).find('td:eq(1)').text();
-            var status = $('#'+id).find('td:eq(4)').text();
+            var description = $('#'+id).find('td:eq(2)').text();
+            var status = $('#'+id).find('td:eq(5)').text();
 
             $('#edit-id').val(id);
             $('#edit-name').val(name);
+            $('#edit-description').val(description);
             (status.trim() == "Active") ? $('#edit-status').attr('checked', true) : $('#edit-status').attr('checked', false)
             $('#edit-relation-modal').modal('show');
         });
