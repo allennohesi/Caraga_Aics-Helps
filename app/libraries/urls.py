@@ -5,7 +5,7 @@ from app.libraries.views import category, edit_category, mode_of_admission, edit
     type_of_assistance, edit_type_of_assistance, relation, edit_relation, sex, edit_sex, suffix, edit_suffix, province, \
     edit_province, city, edit_city, barangay, get_city_name, edit_barangay, get_all_user, delete_focal_service_provider, \
     get_barangay_name, get_all_client_beneficiary, get_all_service_provider, tribe, edit_tribe, get_province_name, fund_source, \
-    service_provider, signatories, update_signatories, edit_fund_source, occupation
+    service_provider, signatories, update_signatories, edit_fund_source, occupation, purpose_library, edit_purpose
 
 urlpatterns = [
     path('category/', category, name='category'),
@@ -37,7 +37,8 @@ urlpatterns = [
     path('city/edit/', edit_city, name='edit_city'),
     path('barangay/', barangay, name='barangay'),
     path('barangay/edit/', edit_barangay, name='edit_barangay'),
-    
+    path('purpose/library/', purpose_library, name='purpose_library'),
+    path('purpose/edit/', edit_purpose, name='edit_purpose'),
     path('fund-source/', fund_source, name='fund_source'),
     path('update/fund-source', edit_fund_source,name='edit_fund_source'),
     path('service-provider/', service_provider, name='service_provider'),
