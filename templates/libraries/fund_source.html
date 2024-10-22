@@ -159,7 +159,12 @@
             $('#edit-id').val(id);
             $('#edit-name').val(name);
             $('#edit-description').val(description);
-            (status.trim() == "Active") ? $('#edit-status').attr('checked', true) : $('#edit-status').attr('checked', false)
+
+            if (status.trim() == "Active") {
+                $('#edit-status').prop('checked', true);
+            } else {
+                $('#edit-status').prop('checked', false);
+            }
             $('#edit-relation-modal').modal('show');
         });
     });
