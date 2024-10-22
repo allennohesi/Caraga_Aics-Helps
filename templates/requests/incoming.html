@@ -199,7 +199,7 @@
             'order': [[ 0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}',
+                'url': '/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}',
                 'type': 'GET',
                 'data': function(d) {
                     d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
@@ -397,7 +397,7 @@
 			if($('#year').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&year=' + $('#year').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&year=' + $('#year').val()).load();
 			}
 		});
         
@@ -405,14 +405,14 @@
 			if($('#dropdown').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&dropdown=' + $('#dropdown').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&dropdown=' + $('#dropdown').val()).load();
 			}
 		});
         $('#filter-code').on('click', function(){
 			if($('#code').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}&code=' + $('#code').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&code=' + $('#code').val()).load();
 			}
 		});
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
