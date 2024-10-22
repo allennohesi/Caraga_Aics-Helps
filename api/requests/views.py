@@ -71,31 +71,30 @@ class TransactionIncoming(generics.ListAPIView):
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
 		queryset = TransactionStatus1.objects.none() 
-		region = self.request.query_params.get('region')
+		requested_in = self.request.query_params.get('region')
 		year = self.request.query_params.get("year")
 		dropdown = self.request.query_params.get("dropdown")
 		code = self.request.query_params.get("code")
 		
 		if year:
-			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__requested_in=region).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__office_station_in_id=requested_in).order_by('-id')
 		elif code:
-			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__requested_in=region).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__office_station_in_id=requested_in).order_by('-id')
 
 		elif dropdown:
 			if dropdown == "0":
-				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__office_station_in_id=requested_in).order_by('-id')
 			elif dropdown == "1": #COMPLETED
-				queryset = TransactionStatus1.objects.filter(status__in=[3, 6],transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.filter(status__in=[3, 6],transaction_id__office_station_in_id=requested_in).order_by('-id')
 			elif dropdown == "4": #SUBMITTED CASE STUDY
-				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__office_station_in_id=requested_in).order_by('-id')
 			elif dropdown == "5": #WITH DV
-				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__requested_in=region).order_by('-id')
+				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__office_station_in_id=requested_in).order_by('-id')
 			elif dropdown == "6": #ALL TRANSACTION
 				queryset = TransactionStatus1.objects.filter(verified_time_start__gte=seven_months_ago).order_by('-id')
 			return queryset
 		else:
-			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__requested_in=region).order_by('-id')
-
+			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__office_station_in_id=requested_in).order_by('-id')
 		return queryset
 
 
