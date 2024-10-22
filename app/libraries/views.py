@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from app.global_variable import groups_only
 from app.libraries.models import Category, ModeOfAdmission, ModeOfAssistance, ServiceProvider, SubCategory, \
     TypeOfAssistance, Relation, Sex, Suffix, Province, City, Barangay, FocalServiceProvider, Tribe, region, FundSource, \
-    SignatoriesTbl, occupation_tbl
+    SignatoriesTbl, occupation_tbl, Purpose
 from app.requests.models import ClientBeneficiary
 from app.models import AuthUser, AuthUserGroups
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -64,6 +64,37 @@ def fund_source(request):
     }
     return render(request, 'libraries/fund_source.html', context)
     
+@login_required
+def purpose_library(request):
+    if request.method == "POST":
+        name=request.POST.get('fund_source')
+        check = Purpose.objects.filter(name=request.POST.get('fund_source'))
+        if not check:
+            Purpose.objects.create(
+                name=name,
+                updated_by_id=request.user.id,
+                status=True,
+                date_updated=datetime.now(),
+            )
+            return JsonResponse({'error': False, 'msg': "New Purpose '{}' has been added successfully.".format(name)})
+        else:
+            return JsonResponse({'error': True, 'msg': "Purpose '{}' is already existed.".format(name)})
+        
+    context = {
+        'title': 'Purpose'
+    }
+    return render(request, 'libraries/purpose.html', context)
+
+def edit_purpose(request):
+    if request.method == "POST":
+        name = request.POST.get('edit-name')
+        Purpose.objects.filter(id=request.POST.get('edit-id')).update(
+            name=name,
+            updated_by_id=request.user.id,
+            status=True if request.POST.get('edit-status') else False,
+        )
+        return JsonResponse({'error': False, 'msg': "Purpose has '{}' has been updated successfully.".format(name)})
+
 def edit_fund_source(request):
     if request.method == "POST":
         name = request.POST.get('edit-name')
