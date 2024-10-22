@@ -311,7 +311,7 @@ def export_fund_summary(request):
 				"lib_assistance_category__name",
 				"is_gl",
 				"is_walkin",
-				"fund_source__name",
+				"fund_source__description",
 				"service_provider__name",
 				"total_amount",
 				"is_referral",
@@ -403,7 +403,7 @@ def generate_csv_data(queryset):
 			total_amount_str,
 			smart_str("GL") if transaction.is_gl == 1 else "CASH",
 			smart_str("Referral") if transaction.is_referral == 1 else "Walk-in",
-			smart_str(transaction.fund_source.name) if transaction.fund_source and transaction.fund_source.name else "N/a",
+			smart_str(transaction.fund_source.description) if transaction.fund_source and transaction.fund_source.description else "N/a",
 			smart_str(transaction.swo_date_time_end),
 			smart_str(transaction.swo.fullname),
 			service_provider_str,
@@ -496,7 +496,7 @@ def get_data_transaction(request, pk):
 	ct = data.transaction.client_category.acronym
 	csc = data.transaction.client_sub_category.acronym
 	service_provider = data.transaction.service_provider.name
-	fund_source = data.transaction.fund_source.name
+	fund_source = data.transaction.fund_source.description
 	return JsonResponse({'fullname': fullname, 'toa': toa, 'ta': ta, 'ct': ct,'csc':csc,'service_provider': service_provider, 'fund_source': fund_source})
 
 def print_voucher(request, pk):
