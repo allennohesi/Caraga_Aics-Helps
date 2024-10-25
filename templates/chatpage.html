@@ -26,6 +26,10 @@
         'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
     );
 
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection established.');
+    };
+
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         document.querySelector('#chat-log').innerHTML += '<br><strong>' + data.username + ':</strong> ' + data.message;
@@ -35,14 +39,24 @@
         console.error('Chat socket closed unexpectedly');
     };
 
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error observed:', e);
+    };
+
     document.querySelector('#chat-message-submit').onclick = function(e) {
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'username': "{{ request.user.username }}"
-        }));
-        messageInputDom.value = '';
+
+        // Check if the WebSocket is open before sending a message
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'username': "{{ request.user.username }}"
+            }));
+            messageInputDom.value = '';
+        } else {
+            console.error('WebSocket is not open. Ready state: ' + chatSocket.readyState);
+        }
     };
 </script>
 
