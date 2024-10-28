@@ -405,6 +405,16 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Office Station</label><span class="txt-danger">*</span>
+                                        <select class="form-control fund_source hidden" name="station" id="station" required>
+                                            <option></option>
+                                            <option value="1">Regional Office Caraga</option>
+                                            <option value="2">Butuan Medical Center</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -596,7 +606,7 @@
             });
             $('.fund_source').select2({
                 width: '100%',
-                placeholder: 'Please Search Service Provider',
+                placeholder: 'Please Office Station',
                 containerCssClass: 'select'
             });
             function isNumberKey(evt)

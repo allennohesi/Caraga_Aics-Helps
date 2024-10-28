@@ -91,11 +91,13 @@
                 <i class="fa fa-calendar-o"></i> Timelines
             </a>
         </li>
+        {% if transaction.office_station_in.name == "Regional Office Caraga" %}
         <li class="nav-item">
             <a class="nav-link" data-role="callClient" href="javascript:void(0);">
                 <i class="fa fa-phone"></i>{% if transaction_status.queuing_call == 1 %} STOP CALL {% else %} CALL CLIENT {% endif %}
             </a>
         </li>
+        {% endif %}
         &nbsp;&nbsp;
         {% if Problem_Assessment.sw_assessment %}
         <li class="nav-item">
