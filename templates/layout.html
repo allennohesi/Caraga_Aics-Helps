@@ -298,7 +298,7 @@
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
-                                                    <li><a href="{% url 'personalData' %}">My data</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#my_data">My data</a></li>
                                                     {% endif %}
                                                     {% if user|check_group_permission:"Biller" %}
                                                     <li><a href="{% url 'withDvTransactions' %}" target="_blank">My DV data</a></li>
@@ -358,6 +358,33 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{% url 'generateAICSData' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="start_date">Start Date:</label>
+                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
+                                    <label for="end_date">End Date:</label>
+                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="my_data" aria-labelledby="my_data" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="my_data">MY DATA REPORsT</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'personalData' %}" target="_blank" method="GET">
                         <div class="modal-body">
                             <div class="row mb-3">
                                 <div class="col-md-12">
