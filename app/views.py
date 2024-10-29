@@ -605,21 +605,23 @@ def generateAICSData(request): #FOR GENERAL
 @api_view(['GET'])
 def personalData(request): #FOR GENERAL
 	if request.method == "GET":
-		data = TransactionStatus1.objects.filter(transaction__swo_id=request.user.id
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = TransactionStatus1.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),transaction__swo_id=request.user.id
 				).select_related(
-					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo' 
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo',
 				)
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
 			yield ','.join(['Tracking number',  'Date Accomplished',
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
-				   'Client Category','Client Sub-Category',
+				   'Client Category','Client Sub-Category', 'Client Barangay',
 				   
 				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
 				   'Bene Category','Bene Sub-Category',
 
-				   'Relationship', 'Type of Assistance', 'Amount', 
+				   'Purpose','Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral',
 				   'Date Interviewed','For case study','Case Study Status','Transaction Status',
 				   'Is_PFA', 'Is_SWC'
@@ -676,6 +678,7 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.client.age),
 					str(item.transaction.client_category.name),
 					str(item.transaction.client_sub_category.name),
+					str(item.transaction.client.barangay.brgy_name),
 					str(item.transaction.bene.last_name),
 					str(item.transaction.bene.first_name),
 					str(item.transaction.bene.middle_name),
@@ -686,6 +689,7 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.bene.age),
 					str(item.transaction.bene_category.name),
 					str(item.transaction.bene_sub_category.name),
+					str(item.transaction.purpose),
 					str(item.transaction.relation.name),
 					str(item.transaction.lib_assistance_category.name),
 					total_amount_str,
