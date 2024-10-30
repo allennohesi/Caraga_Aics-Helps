@@ -265,7 +265,6 @@
                                   <th>Beneficiary Name</th>
                                   <th class="text-center">Date of Transaction</th>
                                   <th class="text-center">Case Study</th>
-                                  <th class="text-center">Priority</th>
                               </tr>
                           </thead>
                       </table>
@@ -601,15 +600,6 @@ $('#submitFeedback').on('submit', function(e){
                         return "<td>For Case Study</td>"
                     }else{
                         return "<td>Not for case Study</td>"
-                    }
-                }
-        },
-        {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
-                'render': function(data,type,row,meta){
-                    if(row['priority_id'] == 1){
-                        return "<span class='badge badge-primary'>"+ NA +"</span>" 
-                    }else{
-                        return "<span class='badge badge-primary'>"+ row['priority'] +"</span>" 
                     }
                 }
         },
