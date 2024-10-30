@@ -2,7 +2,7 @@ from django.urls import path
 
 from api.requests.views import TransactionDescriptionViews, CompletedTransactionViews, TransactionPerSession, AdvanceFinanceFilterViews, FinanceVoucherViews, \
     VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews, adminMonitoring, TransactionIncoming, \
-    kioskAPI, queuingAPI
+    kioskAPI, queuingAPI, CaseStudyDeadline
 
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('transaction/session/',TransactionPerSession.as_view(), name='api_TransactionPerSession'),
     path('transaction/all/session/', TransactionPerSessionAllViews.as_view(), name='api_transactionPerSessionAll_list'),
     path('transaction/incoming/list/', TransactionIncoming.as_view(), name='api_TransactionIncoming'),
+    path('case_study/deadline/', CaseStudyDeadline.as_view(), name='api_CaseStudyDeadline'),
     path('trasanction/queuing/', queuingAPI.as_view(), name='api_queuing_system'), # AGUSAN DEL NORTE ONLY
     #FINANCE
     path('finance/search/',AdvanceFinanceFilterViews.as_view(), name='api_AdvanceFinanceFilterViews'),
