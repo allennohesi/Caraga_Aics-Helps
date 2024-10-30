@@ -241,6 +241,7 @@
             </div>
           </div>
         </div>
+        {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
         <div class="col-xl-8">
           <div class="card">
             <div class="card-body">
@@ -249,7 +250,7 @@
                   <div class="col-xl-12 appointment">
                     <div class="card-header card-no-border">
                       <div class="header-top">
-                        <h5 class="m-0">Incomplete Asessment</h5>
+                        <h5 class="m-0">Pending Case Study</h5>
                       </div>
                     </div>
                     <div class="card-body pt-0">
@@ -258,7 +259,6 @@
                           <thead>
                               <tr>
                                   <th class="text-center">#</th>
-                                  <th class="text-center">Status</th>
                                   <th>Picture</th>
                                   <th>Tracking Code</th>
                                   <th>Client Name</th>
@@ -277,6 +277,7 @@
             </div>
           </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -548,7 +549,7 @@ $('#submitFeedback').on('submit', function(e){
     'order': [[ 0, 'desc' ]],
     'bDestroy': true,
     'ajax': {
-        'url': '{% if restriction %}/api/requests/admin_monitoring/list/?format=datatables&ongoing=ongoing{% else %}/api/requests/transaction/session/?format=datatables&user={{ request.user.id }}{% endif %}',
+        'url': '{% if restriction %}/api/requests/admin_monitoring/list/?format=datatables&ongoing=ongoing{% else %}/api/requests/case_study/deadline/?format=datatables&user={{ request.user.id }}{% endif %}',
         'type': 'GET',
         'data': function(d) {
           d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
@@ -563,27 +564,6 @@ $('#submitFeedback').on('submit', function(e){
             'render': function(data, type, row, meta) {
                 return meta.row + meta.settings._iDisplayStart + 1;
             },
-        },
-        {'data': 'status', 'className': 'text-center', 'searchable': false,
-            'render': function(data,type,row,meta){
-                if(row['status'] == null){
-                    return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
-                }else if(row['status'] == 1){
-                    return "<span class='badge badge-dark'>Pending</span>"
-                }else if(row['status'] == 2){
-                    return "<span class='badge badge-warning'>Ongoing</span>"
-                }else if(row['status'] == 3){
-                    return "<span class='badge badge-info'>For Uploading Picture</span>"
-                }else if(row['status'] == 4){
-                    return "<span class='badge badge-danger'>Hold</span>"
-                }else if(row['status'] == 5){
-                    return "<span class='badge badge-danger'>Cancelled</span>"
-                }else if(row['status'] == 6){
-                    return "<span class='badge badge-success'>Completed</span>"
-                }else if(row['status'] == 7){
-                    return "<span class='badge badge-warning'>Ongoing</span>"
-                }
-            }
         },
         {'data': 'get_picture',
             'render': function(data, type, row, meta) {
