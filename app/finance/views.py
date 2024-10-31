@@ -215,7 +215,6 @@ def export_fund_summary(request):
 		end_date_str = request.GET.get("end_date")
 		station = request.GET.get('station')
 		if request.GET.get("fund_source") == "all":
-			print("TEST")
 			queryset = Transaction.objects.filter(
 				date_of_transaction__range=(start_date_str, end_date_str), office_station_in=station
 			).order_by("id").select_related(

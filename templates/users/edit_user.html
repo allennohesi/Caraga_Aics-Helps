@@ -26,7 +26,7 @@
         <br>
         <div class="form-group mb-3">
             <label>Group <span class="txt-danger">*</span></label>
-            <select class="form-control select" name="group" required>
+            <select class="form-control select" name="group" id="group_id" required>
                 <option></option>
                 {% for row in group %}
                     {% if row.id == user_group.group_id %}
@@ -36,6 +36,10 @@
                     {% endif %}
                 {% endfor %}
             </select>
+        </div>
+        <div class="form-group mb-3">
+            <label>Service Provider Name <span class="txt-danger" id="txt-id-edit_service_provider"></span></label>
+            <select class="form-control select2 get_service_provider" id="edit_service_provider" name="sp_name" disabled></select>
         </div>
         <div class="row mb-3">
             <div class="col-md-3">
@@ -132,6 +136,7 @@
         processBrgy.then( function(parent, child, items) {
             $('#edit_barangay').val('{{ information.barangay_id }}').trigger('change');
         });
+        
         function clearValidation(){
             $('.form-control').each(function() {
                 $(this).removeClass('is-invalid');
@@ -183,5 +188,81 @@
             }
         });
     });
+    $('#group_id').on('change', function(){
+        if($(this).val() == "4") {
+            $('#edit_service_provider').prop('disabled', false);
+            $('#edit_service_provider').prop('required', true);
+            $('#txt-id-edit_service_provider').text('*');
+
+        } else {
+            $('#txt-id-edit_service_provider').text('');
+            $('#edit_service_provider').val('');
+            $('#edit_service_provider').prop('disabled', true);
+            $('#edit_service_provider').prop('required', false);
+        }
+    });
+    $(document).ready(function() {
+        setTimeout(function() {
+            // Set up Select2 with AJAX data source
+            $('.get_service_provider').select2({
+                width: '100%',
+                placeholder: 'CHOOSE',
+                containerCssClass: 'select',
+                allowClear: true,
+                ajax: {
+                    url: "{% url 'get_all_service_provider' %}",
+                    method: "GET",
+                    dataType: "json",
+                    data: function(params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
+                }
+            });
+    
+            // Get the service provider ID and name
+            var serviceProviderId = "{{ information.service_provider_id|default:'' }}"; // Get the ID from Django context
+            var serviceProviderName = "{{ information.service_provider.name|default:'' }}"; // Get the name from Django context
+    
+            console.log(serviceProviderName)
+            // Check if the service provider ID is valid
+            if (serviceProviderId && serviceProviderId !== "none") {
+                // Set default value if the ID exists and is not "none"
+                var defaultData = {
+                    id: serviceProviderId,
+                    text: serviceProviderName
+                };
+    
+                // Add the default option and select it
+                var $select = $('.get_service_provider');
+                var option = new Option(defaultData.text, defaultData.id, true, true);
+                $select.append(option).trigger('change');
+    
+                // Enable the select input and set it as required
+                $('#edit_service_provider').prop('disabled', false);
+                $('#edit_service_provider').prop('required', true);
+            } else {
+                // Clear Select2 if no valid data, disable it, and remove required
+                var $select = $('.get_service_provider');
+                $select.val(null).trigger('change'); // Clear selection
+                $('#edit_service_provider').prop('disabled', true);
+                $('#edit_service_provider').prop('required', false);
+            }
+    
+        }, 100); // Adjust the delay if necessary
+    });
+    
+    
+    
+    
+    
+    
 </script>
 {% endblock %}

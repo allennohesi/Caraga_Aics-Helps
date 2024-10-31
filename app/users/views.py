@@ -53,7 +53,8 @@ def user_list(request):
 					user.save()
 					AuthuserDetails.objects.create(
 						user_id=user.id,
-						barangay_id=request.POST.get('barangay')
+						barangay_id=request.POST.get('barangay'),
+						service_provider_id=request.POST.get('service_provider_id'),
 					)
 					AuthUserGroups.objects.create(
 						user_id=user.id,
@@ -120,7 +121,8 @@ def edit_user(request, pk):
 				AuthuserDetails.objects.update_or_create(
 					user_id=pk,  # Lookup field (find by user_id)
 					defaults={
-						'barangay_id': request.POST.get('barangay')  # Update or set this field
+						'barangay_id': request.POST.get('barangay'),  # Update or set this field
+						'service_provider_id':request.POST.get('sp_name')
 					}
 				)
 				AuthUserGroups.objects.update_or_create(

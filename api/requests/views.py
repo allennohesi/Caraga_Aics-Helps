@@ -206,3 +206,18 @@ class CashTransactionViews(generics.ListAPIView):
 		region = self.request.query_params.get('region')
 		queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=0,transaction_id__requested_in=region, status__in=[6, 3]).order_by('-id')
 		return queryset
+	
+
+#SERVICE PROVIDER
+class ServiceProviderMonitoring(generics.ListAPIView):
+	serializer_class = TransactionSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	def get_queryset(self):
+		if self.request.query_params.get('sp_id'):
+			sp_id = self.request.query_params.get('sp_id')
+			queryset = TransactionStatus1.objects.filter(
+				transaction_id__service_provider_id=sp_id,
+				status__in=[3, 6],
+			).order_by('-id')
+			return queryset

@@ -86,11 +86,16 @@
                     </div>
                     <div class="form-group mb-3">
                         <label>Group <span class="txt-danger">*</span></label>
-                        <select class="form-control select" name="group" required>
+                        <select class="form-control select" name="group" id="group" required>
                             <option></option>
                             {% for row in group %}
                             <option value="{{ row.id }}">{{ row.name|upper  }}</option>
                             {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Service Provider Name <span class="txt-danger" id="txt-id-service_provider_id"></span></label>
+                        <select class="form-control select get_service_provider" name="service_provider_id" id="service_provider_id" disabled>
                         </select>
                     </div>
                     <hr>
@@ -151,7 +156,7 @@
                 <small class="modal-subtitle">Please fill out the form below.</small>
                 <button class="btn-close position-absolute" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="edit-content"></div>
+            <div class="modal-body" id="edit-content"></div>
         </div>
     </div>
 </div>
@@ -188,6 +193,44 @@
 </div>
 {% endblock %}
 {% block script %}
+<script>
+    $('#group').on('change', function(){
+        if($(this).val() == "4") {
+            $('#service_provider_id').prop('disabled', false);
+            $('#service_provider_id').prop('required', true);
+            $('#txt-id-service_provider_id').text('*');
+
+        } else {
+            $('#txt-id-service_provider_id').text('');
+            $('#service_provider_id').val('');
+            $('#service_provider_id').prop('disabled', true);
+            $('#service_provider_id').prop('required', false);
+        }
+    });
+
+    $('.get_service_provider').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select',
+        allowClear: true,
+        ajax: {
+            url: "{% url 'get_all_service_provider' %}",
+            method: "GET",
+            dataType: "json",  // Corrected the property name to "dataType"
+            data: function(params) {
+                return {
+                    searchTerm: params.term
+                };
+            },
+            processResults: function(response) {
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+</script>
 <script>
     document.getElementById("password").addEventListener("input", function() {
       const password = this.value;

@@ -1,0 +1,461 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% load static %}
+<style>
+    /* Styling for DataTable */
+    #incoming-table_wrapper {
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
+
+    #incoming-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    #incoming-table th,
+    #incoming-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+
+    #incoming-table th {
+        background-color: #f8f9fa; /* Lighter background color */
+        font-weight: bold;
+        color: #555; /* Darker font color */
+    }
+
+    #incoming-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    #incoming-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    /* Styling for DataTable Search Boxes */
+    .dataTables_filter input {
+        width: 240px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    .dataTables_length select {
+        width: 120px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    /* Customizing Placeholder Text Color */
+    ::placeholder {
+        color: #aaa;
+    }
+    .image-container img {
+        transition: transform 0.3s ease;
+    }
+    
+    .image-container img:hover {
+        transform: scale(1.2); /* Adjust scale factor for desired zoom level */
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Incoming</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Incoming</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <ul class="nav nav-pills" id="tabUL" role="tablist">
+                        <li class="nav-item" data-bs-toggle="modal" data-bs-target="#filteriningmodal">
+                            <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
+                                <i class="fa fa-file-o"></i> Filter Transactions
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
+                            <small>Requested by clients</small>
+                            <hr>
+                            <div class="table-responsive text-nowrap table-scroll">
+                                <table class="table table-responsive table-sm table-bordered" id="incoming-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Transaction Status</th>
+                                            <th>PICTURE</th>
+                                            <th>Tracking Code</th>
+                                            <th>Client Name</th>
+                                            <th>Beneficiary Name</th>
+                                            <th class="text-center">Date of Transaction</th>
+                                            <th class="text-center">Service Provider</th>
+                                            <th>SOCIAL WORKER LAST NAME</th>
+                                            {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
+                                            <th class="text-center">Assistance type</th>
+                                            <th>Mode of release</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="Tracking_modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <form id="startTransaction">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title" id="staticBackdropLabel">Tracking of Transaction</h6>
+                <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="load_data">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Status</h5> <!--Updating of status-->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="load_data">
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal fade" id="filteriningmodal" tabindex="-1" aria-labelledby="filteriningmodalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filteriningmodallLabel">Filtering modal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Funds" id="code" aria-describedby="button-addon2" autocomplete="off">
+                <button class="btn btn-outline-primary" type="button" id="filter-code">Filter</button>
+            </div>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="{{current_year}}" id="year" aria-describedby="button-addon2" autocomplete="off">
+                <button class="btn btn-outline-primary" type="button" id="filter-year">Filter</button>
+            </div>
+            <div class="input-group mb-3" style="height:130px;">
+                <select class="form-select " multiple aria-label="multiple select example" id="dropdown">
+                    <option value="0" selected>Pending</option>
+                    <option value="1">Completed</option>
+                    <option value="4">Submitted CS</option>
+                    <option value="5">Billed/DV</option>
+                    <option value="6">All Data</option>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <button class="btn btn-outline-primary" type="button" id="filter-dropdown" style="width:100%;">Filter</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function(){
+        var table = $('#incoming-table').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 15, 30, 50, 100, 200 ],
+            'order': [[ 0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/service/monitoring/?format=datatables&sp_id={{sp_details.service_provider_id}}',
+                'type': 'GET',
+                'data': function(d) {
+                    d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
+                    d.page_size = d.length;  // Send the page size
+                },
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            }, 
+            'columns': [
+                {'data': 'status', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['status'] == null){
+                            return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
+                        }else if(row['status'] == 1){
+                            return "<span class='badge badge-dark'>Pending</span>"
+                        }else if(row['status'] == 2){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }else if(row['status'] == 3){
+                            return "<span class='badge badge-info'>For Uploading Picture</span>"
+                        }else if(row['status'] == 4){
+                            return "<span class='badge badge-danger'>Hold</span>"
+                        }else if(row['status'] == 5){
+                            return "<span class='badge badge-danger'>Cancelled</span>"
+                        }else if(row['status'] == 6){
+                            return "<span class='badge badge-success'>Completed</span>"
+                        }else if(row['status'] == 7){
+                            return "<span class='badge badge-warning'>Ongoing</span>"
+                        }
+                    }
+                },
+                {'data': 'get_picture',
+                    'render': function(data, type, row, meta) {
+                        if (data) {
+                            return `<div class="image-container">
+                                <img loading="lazy" class="rounded-circle img-radius align-top m-r-15" 
+                                    data-toggle="popover" data-trigger="hover" 
+                                    data-html="true" loading="lazy" 
+                                    style="object-fit:cover; width: 40px; height: 40px;" 
+                                    data-placement="right" 
+                                    data-content="<img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'>" 
+                                    src='`+ data + `'>
+                            </div>`;
+                        }else{
+                            return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
+                                data-html="true"
+                                loading="lazy"
+                                style="object-fit:cover; width: 40px; height: 40px;"
+                                data-placement="right"
+                                data-content="<center><img loading='lazy' src='{% static 'images/dashboard/profile.jpg' %}' style='width: 250px; height: 250px; object-fit:cover;'></center>" src="{% static 'images/dashboard/profile.jpg' %}">
+                            </center>`;
+                        }
+                    },
+                    searchable:'false',
+                    sortable:'false',
+                    className: 'text-center'
+                },
+                {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
+                {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                {'data': 'verified_time_start', 'className': 'text-center', 'searchable':false, 'sortable':false},
+                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-center', 'searchable':false, 'sortable':false},
+                {'data': 'swo_fullname', 'name': 'transaction.swo.fullname', 'className': 'text-center', 'sortable': false},
+                {'data': 'assistance_type', 'className': 'text-center', 'searchable': false, 'sortable': false },
+                {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['mode_of_release'] == 0){
+                            return "<span class='badge bg-light text-dark'>CASH</span>"
+                        }else{
+                            return "<span class='badge bg-light text-dark'>GL</span>"
+                        }
+                    }
+                },
+                {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            // Retain the original formatting if already contains commas
+                            return data;
+                        }
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                },
+            ]
+        });
+        $('.dataTables_filter input').attr('maxlength', 26);
+
+        // Limit individual column search inputs to 10 characters
+        $('input.form-control').each(function() {
+            $(this).attr('maxlength', 26);
+        });
+        // Add individual search box for tracking_number column
+        var columnIndex = table.column('transaction.tracking_number:name').index();
+        var headerText = $(table.column(columnIndex).header()).text().trim();
+        
+        
+        var input = $('<input type="text" class="form-control" placeholder="Search Tracking" maxlength="23" />')
+            .appendTo($(table.column(columnIndex).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndex).search() !== this.value) {
+                    table.column(columnIndex).search(this.value).draw();
+                }
+            });
+
+        var columnIndexClient = table.column('transaction.client.client_bene_fullname:name').index();
+        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
+        
+        var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients" maxlength="23" />')
+            .appendTo($(table.column(columnIndexClient).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexClient).search() !== this.value) {
+                    table.column(columnIndexClient).search(this.value).draw();
+                }
+            });
+
+        var columnIndexBene = table.column('transaction.bene.client_bene_fullname:name').index();
+        var headerTextBene = $(table.column(columnIndexBene).header()).text().trim();
+        
+        var inputBene = $('<input type="text" class="form-control" placeholder="Search Beneficiary" maxlength="23" />')
+            .appendTo($(table.column(columnIndexBene).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexBene).search() !== this.value) {
+                    table.column(columnIndexBene).search(this.value).draw();
+                }
+            });
+        
+        var columnIndexClient = table.column('transaction.swo.fullname:name').index();
+        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
+        
+        var inputClient = $('<input type="text" class="form-control" placeholder="Search Social Worker" maxlength="23" />')
+            .appendTo($(table.column(columnIndexClient).header()))
+            .on('keyup change clear', function () {
+                if (table.column(columnIndexClient).search() !== this.value) {
+                    table.column(columnIndexClient).search(this.value).draw();
+                }
+            });       
+            
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/requests/incoming/view/' + id);
+        });
+
+        $(document).on('click','a[data-role=direct]', function(){ // FOR MODAL SUMMARY
+            var id = $(this).data('id');
+            $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
+        });
+        $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+            var id = $(this).data('id');
+            $('#empid').val(id)
+            $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/update_amount/' +id);
+        });
+
+		$('#filter-year').on('click', function(){
+			if($('#year').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&year=' + $('#year').val()).load();
+			}
+		});
+        
+		$('#filter-dropdown').on('click', function(){
+			if($('#dropdown').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&dropdown=' + $('#dropdown').val()).load();
+			}
+		});
+        $('#filter-code').on('click', function(){
+			if($('#code').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&code=' + $('#code').val()).load();
+			}
+		});
+        $(document).on('click', 'a[data-role=submit_case_study]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+                title: "Are you sure",
+                text: "You already submitted this case study?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3498DB",
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'submitCaseStudy' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "Case study submitted",
+                                icon: "success",
+                                confirmButtonColor: "#3498DB",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                    }
+                            });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on('click', 'a[data-role=remove_case_study]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to remove this as case study?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3498DB",
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'removeCaseStudy' %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "Case study updated",
+                                icon: "success",
+                                confirmButtonColor: "#3498DB",
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#incoming-table').DataTable().ajax.reload();
+                                    }
+                            });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
+                        }
+                    });
+                }
+            });
+        });
+    });
+    
+</script>
+{% endblock %}
