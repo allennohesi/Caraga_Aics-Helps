@@ -172,7 +172,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'all_transactions' %}"><i data-feather="zap"></i><span>All transactions</span></a>
                                     </li>
                                     {% endif %} {% endcomment %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" or user|check_group_permission:"Signatories" %}
                                     <li class="sidebar-list">
                                         {% comment %} <label class="badge badge-success">{% count_assessment_all %}</label> {% endcomment %}
                                         <label class="badge badge-info">Click me !</label>
