@@ -314,7 +314,7 @@ def get_bene_info(request, pk):
 
 
 @login_required
-@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller', 'signatories')
 def incoming(request):
 	user_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	current_year = today.year
@@ -335,7 +335,7 @@ def get_file_path(instance, filename):
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller')
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller', 'signatories')
 def view_incoming(request, pk):
 	if request.method == "POST":
 		try:
