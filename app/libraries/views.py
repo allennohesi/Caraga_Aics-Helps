@@ -393,10 +393,8 @@ def get_all_client_beneficiary(request):
 @csrf_exempt
 def get_all_service_provider(request):
     json = []
-    print("TEST")
     if request.GET.get('searchTerm', ''):
-        client = ServiceProvider.objects.filter(Q(name__icontains=request.GET.get('searchTerm')) |
-                                        Q(acronym__icontains=request.GET.get('searchTerm'))).order_by('name')[:10]
+        client = ServiceProvider.objects.filter(Q(name__icontains=request.GET.get('searchTerm')) & Q(status=1)).order_by('name')[:10]
         if client:
             for row in client:
                 json.append({'id': row.id, 'text': row.name })
