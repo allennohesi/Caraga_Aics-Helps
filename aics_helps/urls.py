@@ -42,7 +42,8 @@ urlpatterns = [
     path('requests/', include('app.requests.urls')),
     path('online-request/', include('app.client_bene_online.urls')),
     path('users/', include('app.users.urls')),
-    
+    path('service-provider/', include('app.service_provider.urls')),
+
     path('chat/', include("app.chat.urls")),
     #FOR API
     path('api/', include('api.urls')), 

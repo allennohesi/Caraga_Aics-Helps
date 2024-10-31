@@ -52,7 +52,7 @@
         <div class="col-xl-4">
           <div class="card">
             <div class="card-header">
-              <h4 class="card-title mb-0">My Profile</h4>
+              <h4 class="card-title mb-0">My Credentials</h4>
               <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
             </div>
             <div class="card-body">
@@ -93,7 +93,7 @@
                   <input class="form-control" type="password" value="" name="password" placeholder="*******" required>
                 </div>
                 <div class="form-footer">
-                  <button action="submit" class="btn btn-primary btn-block">Update</button>
+                  <button action="submit" class="btn btn-primary btn-block">Update Password</button>
                 </div>
                 <input type="text" hidden value="changepassword" name="verification">
               </form>
@@ -104,7 +104,7 @@
           <form id="employee_profile_update" class="card">
             {% csrf_token %}
             <div class="card-header">
-              <h4 class="card-title mb-0">Employee Profile</h4>
+              <h4 class="card-title mb-0">Details</h4>
               <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
             </div>
             <div class="card-body">
@@ -170,14 +170,13 @@
                         </div>
                     </div>
                 </div>
-                {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
+                {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" or user|check_group_permission:"Verifier"  or user|check_group_permission:"Finance" %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
                     <label class="form-label">SWO License No.</label>
                     <input class="form-control" type="text" name='license_no' value="{{information.license_no}}">
                   </div>
                 </div>
-                {% endif %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
                     <label>Office / Station <span class="txt-danger">*</span></label>
@@ -193,6 +192,7 @@
                     </select>
                   </div>
                 </div>
+                {% endif %}
               </div>
             </div>
             <div class="card-footer text-end">
