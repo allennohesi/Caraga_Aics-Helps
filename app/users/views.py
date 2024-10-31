@@ -24,6 +24,12 @@ def handle_error(error, location, user): #ERROR HANDLING
 		user_id=user,
 	)
 
+def userFeedback(request):
+	context = {
+		'title': "feedback",
+	}
+	return render(request, 'users/userfeedback.html', context)
+
 @login_required
 def user_list(request):
 	if request.method == "POST":

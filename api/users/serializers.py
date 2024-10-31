@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from app.models import AuthUser, AuthUserGroups
+from app.models import AuthUser, AuthUserGroups, AuthFeedback
 from app.requests.models import SocialWorker_Status, ErrorLogData
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,4 +32,11 @@ class ErrorLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ErrorLogData
+        fields = '__all__'
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(source='user.get_fullname', read_only=True)
+    date_created = serializers.DateTimeField(format="%b %d, %Y - %H:%M %p", read_only=True)
+    class Meta:
+        model = AuthFeedback
         fields = '__all__'

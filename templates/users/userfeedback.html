@@ -1,0 +1,121 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Feedback</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">User</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-sm table-bordered table-hover w-100" id="feedback-logs">
+                        <thead>
+                            <th>#</th>
+                            <th>SUBJECT</th>
+                            <th>MESSAGE</th>
+                            <th>EXPRESSION</th>
+                            <th>MOOD</th>
+                            <th>USER</th>
+                            <th>DATE</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    document.getElementById("password").addEventListener("input", function() {
+      const password = this.value;
+      const passwordValidationMessage = document.getElementById("password-validation-message");
+
+      // Check if the password meets the criteria
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasSpecialCharacter = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
+      const isLengthValid = password.length >= 8;
+
+      if (hasUppercase && hasSpecialCharacter && isLengthValid) {
+        passwordValidationMessage.textContent = "Password is valid.";
+      } else {
+        passwordValidationMessage.textContent = "Password must have at least 1 uppercase letter, 1 special character, and be at least 8 characters long.";
+      }
+    });
+  </script>
+<script>
+    $(document).ready(function(){
+        $('#feedback-logs').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 25, 50, 100 ],
+            'order': [[ 0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/user/FeedbackViews/?format=datatables',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {'data': 'subject', 'sortable': false},
+                {'data': 'message', 'sortable': false},
+                {'data': 'mood', 'sortable': false},
+                {
+                    'data': 'mood',
+                    'className': 'text-center',
+                    'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        console.log(data); // Log the mood value to the console
+                
+                        // Use a switch statement to return the corresponding emoji
+                        switch (data.toLowerCase()) {
+                            case 'worried':
+                                return '😟'; // Worried emoji
+                            case 'sad':
+                                return '😢'; // Sad emoji
+                            case 'confused':
+                                return '😕'; // Confused emoji
+                            case 'happy':
+                                return '😊'; // Happy emoji
+                            case 'joyful':
+                                return '😁'; // Joyful emoji
+                            default:
+                                return '❓'; // Default emoji for unknown mood
+                        }
+                        
+                    }
+                },
+                {'data': 'fullname', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data, type, row, meta) {
+                        return data ? data : 'N/A';
+                    }
+                },
+                {'data': 'date_created', 'className': 'text-center', 'sortable': false, 'searchable': false},
+            ]
+        });
+    });
+</script>
+{% endblock %}
