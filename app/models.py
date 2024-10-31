@@ -100,12 +100,13 @@ class AuthUser(models.Model):
 
 
 class AuthuserDetails(models.Model):
-    from app.libraries.models import Barangay, OfficeStation
+    from app.libraries.models import Barangay, OfficeStation, ServiceProvider
 
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     barangay = models.ForeignKey(Barangay, models.DO_NOTHING, to_field='brgy_code')
     license_no = models.CharField(max_length=255, blank=True, null=True)
     OfficeStationLib = models.ForeignKey(OfficeStation, models.DO_NOTHING, blank=True, null=True)
+    service_provider = models.ForeignKey(ServiceProvider, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
