@@ -45,8 +45,8 @@ def update_signatories(request):
 @login_required
 def fund_source(request):
     if request.method == "POST":
-        name=request.POST.get('fund_source')
-        check = FundSource.objects.filter(name=request.POST.get('fund_source'))
+        name=request.POST.get('description')
+        check = FundSource.objects.filter(description=name)
         if not check:
             FundSource.objects.create(
                 name=name,
@@ -57,7 +57,7 @@ def fund_source(request):
             )
             return JsonResponse({'error': False, 'msg': "New Fund Source '{}' has been added successfully.".format(name)})
         else:
-            return JsonResponse({'error': True, 'msg': "Fund Source '{}' is already existed.".format(name)})
+            return JsonResponse({'error': True, 'msg': "Description of Fund Source '{}' is already existed.".format(name)})
         
     context = {
         'title': 'Fund-Source'
@@ -101,11 +101,10 @@ def edit_fund_source(request):
         FundSource.objects.filter(id=request.POST.get('edit-id')).update(
             name=name,
             updated_by_id=request.user.id,
-            description=request.POST.get('description'),
+            description=request.POST.get('edit-description'),
             status=True if request.POST.get('edit-status') else False,
         )
         return JsonResponse({'error': False, 'msg': "Fund source has '{}' has been added successfully.".format(name)})
-
 @login_required
 @groups_only('Super Administrator')
 def category(request):
