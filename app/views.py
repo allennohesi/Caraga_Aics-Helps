@@ -695,7 +695,7 @@ def personalData(request): #FOR GENERAL
 
 					str(item.transaction.bene_category.name),
 					str(item.transaction.bene_sub_category.name),
-					str(item.transaction.service_provider.name),
+					service_provider,
 					str(item.transaction.purpose),
 					str(item.transaction.relation.name),
 					str(item.transaction.lib_assistance_category.name),
