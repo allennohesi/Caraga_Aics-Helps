@@ -728,6 +728,15 @@ def view_assessment(request, pk):
 	}
 	return render(request, 'requests/view_assessment.html', context)
 
+@login_required
+@groups_only('Verifier', 'Super Administrator', 'Surveyor', 'Finance', 'Social Worker', 'biller', 'signatories')
+def advanceSearch(request):
+
+	context = {
+		'title': 'Advance Search',
+	}
+	return render(request, 'requests/advance_search.html', context)
+
 @csrf_exempt
 def queuingCall(request, pk):
 	try:

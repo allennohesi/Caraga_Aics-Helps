@@ -105,6 +105,7 @@ def edit_fund_source(request):
             status=True if request.POST.get('edit-status') else False,
         )
         return JsonResponse({'error': False, 'msg': "Fund source has '{}' has been added successfully.".format(name)})
+    
 @login_required
 @groups_only('Super Administrator')
 def category(request):

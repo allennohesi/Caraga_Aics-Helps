@@ -1,0 +1,245 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+    input {border:0;outline:0;}
+    input:focus {outline:none!important;}
+</style>
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>All transactions</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active">Transactions</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <form id="searchingData">
+                        {% csrf_token %}
+                        <div class="alertDiv"></div>
+                        <div class="row mb-3">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label>Full name <span class="txt-danger">*</span></label>
+                                    <select class="form-control select client_beneficiary" id="name" name="name" required></select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="col-md-3">  
+                                <div class="form-group">
+                                    <label><br></label>
+                                    {% comment %} <a data-bs-target="#modalProvided" data-role='hold' class="btn btn-primary btn-lg">Search</a> {% endcomment %}
+                                    <form method="get">
+                                        <button type="submit" class="btn btn-primary" id="search-btn">
+                                            <span class="loading open-circle" style="display:none;"></span> Search
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="card">
+                <div class="card-body" id="transaction_content">
+                    <div class="tab-content" id="pills-icontabContent">
+                        <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
+                            <div class="table-responsive text-nowrap table-scroll">
+                                <table class="table table-responsive" width="100%" id="all-transaction">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th class="text-center">Status</th>
+                                            <th>Tracking Number</th>
+                                            <th>Client Name</th>
+                                            <th>Beneficiary Name</th>
+                                            <th>Service provider</th>
+                                            <th>Assistance Type</th>
+                                            <th>Date of Transaction</th>
+                                            <th class="text-center">Assigned to SWO</th>
+                                            <th class="text-center">DV - Title</th>
+                                            <th class="text-center">Total amount</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Change amount</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="load_data">
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $('.client_beneficiary').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select',
+        allowClear: true,
+        ajax: {
+            url: "{% url 'get_all_client_beneficiary' %}",
+            method: "GET",
+            dataType: "json",  // Corrected the property name to "dataType"
+            data: function(params) {
+                return {
+                    searchTerm: params.term
+                };
+            },
+            processResults: function(response) {
+                $('#relationship').val("").trigger('change');
+                $('#same_with_client').prop('checked', false);
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+    $(document).ready(function(){
+        $('#searchingData').on('submit', function(e){
+            e.preventDefault();
+            check($('#name').val());
+        });
+        function check(name){
+            console.log(name)
+            $('#all-transaction').DataTable({ //ASSIGNED TO SELF
+                'serverSide': true,
+                'processing': true,
+                'deferRender': true,
+                'lengthMenu': [ 15, 30, 50, 100 ],
+                'order': [[ 3, 'asc' ]],
+                'bDestroy': true,
+                'ajax': {
+                    'url': '/api/requests/transaction/advance/search/?format=datatables&name=' + name,
+                    'type': 'GET',
+                    'data': function(d) {
+                        d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
+                        d.page_size = d.length;  // Send the page size
+                    },
+                },
+                'fnCreatedRow': function (row, data, index) {
+                    $(row).attr('id', data['id']);
+                },
+                'columns': [
+                    {'data': 'id',
+                        'render': function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        },
+                    },
+                    {'data': 'status', 'className': 'text-center', 'searchable': false,
+                        'render': function(data,type,row,meta){
+                            if(row['status'] == null){
+                                return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
+                            }else if(row['status'] == 1){
+                                return "<span class='badge badge-dark'>Pending</span>"
+                            }else if(row['status'] == 2){
+                                return "<span class='badge badge-warning'>Ongoing</span>"
+                            }else if(row['status'] == 3){
+                                return "<span class='badge badge-info'>For Uploading Picture</span>"
+                            }else if(row['status'] == 4){
+                                return "<span class='badge badge-danger'>Hold</span>"
+                            }else if(row['status'] == 5){
+                                return "<span class='badge badge-danger'>Cancelled</span>"
+                            }else if(row['status'] == 6){
+                                return "<span class='badge badge-success'>Completed</span>"
+                            }else if(row['status'] == 7){
+                                return "<span class='badge badge-warning'>Ongoing</span>"
+                            }
+                        }
+                    },
+                    {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
+                    {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                    {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
+                    {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false },
+                    {'data': 'assistance_type', 'name': 'transaction.lib_assistance_category.name', 'className': 'text-start', 'sortable': false },
+                    {'data': 'verified_time_start', 'className': 'text-start', 'sortable': false },
+                    {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
+                    {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
+                    {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                        'render': function(data, type, row, meta) {
+                            // Check if total_amount is null or undefined
+                            if (data === null || data === undefined) {
+                                return 'N/a';
+                            }
+                            // Check if data already contains commas
+                            if (data.includes(',')) {
+                                // Retain the original formatting if already contains commas
+                                return data;
+                            }
+                            // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                            return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        }
+                    },
+                ]
+            });
+        }
+        $(document).on('click', 'a[data-role=details]', function(){
+            var id = $(this).data('id');
+            $('#transaction_content').load('/requests/assessment/view/' + id); //stay still in the body
+        });
+    });
+    $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+        var id = $(this).data('id');
+        $('#empid').val(id)
+        $('#myModal').modal('show')
+    });
+    $(document).on('click','a[data-role=PrintingModal]', function(){ // For Printing Purposes Only
+        var id = $(this).data('id');
+        var tracking = $('#'+id).children('td:eq(2)').text();
+        $('#Eid').val(id)
+        $('#PrintingModal').modal('show').find('#load_data').load('/requests/printingModal/' +id);
+    });
+    $(document).on('click','a[data-role=AssessmentStatus]', function(){ // For assessmentStatus
+        var id = $(this).data('id');
+        $('#Eid').val(id)
+        $('#PrintingModal').modal('show').find('#load_data').load('/requests/assessmentStatusModal/' +id);
+    });
+    function validationForm(){
+        var invalid = false;
+        $('.form-control').each(function() {
+            if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                $(this).addClass('is-invalid');
+                $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                invalid = true;
+            }
+        });
+        return invalid;
+    }
+    $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+        var id = $(this).data('id');
+        $('#empid').val(id)
+        $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/update_amount/' +id);
+    });
+
+
+</script>
+{% endblock %}
