@@ -610,18 +610,19 @@ def personalData(request): #FOR GENERAL
 		data = TransactionStatus1.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),transaction__swo_id=request.user.id
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo',
+					'transaction__service_provider'
 				)
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
 			yield ','.join(['Tracking number',  'Date Accomplished',
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
-				   'Client Category','Client Sub-Category', 'Client Barangay',
+				   'Client Category','Client Sub-Category', 'Client Address', 'Client Barangay',
 				   
 				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
-				   'Bene Category','Bene Sub-Category',
+				   'Bene Address', 'Bene Barangay', 'Bene Category','Bene Sub-Category', 
 
-				   'Purpose','Relationship', 'Type of Assistance', 'Amount', 
+				   'Service provider','Purpose','Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral',
 				   'Date Interviewed','For case study','Case Study Status','Transaction Status',
 				   'Is_PFA', 'Is_SWC'
@@ -678,7 +679,9 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.client.age),
 					str(item.transaction.client_category.name),
 					str(item.transaction.client_sub_category.name),
+					str(item.transaction.client.barangay.city_code.city_name),
 					str(item.transaction.client.barangay.brgy_name),
+
 					str(item.transaction.bene.last_name),
 					str(item.transaction.bene.first_name),
 					str(item.transaction.bene.middle_name),
@@ -687,8 +690,12 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.bene.civil_status.name),
 					str(item.transaction.bene.birthdate),
 					str(item.transaction.bene.age),
+					str(item.transaction.bene.barangay.city_code.city_name),
+					str(item.transaction.bene.barangay.brgy_name),
+
 					str(item.transaction.bene_category.name),
 					str(item.transaction.bene_sub_category.name),
+					str(item.transaction.service_provider.name),
 					str(item.transaction.purpose),
 					str(item.transaction.relation.name),
 					str(item.transaction.lib_assistance_category.name),
