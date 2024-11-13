@@ -379,7 +379,7 @@ $('#submitFeedback').on('submit', function(e){
           showLoaderOnConfirm: true,
           preConfirm: function (){
               return $.post({
-                  url: "{% url 'feedback' %}",
+                  url: "{% url 'feedbackRequest' %}",
                   data: form,
                   success : function (response){
                       if(!response.error){

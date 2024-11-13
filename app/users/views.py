@@ -77,7 +77,7 @@ def user_list(request):
 	return render(request, 'users/list.html', context)
 
 @login_required
-def feedback(request):
+def feedbackRequest(request):
 	if request.method == 'POST':
 		feedback = AuthFeedback.objects.create(
 			subject=request.POST.get('subject'),
