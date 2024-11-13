@@ -24,7 +24,7 @@ urlpatterns = [
     path('activate/<int:pk>', status_activation, name='status_activation'),
     path('print_ProvidedBYSWO', print_ProvidedBYSWO, name='print_ProvidedBYSWO'),
 
-    path('personalData/', personalData,name='personalData'),
+    path('personal/data/', personalData,name='personalData'),
     path('withDvTransactions/', withDvTransactions, name='withDvTransactions'),
     path('generatePWD/', generatePWD, name='generatePWD'),
     path('generateTransactions/', generateTransactions, name='generateTransactions'),
