@@ -79,8 +79,19 @@ class CaseStudyDeadline(generics.ListAPIView):
 			).order_by('-id')
 			return queryset
 
-class TransactionIncoming(generics.ListAPIView):
+class TransactionAdvanceSearch(generics.ListAPIView):
+	serializer_class = TransactionSerializer
+	permission_classes = [IsAuthenticated]
+	pagination_class = LargeResultsSetPagination
+	def get_queryset(self):
+		queryset = TransactionStatus1.objects.none() 
+		name = self.request.query_params.get('name')
+		queryset = TransactionStatus1.objects.filter(
+			Q(transaction_id__client_id=name) | Q(transaction_id__bene_id=name)
+		).order_by('-id')
+		return queryset
 
+class TransactionIncoming(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
