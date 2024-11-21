@@ -1023,49 +1023,47 @@ def confirmAmount(request):
 			with transaction.atomic():
 				total = request.POST.get('final_total')
 				transaction_id = request.POST.get('transaction_id')
+				tracking_number = request.POST.get("tracking_number")
 				float_value = float(total)
 				integer_value = int(float_value)
-				areaofassignment = Transaction.objects.filter(id=transaction_id).first()
-				Signatories = ""
-				if integer_value <= 50000:
-					if areaofassignment.requested_in == "AGUSAN DEL NORTE":
-						Signatories = 17 #ANA T. SEMACIO
-					elif areaofassignment.requested_in == "SURIGAO DEL SUR":
-						Signatories = 81 #Arlene M. Ontua
-					elif areaofassignment.requested_in == "AGUSAN DEL SUR":
-						Signatories = 1 #Michael John ANDOHUYAN
-					elif areaofassignment.requested_in == "DINAGAT ISLANDS":
-						Signatories = 1 #
-					elif areaofassignment.requested_in == "SURIGAO DEL NORTE":
-						Signatories = 1 #THESA MUSA
-					data = Transaction.objects.filter(id=transaction_id).update(
-						signatories_id = Signatories, 
-					)
-				elif integer_value >= 50001 and integer_value <= 75000:
-					data = Transaction.objects.filter(id=transaction_id).update(
-						signatories_id = 18, #JESSIE CATHERINE B. ARANAS
-					)
-				elif integer_value >= 75001 and integer_value <= 100000:
-					data = Transaction.objects.filter(id=transaction_id).update(
-						signatories_id = 19, #ARDO
-					)
-				else:
-					data = Transaction.objects.filter(id=transaction_id).update(
-						signatories_id = 20, #RD
-					)
-				if integer_value > 10000:
-					Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
-						is_case_study=2,
-						total_amount=request.POST.get("final_total")
-					)
-				else:
-					Transaction.objects.filter(tracking_number=request.POST.get("tracking_number")).update(
-						is_case_study=1,
-						total_amount=request.POST.get("final_total")
-					)
 
-				return JsonResponse({'data': 'success',
-								'msg': 'The total amount {} confirmed.'.format(total)})
+				# Get the transaction record
+				area_of_assignment = Transaction.objects.filter(id=transaction_id).first()
+
+				# Determine the signatory based on the total amount and area of assignment
+				signatories_map = {
+					"AGUSAN DEL NORTE": 17,  # ANA T. SEMACIO
+					"SURIGAO DEL SUR": 106,  # Arlene M. Ontua
+					"AGUSAN DEL SUR": 1,    # Michael John ANDOHUYAN
+					"DINAGAT ISLANDS": 1,   # Placeholder
+					"SURIGAO DEL NORTE": 1, # THESA MUSA
+				}
+				signatories_id = None
+
+				if integer_value <= 50000:
+					signatories_id = signatories_map.get(area_of_assignment.requested_in, None)
+				elif 50001 <= integer_value <= 75000:
+					signatories_id = 18  # JESSIE CATHERINE B. ARANAS
+				elif 75001 <= integer_value <= 100000:
+					signatories_id = 19  # ARDO
+				else:
+					signatories_id = 20  # RD
+
+				# Update signatories_id for the transaction
+				Transaction.objects.filter(id=transaction_id).update(signatories_id=signatories_id)
+
+				# Determine and update `is_case_study` and `total_amount`
+				is_case_study = 2 if integer_value > 10000 else 1
+				Transaction.objects.filter(tracking_number=tracking_number).update(
+					is_case_study=is_case_study,
+					total_amount=total
+				)
+
+				return JsonResponse({
+					'data': 'success',
+					'msg': f'The total amount {total} confirmed.'
+				})
+
 	except ConnectionError as ce:
 		# Handle loss of connection (e.g., log the error)
 		handle_error(ce, "CONNECTION ERROR IN CONFIRM AMOUNT", request.user.id)
