@@ -241,76 +241,135 @@ def requests(request):
 
 @login_required
 def get_client_info(request, pk):
-	if request.method == "GET":
-		data = ClientBeneficiary.objects.filter(id=pk).first()
-		transaction = Transaction.objects.filter(client_id=data.id).first()
-		if transaction:
-			new = "2"
-		else:
-			new = "1"
-		eid = data.id
-		birthdate = data.birthdate
-		age = data.get_age
-		sex = data.sex.name
-		contact_number = data.contact_number
-		civil_status = data.civil_status.name
-		region = data.barangay.city_code.prov_code.region_code.region_name
-		province = data.barangay.city_code.prov_code.prov_name
-		city = data.barangay.city_code.city_name
-		barangay = data.barangay.brgy_name #done
-		village = data.village
-		house_no = data.house_no
-		street = data.street
-		client_id = pk
-		id_presented = data.presented.presented
-		id_presentedNo = data.presented_id_no if data.presented_id_no else 'N/A'
-		is_4ps = 'Yes' if data.is_4ps else 'No'
-		id_number_4ps = data.number_4ps_id_number if data.number_4ps_id_number else 'N/A'
-		is_indi = 'Yes' if data.is_indi else 'No'
-		tribe = data.tribu.name if data.tribu_id else 'N/A'
-		
-		transaction_history = [dict(tracking_number=row.transaction.tracking_number,type_of_assitance=row.transaction.lib_type_of_assistance.type_name,assistance_category=row.transaction.lib_assistance_category.name,client=row.transaction.client.client_bene_fullname,date_assessment=row.end_assessment,social_worker=row.transaction.swo.get_fullname,status="Completed") for row in
-							TransactionStatus1.objects.filter(Q(transaction_id__client_id=pk,status__in=[3, 6])).order_by('-id')[:2]]
+	data = ClientBeneficiary.objects.filter(id=pk).first()
+	if not data:
+		return JsonResponse({'error': 'Client not found'}, status=404)
 
-		return JsonResponse({'new': new, 'birthdate': birthdate, 'age': age, 'sex': sex, 'contact_number': contact_number,
-							 'civil_status': civil_status,'region': region, 'province': province, 'city': city, 'barangay': barangay,
-							 'village': village, 'house_no': house_no, 'street': street, 'is_4ps': is_4ps,
-							 'id_number_4ps': id_number_4ps, 'is_indi': is_indi, 'tribe': tribe, 'client_id':client_id, 'transaction_history':transaction_history, 'id_presented':id_presented,'id_presentedNo':id_presentedNo})
+	# Determine if the client has a transaction
+	has_transaction = Transaction.objects.filter(client_id=data.id).exists()
+	new = "2" if has_transaction else "1"
+
+	# Extract client details
+	client_details = {
+		'new': new,
+		'birthdate': data.birthdate,
+		'age': data.get_age,
+		'sex': data.sex.name,
+		'contact_number': data.contact_number,
+		'civil_status': data.civil_status.name,
+		'region': data.barangay.city_code.prov_code.region_code.region_name,
+		'province': data.barangay.city_code.prov_code.prov_name,
+		'city': data.barangay.city_code.city_name,
+		'barangay': data.barangay.brgy_name,
+		'village': data.village,
+		'house_no': data.house_no,
+		'street': data.street,
+		'client_id': pk,
+		'id_presented': data.presented.presented,
+		'id_presentedNo': data.presented_id_no or 'N/A',
+		'is_4ps': 'Yes' if data.is_4ps else 'No',
+		'id_number_4ps': data.number_4ps_id_number or 'N/A',
+		'is_indi': 'Yes' if data.is_indi else 'No',
+		'tribe': data.tribu.name if data.tribu_id else 'N/A',
+	}
+
+	# Fetch transaction history
+	transaction_statuses = TransactionStatus1.objects.select_related(
+		'transaction__lib_type_of_assistance', 'transaction__lib_assistance_category',
+		'transaction__client', 'transaction__swo'
+	).filter(
+		Q(transaction__client_id=pk, status__in=[3, 6])
+	).order_by('-id')[:2]
+
+	transaction_history = [
+		{
+			'tracking_number': row.transaction.tracking_number,
+			'type_of_assitance': row.transaction.lib_type_of_assistance.type_name,
+			'assistance_category': row.transaction.lib_assistance_category.name,
+			'client': row.transaction.client.client_bene_fullname,
+			'date_assessment': row.end_assessment,
+			'social_worker': row.transaction.swo.get_fullname,
+			'status': "Completed",
+		}
+		for row in transaction_statuses
+	]
+
+	# Add transaction history to the response
+	client_details['transaction_history'] = transaction_history
+
+	return JsonResponse(client_details)
 
 
 @login_required
 def get_bene_info(request, pk):
-	data = ClientBeneficiary.objects.filter(id=pk).first()
-	birthdate = data.birthdate
-	age = data.get_age
-	sex = data.sex.name
-	contact_number = data.contact_number
-	civil_status = data.civil_status.name
-	region = data.barangay.city_code.prov_code.region_code.region_name
-	province = data.barangay.city_code.prov_code.prov_name
-	city = data.barangay.city_code.city_name
-	barangay = data.barangay.brgy_name
-	village = data.village
-	house_no = data.house_no
-	street = data.street
-	is_4ps = 'Yes' if data.is_4ps else 'No'
-	id_number_4ps = data.number_4ps_id_number if data.number_4ps_id_number else 'N/A'
-	is_indi = 'Yes' if data.is_indi else 'No'
-	tribe = data.tribu.name if data.tribu_id else 'N/A'
-	id_presented = data.presented.presented
-	id_presentedNo = data.presented_id_no if data.presented_id_no else 'N/A'
+    # Fetch client data
+    data = ClientBeneficiary.objects.filter(id=pk).first()
+    if not data:
+        return JsonResponse({'error': 'Client not found'}, status=404)
 
-	bene_transaction_history = [dict(tracking_number=row.transaction.tracking_number,type_of_assitance=row.transaction.lib_type_of_assistance.type_name,assistance_category=row.transaction.lib_assistance_category.name,beneficiary=row.transaction.bene.client_bene_fullname,date_assessment=row.end_assessment,social_worker=row.transaction.swo.get_fullname,status="Completed") for row in
-						TransactionStatus1.objects.filter(Q(transaction_id__bene_id=pk,status__in=[3, 6])).order_by('-id')[:2]]
-	
-	family_composistion = [dict(fullname=row.get_family_fullname_formatted,sex=row.sex.name, birthdate=row.birthdate, relation=row.relation.name, age=row.get_age,
-								occupation=row.occupation.occupation_name, salary=row.salary) for row in
-						   ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=pk)]
-	return JsonResponse({'birthdate': birthdate, 'age': age, 'sex': sex, 'contact_number': contact_number,
-						 'civil_status': civil_status, 'region': region, 'province': province, 'city': city, 'barangay': barangay,
-						 'village': village, 'house_no': house_no, 'street': street, 'is_4ps': is_4ps,
-						 'id_number_4ps': id_number_4ps, 'is_indi': is_indi, 'tribe': tribe,
-						 'family_composistion': family_composistion, 'id_presented':id_presented, 'id_presentedNo': id_presentedNo, 'bene_transaction_history': bene_transaction_history})
+    # Extract related fields with fallbacks
+    barangay = data.barangay
+    city_code = barangay.city_code if barangay else None
+    prov_code = city_code.prov_code if city_code else None
+    region_code = prov_code.region_code if prov_code else None
+
+    # Build client details
+    client_details = {
+        'birthdate': data.birthdate,
+        'age': data.get_age,
+        'sex': data.sex.name if data.sex else 'N/A',
+        'contact_number': data.contact_number or 'N/A',
+        'civil_status': data.civil_status.name if data.civil_status else 'N/A',
+        'region': region_code.region_name if region_code else 'N/A',
+        'province': prov_code.prov_name if prov_code else 'N/A',
+        'city': city_code.city_name if city_code else 'N/A',
+        'barangay': barangay.brgy_name if barangay else 'N/A',
+        'village': data.village or 'N/A',
+        'house_no': data.house_no or 'N/A',
+        'street': data.street or 'N/A',
+        'is_4ps': 'Yes' if data.is_4ps else 'No',
+        'id_number_4ps': data.number_4ps_id_number or 'N/A',
+        'is_indi': 'Yes' if data.is_indi else 'No',
+        'tribe': data.tribu.name if data.tribu_id else 'N/A',
+        'id_presented': data.presented.presented if data.presented else 'N/A',
+        'id_presentedNo': data.presented_id_no or 'N/A',
+    }
+
+    # Beneficiary transaction history
+    bene_transaction_history = [
+        {
+            'tracking_number': row.transaction.tracking_number,
+            'type_of_assitance': row.transaction.lib_type_of_assistance.type_name if row.transaction.lib_type_of_assistance else 'N/A',
+            'assistance_category': row.transaction.lib_assistance_category.name if row.transaction.lib_assistance_category else 'N/A',
+            'beneficiary': row.transaction.bene.client_bene_fullname if row.transaction.bene else 'N/A',
+            'date_assessment': row.end_assessment or 'N/A',
+            'social_worker': row.transaction.swo.get_fullname if row.transaction.swo else 'N/A',
+            'status': "Completed",
+        }
+        for row in TransactionStatus1.objects.filter(Q(transaction__bene_id=pk, status__in=[3, 6])).order_by('-id')[:2]
+    ]
+
+    # Family composition
+    family_composition = [
+        {
+            'fullname': row.get_family_fullname_formatted,
+            'sex': row.sex.name if row.sex else 'N/A',
+            'birthdate': row.birthdate or 'N/A',
+            'relation': row.relation.name if row.relation else 'N/A',
+            'age': row.age or 'N/A',
+            'occupation': row.occupation.occupation_name if row.occupation else 'N/A',
+            'salary': row.salary or 'N/A',
+        }
+        for row in ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=pk)
+    ]
+
+    # Add results to response
+    client_details.update({
+        'family_composistion': family_composition,
+        'bene_transaction_history': bene_transaction_history,
+    })
+
+    return JsonResponse(client_details)
 
 
 @login_required

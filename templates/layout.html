@@ -310,7 +310,7 @@
                                                     {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#my_data">My data</a></li>
                                                     {% endif %}
-                                                    {% if user|check_group_permission:"Biller" %}
+                                                    {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" %}
                                                     <li><a href="{% url 'withDvTransactions' %}" target="_blank">My DV data</a></li>
                                                     {% endif %}
                                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
