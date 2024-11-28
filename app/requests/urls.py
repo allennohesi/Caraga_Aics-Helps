@@ -41,11 +41,11 @@ urlpatterns = [
     path('confirmAmount', confirmAmount, name='confirmAmount'),
     path('remove_family_composition', remove_family_composition,name='remove_family_composition'),
     path('print/Pag-Pamatuod/<int:pk>',printPagPamatuod,name='printPagPamatuod'),
-    path('view_online_swo/',view_online_swo, name='view_online_swo'),
+    path('view-transaction-swo/',view_online_swo, name='view_online_swo'),
     path('view_online_swo_data', view_online_swo_data, name='view_online_swo_data'),
     path('all_transactions/',all_transactions, name='all_transactions'),
     path('printAttestation/<int:pk>', printAttestation, name='printAttestation'),
-    path('advance/search/', advanceSearch, name='advanceSearch'),
+    path('advance-search/', advanceSearch, name='advanceSearch'),
     #SubmitCaseStudy
     path('submitCaseStudy', submitCaseStudy, name='submitCaseStudy'),
     path('removeCaseStudy', removeCaseStudy, name='removeCaseStudy'),

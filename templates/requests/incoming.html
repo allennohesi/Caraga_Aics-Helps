@@ -159,10 +159,19 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="filteriningmodallLabel">Filtering modal</h5>
+          <h5 class="modal-title" id="filteriningmodallLabel">Filter Transaction</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <div class="input-group mb-3">
+                <select class="form-select" aria-label="Default select example" id="aoa">
+                    <option value="" selected>Choose area of assignment</option>
+                    {% for row in officestation %}
+                    <option value="{{row.id}}">{{row.name}}</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-outline-primary" type="button" id="filter-area">Filter</button>
+            </div>
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Funds" id="code" aria-describedby="button-addon2" autocomplete="off">
                 <button class="btn btn-outline-primary" type="button" id="filter-code">Filter</button>
@@ -401,6 +410,14 @@
 			}
 		});
         
+        $('#filter-area').on('click', function(){
+			if($('#aoa').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by area of assignment cannot be blank.", "warning");
+			} else {
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&aoa=' + $('#aoa').val()).load();
+			}
+		});
+
 		$('#filter-dropdown').on('click', function(){
 			if($('#dropdown').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");

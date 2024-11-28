@@ -101,12 +101,13 @@ class TransactionIncoming(generics.ListAPIView):
 		year = self.request.query_params.get("year")
 		dropdown = self.request.query_params.get("dropdown")
 		code = self.request.query_params.get("code")
-		
+		aoa = self.request.query_params.get("aoa")
 		if year:
 			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__office_station_in_id=requested_in).order_by('-id')
 		elif code:
 			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__office_station_in_id=requested_in).order_by('-id')
-
+		if aoa:
+			queryset = TransactionStatus1.objects.filter(transaction_id__office_station_in_id=aoa).order_by('-id')
 		elif dropdown:
 			if dropdown == "0":
 				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__office_station_in_id=requested_in).order_by('-id')
