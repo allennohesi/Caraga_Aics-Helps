@@ -82,7 +82,7 @@ def queuing(request):
 	}
 	return render(request, 'queuing.html', context)
 
-def get_transaction_summary():
+def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 	transaction_counts = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6], verified_time_start__year=year)
@@ -351,7 +351,7 @@ def dashboard(request): #DASHBOARD AFTER LOGGED IN
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def transactionDashboard(request):
+def transactionDashboard(request): #TRANSACTION OVERVIEW
 	transactions_per_swo = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6],verified_time_end__year=year)  # Filter transactions with status 3 or 6
