@@ -8,10 +8,10 @@ urlpatterns = [
     path('feedback/', userFeedback, name='userFeedback'),
     path('edit/<int:pk>', edit_user, name='edit_user'),
     path('role/<int:pk>', get_role, name='get_role'),
-    path('change_password/', change_password, name='change_password'),
-    path('user_profile/', user_profile, name='user_profile'),
+    path('change-password/', change_password, name='change_password'),
+    path('user-profile/', user_profile, name='user_profile'),
     path('feedback/request/', feedbackRequest, name='feedbackRequest'),
-    path('error_logs/', error_logs, name='error_logs'),
+    path('error-logs/', error_logs, name='error_logs'),
     path('clientupdatehistory/', clientupdatehistory, name='clientupdatehistory'),
     path('clienthistorymodal/modal/<int:pk>', clienthistorymodal, name='clienthistorymodal')
 ]

@@ -9,7 +9,7 @@ from app.global_variable import groups_only
 from app.libraries.models import FileType, Relation, Category, SubCategory, ServiceProvider, ServiceAssistance, \
 	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, FundSource, SubModeofAssistance, TypeOfAssistance, \
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, SignatoriesTbl, Suffix, \
-	Sex, occupation_tbl
+	Sex, occupation_tbl, OfficeStation
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
@@ -377,12 +377,14 @@ def get_bene_info(request, pk):
 def incoming(request):
 	user_address = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	current_year = today.year
+
 	# token = Token.objects.create(user_id=6)
 	# print(token.key)
 	context = {
 		'title': 'Incoming',
 		'user_address': user_address,
 		'current_year':current_year,
+		'officestation': OfficeStation.objects.all()
 	}
 	return render(request, 'requests/incoming.html', context)
 
