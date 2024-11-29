@@ -307,7 +307,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <hr>
+                                {% comment %} <hr>
                                 <small>Beneficiary Family Composistion</small>
                                 <br><br>
                                 <div class="row mb-3">
@@ -327,7 +327,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div> {% endcomment %}
                                 <div class="row">
                                     <div class="form-group">
                                         <a class="btn btn-primary btn-lg" id="next">Next</a>
@@ -837,46 +837,6 @@
                     $('#bene_IDPresented').val(response.id_presented);
                     $('#bene_IDNo').val(response.id_presentedNo);
 
-                    var family_composistion = response.family_composistion
-
-                    var template = "";
-                    for(var i=0; i < family_composistion.length; i++) {
-                        template += `
-                            <tr>
-                            <td class="f-w-900 upper">`+ family_composistion[i]['fullname'] +`</td>
-                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['sex'] +`</td>
-                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['birthdate'] +`</td>
-                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['relation'] +`</td>
-                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['age'] +`</td>
-                            <td class="text-center f-w-900 upper">`+ family_composistion[i]['occupation'] +`</td>
-                            <td class="text-end f-w-900 upper">`+ family_composistion[i]['salary'] +`</td>
-                            </tr>
-                        `
-                    }
-                    $('#family-composition-table tbody').html(template)
-
-                    var bene_transaction_history = response.bene_transaction_history
-                    var template_beneficiary = "";
-                    for(var i=0; i < bene_transaction_history.length; i++) {
-                        template_beneficiary += `
-                            <tr class="table-primary">
-                                <td class="f-w-900 upper">`+ bene_transaction_history[i]['tracking_number'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['type_of_assitance'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['assistance_category'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['beneficiary'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['social_worker'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['date_assessment'] +`</td>
-                                <td class="text-center f-w-900 upper">`+ bene_transaction_history[i]['status'] +`</td>
-                            </tr>
-                        `
-                    }
-                    if(template_beneficiary){
-                        $('#beneficiary_transaction').show();
-                        $('#beneficiary-table tbody').html(template_beneficiary)
-                    }else{
-                        $('#beneficiary-table tbody').html(template_beneficiary)
-                        $('#beneficiary_transaction').hide();
-                    }
                 }
            });
         }
