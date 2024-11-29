@@ -455,7 +455,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <small>Transaction History of Client/Beneficiary</small>
+                                {% comment %} <small>Transaction History of Client/Beneficiary</small>
                                 <hr>
                                 <br>
                                 <div class="card" id="display_transaction">
@@ -481,7 +481,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> {% endcomment %}
                                 <div class="card" id="beneficiary_transaction">
                                     <div class="card-body">
                                         <div class="row mb-3">
@@ -732,28 +732,6 @@
                         $('#id_presented').val(response.id_presented);
                         $('#id_presentedNo').val(response.id_presentedNo);
 
-                        var transaction_history = response.transaction_history
-                        var template = "";
-                        for(var i=0; i < transaction_history.length; i++) {
-                            template += `
-                                <tr class="table-primary">
-                                    <td class="f-w-900 upper">`+ transaction_history[i]['tracking_number'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['type_of_assitance'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['assistance_category'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['client'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['social_worker'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['date_assessment'] +`</td>
-                                    <td class="text-center f-w-900 upper">`+ transaction_history[i]['status'] +`</td>
-                                </tr>
-                            `
-                        }
-                        if(template){
-                            $('#display_transaction').show();
-                            $('#transaction-table tbody').html(template)
-                        }else{
-                            $('#transaction-table tbody').html(template)
-                            $('#display_transaction').hide();
-                        }
                         
                     }
                });
