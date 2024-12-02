@@ -40,7 +40,6 @@
                                     <th class="text-center">Birthdate</th>
                                     <th class="text-center">Address</th>
                                     <th class="text-end">Date of Registration</th>
-                                    <th class="text-end">View Transaction</th>
                                     <th class="text-end">Status</th>
                                 </tr>
                             </thead>
@@ -59,9 +58,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="load_data">
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -95,17 +91,25 @@
                     },
                     
                 },
-                {'data': 'is_validated',
+                {
+                    'data': 'is_validated',
                     'render': function(data, type, row, meta) {
-                        if(data == 1) {
-                            return "<a href='#' data-role='deactivate', 'className': 'text-center', data-id="+ row['id'] + ">DEACTIVATE</a>"
-                        }else{
-                            return "<a href='#' data-role='activate', 'className': 'text-center', data-id="+ row['id'] + ">ACTIVATE</a>" 
-                        }
+                        // Determine activate/deactivate link
+                        let actionLink = data == 1 
+                            ? "<a href='#' data-role='deactivate' class='text-center' data-id='" + row['id'] + "'>DEACTIVATE</a>"
+                            : "<a href='#' data-role='activate' class='text-center' data-id='" + row['id'] + "'>ACTIVATE</a>";
+                
+                        // View transaction link
+                        let viewLink = "<a href='#' data-role='view_transactions' class='text-center' data-id='" + row['id'] + "'>HISTORY</a>";
+                
+                        // Combine the two links with a separator
+                        return actionLink + " | " + viewLink;
                     },
+                    'sortable': false,
                     'searchable': false,
-                    'sortable': false
+                    'className': 'text-center'
                 },
+                
                 {'data': 'unique_id_number',
                     'render': function(data, type, row, meta) {
                         return "<a href='javascript:void(0);' data-role='details' data-title='"+ data + "'>"+ data +"</a>"
@@ -155,13 +159,6 @@
                 {'data': 'date_of_registration',
                     'className': 'text-end',
                     'sortable': false
-                },
-                {'data': 'id', 'className': 'text-center', 
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='view_transactions' data-id="+ row['id'] + ">View Transaction</a>"
-                    },
-                    'sortable': false,
-                    'searchable': false
                 },
                 {'data': 'is_validated',
                     'render': function(data, type, row, meta) {

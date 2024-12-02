@@ -1,7 +1,7 @@
 from django.urls import path
 
 from app.client_bene.views import client_beneficiary, view_client_bene_info, registration, modal_transaction, Modal_DirectRequest, \
-    InsertDirectRequests, deactivate_client, activate_client
+    InsertDirectRequests, deactivate_client, activate_client, PhilysysVerify
 
 urlpatterns = [
     path('', client_beneficiary, name='client_beneficiary'),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('InsertDirectRequests/', InsertDirectRequests,name='InsertDirectRequests'),
     path('activate_client/', activate_client, name='activate_client'),
     path('deactivate/', deactivate_client, name='deactivate_client'),
+    path('philsys/verification', PhilysysVerify, name='PhilysysVerify')
 ]
