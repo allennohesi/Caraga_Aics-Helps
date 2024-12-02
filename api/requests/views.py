@@ -48,7 +48,7 @@ class adminMonitoring(generics.ListAPIView):
 			).order_by('-id')
 			return queryset
 		else:
-			queryset = TransactionStatus1.objects.filter(verified_time_start__gte=seven_months_ago).exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE PENDING
+			queryset = TransactionStatus1.objects.all().exclude(status__in=[1, 2, 3, 4, 7]).order_by('-id') # FILTER ONLY THE PENDING
 			return queryset
 
 
