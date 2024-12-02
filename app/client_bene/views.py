@@ -477,3 +477,245 @@ def filter_search(request):
 	search = request.GET.get('search','')
 	if request.GET.get('search'):
 		print(search)
+
+
+@login_required
+def PhilysysVerify(request):
+    import requests
+    import json
+    try:
+        if request.method == "POST":
+            with transaction.atomic():
+             # Extract form data
+                print("PHILSYS VERIFICATION")
+                first_name = request.POST.get('first_name')
+                middle_name = request.POST.get('middle_name')
+                last_name = request.POST.get('last_name')
+                suffix = request.POST.get('suffix')
+                birthdate = request.POST.get('birthdate')
+                image = request.FILES.get('file_name')
+                print(image)
+                data = {
+                    "first_name": first_name,
+                    "middle_name": middle_name,
+                    "last_name": last_name,
+                    "suffix": suffix,
+                    "birth_date": birthdate,
+                }
+
+                files = {
+                    'file_upload_image': image  # Send the file as part of the 'files' parameter
+                }
+
+                # Define the authorization token
+                api_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2R4Y2xvdWQuZHN3ZC5nb3YucGgvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3MzI3MDA2MTMsImV4cCI6MTczNTI5MjYxMywibmJmIjoxNzMyNzAwNjEzLCJqdGkiOiIxblJna1kwSnpLbXEwbFZBIiwic3ViIjoyMTEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.BbO1JgvaCLF8bsQX46lGalEJUcHynhCQKkN8AD4RiLU"                # Make the POST request to the API endpoint
+                response = requests.post(
+                    'https://dxcloud.dswd.gov.ph/api/person/verify',  # Replace with the actual endpoint
+                    data=data,  # Form data goes here
+                    files=files,  # Files go here
+                    headers={
+                        'Authorization': f'Bearer {api_token}'
+                    }
+                )
+
+                json_response = response.json()
+                print("Full API Response: ", json_response) 
+
+                # Check if the request was successful
+                if json_response.get('status'):
+                    # Extract the verification score
+                    verification_score = json_response['data'].get('VerificationScore')
+
+                    # Extract PhilSys details
+                    philsys_details = json_response['data'].get('PhilSysDetails', {})
+                    print(json_response)
+                    # Access individual PhilSys details
+                    full_name = philsys_details.get('full_name')
+                    first_name = philsys_details.get('first_name')
+                    middle_name = philsys_details.get('middle_name')
+                    last_name = philsys_details.get('last_name')
+                    birth_date = philsys_details.get('birth_date')
+                    mobile_number = philsys_details.get('mobile_number')
+                    barangay = philsys_details.get('barangay')
+                    municipality = philsys_details.get('municipality')
+                    province = philsys_details.get('province')
+                    country = philsys_details.get('country')
+
+                    # Print for debugging
+                    print("Verification Score:", verification_score)
+                    print("Full Name:", full_name)
+                    print("First Name:", first_name)
+                    print("Middle Name:", middle_name)
+                    print("Last Name:", last_name)
+                    print("Birth Date:", birth_date)
+                    print("Mobile Number:", mobile_number)
+                    print("Barangay:", barangay)
+                    print("Municipality:", municipality)
+                    print("Province:", province)
+                    print("Country:", country)
+                    return JsonResponse({
+                        'data': 'success',
+                        "msg": "Verification completed, here's the score " + verification_score,
+                        "first_name": first_name,
+                        "middle_name": philsys_details.get('middle_name'),
+                        "last_name": philsys_details.get('last_name'),
+                        "birth_date": philsys_details.get('birth_date'),
+                        "mobile_number": philsys_details.get('mobile_number'),
+                        "barangay": philsys_details.get('barangay'),
+                        "municipality": philsys_details.get('municipality'),
+                        "province": philsys_details.get('province'),
+                        "country": philsys_details.get('country')
+                    })
+                else:
+                    print("Verification failed or status is false")
+
+                    
+                print("CHECK")
+                if response.status_code == 200 and response.json().get('exists'):
+                    response_data = response.json()
+                    if response_data.get('exists'):
+                        # If the client beneficiary already exists
+                        print('Client Beneficiary with this name and birthdate already exists.')
+                        existing_clientbene = response_data.get('data')
+                        unique_id_number = existing_clientbene.get('unique_id_number')
+                        print(existing_clientbene)
+                        print(existing_clientbene['first_name'])
+                        context = {
+                            'existing_clientbene': existing_clientbene,
+                            'form_data': data
+                        }
+
+                        print('Client Beneficiary with this name and birthdate already exists.')
+                
+                elif not response.json().get('exists'):
+                    print("TEST LANG")
+                    check_if_name_exists = ClientBeneficiary.objects.filter(
+                    Q(last_name__icontains=request.POST.get('last_name')) &
+                    Q(first_name__icontains=request.POST.get('first_name')) &
+                    Q(middle_name__icontains=request.POST.get('middle_name')) &
+                    Q(suffix_id=request.POST.get('suffix') if request.POST.get('suffix') else None) &
+                    Q(birthdate=request.POST.get('birthdate')))
+                    if not check_if_name_exists:
+                        if request.POST.get('suffix'):
+                            suffix = Suffix.objects.filter(id=request.POST.get('suffix')).first()
+                            if request.POST.get('middle_name'):
+                                middle_name = request.POST.get('middle_name')
+                                middle_initial = middle_name[0].upper()
+                                client_bene_fullname = request.POST.get('first_name') + " " + middle_initial + ". " + request.POST.get('last_name') + ", " + suffix.name
+                            else:
+                                client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name') + ", " + suffix.name
+                        else:
+                            if request.POST.get('middle_name'):
+                                middle_name = request.POST.get('middle_name')
+                                middle_initial = middle_name[0].upper()
+                                client_bene_fullname = request.POST.get('first_name') + " " + middle_initial + ". " + request.POST.get('last_name')
+                            else:
+                                client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name')
+                                
+                        unique_id = uuid.uuid4()
+                        clientbene = ClientBeneficiary(
+                            last_name=request.POST.get('last_name'),
+                            first_name=request.POST.get('first_name'),
+                            middle_name=request.POST.get('middle_name'),
+                            suffix_id=request.POST.get('suffix'),
+                            birthdate=request.POST.get('birthdate'),
+                            age=request.POST.get('calculated_age'),
+                            sex_id=request.POST.get('sex'),
+                            contact_number=request.POST.get('contact_number') if request.POST.get('contact_number') else None,
+                            civil_status_id=request.POST.get('civil_status'),
+                            is_indi=True if request.POST.get('indi') == "1" else False,
+                            tribu_id=request.POST.get('tribe'),
+                            barangay_id=request.POST.get('barangay'),
+                            street=request.POST.get('street') if request.POST.get('street') else None,
+                            house_no=request.POST.get('house_no') if request.POST.get('house_no') else None,
+                            village=request.POST.get('village') if request.POST.get('street') else None,
+                            is_4ps=True if request.POST.get('4ps_member') == "1" else False,
+                            number_4ps_id_number=request.POST.get('4ps_id_number'),
+                            unique_id_number=str(unique_id).upper(),
+                            updated_by_id=request.user.id,
+                            is_validated=True,
+                            registered_by_id=request.user.id,
+                            occupation_id=request.POST.get('occupation_data'),
+                            salary=request.POST.get('salary'),
+                            presented_id=request.POST.get('id_presented'),
+                            presented_id_no=request.POST.get('presented_id_no'),
+                            client_bene_fullname=client_bene_fullname
+                        )
+
+                        clientbene.save()
+
+                        first_name = request.POST.getlist('first_name[]')
+                        middle_name = request.POST.getlist('middle_name[]')
+                        last_name = request.POST.getlist('last_name[]')
+                        suffix = request.POST.getlist('suffix[]')
+                        birthdate = request.POST.getlist('birthdate[]')
+                        occupation = request.POST.getlist('occupation[]')
+                        salary = request.POST.getlist('salary[]')
+                        relation = request.POST.getlist('relation[]')
+                        rosterSex = request.POST.getlist('rosterSex[]')
+
+                        if not first_name == [''] and not last_name == [''] and not birthdate == [''] and not occupation == [
+                            ''] and not salary == [''] and not relation == [''] and not rosterSex == ['']:
+                            data = [
+                                {'first_name': fn, 'middle_name': mn, 'last_name': ln, 'suffix': sx, 'birthdate': b,
+                                'occupation': o, 'salary': s, 'relation': rl, 'rosterSex': rs}
+                                for fn, mn, ln, sx, b, o, s, rl, rs in
+                                zip(first_name, middle_name, last_name, suffix, birthdate, occupation, salary, relation, rosterSex)
+                            ]
+
+                            for row in data:
+                                ClientBeneficiaryFamilyComposition.objects.create(
+                                    first_name=row['first_name'],
+                                    middle_name=row['middle_name'],
+                                    last_name=row['last_name'],
+                                    suffix_id=row['suffix'],
+                                    sex_id=row['rosterSex'],
+                                    birthdate=row['birthdate'],
+                                    relation_id=row['relation'],
+                                    occupation_id=row['occupation'],
+                                    salary=row['salary'],
+                                    clientbene_id=clientbene.id
+                                )
+                        else:
+                            print("1111")
+                            return JsonResponse({'error': True,
+                                                'msg': 'You have provided information in Family Composistion. Please fill in or leave the form blank if not applicable. Thank you!'})
+                        print("2222")
+                        return JsonResponse({'data': 'success',
+                                            'msg': 'You have successfully registered a client / beneficiary. You can now proceed to make a new request for assistance.'})
+                    else:
+                        print("333")
+                        return JsonResponse({'error': True, 'msg': 'A client or beneficiary with this name already exists.'})
+                else:
+                    print("AMBOT")
+            return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
+    
+    except ConnectionError as ce:
+        handle_error(ce, "CONNECTION ERROR IN REGISTRATION PAGE", request.user.id)
+        return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+    except ValidationError as e:
+        handle_error(e, "VALIDATION ERROR IN REGISTRATION TRANSACTION", request.user.id)
+        return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+    except IntegrityError as e:
+        handle_error(e, "INTEGRITY ERROR IN REGISTRATION TRANSACTION", request.user.id)
+        return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+    except RequestException as re:
+        handle_error(re, "NETWORK NETWORK ERROR IN REGISTRATION PAGE", request.user.id)
+        return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+    except Exception as e:
+        handle_error(e, "EXCEPTION ERROR IN REGISTRATION PAGE", request.user.id)
+        return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
+
+    context = {
+        'title': 'Client / Beneficiary Registration',
+        'suffix': Suffix.objects.filter(status=1).order_by('name'),
+        'sex': Sex.objects.filter(status=1).order_by('name'),
+        'tribe': Tribe.objects.filter(status=1).order_by('name'),
+        'civil_status': CivilStatus.objects.filter(status=1).order_by('name'),
+        'province': Province.objects.filter(is_active=1).order_by('prov_name'),
+        'region': region.objects.filter(is_active=1).order_by('region_name'),
+        'occupation': occupation_tbl.objects.filter(is_active=1).order_by('id'),
+        'Relation': Relation.objects.filter(status=1),
+        'presented_id':presented_id.objects.all(),
+    }
+    return render(request, 'client_bene/philsys_verify.html', context)

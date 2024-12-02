@@ -237,6 +237,17 @@
                                     {% if user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
+                                            <h6>Future Features</h6>
+                                            <p>Philsys Verification</p>
+                                        </div>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'PhilysysVerify' %}"><i data-feather="cast"></i><span>philsys verification</span></a>
+                                    </li>
+                                    {% endif %}
+                                    {% if user|check_group_permission:"Super Administrator" %}
+                                    <li class="sidebar-main-title">
+                                        <div>
                                             <h6>General</h6>
                                             <p>Category, Sub-category & etc.</p>
                                         </div>
