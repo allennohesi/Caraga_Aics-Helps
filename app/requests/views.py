@@ -274,28 +274,28 @@ def get_client_info(request, pk):
 	}
 
 	# Fetch transaction history
-	transaction_statuses = TransactionStatus1.objects.select_related(
-		'transaction__lib_type_of_assistance', 'transaction__lib_assistance_category',
-		'transaction__client', 'transaction__swo'
-	).filter(
-		Q(transaction__client_id=pk, status__in=[3, 6])
-	).order_by('-id')[:2]
+	# transaction_statuses = TransactionStatus1.objects.select_related(
+	# 	'transaction__lib_type_of_assistance', 'transaction__lib_assistance_category',
+	# 	'transaction__client', 'transaction__swo'
+	# ).filter(
+	# 	Q(transaction__client_id=pk, status__in=[3, 6])
+	# ).order_by('-id')[:2]
 
-	transaction_history = [
-		{
-			'tracking_number': row.transaction.tracking_number,
-			'type_of_assitance': row.transaction.lib_type_of_assistance.type_name,
-			'assistance_category': row.transaction.lib_assistance_category.name,
-			'client': row.transaction.client.client_bene_fullname,
-			'date_assessment': row.end_assessment,
-			'social_worker': row.transaction.swo.get_fullname,
-			'status': "Completed",
-		}
-		for row in transaction_statuses
-	]
+	# transaction_history = [
+	# 	{
+	# 		'tracking_number': row.transaction.tracking_number,
+	# 		'type_of_assitance': row.transaction.lib_type_of_assistance.type_name,
+	# 		'assistance_category': row.transaction.lib_assistance_category.name,
+	# 		'client': row.transaction.client.client_bene_fullname,
+	# 		'date_assessment': row.end_assessment,
+	# 		'social_worker': row.transaction.swo.get_fullname,
+	# 		'status': "Completed",
+	# 	}
+	# 	for row in transaction_statuses
+	# ]
 
 	# Add transaction history to the response
-	client_details['transaction_history'] = transaction_history
+	# client_details['transaction_history'] = transaction_history
 
 	return JsonResponse(client_details)
 
