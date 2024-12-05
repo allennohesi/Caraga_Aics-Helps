@@ -1399,7 +1399,7 @@ def approveTransactions(request):
 	return JsonResponse({'data': 'success'})
 
 @login_required
-@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
+@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor', 'Signatories')
 def view_online_swo_data(request):
 	search = request.GET.get('search', '')
 	page = request.GET.get('page', 1)
@@ -1433,7 +1433,7 @@ def view_online_swo_data(request):
 	return response
 
 @login_required
-@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor')
+@groups_only('Social Worker','Verifier', 'Super Administrator', 'Surveyor', 'Signatories')
 def view_online_swo(request):
 	context = {
 		'user_details': AuthuserDetails.objects.filter(user_id=request.user.id).first(),
