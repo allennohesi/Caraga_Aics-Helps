@@ -179,7 +179,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Signatories" %}
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'new_requests' %}"><i data-feather="file-text"></i><span>New Requests</span></a>
                                     </li>
