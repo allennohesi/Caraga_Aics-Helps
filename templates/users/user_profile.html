@@ -170,11 +170,11 @@
                         </div>
                     </div>
                 </div>
-                {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" or user|check_group_permission:"Verifier"  or user|check_group_permission:"Finance" %}
+                {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Verifier"  or user|check_group_permission:"Finance" or user|check_group_permission:"Signatories"  %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
                     <label class="form-label">SWO License No.</label>
-                    <input class="form-control" type="text" name='license_no' value="{{information.license_no}}">
+                    <input class="form-control" type="text" name='license_no' value="{% if information.license_no %}{{information.license_no}}{% endif %}">
                   </div>
                 </div>
                 <div class="col-sm-4 col-md-3">
