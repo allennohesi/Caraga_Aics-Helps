@@ -354,14 +354,14 @@
                 }
             });
 
-        var columnIndexClient = table.column('transaction.client.client_bene_fullname:name').index();
-        var headerTextClient = $(table.column(columnIndexClient).header()).text().trim();
-        
+        var columnIndexClientBene = table.column('transaction.client.client_bene_fullname:name').index();
+        var headerTextClientBene = $(table.column(columnIndexClientBene).header()).text().trim();
+
         var inputClient = $('<input type="text" class="form-control" placeholder="Search Clients" maxlength="23" />')
-            .appendTo($(table.column(columnIndexClient).header()))
+            .appendTo($(table.column(columnIndexClientBene).header()))
             .on('keyup change clear', function () {
-                if (table.column(columnIndexClient).search() !== this.value) {
-                    table.column(columnIndexClient).search(this.value).draw();
+                if (table.column(columnIndexClientBene).search() !== this.value) {
+                    table.column(columnIndexClientBene).search(this.value).draw();
                 }
             });
 
