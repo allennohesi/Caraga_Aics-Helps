@@ -236,6 +236,7 @@ class City(models.Model):
 class OfficeStation(models.Model):
     name = models.CharField(max_length=64, unique=True)
     is_active = models.IntegerField()
+    billing_signatories = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

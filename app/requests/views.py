@@ -1243,6 +1243,8 @@ def printGLHead(request, pk):
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
 	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
 	rows = count + 1
+	get_signatories_library = OfficeStation.objects.filter(id=transaction.office_station_in.id).first()
+
 
 	context = {
 		'data': transaction,
@@ -1253,6 +1255,7 @@ def printGLHead(request, pk):
 		'calculate': calculate,
 		'validity':EndDate,
 		'ct':rows,
+		'billing_signatories':get_signatories_library.billing_signatories,
 	}
 	return render(request,"requests/printGLHead.html", context)
 
