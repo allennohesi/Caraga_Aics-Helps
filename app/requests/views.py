@@ -1193,6 +1193,7 @@ def printCECASH(request, pk):
 
 	esig = SignatoriesTbl.objects.filter(signatories_id=transaction.signatories, status=1).first()
 	purpose_assessment = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
+	get_signatories_library = OfficeStation.objects.filter(id=transaction.office_station_in.id).first()
 	context = {
 		'data': transaction,
 		'roster': display_family_roster,
@@ -1202,6 +1203,7 @@ def printCECASH(request, pk):
 		'calculate': calculate,
 		'esignature':esig,
 		'purpose_assessment':purpose_assessment,
+		'cash_signatories':get_signatories_library.cash_signatories,
 	}
 	return render(request,"requests/printCECASH.html", context)
 
@@ -1298,7 +1300,7 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
 	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
 	rows = count + 1
-
+	get_signatories_library = OfficeStation.objects.filter(id=transaction.office_station_in.id).first()
 	context = {
 		'data': transaction,
 		'data': transaction,
@@ -1309,6 +1311,7 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 		'validity':EndDate,
 		'ct':rows,
 		'today':today,
+		'get_signatories_library':get_signatories_library.cash_signatories,
 	}
 	return render(request, "requests/print_pettyCashVoucher.html", context)
 

@@ -57,6 +57,7 @@
                             <input type="text" class="form-control" id="fund_source_data" readonly>
                         </div>
                     </div>
+                    <input type="text" class="form-control" name="soa_total_amount" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" hidden>
                     <div class="col-md-1">
                         <div class="form-group">
                             <label>SAVE</label>

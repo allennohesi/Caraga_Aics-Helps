@@ -95,15 +95,27 @@ def financial_transaction(request):
 				).first()
 				if not check_if_exists:
 					if request.POST.get('dv_id'):
-						finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							user_id=request.user.id,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-							date_updated=today
-						)
+						if request.POST.get('with_without_dv') == "WITHOUT-DV":
+							finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+							)
+
+						else:
+							finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								date_updated=today
+							)
+							
 						data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
 						voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
 						for row in voucher_data:
@@ -111,8 +123,7 @@ def financial_transaction(request):
 								dv_number=voucher,
 								dv_date=date
 							)
-
-						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the DV-Name'})
+						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the transaction'})
 					else:
 						finance_voucher.objects.create(
 							voucher_code=str(unique_id).upper(),
@@ -570,6 +581,20 @@ def view_dv_number(request,pk):
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
+
+	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
+	outside_fo_data = outside_fo.values_list('amount', flat=True)
+
+	# Convert to numeric in Python and calculate sum
+	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
+	total_amount = sum(float(value.replace(',', '')) if value else 0 for value in outside_fo_data)
+
+	# Calculate total sum
+	total_sum = total_values + total_amount
+	
+	finance_voucher.objects.filter(id=pk).update(
+		soa_total_amount = total_sum
+	)
 	if request.method == "POST":
 		try:
 			with transaction.atomic():
@@ -577,6 +602,7 @@ def view_dv_number(request,pk):
 					voucher_id=pk,
 					transactionStatus_id=request.POST.get('transaction_id'),
 				)
+
 				Transaction.objects.filter(id=request.POST.get('transaction_id')).update( #PARA MABUTNGAN UG DV NUMBER
 					dv_number = finance_data.voucher_title,
 					dv_date = finance_data.date
@@ -595,15 +621,8 @@ def view_dv_number(request,pk):
 			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
 
-	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
-	outside_fo_data = outside_fo.values_list('amount', flat=True)
 
-	# Convert to numeric in Python and calculate sum
-	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
-	total_amount = sum(float(value.replace(',', '')) if value else 0 for value in outside_fo_data)
 
-	# Calculate total sum
-	total_sum = total_values + total_amount
 
 	context = {
 		'finance_datas':finance_data,

@@ -115,9 +115,7 @@
                                     </li>
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'home' %}"><i data-feather="home"></i><span>Dashboard</span></a>
-                                        {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactionDashboard' %}"><i data-feather="zap"></i><span>Transactions Overview</span></a>
-                                        {% endif %}
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'user_profile' %}"><i data-feather="user-check"></i><span>Profile</span></a>
                                     </li>
                                     {% if user|check_group_permission:"Client" or user|check_group_permission:"Super Administrator" %}
@@ -152,29 +150,20 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'get_monitoring' %}"><i data-feather="download"></i><span>Monitoring</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>On-site Transaction</h6>
                                             <p>On-site transaction</p>
                                         </div>
                                     </li>
-                                    {% endif %}
                                     {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-primary">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
                                     </li>
                                     {% endif %}
-                                    {% comment %} {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" %}
-                                    <li class="sidebar-list">
-                                        <label class="badge badge-primary"></label>
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'all_transactions' %}"><i data-feather="zap"></i><span>All transactions</span></a>
-                                    </li>
-                                    {% endif %} {% endcomment %}
                                     {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Biller" or user|check_group_permission:"Signatories" %}
                                     <li class="sidebar-list">
-                                        {% comment %} <label class="badge badge-success">{% count_assessment_all %}</label> {% endcomment %}
                                         <label class="badge badge-info">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
                                     </li>
