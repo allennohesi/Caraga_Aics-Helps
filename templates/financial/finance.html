@@ -96,15 +96,15 @@
                             <input type="text" id="dv_id" name="dv_id" hidden>
                             {% csrf_token %}
                                 <div class="row mb-3">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>DV Number / Temporary title</label> <span class="txt-danger" id="required">*</span>
                                             <input type="text" class="form-control f-w-900 upper" id="voucher_title" name="voucher_title" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>DV Date / Temporary date</label> <span class="txt-danger" id="required">*</span>
+                                            <label>DV Date / Satement of Account Date</label> <span class="txt-danger" id="required">*</span>
                                             <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
@@ -140,11 +140,12 @@
                                         <th>AICS-DV tracking</th>
                                         <th>Finance DV-number</th>
                                         <th>Status</th>
-                                        <th>Date</th>
                                         <th>Created by</th>
                                         <th>Updated by</th>
+                                        <th>Date Statement of Account</th>
                                         <th>Date Created</th>
-                                        <th>Date Updated</th>
+                                        <th>Date DV Created</th>
+                                        <th>Total Amount </th>
                                         <th>Remarks</th>
                                     </tr>
                                 </thead>
@@ -347,11 +348,30 @@
             {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
             {'data': 'voucher_title','className': 'text-start', 'sortable': false },
             {'data': 'with_without_dv','className': 'text-start'},
-            {'data': 'date', 'className': 'text-start', 'sortable': false },
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
             {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
+            {'data': 'date', 'className': 'text-start', 'sortable': false },
             {'data': 'date_added', 'className': 'text-start', 'sortable': false },
             {'data': 'date_updated', 'className': 'text-start', 'sortable': false },
+            {
+                'data': 'soa_total_amount',
+                'className': 'text-start',
+                'sortable': false,
+                'render': function (data, type, row, meta) {
+                    if (data) {
+                        // Remove decimal places if the number is a whole number
+                        var formattedAmount = parseFloat(data).toFixed(2); // Ensure two decimal places
+                        if (formattedAmount.indexOf('.00') !== -1) {
+                            // Remove the decimal places if the amount is a whole number
+                            formattedAmount = formattedAmount.replace('.00', '');
+                        }
+                        // Format with commas
+                        return formattedAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    } else {
+                        return data;
+                    }
+                }
+            },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
             ]
         });

@@ -237,7 +237,8 @@ class OfficeStation(models.Model):
     name = models.CharField(max_length=64, unique=True)
     is_active = models.IntegerField()
     billing_signatories = models.CharField(max_length=255, blank=True, null=True)
-
+    cash_signatories = models.CharField(max_length=255, blank=True, null=True)
+    
     class Meta:
         managed = False
         db_table = 'lib_office_station'
