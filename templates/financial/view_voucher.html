@@ -86,8 +86,6 @@
                                 <th class="text-center">Service provider</th>
                                 <th class="text-center">Assistance category</th>
                                 <th class="text-center">Assistance type</th>
-                                <th class="text-center">DV-Name</th>
-                                <th class="text-center">DV-Date</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
@@ -110,8 +108,6 @@
                                 <th class="text-center">Assistance Category</th>
                                 <th class="text-center">Service provider</th>
                                 <th class="text-center">Date of transaction</th>
-                                <th class="text-center" style="width:150px;">DV-Name</th>
-                                <th class="text-center">DV-Date</th>
                                 <th class="text-center">Amount of assistance</th>
                             </tr>
                         </thead>
@@ -124,8 +120,6 @@
                                 <td class="text-center">{{row.assistance_type}}</td>
                                 <td class="text-center">{{row.service_provider.name}}</td>
                                 <td class="text-center">{{row.date_soa}}</td>
-                                <td class="text-center">{{row.voucher.voucher_title}}</td>
-                                <td class="text-center">{{row.voucher.date}}</td>
                                 <td class="text-center">{{row.amount|intcomma}}</td>
                             </tbody>
                             {% endfor %}
@@ -211,8 +205,6 @@
                 {'data': 'service_provider','name':'transactionStatus.service_provider.name', 'className': 'text-center','searchable':false, 'sortable': false},
                 {'data': 'Assistance_type','name':'transactionStatus.lib_type_of_assistance.type_name', 'className': 'text-center','searchable':false, 'sortable': false},
                 {'data': 'Assistance_category','name':'transactionStatus.lib_assistance_category.name', 'className': 'text-center','searchable':false, 'sortable': false},
-                {'data': 'dv_number','name':'transactionStatus.dv_number', 'className': 'text-center', 'sortable': false },
-                {'data': 'dv_date', 'className': 'text-center', 'sortable': false, 'searchable':false, },
                 {'data': 'total', 'name': 'transactionStatus.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data, type, row, meta) {
                         // Check if total_amount is null or undefined
