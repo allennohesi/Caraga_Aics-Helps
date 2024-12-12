@@ -337,6 +337,16 @@ class Transaction(models.Model):
         managed = False
         db_table = 'tbl_transaction'
 
+class transactionHistory(models.Model):
+    tracking_number = models.ForeignKey(Transaction, models.DO_NOTHING, to_field='tracking_number')
+    total_amount = models.CharField(max_length=255, blank=True, null=True)
+    date_updated = models.DateField()
+    updated_by = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tbl_transaction_history'
+
 class transaction_description(models.Model):
     tracking_number = models.ForeignKey(Transaction, models.DO_NOTHING, to_field='tracking_number')
     provided_data = models.CharField(max_length=255, blank=True, null=True)
