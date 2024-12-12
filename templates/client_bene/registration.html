@@ -450,6 +450,42 @@
         new Select2Cascade($('#province'), $('#city'), '/libraries/city/get/:parentId:', select2options);
         new Select2Cascade($('#city'), $('#barangay'), '/libraries/barangay/get/:parentId:', select2options);
 
+        function logSelections() {
+        
+            // Get selected region name and ID
+            const regionText = $('#region option:selected').text();
+            const regionValue = $('#region').val();
+        
+            // Get selected province name and ID
+            const provinceText = $('#province option:selected').text();
+            const provinceValue = $('#province').val();
+        
+            // Get selected city name and ID
+            const cityText = $('#city option:selected').text();
+            const cityValue = $('#city').val();
+        
+            // Get selected barangay name and ID
+            const barangayText = $('#barangay option:selected').text();
+            const barangayValue = $('#barangay').val();
+        }
+        function getSelections() {
+            return {
+                regionText: $('#region option:selected').text(),
+                regionValue: $('#region').val(),
+                provinceText: $('#province option:selected').text(),
+                provinceValue: $('#province').val(),
+                cityText: $('#city option:selected').text(),
+                cityValue: $('#city').val(),
+                barangayText: $('#barangay option:selected').text(),
+                barangayValue: $('#barangay').val()
+            };
+        }
+        // Add event listeners
+        $('#region').on('change', logSelections);
+        $('#province').on('change', logSelections);
+        $('#city').on('change', logSelections);
+        $('#barangay').on('change', logSelections);
+
         $('#4ps_member').on('change', function(){
             if($(this).val() == "0") {
                 $('#4ps_id_number').prop('readonly', true);
@@ -516,6 +552,16 @@
         $('#submitForm').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
+
+            const selections = getSelections();
+            form.append('region_name', selections.regionText);
+            form.append('region_id', selections.regionValue);
+            form.append('province_name', selections.provinceText);
+            form.append('province_id', selections.provinceValue);
+            form.append('city_name', selections.cityText);
+            form.append('city_id', selections.cityValue);
+            form.append('barangay_name', selections.barangayText);
+            form.append('barangay_id', selections.barangayValue);
             if (!validationForm()){
                 Swal.fire({
                     title: "Are you sure",
