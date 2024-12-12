@@ -436,9 +436,6 @@
                                         <label>Fund source</label><span class="txt-danger">*</span>
                                         <select class="form-control fund_source hidden" name="fund_source" id="fund_source" required>
                                             <option value="all">Generate All</option>
-                                            {% for row in fund_source  %}
-                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
-                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>

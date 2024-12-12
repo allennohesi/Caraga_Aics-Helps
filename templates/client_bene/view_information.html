@@ -455,6 +455,26 @@
             $('#barangay').val('{{ information.barangay_id }}').trigger('change');
         });
 
+        function logAddressSelections() {
+            const regionValue = $('#region').val();
+            const regionText = $('#region option:selected').text();
+        
+            const provinceValue = $('#province').val();
+            const provinceText = $('#province option:selected').text();
+        
+            const cityValue = $('#city').val();
+            const cityText = $('#city option:selected').text();
+        
+            const barangayValue = $('#barangay').val();
+            const barangayText = $('#barangay option:selected').text();
+        
+            console.log("Selected Address:");
+            console.log(`Region: ${regionText} (ID: ${regionValue})`);
+            console.log(`Province: ${provinceText} (ID: ${provinceValue})`);
+            console.log(`City: ${cityText} (ID: ${cityValue})`);
+            console.log(`Barangay: ${barangayText} (ID: ${barangayValue})`);
+        }
+
         var template = `
             <tr>
                 <td>
@@ -552,6 +572,25 @@
         $('#updateInformationForm').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
+
+            const regionValue = $('#region').val();
+            const regionText = $('#region option:selected').text();
+            const provinceValue = $('#province').val();
+            const provinceText = $('#province option:selected').text();
+            const cityValue = $('#city').val();
+            const cityText = $('#city option:selected').text();
+            const barangayValue = $('#barangay').val();
+            const barangayText = $('#barangay option:selected').text();
+            console.log(cityText)
+            // Append selected values to FormData
+            form.append('region_id', regionValue);
+            form.append('region_name', regionText);
+            form.append('province_id', provinceValue);
+            form.append('province_name', provinceText);
+            form.append('city_id', cityValue);
+            form.append('city_name', cityText);
+            form.append('barangay_id', barangayValue);
+            form.append('barangay_name', barangayText);
             if (!validationForm()){
                 Swal.fire({
                     title: "Are you sure",
