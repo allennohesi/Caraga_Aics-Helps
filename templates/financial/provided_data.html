@@ -45,15 +45,11 @@
                     <div class="row mb-3">
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label>Updating amount</label>
+                                <label>Update Amount</label>
                                 <input type="text" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="amount" id="amount" value="{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}" required>
                             </div>
                             <br>
-                            {% if finance %}
                             <input type="submit" class="btn btn-primary" value="UPDATE" style="width:100%">
-                            {% else %}
-                            <input type="submit" class="btn btn-primary" value="UPDATE" style="width:100%" disabled>
-                            {% endif %}
                         </div>
                     </div>
                 </form>
