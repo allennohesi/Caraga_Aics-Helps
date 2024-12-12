@@ -245,6 +245,22 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 		without_dv=Count(Case(When(with_without_dv="WITHOUT-DV", then=1), output_field=IntegerField()))
 	)
 
+	# Get the total amount for transactions in the specified year
+	billed_total_amount = TransactionStatus1.objects.filter(verified_time_start__year=year, transaction__dv_number__isnull=False,status__in=[3, 6]).aggregate(
+		total_amount=Sum('transaction__total_amount')
+	)
+
+	# Format the total amount
+	billed_total = "{:,.2f}".format(billed_total_amount['total_amount'] if billed_total_amount['total_amount'] else 0)
+
+	# Get the total amount for transactions in the specified year
+	unbilled_total_amount = TransactionStatus1.objects.filter(verified_time_start__year=year, transaction__dv_number__isnull=True, status__in=[3, 6]).aggregate(
+		total_amount=Sum('transaction__total_amount')
+	)
+
+	# Format the total amount
+	unbilled_total = "{:,.2f}".format(unbilled_total_amount['total_amount'] if unbilled_total_amount['total_amount'] else 0)
+
 	return {
 		'monthly_transactions': monthly_transactions,
 		'summary_data': summary_data,
@@ -256,6 +272,8 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 		'disability_storage': disability_storage,
 		'formatted_total_amount': formatted_total_amount,
 		'billed_transactions': billed_transactions,
+		'billed_total':billed_total,
+		'unbilled_total':unbilled_total,
 	}
 
 
@@ -276,22 +294,7 @@ def send_notification(message, contact_number):
 		pass
 
 def landingpage(request): #LANDING PAGE
-	transaction_summary = get_transaction_summary()
-	context = {
-		'title': 'Landingpage',
-		'summary_data': transaction_summary['summary_data'],
-		'sub_category': transaction_summary['sub_category'],
-		'monthly_transactions': transaction_summary['monthly_transactions'],
-		'disability_storage': transaction_summary['disability_storage'],
-		'count_male': transaction_summary['count_male'],
-		'count_female': transaction_summary['count_female'],
-		'count_client': transaction_summary['count_client'],
-		'count_bene': transaction_summary['count_bene'],
-		'formatted_total_amount': transaction_summary['formatted_total_amount'],
-		'with_dv': transaction_summary['billed_transactions']['with_dv'],
-		'without_dv': transaction_summary['billed_transactions']['without_dv']
-	}
-	return render(request, 'landingpage.html', context)
+	return render(request, 'landingpage.html')
 
 
 def login(request):
@@ -344,7 +347,9 @@ def dashboard(request): #DASHBOARD AFTER LOGGED IN
 		'formatted_total_amount': transaction_summary['formatted_total_amount'],
 		'no_role': no_role,
 		'with_dv': transaction_summary['billed_transactions']['with_dv'],
-		'without_dv': transaction_summary['billed_transactions']['without_dv']
+		'without_dv': transaction_summary['billed_transactions']['without_dv'],
+		'billed_total': transaction_summary['billed_total'],
+		'unbilled_total': transaction_summary['unbilled_total'],
 	}
 
 	return render(request, 'home.html', context)
