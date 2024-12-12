@@ -11,7 +11,7 @@ from app.libraries.models import FileType, Relation, Category, SubCategory, Serv
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, FundSource
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
-	uploadfile, TransactionStatus1, SocialWorker_Status, ErrorLogData
+	uploadfile, TransactionStatus1, SocialWorker_Status, ErrorLogData, transactionHistory
 from django.contrib.sessions.models import Session
 from app.models import AuthUser, AuthUserGroups
 from django.db.models import Value, Sum, Count
@@ -591,7 +591,7 @@ def view_dv_number(request,pk):
 
 	# Calculate total sum
 	total_sum = total_values + total_amount
-	
+
 	finance_voucher.objects.filter(id=pk).update(
 		soa_total_amount = total_sum
 	)
@@ -720,6 +720,12 @@ def finance_modal_provided(request,pk):
 					transaction_id.save()
 					return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
 				elif request.POST.get('update_sp') == "update_amount":
+					transactionHistory.objects.create(
+						tracking_number_id=transaction_id.tracking_number,
+						total_amount=transaction_id.total_amount,
+						updated_by_id=request.user.id,
+						date_updated=today,
+					)
 					transaction_id.total_amount = request.POST.get('amount')
 					transaction_id.save()
 					return JsonResponse({'data': 'success', 'msg': 'The service provider has been updated, for the tracking: {}'.format(transaction_id.tracking_number)})
