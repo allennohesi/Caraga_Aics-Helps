@@ -46,6 +46,10 @@ class ClientBeneficiary(models.Model):
     photo = models.FileField(upload_to='CIS/',default='photo/default.png')
     user_data = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='user_data')
     client_bene_fullname = models.CharField(max_length=255, blank=True, null=True)
+    region = models.CharField(max_length=255, blank=True, null=True)
+    province = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    barangay_value = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_client_fullname(self): #GI GAMIT SA SERIALIZER FOR VIEWING IN TABLE
