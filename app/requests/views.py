@@ -101,7 +101,8 @@ def transaction_request(request):
 				is_ce_gl=request.POST.get('ce_gl') if request.POST.get('ce_gl') else 0,
 				transaction_status=1,
 				requested_in=request.POST.get('requested_in'),
-				office_station_in_id=request.POST.get('office_station')
+				office_station_in_id=request.POST.get('office_station'),
+				exp_status="Pending"
 			)
 			data.save()
 			AssessmentProblemPresented.objects.create(
@@ -398,7 +399,8 @@ def view_incoming(request, pk):
 					status=6
 				)
 				update_transaction = Transaction.objects.filter(id=pk).update(
-					status=6
+					status=6,
+					exp_status="Completed",
 				)
 				return JsonResponse({'data': 'success', 'msg': 'You successfully uploaded a picture.'})
 			
@@ -581,8 +583,22 @@ def assessmentStatusModal(request,pk):
 			status=request.POST.get("change_status"),
 			status_remarks=request.POST.get("remarks_transaction")
 		)
+		change_status = request.POST.get("change_status")
+		if change_status == "7":
+			exp_status = "Ongoing"
+		elif change_status == "5":
+			exp_status = "Cancelled"
+		elif change_status == "6":
+			exp_status = "Completed"
+		elif change_status == "2":
+			exp_status = "Ongoing"
+		elif change_status == "4":
+			exp_status = "Hold"
+		else:
+			exp_status = "Pending"
 		data = Transaction.objects.filter(id=pk).update(
-			status=request.POST.get("change_status")
+			status=request.POST.get("change_status"),
+			exp_status=exp_status
 		)
 
 	transactionStatus = TransactionStatus1.objects.filter(transaction_id=pk).first()
@@ -882,7 +898,8 @@ def save_assessment(request, pk):
 					service_provider=request.POST.get('service_provider'),
 					is_referral=1 if request.POST.get('is_referral') else None,
 					is_pfa=request.POST.get('pfa') if request.POST.get('pfa') else 0,
-					is_swc=request.POST.get('swc') if request.POST.get('swc') else 0
+					is_swc=request.POST.get('swc') if request.POST.get('swc') else 0,
+					exp_status="For uploading Picture"
 				)
 				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 					sw_assessment=request.POST.get('sw_asessment'),
