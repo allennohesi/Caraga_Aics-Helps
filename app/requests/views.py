@@ -160,7 +160,9 @@ def requests(request):
 				Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
 				Q(status__in=[1, 2, 3, 6])
 			).last()
-			if check_client.transaction.client.barangay_value == None or check_beneficiary.transaction.bene.barangay_value == None:
+			check_client_address = ClientBeneficiary.objects.filter(id=request.POST.get('client')).first()
+			check_bene_address = ClientBeneficiary.objects.filter(id=request.POST.get('beneficiary')).first()
+			if check_client_address.barangay_value == None or check_bene_address.barangay_value == None:
 				return JsonResponse({'error': True, 'msg': 'Kindly press update button in Client/Beneficiary list of this specific client'})
 			else:
 				if request.POST.get('justification'): #Whatever the condition is as long as nay justification proceed
