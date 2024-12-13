@@ -160,44 +160,47 @@ def requests(request):
 				Q(transaction_id__lib_assistance_category_id=request.POST.get('assistance_category')) &
 				Q(status__in=[1, 2, 3, 6])
 			).last()
-			if request.POST.get('justification'): #Whatever the condition is as long as nay justification proceed
-				submission=transaction_request(request)
-				return submission
+			if check_client.transaction.client.barangay_value == None or check_beneficiary.transaction.bene.barangay_value == None:
+				return JsonResponse({'error': True, 'msg': 'Kindly press update button in Client/Beneficiary list of this specific client'})
 			else:
-				if check_client:
-					# Get the latest transaction's end date
-					client_date_entried = check_client.swo_time_end.date()
-					threemonths1 = timedelta(3*365/12)
-					result1 = (client_date_entried + threemonths1).isoformat()
-					convertedDate = date.fromisoformat(result1)
-					present = datetime.now().date()
-					dateStr = convertedDate.strftime("%d %b, %Y")
-					if present > convertedDate: #IF LAPAS NA SYAS 3 months same client
-						submission=transaction_request(request)
-						return submission
-					else: #IF dili pa sya lapas 3 months, walay justification
-						return JsonResponse({'error': True,
-											'msg': 'The assistance is not yet available for the client. Please wait for another 3 months (until {}) or provide justification.'.format(dateStr)})
-				elif check_beneficiary:
-					if check_beneficiary.swo_time_end:
-					# Get the latest transaction's end date
-						bene_date_entried = check_beneficiary.swo_time_end.date()
-						threemonths2 = timedelta(3*365/12)
-						result2 = (bene_date_entried + threemonths2).isoformat()
-						convertedDate1 = date.fromisoformat(result2)
-						present1 = datetime.now().date()
-						dateStr1 = convertedDate1.strftime("%d %b, %Y")
-						if present1 > convertedDate1: #naa na syay transaction but lapas na 3 months, proceed 
+				if request.POST.get('justification'): #Whatever the condition is as long as nay justification proceed
+					submission=transaction_request(request)
+					return submission
+				else:
+					if check_client:
+						# Get the latest transaction's end date
+						client_date_entried = check_client.swo_time_end.date()
+						threemonths1 = timedelta(3*365/12)
+						result1 = (client_date_entried + threemonths1).isoformat()
+						convertedDate = date.fromisoformat(result1)
+						present = datetime.now().date()
+						dateStr = convertedDate.strftime("%d %b, %Y")
+						if present > convertedDate: #IF LAPAS NA SYAS 3 months same client
 							submission=transaction_request(request)
 							return submission
 						else: #IF dili pa sya lapas 3 months, walay justification
 							return JsonResponse({'error': True,
-											'msg': 'The assistance is not yet available for the beneficiary. Please wait for another 3 months (until {}) or provide justification.'.format(dateStr1)})
-					elif check_beneficiary.swo_time_end == None:
-						return JsonResponse({'error': True, 'msg': 'The beneficiary have a pending/ongoing transaction, please update the status'})
-				else:
-					submission=transaction_request(request) #IF new pa ang client walay transaction history
-					return submission
+												'msg': 'The assistance is not yet available for the client. Please wait for another 3 months (until {}) or provide justification.'.format(dateStr)})
+					elif check_beneficiary:
+						if check_beneficiary.swo_time_end:
+						# Get the latest transaction's end date
+							bene_date_entried = check_beneficiary.swo_time_end.date()
+							threemonths2 = timedelta(3*365/12)
+							result2 = (bene_date_entried + threemonths2).isoformat()
+							convertedDate1 = date.fromisoformat(result2)
+							present1 = datetime.now().date()
+							dateStr1 = convertedDate1.strftime("%d %b, %Y")
+							if present1 > convertedDate1: #naa na syay transaction but lapas na 3 months, proceed 
+								submission=transaction_request(request)
+								return submission
+							else: #IF dili pa sya lapas 3 months, walay justification
+								return JsonResponse({'error': True,
+												'msg': 'The assistance is not yet available for the beneficiary. Please wait for another 3 months (until {}) or provide justification.'.format(dateStr1)})
+						elif check_beneficiary.swo_time_end == None:
+							return JsonResponse({'error': True, 'msg': 'The beneficiary have a pending/ongoing transaction, please update the status'})
+					else:
+						submission=transaction_request(request) #IF new pa ang client walay transaction history
+						return submission
 			
 	except ValidationError as e:
 		handle_error(e, "VALIDATION ERROR IN REQUEST PAGE", request.user.id)
