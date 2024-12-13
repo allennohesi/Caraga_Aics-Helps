@@ -178,7 +178,7 @@ def user_profile(request):
 				first_name = request.POST.get('first_name', '')
 				middle_name = request.POST.get('middle_name', '')
 				last_name = request.POST.get('last_name', '')
-    
+	
 				# Get the first letter of each part of the first name and middle name
 				first_initials = ''.join([name[0] for name in first_name.split()]) if first_name else ''
 				middle_initials = ''.join([name[0] for name in middle_name.split()]) if middle_name else ''
