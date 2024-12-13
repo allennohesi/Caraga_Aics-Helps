@@ -225,124 +225,64 @@ def export_fund_summary(request):
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
 		station = request.GET.get('station')
-		if request.GET.get("fund_source") == "all":
-			queryset = Transaction.objects.filter(
-				date_of_transaction__range=(start_date_str, end_date_str), office_station_in=station
-			).order_by("id").select_related(
-				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
-			).only(
-				"tracking_number",
-				"date_of_transaction",
-				"client__last_name",
-				"client__first_name",
-				"client__middle_name",
-				"client__suffix__name",
-				"client__birthdate",
-				"client__age",
-				"client__civil_status__name",
-				"client__sex__name",
-				"client__street",
-				"client__barangay__brgy_name",
-				"client__barangay__city_code__city_name",
-				"client__street",
-				"client__barangay__city_code__prov_code__prov_name",
-				"client__barangay__city_code__prov_code__region_code__region_name",	
-				"bene__last_name",
-				"bene__first_name",
-				"bene__middle_name",
-				"bene__suffix__name",
-				"bene__age",
-				"bene__civil_status__name",
-				"bene__birthdate",
-				"bene__sex__name",
-				"bene__barangay__brgy_name",
-				"bene__barangay__city_code__city_name",
-				"bene__street",
-				"bene__barangay__city_code__prov_code__prov_name",
-				"bene__barangay__city_code__prov_code__region_code__region_name",
-				"relation__name",
-				"lib_assistance_category__name",
-				"is_gl",
-				"is_walkin",
-				"fund_source__name",
-				"service_provider__name",
-				"total_amount",
-				"is_referral",
-				"swo_date_time_end",
-				"swo__fullname",
-				"swo__last_name",
-				"swo__middle_name",
-				"swo__first_name",
-				"dv_number",
-				"dv_date",
-				"status"
+		queryset = Transaction.objects.filter(
+			date_of_transaction__range=(start_date_str, end_date_str), office_station_in=station
+		).order_by("id").select_related(
+			'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
+		).only(
+			"tracking_number",
+			"date_of_transaction",
+			"client__last_name",
+			"client__first_name",
+			"client__middle_name",
+			"client__suffix__name",
+			"client__birthdate",
+			"client__age",
+			"client__civil_status__name",
+			"client__sex__name",
+			"client__street",
+			"client__barangay__brgy_name",
+			"client__barangay__city_code__city_name",
+			"client__street",
+			"client__barangay__city_code__prov_code__prov_name",
+			"client__barangay__city_code__prov_code__region_code__region_name",	
+			"bene__last_name",
+			"bene__first_name",
+			"bene__middle_name",
+			"bene__suffix__name",
+			"bene__age",
+			"bene__civil_status__name",
+			"bene__birthdate",
+			"bene__sex__name",
+			"bene__barangay__brgy_name",
+			"bene__barangay__city_code__city_name",
+			"bene__street",
+			"bene__barangay__city_code__prov_code__prov_name",
+			"bene__barangay__city_code__prov_code__region_code__region_name",
+			"relation__name",
+			"lib_assistance_category__name",
+			"is_gl",
+			"is_walkin",
+			"fund_source__name",
+			"service_provider__name",
+			"total_amount",
+			"is_referral",
+			"swo_date_time_end",
+			"swo__fullname",
+			"swo__last_name",
+			"swo__middle_name",
+			"swo__first_name",
+			"dv_number",
+			"dv_date",
+			"status"
 
-			)
+		)
 
-			# Create the StreamingHttpResponse object with CSV header.
-			response = StreamingHttpResponse(streaming_content=generate_csv_data(queryset), content_type='text/csv')
-			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
+		# Create the StreamingHttpResponse object with CSV header.
+		response = StreamingHttpResponse(streaming_content=generate_csv_data(queryset), content_type='text/csv')
+		response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
 
-			return response
-		else:
-			queryset = Transaction.objects.filter(fund_source_id=request.GET.get("fund_source"),requested_in="AGUSAN DEL NORTE",
-				date_of_transaction__range=(start_date_str, end_date_str)
-			).order_by("-id").select_related(
-				'client', 'bene', 'relation', 'lib_assistance_category', 'fund_source', 'swo'
-			).only(
-				"tracking_number",
-				"date_of_transaction",
-				"client__last_name",
-				"client__first_name",
-				"client__middle_name",
-				"client__suffix__name",
-				"client__birthdate",
-				"client__age",
-				"client__civil_status__name",
-				"client__sex__name",
-				"client__street",
-				"client__barangay__brgy_name",
-				"client__barangay__city_code__city_name",
-				"client__street",
-				"client__barangay__city_code__prov_code__prov_name",
-				"client__barangay__city_code__prov_code__region_code__region_name",	
-				"bene__last_name",
-				"bene__first_name",
-				"bene__middle_name",
-				"bene__suffix__name",
-				"bene__age",
-				"bene__civil_status__name",
-				"bene__birthdate",
-				"bene__sex__name",
-				"bene__barangay__brgy_name",
-				"bene__barangay__city_code__city_name",
-				"bene__street",
-				"bene__barangay__city_code__prov_code__prov_name",
-				"bene__barangay__city_code__prov_code__region_code__region_name",
-				"relation__name",
-				"lib_assistance_category__name",
-				"is_gl",
-				"is_walkin",
-				"fund_source__description",
-				"service_provider__name",
-				"total_amount",
-				"is_referral",
-				"swo_date_time_end",
-				"swo__fullname",
-				"swo__last_name",
-				"swo__middle_name",
-				"swo__first_name",
-				"dv_number",
-				"dv_date",
-				"status"
-
-			)
-
-			# Create the StreamingHttpResponse object with CSV header.
-			response = StreamingHttpResponse(streaming_content=generate_csv_data(queryset), content_type='text/csv')
-			response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
-
-			return response
+		return response
 
 def generate_csv_data(queryset):
 	# Write the header
@@ -360,14 +300,6 @@ def generate_csv_data(queryset):
 	# Write rows as dictionaries
 	for transaction in queryset.iterator(chunk_size=7000):
 		# Map status to corresponding string
-		status_str = (
-			smart_str("Completed") if transaction.status == 6 else
-			smart_str("Cancelled") if transaction.status == 5 else
-			smart_str("Hold") if transaction.status == 4 else
-			smart_str("Completed") if transaction.status == 3 else
-			smart_str("Ongoing") if transaction.status == 2 else
-			smart_str("Pending")
-		)
 		client_street_str = smart_str(transaction.client.street).replace(",", "") if transaction.client.street else ""
 		
 		bene_street_str = smart_str(transaction.bene.street).replace(",", "") if transaction.bene.street else ""
@@ -421,7 +353,7 @@ def generate_csv_data(queryset):
 			service_provider_str,
 			smart_str(transaction.dv_date),
 			dv_number_str,
-			smart_str(status_str)
+			smart_str(transaction.exp_status)
 		]) + '\n'
 
 @login_required 

@@ -638,15 +638,6 @@ def personalData(request): #FOR GENERAL
 					total_amount_str = total_amount_str.replace(',', '')
 				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
 
-				status_str = (
-					str("Resumed") if item.status == 7 else
-					str("Completed") if item.status == 6 else
-					str("Cancelled") if item.status == 5 else
-					str("Pending") if item.status == 1 else
-					str("Ongoing") if item.status == 2 else
-					str("Completed") if item.status == 3 else
-					"N/a"
-				)
 				is_pfa_str = item.transaction.is_pfa
 				if is_pfa_str == 1:
 					is_pfa_str = "PROVIDED WITH PFA"
@@ -710,7 +701,7 @@ def personalData(request): #FOR GENERAL
 					str(item.transaction.swo_date_time_end),
 					category_of_study_str,
 					case_study_result_str,
-					status_str,
+					str(item.transaction.exp_status),
 					is_pfa_str,
 					is_swc_str,
 				]) + '\n'
@@ -741,20 +732,13 @@ def generatePWD(request): #FOR GENERAL
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
 				   'Date Interviewed', 'Interviewer/Swo','Service Provider',
+				   'status'
 				   ]) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
 				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
-
-				status_str = (
-					str("Completed") if item.status == 6 else
-					str("Cancelled") if item.status == 5 else
-					str("Ongoing") if item.status == 2 else
-					str("Completed") if item.status == 3 else
-					"N/a"
-				)
 
 				case_study_str = str(item.transaction.is_case_study)
 				if case_study_str == "2":
@@ -806,6 +790,7 @@ def generatePWD(request): #FOR GENERAL
 					str(item.transaction.swo_date_time_end),
 					str(item.transaction.swo.fullname),
 					service_provider,
+					str(item.transaction.exp_status),
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="PWD_REPORT.csv"'
