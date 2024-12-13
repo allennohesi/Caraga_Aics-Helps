@@ -238,6 +238,7 @@ class Transaction(models.Model):
     office_station_in = models.ForeignKey(OfficeStation, models.DO_NOTHING, blank=False, null=False)
     is_pfa = models.SmallIntegerField(blank=True, null=True)
     is_swc = models.SmallIntegerField(blank=True, null=True)
+    exp_status = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_action_action(self):

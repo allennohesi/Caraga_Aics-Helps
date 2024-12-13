@@ -836,8 +836,22 @@ def update_amount(request,pk):
 					data = TransactionStatus1.objects.filter(transaction_id=pk).update(
 						status=request.POST.get("change_status"),
 					)
+					change_status = request.POST.get("change_status")
+					if change_status == "7":
+						exp_status = "Ongoing"
+					elif change_status == "5":
+						exp_status = "Cancelled"
+					elif change_status == "6":
+						exp_status = "Completed"
+					elif change_status == "2":
+						exp_status = "Ongoing"
+					elif change_status == "4":
+						exp_status = "Hold"
+					else:
+						exp_status = "Pending"
 					data = Transaction.objects.filter(id=pk).update(
-						status=request.POST.get("change_status")
+						status=request.POST.get("change_status"),
+						exp_status=exp_status
 					)
 					return JsonResponse({'data': 'success', 'msg': 'The status has been updated'})
 				else:
