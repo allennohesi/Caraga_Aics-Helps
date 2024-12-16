@@ -864,21 +864,24 @@ def generate_case_study(request):
 @api_view(['GET'])
 def withDvTransactions(request): #FOR GENERAL
 	if request.method == "GET":
-		data = finance_voucher.objects.filter(user_id=request.user.id,with_without_dv="WITH-DV") #USER_ID IS UPDATED BY
+		data = finance_voucher.objects.filter(Q(added_by=request.user.id) | Q(user_id=request.user.id)) #WITHOUT DV ENCODED
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['VOUCHER CODE','VOUCHER TITLE', 'DATE', 'UPDATED BY']) + '\n'
+			yield ','.join(['VOUCHER CODE','VOUCHER TITLE', 'DATE','AMOUNT','STATUS','ENCODED BY', 'UPDATED BY']) + '\n'
 			for item in data:
 				yield ','.join([
 					str(item.voucher_code),
 					str(item.voucher_title),
 					str(item.date),
+					str(item.soa_total_amount),
+					str(item.with_without_dv),
+					str(item.added_by.fullname if hasattr(item, 'added_by') and item.added_by else "N/A"),
 					str(item.user.fullname)
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
 		return response
-	
+
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
 def ExportBilledUnbilled(request):  # FOR GENERAL

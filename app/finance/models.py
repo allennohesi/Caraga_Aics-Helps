@@ -19,9 +19,9 @@ class finance_voucher(models.Model):
     date = models.DateField()
     remarks = models.CharField(max_length=255, blank=True, null=True)
     with_without_dv = models.CharField(max_length=255, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True) #UPDATED DATA
     status = models.IntegerField()
-    added_by = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='added_by')
+    added_by = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='added_by') #ADDED BY IS ENCODED DATA
     date_added = models.DateField(default=timezone.now)
     date_updated = models.DateField()
     soa_total_amount = models.CharField(max_length=255, blank=True, null=True)
