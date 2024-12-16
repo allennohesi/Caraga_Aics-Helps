@@ -141,7 +141,6 @@
                                             <th class="text-center">Action</th>
                                             <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
-                                            <th>Picture</th>
                                             <th class="text-center">Priority Lane</th>
                                             <th>Tracking Code</th>
                                             <th>Client Name</th>
@@ -165,7 +164,6 @@
                                             <th class="text-center">Action</th>
                                             <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
-                                            <th>Picture</th>
                                             <th>Tracking Code</th>
                                             <th>Client Name</th>
                                             <th>Beneficiary Name</th>
@@ -292,32 +290,6 @@
                         }
                     }
                 },
-                {'data': 'get_picture',
-                    'render': function(data, type, row, meta) {
-                        if (data) {
-                            return `<div class="image-container">
-                                <img loading="lazy" class="rounded-circle img-radius align-top m-r-15" 
-                                    data-toggle="popover" data-trigger="hover" 
-                                    data-html="true" loading="lazy" 
-                                    style="object-fit:cover; width: 40px; height: 40px;" 
-                                    data-placement="right" 
-                                    data-content="<img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'>" 
-                                    src='`+ data + `'>
-                            </div>`;
-                        }else{
-                            return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
-                                data-html="true"
-                                loading="lazy"
-                                style="object-fit:cover; width: 40px; height: 40px;"
-                                data-placement="right"
-                                data-content="<center><img loading='lazy' src='{% static 'images/dashboard/profile.jpg' %}' style='width: 250px; height: 250px; object-fit:cover;'></center>" src="{% static 'images/dashboard/profile.jpg' %}">
-                            </center>`;
-                        }
-                    },
-                    searchable:'false',
-                    sortable:'false',
-                    className: 'text-center'
-                },
                 {'data': 'priority', 'className': 'text-center', 'name': 'transaction.priority.priority_name',
                     'render': function(data,type,row,meta){
                         const NA = 'N/A';
@@ -421,32 +393,6 @@
                             return "<span class='badge badge-warning'>Ongoing</span>"
                         }
                     }
-                },
-                {'data': 'get_picture',
-                    'render': function(data, type, row, meta) {
-                        if (data) {
-                            return `<div class="image-container">
-                                <img loading="lazy" class="rounded-circle img-radius align-top m-r-15" 
-                                    data-toggle="popover" data-trigger="hover" 
-                                    data-html="true" loading="lazy" 
-                                    style="object-fit:cover; width: 40px; height: 40px;" 
-                                    data-placement="right" 
-                                    data-content="<img loading='lazy' src='`+ data + `' style='width: 250px; height: 250px; object-fit:cover;'>" 
-                                    src='`+ data + `'>
-                            </div>`;
-                        }else{
-                            return `<center><img loading="lazy" class="rounded-circle img-radius align-top m-r-15" data-toggle="popover"
-                                data-html="true"
-                                loading="lazy"
-                                style="object-fit:cover; width: 40px; height: 40px;"
-                                data-placement="right"
-                                data-content="<center><img loading='lazy' src='{% static 'images/dashboard/profile.jpg' %}' style='width: 250px; height: 250px; object-fit:cover;'></center>" src="{% static 'images/dashboard/profile.jpg' %}">
-                            </center>`;
-                        }
-                    },
-                    searchable:'false',
-                    sortable:'false',
-                    className: 'text-center'
                 },
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },

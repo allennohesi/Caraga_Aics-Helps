@@ -22,7 +22,6 @@ class TransactionSerializer(serializers.ModelSerializer):
     service_provider = serializers.CharField(source='transaction.service_provider.name', read_only=True, default=None)
     mode_of_release = serializers.CharField(source='transaction.is_gl', read_only=True)
     assistance_type = serializers.CharField(source='transaction.lib_assistance_category.name', read_only=True)
-    get_picture = serializers.CharField(source='transaction.client.get_picture', read_only=True, default=None)
     get_table_no = serializers.CharField(source='transaction.swo_table')
     # is_verified = serializers.CharField(source='transaction.get_verified', read_only=True)
     # is_swo = serializers.CharField(source='transaction.get_swo', read_only=True)
@@ -30,7 +29,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionStatus1
         fields = ['tracking_number','status', 'client', 'beneficiary', 'verified_time_start', 'swo','swo_fullname','swo_lastname','swo_firstname','priority', 'action', 'transaction', 'total_amount', 'dv_number', 'service_provider','case_study_status','case_study',
-                  'mode_of_release', 'assistance_type', 'get_picture', 'get_table_no']
+                  'mode_of_release', 'assistance_type', 'get_table_no']
         
 class Transaction_DescriptionSerializer(serializers.ModelSerializer):
     medicine = serializers.CharField(source='medicine.medicine_name', read_only=True, default=None)

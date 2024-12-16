@@ -95,34 +95,64 @@ class TransactionIncoming(generics.ListAPIView):
 	serializer_class = TransactionSerializer
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
+
 	def get_queryset(self):
-		queryset = TransactionStatus1.objects.none() 
+		"""Construct queryset based on query parameters."""
+		queryset = TransactionStatus1.objects.none()  # Default empty queryset
 		requested_in = self.request.query_params.get('region')
 		year = self.request.query_params.get("year")
 		dropdown = self.request.query_params.get("dropdown")
 		code = self.request.query_params.get("code")
 		aoa = self.request.query_params.get("aoa")
+		
+		# Filter by year and region
 		if year:
-			queryset = TransactionStatus1.objects.filter(verified_time_start__year=year,transaction_id__office_station_in_id=requested_in).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(
+				verified_time_start__year=year,
+				transaction_id__office_station_in_id=requested_in,
+				verified_time_start__gte=seven_months_ago
+			).order_by('-id')
+
+		# Filter by code and region
 		elif code:
-			queryset = TransactionStatus1.objects.filter(transaction__fund_source__name=code,transaction_id__office_station_in_id=requested_in).order_by('-id')
-		if aoa:
-			queryset = TransactionStatus1.objects.filter(transaction_id__office_station_in_id=aoa).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(
+				transaction__fund_source__name=code,
+				transaction_id__office_station_in_id=requested_in,
+				verified_time_start__gte=seven_months_ago
+			).order_by('-id')
+
+		# Filter by AOA
+		elif aoa:
+			queryset = TransactionStatus1.objects.filter(
+				transaction_id__office_station_in_id=aoa,
+				verified_time_start__gte=seven_months_ago
+			).order_by('-id')
+
+		# Filter by dropdown options
 		elif dropdown:
-			if dropdown == "0":
-				queryset = TransactionStatus1.objects.filter(status__in=[1,2,3,4],transaction_id__office_station_in_id=requested_in).order_by('-id')
-			elif dropdown == "1": #COMPLETED
-				queryset = TransactionStatus1.objects.filter(status__in=[3, 6],transaction_id__office_station_in_id=requested_in).order_by('-id')
-			elif dropdown == "4": #SUBMITTED CASE STUDY
-				queryset = TransactionStatus1.objects.filter(case_study_status=1,transaction_id__office_station_in_id=requested_in).order_by('-id')
-			elif dropdown == "5": #WITH DV
-				queryset = TransactionStatus1.objects.filter(transaction__dv_number__isnull=False,transaction_id__office_station_in_id=requested_in).order_by('-id')
-			elif dropdown == "6": #ALL TRANSACTION
-				queryset = TransactionStatus1.objects.filter(verified_time_start__gte=seven_months_ago).order_by('-id')
-				#queryset = TransactionStatus1.objects.all().order_by('-id')
-			return queryset
+			dropdown_filters = {
+				"0": {"status__in": [1, 2, 3, 4], "verified_time_start__gte": seven_months_ago},
+				"1": {"status__in": [3, 6], "verified_time_start__gte": seven_months_ago},  # COMPLETED
+				"4": {"case_study_status": 1, "verified_time_start__gte": seven_months_ago},  # SUBMITTED CASE STUDY
+				"5": {"transaction__dv_number__isnull": False, "verified_time_start__gte": seven_months_ago},  # WITH DV
+				"6": {"verified_time_start__gte": seven_months_ago},  # ALL TRANSACTIONS
+			}
+			filter_params = dropdown_filters.get(dropdown)
+			if filter_params:
+				queryset = TransactionStatus1.objects.filter(
+					transaction_id__office_station_in_id=requested_in,
+					**filter_params
+				).order_by('-id')
+
+		# Default filter (e.g., today's transactions)
 		else:
-			queryset = TransactionStatus1.objects.filter(verified_time_start__date=today,status__in=[1,2,3,4,7],transaction_id__office_station_in_id=requested_in).order_by('-id')
+			queryset = TransactionStatus1.objects.filter(
+				verified_time_start__date=today,
+				status__in=[1, 2, 3, 4, 7],
+				transaction_id__office_station_in_id=requested_in,
+				verified_time_start__gte=seven_months_ago
+			).order_by('-id')
+
 		return queryset
 
 
