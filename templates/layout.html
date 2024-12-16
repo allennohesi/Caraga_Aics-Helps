@@ -300,33 +300,51 @@
                                             <p>REPORT IN EXCEL FORMAT</p>
                                         </div>
                                     </li>
+                                    {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="book"></i><span>Generate Report</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#my_data"><i data-feather="git-pull-request"></i><span>My Data</span></a>
+                                    </li>
+                                    {% endif %}
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Finance billing</span></a>
                                         <ul class="sidebar-submenu">
-                                            <li><a href="javascript:void(0);" class="submenu-title">CSV <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                            <li><a href="javascript:void(0);" class="submenu-title">Billing <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
-                                                    {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#my_data">My data</a></li>
-                                                    {% endif %}
-                                                    {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" %}
-                                                    <li><a href="{% url 'withDvTransactions' %}" target="_blank">My DV data</a></li>
-                                                    {% endif %}
+                                                    <li><a href="{% url 'withDvTransactions' %}" target="_blank">Encoded Data</a></li>
                                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
-                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
-                                                    {% endif %}
-                                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
-                                                    <li><a href="{% url 'generatePWD' %}">PWD Report</a></li>
+                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     {% endif %}
                                                 </ul>
                                             </li>
                                         </ul>
                                     </li>
+                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Verifier Data</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a href="javascript:void(0);" class="submenu-title">CSV <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
+                                                    <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
+                                                    {% comment %} {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Finance"  or user|check_group_permission:"Biller" %}
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#my_transaction">Billing/Finance data</a></li>
+                                                    {% endif %}
+                                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
+                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
+                                                    {% endif %} {% endcomment %}
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
+                                                    <li><a href="{% url 'generatePWD' %}">PWD Report</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -477,6 +495,26 @@
                                     <input class="form-control" type="date" name="end_date" id="end_date" required>
                                 </div>
                                 <br>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="my_transaction" aria-labelledby="my_transaction" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="my_data">Encoded Data</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'withDvTransactions' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
                             </div>
                         </div>
                         <div class="modal-footer">

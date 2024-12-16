@@ -57,93 +57,35 @@
         </div>
       </div>
     <hr>
-    <form id="submitformProvided">
-        {% csrf_token %}
-        <input type="text" class="form-control" name="final_total" id="" value="{{calculate.total_payment|floatformat:2}}" hidden>
-        <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
-        <input type="text" class="form-control" name="sid" id="sid" hidden>
-        <br>
-        <div class="row mb-3">
-            <div class="table-responsive">
-                <table class="table table-bordered w-100 table-sm" id="provided-table">
-                    <thead>
-                        <th width="250px;">Provided</th>
-                        <th class="text-center" width="200px;">Regular Price</th>
-                        <th width="200px;" class="text-center">Quantity</th>
-                        <th class="text-center" width="200px;">Discount %</th>
-                        <th class="text-center" width="238px;">Discounted Price</th>
-                        <th width="250px;" class="text-center">Quantity</th>
-                        <th width="250px;" class="text-center">Final total *</th>
-                        <th>
-                            <center>
-                                <button type="button" class="btn btn-primary btn-xs" id="add-provided"><i class="fa fa-plus"></i></button>
-                            </center>
-                        </th>
-                    </thead>           
-                    <tbody>
-                        {% if transactionProvided %}
-                            {% for row in transactionProvided %}
-                            <tr>
-                                <td>
-                                    <input type="text" class="form-control" name="provided[]" value="{{row.provided_data}}" id="provided" required>
-                                </td>
-                                <td valign="middle">
-                                    <input type="text" class="form-control" name="regprice[]" value="{{row.regular_price}}" onkeypress='validate(event)' id="reg_price" required>
-                                </td>
-                                <td valign="middle">
-                                    <input type="number" class="form-control" name="qty[]" id="qty" value="{{row.regular_quantity}}" onkeypress='validate(event)' step="any" required>
-                                </td>
-                                <td valign="middle">
-                                    <input type="number" class="form-control" name="dsc[]" id="dsc" value="{% if row.discount %}{{row.discount}}{% else %}0{% endif %}" onkeypress='validate(event)' step="any" required>
-                                </td>
-                                <td valign="middle">
-                                    <input type="number" class="form-control" name="discounted_price[]" value="{{row.discount_price}}" id="discounted_price" onkeypress='validate(event)' step="any" required>
-                                </td>
-                                <td valign="middle">
-                                    <input type="number" class="form-control" name="qty1[]" id="qty1" value="{{row.discount_quantity}}" onkeypress='validate(event)' step="any" required>
-                                    <div class="invalid-feedback"></div>
-                                </td>
-                                <td valign="middle">
-                                    <input type="number" class="form-control" name="tot[]" id="tot" value="{{row.total}}" onkeypress='validate(event)' step="any" required readonly>
-                                    <div class="invalid-feedback"></div>
-                                </td>
-                                <td valign="middle">
-                                    <center>
-                                        <a type="button" class="btn btn-danger btn-xs" data-role="delete" data-id="{{row.id}}"><i class="fa fa-minus"></i></a>
-                                    </center>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% endif %}
-                        <tr>
-                            <td>*nothing follows*</td>
-                            <td colspan="5" style="text-align: right;"><b>Pre total </b></td>
-                            <td colspan="1" style="border-bottom: 1px solid black"><span>&#8369;</span> <label id="pre_total_label" style="color:red;">{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2|intcomma}}{% else %}0{% endif %}</label></td>
-                            <td><button type="submit" id="submit_button" class="btn btn-primary" disabled>Submit</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </form>
-    <form id="Confirmation">
-        {% csrf_token %}
-        <input type="text" class="form-control" name="tracking_number" id="" value="{{transaction.tracking_number}}" hidden>
-        <input type="text" class="form-control" name="final_total" id="final_total" value="{% if calculate.total_payment%}{{calculate.total_payment|floatformat:2}}{% else %}0{% endif %}" hidden>
-        <input type="text" class="form-control" name="transaction_id" id="" value="{{transaction.id}}" hidden>
-        <br>
-        <div class="alert alert-light" role="alert">
-            Final total: <a href="#" class="alert-link"><span>&#8369;</span> <u>{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}</u></a>. <p style="color:red;"> Note: final total is your confirmed amount</p>
-        </div>
-        <center>
-            {% if calculate.total_payment%}
-            <div class="btn-group">
-                <button type="submit" class="btn btn-primary">CONFIRM</button>
-            </div>
-            {% endif %}
-            </b>
-        </center>
-    </form>
+    <p>Update history</p>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Updated by</th>
+            <th scope="col">Date Updated</th>
+            <th scope="col">Recent Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for row in transaction_history %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{row.updated_by.updated_by.fullname}}</td>
+            <td>{{row.date_updated}}</td>
+            <td>{{row.total_amount|intcomma}}</td>
+        </tr>
+        {% endfor %}
+        <tfoot>
+            <tr>
+              <th colspan="2"></th>
+              <th>Current Amount</th>
+              <th>{{transaction.total_amount|intcomma}}</th>
+        </tr>
+    </table>
+    
+    
+    
     <!-- Modal -->
 </div>
 <script>
