@@ -110,9 +110,12 @@
                                             <th>SOCIAL WORKER LAST NAME</th>
                                             {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
                                             <th>Case study</th>
+                                            <th>Case study status</th>
                                             <th class="text-center">Assistance type</th>
                                             <th>Service provider</th>
+                                            <th>Mode of release</th>
                                             <th>Amount</th>
+                                            <th class="text-center">DV - Title</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -267,8 +270,26 @@
                         }
                     }
                 },
+                {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['case_study_status'] == 1){
+                            return "<span class='badge badge-dark'>Submitted</span>"
+                        }else{
+                            return "<span class='badge badge-dark'>N/a</span>"
+                        }
+                    }
+                },
                 {'data': 'assistance_type', 'className': 'text-center', 'searchable': false, 'sortable': false },
                 {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false, 'searchable': false},
+                {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['mode_of_release'] == 0){
+                            return "<span class='badge bg-light text-dark'>CASH</span>"
+                        }else{
+                            return "<span class='badge bg-light text-dark'>GL</span>"
+                        }
+                    }
+                },
                 {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data, type, row, meta) {
                         // Check if total_amount is null or undefined
@@ -284,11 +305,18 @@
                         return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
-            ]
-        });
-        $('#incoming-table_filter input').on('keypress', function(e) {
-            if (e.which === 13) {  // 13 is the Enter key
-                table.search(this.value).draw();  // Trigger DataTable search
+                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center', 'searchable': false, 'sortable': false},
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#incoming-table_filter input').attr('placeholder', 'Press Enter to search');
+                
+                // Bind the Enter key to trigger search on the table
+                $('#incoming-table_filter input').unbind().bind('keyup', function(e) {
+                    if (e.key === 'Enter') {  // Check if the Enter key was pressed
+                        table.search(this.value).draw();
+                    }
+                });
             }
         });
         $('.dataTables_filter input').attr('maxlength', 26);
