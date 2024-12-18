@@ -18,7 +18,7 @@ from django.db.models import Value, Sum, Count
 from datetime import datetime, timedelta, time, date
 from django.utils import timezone
 from django.contrib.auth.models import User
-from app.finance.models import finance_voucher, finance_voucherData, exporting_csv, finance_outsideFo
+from app.finance.models import finance_voucher, finance_voucherData, exporting_csv, finance_outsideFo, disbursementVoucher
 from django.db.models import Q
 import csv, uuid
 from django.utils.encoding import smart_str
@@ -163,6 +163,47 @@ def financial_transaction(request):
 	}
 	return render(request,'financial/finance.html', context)
 
+@login_required
+@groups_only('Super Administrator')
+def dibursement_voucher(request):
+	if request.method == "POST":
+		try:
+			with transaction.atomic():
+				unique_id = uuid.uuid4()
+				disbursementVoucher.objects.create(
+					dv_name=request.POST.get('dv_name'),
+					dv_tracking_code=str(unique_id).upper(),
+					status=1,
+					remarks=request.POST.get('remarks'),
+					created_by_id=request.user.id
+				)
+				return JsonResponse({'data': 'success', 'msg': 'You successfully submitted the data.'})
+
+		except ConnectionError as ce:
+			# Handle loss of connection (e.g., log the error)
+			handle_error(ce, "CONNECTION ERROR IN VIEW ASSESSMENT", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN financial_transaction", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST financial_transaction", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST financial_transaction", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+
+
+
+	context = {
+		'title':'disbursement',
+		'service_provider': ServiceProvider.objects.all(),
+		'fund_source': FundSource.objects.all()
+	}
+	return render(request,'financial/disbursement_voucher.html', context)
 
 @login_required
 @groups_only('Super Administrator', 'Biller','Finance')
