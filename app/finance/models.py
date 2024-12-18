@@ -103,3 +103,14 @@ class exporting_csv(models.Model):
         db_table = 'finance_exporting_tbl'
 
 
+class disbursementVoucher(models.Model):
+    dv_tracking_code = models.CharField(max_length=255, blank=True, null=True)
+    dv_name = models.CharField(max_length=255, blank=True, null=True)
+    date_entried = models.DateField(default=timezone.now)
+    remarks = models.CharField(max_length=255, blank=True, null=True)
+    status = models.CharField(max_length=255, blank=True, null=True)
+    created_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    class Meta:
+        managed = False
+        db_table = 'finance_dv_tbl'
+

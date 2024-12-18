@@ -2,7 +2,7 @@ from django.urls import path
 
 from api.requests.views import TransactionDescriptionViews, CompletedTransactionViews, TransactionPerSession, AdvanceFinanceFilterViews, FinanceVoucherViews, \
     VoucherDataViews, SignatoriesTransactionsViews, TransactionPerSessionAllViews, CashTransactionViews, OutsideFoDataViews, adminMonitoring, TransactionIncoming, \
-    kioskAPI, queuingAPI, CaseStudyDeadline, ServiceProviderMonitoring, TransactionAdvanceSearch
+    kioskAPI, queuingAPI, CaseStudyDeadline, ServiceProviderMonitoring, TransactionAdvanceSearch, DisbursementDataViews
 
 
 urlpatterns = [
@@ -23,7 +23,7 @@ urlpatterns = [
     path('finance/voucher/', FinanceVoucherViews.as_view(), name='api_FinanceList'),
     path('finance/voucher/data/', VoucherDataViews.as_view(), name='api_FinanceVoucherData'),
     path('finance/outside/fo/', OutsideFoDataViews.as_view(), name='api_OutsideFoDataViews'),
-
+    path('finance/disbursement/list/', DisbursementDataViews.as_view(), name='api_DisbursementDataViews'),
     #Cash
     path('cash/transaction/', CashTransactionViews.as_view(), name='api_CashTransactionViews'),
 
