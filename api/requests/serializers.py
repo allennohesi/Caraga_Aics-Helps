@@ -2,7 +2,7 @@ from decimal import DefaultContext
 from rest_framework import serializers
 
 from app.requests.models import Transaction, transaction_description, TransactionStatus1
-from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo
+from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo, disbursementVoucher
 
 class TransactionSerializer(serializers.ModelSerializer):
     tracking_number = serializers.CharField(source='transaction.tracking_number')
@@ -78,8 +78,6 @@ class TransactionsSignatoriesSerializer(serializers.ModelSerializer):
         model = TransactionStatus1
         fields = '__all__'
 
-# FINANCIAL TRANSACTION
-
 class TransactionOutsideFOSerializer(serializers.ModelSerializer):
     voucher = serializers.CharField(source='voucher.voucher_title')
     service_provider = serializers.CharField(source='service_provider.name')
@@ -87,3 +85,9 @@ class TransactionOutsideFOSerializer(serializers.ModelSerializer):
         model = finance_outsideFo
         fields = '__all__'
 
+class DisbursementVoucherSerializer(serializers.ModelSerializer):
+    date_entried = serializers.DateField(format="%b %d, %Y", read_only=True)
+    added_by = serializers.CharField(source='created_by.get_fullname', read_only=True, default=None)
+    class Meta:
+        model = disbursementVoucher
+        fields = '__all__'

@@ -63,7 +63,7 @@
     <div class="page-title">
         <div class="row">
             <div class="col-6">
-                <h3>Billing</h3>
+                <h3>Finance</h3>
             </div>
             <div class="col-6">
                 <ol class="breadcrumb">
@@ -96,35 +96,19 @@
                             <input type="text" id="dv_id" name="dv_id" hidden>
                             {% csrf_token %}
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
+                                    <div class="col-md-7">
                                         <div class="form-group">
-                                            <label>DV Number / Temporary title</label> <span class="txt-danger" id="required">*</span>
-                                            <input type="text" class="form-control f-w-900 upper" id="voucher_title" name="voucher_title" oninput="this.value = this.value.toUpperCase()" required>
+                                            <label>Disbursement voucher name</label> <span class="txt-danger" id="required">*</span>
+                                            <input type="text" class="form-control f-w-900 upper" id="dv_name" name="dv_name" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>DV Date / Satement of Account Date</label> <span class="txt-danger" id="required">*</span>
-                                            <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>With DV / Without DV</label>
-                                            <select class="form-select select" name="with_without_dv" aria-label="Default select example" required>
-                                                <option></option>
-                                                <option value="WITH-DV">WITH-DV</option>
-                                                <option value="WITHOUT-DV">WITHOUT-DV</option>
-                                              </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>REMARKS</label>
                                             <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>SAVE</label>
                                             <input type="submit" class="form-control f-w-900">
@@ -137,15 +121,10 @@
                                 <thead>
                                     <tr>
                                         <th>Action</th>
-                                        <th>AICS-DV tracking</th>
-                                        <th>Finance DV-number</th>
-                                        <th>Status</th>
-                                        <th>Created by</th>
-                                        <th>Updated by</th>
-                                        <th>SOA Date</th>
-                                        <th>Date Created</th>
-                                        <th>Dv date</th>
-                                        <th>Total Amount </th>
+                                        <th>DV-Tracking Code</th>
+                                        <th>DV name</th>
+                                        <th>Date Entried</th>
+                                        <th>Created By</th>
                                         <th>Remarks</th>
                                     </tr>
                                 </thead>
@@ -190,116 +169,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="sp" aria-labelledby="sprovider" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="sprovider">Generate report</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="{% url 'print_service_provider' %}" target="_blank" method="GET">
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <label for="start_date">Start Date:</label>
-                        <input class="form-control" type="date" name="start_date" id="start_date" required>
-                        <label for="end_date">End Date:</label>
-                        <input class="form-control" type="date" name="end_date" id="end_date" required>
-                    </div>
-                    <br>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Service Provider <span class="txt-danger">*</span></label>
-                            <select class="form-control select1 hidden" name="service_provider" id="service_pr" required>
-                                <option></option>
-                                {% for row in service_provider  %}
-                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Print</button>
-            </div>
-        </form>
-      </div>
-    </div>
-</div>
-<div class="modal fade" id="fund_source" aria-labelledby="fundsource" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="fundsource">Generate report</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="{% url 'export_fund_summary' %}" target="_blank" method="GET">
-        <div class="modal-body">
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label for="start_date">Start Date:</label>
-                    <input class="form-control" type="date" name="start_date" id="start_date" required>
-                    <label for="end_date">End Date:</label>
-                    <input class="form-control" type="date" name="end_date" id="end_date" required>
-                </div>
-                <br>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Fund source</label><span class="txt-danger">*</span>
-                        <select class="form-control select1 hidden" name="fund_source" id="fund_source" required>
-                            <option value="all">Generate All</option>
-                            {% for row in fund_source  %}
-                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Generate</button>
-        </div>
-        </form>
-      </div>
-    </div>
-</div>
-<div class="modal fade bd-example-modal-xl" id="voucher" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h6 class="modal-title" id="staticBackdropLabel">DV Data creation: </h6>
-            <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="load_data">
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="filteriningmodal" tabindex="-1" aria-labelledby="filteriningmodalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="filteriningmodallLabel">Filtering modal</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="input-group mb-3">
-                <select class="form-select" id="without-dv">
-                    <option></option>
-                    <option value="WITH-DV">WITH-DV</option>
-                    <option value="WITHOUT-DV">WITHOUT-DV</option>
-                  </select>
-            </div>
-            <div class="input-group mb-3">
-                <button class="btn btn-outline-primary" type="button" id="filter-dropdown" style="width:100%;">Filter</button>
-            </div>
-        </div>
-      </div>
-    </div>
-</div>
 {% endblock %}
 {% block script %}
 <script>
@@ -331,7 +200,7 @@
             'order': [[ 1, 'asc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/finance/voucher/?format=datatables',
+                'url': '/api/requests/finance/disbursement/list/?format=datatables',
                 'type': 'GET',
             },
             'fnCreatedRow': function (row, data, index) {
@@ -345,33 +214,10 @@
                         "<a href='" + printUrl + data + "' data-role='print' data-id=" + data + "' target='_blank'>Print</a>";
                     }
             },
-            {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
-            {'data': 'voucher_title','className': 'text-start', 'sortable': false },
-            {'data': 'with_without_dv','className': 'text-start'},
+            {'data': 'dv_tracking_code', 'className': 'text-start', 'sortable': false },
+            {'data': 'dv_name','className': 'text-start', 'sortable': false },
+            {'data': 'date_entried','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
-            {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
-            {'data': 'date', 'className': 'text-start', 'sortable': false },
-            {'data': 'date_added', 'className': 'text-start', 'sortable': false },
-            {'data': 'date_updated', 'className': 'text-start', 'sortable': false },
-            {
-                'data': 'soa_total_amount',
-                'className': 'text-start',
-                'sortable': false,
-                'render': function (data, type, row, meta) {
-                    if (data) {
-                        // Remove decimal places if the number is a whole number
-                        var formattedAmount = parseFloat(data).toFixed(2); // Ensure two decimal places
-                        if (formattedAmount.indexOf('.00') !== -1) {
-                            // Remove the decimal places if the amount is a whole number
-                            formattedAmount = formattedAmount.replace('.00', '');
-                        }
-                        // Format with commas
-                        return formattedAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    } else {
-                        return data;
-                    }
-                }
-            },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
             ]
         });
@@ -420,7 +266,7 @@
                 showLoaderOnConfirm: true,
                 preConfirm: function (){
                     return $.post({
-                        url: "{% url 'financial_transaction' %}",
+                        url: "{% url 'dibursement_voucher' %}",
                         data: form,
                         success : function (response){
                             if(!response.error){
