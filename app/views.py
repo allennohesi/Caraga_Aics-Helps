@@ -379,7 +379,7 @@ def transactionDashboard(request): #TRANSACTION OVERVIEW
 		.filter(registered_by__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"),date_of_registration__year=year)
 		.values('registered_by__id', 'registered_by__first_name', 'registered_by__last_name')
 		.annotate(transaction_count=Count('registered_by'))  # Count updates made by each user
-		.order_by('-transaction_count')
+		.order_by('-transaction_count')[:10]
 	)
 
 	requested_by_verifier = (
@@ -387,7 +387,7 @@ def transactionDashboard(request): #TRANSACTION OVERVIEW
 		.filter(verifier__in=AuthUser.objects.filter(authusergroups__group__name="Verifier"),verified_time_end__year=year)
 		.values('verifier__id', 'verifier__first_name', 'verifier__last_name')
 		.annotate(transaction_count=Count('verifier'))  # Count updates made by each user
-		.order_by('-transaction_count')
+		.order_by('-transaction_count')[:10]
 	)
 
 	case_study_per_swo = (
