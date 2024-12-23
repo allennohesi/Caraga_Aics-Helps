@@ -131,11 +131,36 @@
       </div>
     </div>
   </div>
-  
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Season's Greetings</h5>
+        </div>
+        <div class="modal-body">
+          <center>
+            <h4 class="text-success">🎄 Merry Christmas 🎅</h4>
+            <h5>and</h5>
+            <h4 class="text-primary">✨ Advance Happy New Year! 🎆</h4>
+            <p class="mt-3">Wishing you a wonderful holiday season filled with joy, love, and peace.</p>
+          </center>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block script %}
 <script src="{% static 'js/datalabels.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    // Automatically show the modal when the page is loaded
+    $('#exampleModal').modal('show');
+  });
+</script>
 <script>
   $(document).ready(function(){
     {% if no_role %}
