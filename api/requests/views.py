@@ -109,7 +109,6 @@ class TransactionIncoming(generics.ListAPIView):
 		if year:
 			queryset = TransactionStatus1.objects.filter(
 				verified_time_start__year=year,
-				transaction_id__office_station_in_id=requested_in,
 			).order_by('-id')
 
 		# Filter by code and region
