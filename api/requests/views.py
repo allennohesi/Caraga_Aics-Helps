@@ -110,7 +110,6 @@ class TransactionIncoming(generics.ListAPIView):
 			queryset = TransactionStatus1.objects.filter(
 				verified_time_start__year=year,
 				transaction_id__office_station_in_id=requested_in,
-				verified_time_start__gte=seven_months_ago
 			).order_by('-id')
 
 		# Filter by code and region
