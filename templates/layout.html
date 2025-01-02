@@ -420,9 +420,15 @@
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label for="start_date">Start Date:</label>
-                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
+                                    <input class="form-control" type="date" name="start_date" id="start_date">
                                     <label for="end_date">End Date:</label>
-                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
+                                    <input class="form-control" type="date" name="end_date" id="end_date">
+                                    <br>
+                                    <select class="form-select by_semester" aria-label="Default select example" name="by_sem" required>
+                                        <option></option>
+                                        <option value="1">By Month/Semester</option>
+                                        <option value="2">Selected Date</option>
+                                    </select>
                                 </div>
                                 <br>
                             </div>
@@ -683,6 +689,11 @@
             $('.fund_source').select2({
                 width: '100%',
                 placeholder: 'Please Office Station',
+                containerCssClass: 'select'
+            });
+            $('.by_semester').select2({
+                width: '100%',
+                placeholder: 'Please Choose Menu',
                 containerCssClass: 'select'
             });
             function isNumberKey(evt)
