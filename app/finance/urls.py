@@ -2,8 +2,8 @@ from django.urls import path
 
 from app.finance.views import financial_transaction, finance_assessment, voucher_modal, get_all_transaction, get_data_transaction, \
     remove_voucherData, print_voucher, print_service_provider,view_dv_number, finance_modal_provided, export_fund_summary, \
-    export_report_csv, update_amount, voucher_outside_fo, edit_outside_fo, remove_data_outside_fo, list_outside_fo, printStateofAccount, \
-    dibursement_voucher
+    update_amount, voucher_outside_fo, edit_outside_fo, remove_data_outside_fo, list_outside_fo, printStateofAccount, \
+    dibursement_voucher, disbursement_voucher_data, get_all_soa
 
 urlpatterns = [
     path('transaction/', financial_transaction, name='financial_transaction'),
@@ -26,8 +26,10 @@ urlpatterns = [
     path('finance_modal_provided/<int:pk>',finance_modal_provided,name='finance_modal_provided'),
     path('update_amount/<int:pk>', update_amount, name='update_amount'),
 
-    path('export-csv/', export_report_csv, name='export_report_csv'),
     path('export/fund/summary/', export_fund_summary,name='export_fund_summary'),
 
-    path('dibursement/voucher', dibursement_voucher, name='dibursement_voucher')
+    path('dibursement/voucher', dibursement_voucher, name='dibursement_voucher'),
+    path('get_all_soa/', get_all_soa, name='get_all_soa'),
+    path('disbursement/data/<int:pk>', disbursement_voucher_data,name='disbursement_voucher_data'),
+
 ]

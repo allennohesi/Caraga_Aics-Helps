@@ -18,7 +18,7 @@ from django.db.models import Value, Sum, Count
 from datetime import datetime, timedelta, time, date
 from django.utils import timezone
 from django.contrib.auth.models import User
-from app.finance.models import finance_voucher, finance_voucherData, exporting_csv, finance_outsideFo, disbursementVoucher
+from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo, disbursementVoucher, disbursementVoucherData
 from django.db.models import Q
 import csv, uuid
 from django.utils.encoding import smart_str
@@ -175,7 +175,8 @@ def dibursement_voucher(request):
 					dv_tracking_code=str(unique_id).upper(),
 					status=1,
 					remarks=request.POST.get('remarks'),
-					created_by_id=request.user.id
+					created_by_id=request.user.id,
+					sp_id=request.POST.get('service_provider_id')
 				)
 				return JsonResponse({'data': 'success', 'msg': 'You successfully submitted the data.'})
 
@@ -196,14 +197,51 @@ def dibursement_voucher(request):
 			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
-
-
 	context = {
 		'title':'disbursement',
 		'service_provider': ServiceProvider.objects.all(),
 		'fund_source': FundSource.objects.all()
 	}
 	return render(request,'financial/disbursement_voucher.html', context)
+
+@login_required
+def disbursement_voucher_data(request, pk):
+	data = disbursementVoucher.objects.filter(id=pk).first()
+	dv_data = disbursementVoucherData.objects.filter(dv_id=data.id)
+	total_values_data = dv_data.values_list('soa__soa_total_amount', flat=True)
+	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
+	data.amount = total_values
+	data.save()
+	if request.method == "POST":
+		create = disbursementVoucherData.objects.create(
+			dv_id=data.id,
+			soa_id=request.POST.get('soa_id'),
+			date_added=today,
+			added_by_id=request.user.id
+		)
+		finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
+			user_id=request.user.id,
+			date_updated=today
+		)
+		return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
+	context = {
+		'data': data,
+	}
+	return render(request,'financial/disbursement_voucher_data.html', context)
+
+@login_required
+@csrf_exempt
+def get_all_soa(request):
+	json = []
+	if request.GET.get('searchTerm', ''):
+		sp = finance_voucher.objects.filter(Q(voucher_code__icontains=request.GET.get('searchTerm')))[:10]
+		if sp:
+			for row in sp:
+				json.append({'id': row.id, 'text': row.voucher_code })
+
+		return JsonResponse(json, safe=False)
+	else:
+		return JsonResponse(json, safe=False)
 
 @login_required
 @groups_only('Super Administrator', 'Biller','Finance')
@@ -240,24 +278,6 @@ def finance_assessment(request, pk):
 		'transactionProvided':transactionProvided,
 	}
 	return render(request, 'financial/finance_assessment.html', context)
-
-def export_report_csv(request):
-	data = Transaction.objects.all()
-
-	response = HttpResponse(
-		content_type="text/csv",
-		headers={"Content-Disposition": 'attachment; filename="financial_file.csv"'},
-	)
-
-	# Create a CSV writer and write the header
-	writer = csv.writer(response)
-	writer.writerow([field.name for field in exporting_csv._meta.fields])
-
-	# Write data rows
-	for row in data:
-		writer.writerow([getattr(row, field.name) for field in exporting_csv._meta.fields])
-
-	return response
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
@@ -593,9 +613,6 @@ def view_dv_number(request,pk):
 		except Exception as e:
 			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
-
-
-
 
 	context = {
 		'finance_datas':finance_data,
