@@ -1,0 +1,318 @@
+{% load tags %}
+{% load static %}
+{% load humanize %}
+<style>
+    .modal-xxl {
+        max-width: 75%;
+    }
+
+    .modal-xxl .modal-dialog {
+        max-width: 65%;
+        width: auto;
+    }
+</style>
+<div class="row" id="client_content">
+    <a href="javascript:void(0);" id="back"><i class="fa fa-angle-double-left"></i>Back</a>
+    <div class="tab-content" id="pills-icontabContent">
+        <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel" readonly>
+            <br><br>
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Disrbursement Voucher: {{data.dv_name}} </u> 
+                            <br>Payee: {{data.sp.name}}</u></label>
+                    </div>
+                </div>
+            </div>
+            <form id="submitVoucherData">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Search Statement of Account <span class="txt-danger">*</span></label>
+                            <select class="form-control select soa" id="transaction" name="soa_id" required></select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Assistance category <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="category_assistance" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Assistance type <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="type_of_assistance" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Service provider <span class="txt-danger">*</span></label>
+                            <input type="text" class="form-control" id="service_provider" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Fund source</label>
+                            <input type="text" class="form-control" id="fund_source_data" readonly>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" name="soa_total_amount" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" hidden>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>SAVE</label>
+                            <input type="submit" class="form-control f-w-900">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>OUTSIDE FO</label>
+                            <a type="button" class="btn btn-primary" data-role='outsidefo' data-id="{{finance_datas.id}}">Open</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <hr>
+            <small>DV Data</small>
+            <div class="row mb-3">
+                <div class="table-responsive">
+                    <table class="table table-responsive table-sm table-bordered" id="">
+                        <thead>
+                            <tr>
+                                <th>Remove</th>
+                                <th>Edit</th>
+                                <th class="text-center">Tracking number</th>
+                                <th class="text-center">Client name</th>
+                                <th class="text-center">Service provider</th>
+                                <th class="text-center">Assistance category</th>
+                                <th class="text-center">Assistance type</th>
+                                <th class="text-center">Amount of assistance</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <p class="text-end">
+                Final total: <u><b style="color:red;">{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}</b></u>
+            </p>
+            <div class="modal fade bd-example-modal-xl" id="modal_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header text-end">
+                        <a href="javascript:void(0);" id="close"><i class="fa fa-angle-double-left"></i>Back</a>
+                    </div>
+                    <div class="modal-body" id="load_data">
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade bd-example-modal-xxl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xxl">
+                    <div class="modal-content">
+                    <div class="modal-header text-end">
+                        <a href="javascript:void(0);" id="exit"><i class="fa fa-angle-double-left"></i>Back</a>
+                    </div>
+                    <div class="modal-body" id="load_data">
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade bd-example-modal-xl" id="updated_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header text-end">
+                        <a href="javascript:void(0);" id="close_voucher"><i class="fa fa-angle-double-left"></i>Back</a>
+                    </div>
+                    <div class="modal-body" id="load_data">
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#voucher-data').DataTable({
+            'serverSide': true,
+            'processing': true,
+            'deferRender': true,
+            'lengthMenu': [ 8, 30, 45, 50 ],
+            'order': [[0, 'desc' ]],
+            'bDestroy': true,
+            'ajax': {
+                'url': '/api/requests/finance/voucher/data/?format=datatables&data={{ finance_datas.id }}',
+                'type': 'GET',
+            },
+            'fnCreatedRow': function (row, data, index) {
+                $(row).attr('id', data['id']);
+            },
+            'columns': [
+                {'data': 'id',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='remove', 'className': 'text-start', data-id="+ row['id'] + ">REMOVE</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'transactionStatus',
+                    'render': function(data, type, row, meta) {
+                        return "<a href='#' data-role='edit_amount' data-id="+ row['transactionStatus'] + ">EDIT</a>"
+                    },
+                    'sortable': false,
+                    'searchable': false
+                },
+                {'data': 'transaction_code','name':'transactionStatus.tracking_number', 'className': 'text-center', 'sortable': false },
+                {'data': 'client_fullname','name':'transactionStatus.client.client_bene_fullname', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'service_provider','name':'transactionStatus.service_provider.name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'Assistance_type','name':'transactionStatus.lib_type_of_assistance.type_name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'Assistance_category','name':'transactionStatus.lib_assistance_category.name', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'total', 'name': 'transactionStatus.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
+                    'render': function(data, type, row, meta) {
+                        // Check if total_amount is null or undefined
+                        if (data === null || data === undefined) {
+                            return 'N/a';
+                        }
+                        // Check if data already contains commas
+                        if (data.includes(',')) {
+                            return data;
+                        }
+                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
+                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                },
+            ]
+        });
+    });
+    $('#submitVoucherData').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to submit add this data?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'disbursement_voucher_data' data.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
+    });
+    $(document).ready(function(){
+        $('.select').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select'
+        });
+        $('#back, #close_modal').on('click', function(){
+            window.location.href = "{% url 'financial_transaction' %}"
+        });
+        $('.soa').select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_soa' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+        //$('#transaction').on('change', function(){
+        //    var id = $(this).val();
+        //       $.ajax({
+        //            url: '/financial-transaction/get_data_transaction/' + id,
+        //            type: 'GET',
+        //            success: function(response){
+        //                $('#fullname').val(response.fullname);
+        //                $('#category_assistance').val(response.toa);
+        //                $('#type_of_assistance').val(response.ta);
+        //                $('#client_category').val(response.ct);
+        //                $('#client_sub_category').val(response.csc);
+        //                $('#service_provider').val(response.service_provider);
+        //                $('#fund_source_data').val(response.fund_source);
+        //            }
+        //       });
+        //});
+        function validationForm(){
+            var invalid = false;
+            $('.form-control').each(function() {
+                if (/<[a-z][\s\S]*>/i.test($(this).val())) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.invalid-feedback').html("The field cannot contain HTML tags.")
+                    invalid = true;
+                }
+            });
+            return invalid;
+        }
+        var select2options = {
+            width: "100%",
+            containerCssClass: 'select',
+            placeholder: 'Choose',
+        }
+        new Select2Cascade($('#assistance_type'), $('#assistance_category'), '/requests/category/get/:parentId:', select2options);
+
+        new Select2Cascade($('#assistance_category'), $('#sub_type_of_assistance'), '/requests/sub_category/get/:parentId:', select2options);
+
+        $('.user').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_user' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    }
+                },
+                processResults: function(response) {
+                    return {
+                        results:response
+                    };
+                },
+                cache: true
+            }
+        });
+    });
+</script>
+{% endblock %}

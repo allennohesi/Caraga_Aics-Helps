@@ -86,7 +86,7 @@
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
                         <li class="nav-item" data-bs-toggle="modal" data-bs-target="#filteriningmodal">
                             <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
-                                <i class="fa fa-file-o"></i> Filter statement of account with/without-dv
+                                <i class="fa fa-file-o"></i> Disbursement Voucher
                             </a>
                         </li>
                     </ul>
@@ -96,10 +96,17 @@
                             <input type="text" id="dv_id" name="dv_id" hidden>
                             {% csrf_token %}
                                 <div class="row mb-3">
-                                    <div class="col-md-7">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Disbursement voucher name</label> <span class="txt-danger" id="required">*</span>
                                             <input type="text" class="form-control f-w-900 upper" id="dv_name" name="dv_name" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Service Provider</label> <span class="txt-danger" id="required">*</span>
+                                            <select class="form-control select get_service_provider" name="service_provider_id" id="service_provider_id">
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -123,6 +130,7 @@
                                         <th>Action</th>
                                         <th>DV-Tracking Code</th>
                                         <th>DV name</th>
+                                        <th>Service Provider</th>
                                         <th>Date Entried</th>
                                         <th>Created By</th>
                                         <th>Remarks</th>
@@ -172,6 +180,30 @@
 {% endblock %}
 {% block script %}
 <script>
+    $('.get_service_provider').select2({
+        width: '100%',
+        placeholder: 'CHOOSE',
+        containerCssClass: 'select',
+        allowClear: true,
+        ajax: {
+            url: "{% url 'get_all_service_provider' %}",
+            method: "GET",
+            dataType: "json",  // Corrected the property name to "dataType"
+            data: function(params) {
+                return {
+                    searchTerm: params.term
+                };
+            },
+            processResults: function(response) {
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+</script>
+<script>
     $('#without-dv').select2({
         width: '100%',
         placeholder: 'CHOOSE',
@@ -209,12 +241,13 @@
             'columns': [
             {'data': 'id',
                 'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='view_dv' data-id="+ data + ">Details</a> | " +
+                        return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a> | " +
                         "<a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a> | " +
                         "<a href='" + printUrl + data + "' data-role='print' data-id=" + data + "' target='_blank'>Print</a>";
                     }
             },
             {'data': 'dv_tracking_code', 'className': 'text-start', 'sortable': false },
+            {'data': 'dv_name','className': 'text-start', 'sortable': false },
             {'data': 'dv_name','className': 'text-start', 'sortable': false },
             {'data': 'date_entried','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
@@ -227,17 +260,11 @@
             $('#voucher').modal('show').find('#load_data').load('/financial-transaction/voucher_modal/modal/' +id);
            });
 
-        $(document).on('click', 'a[data-role=view_dv]', function(){
+        $(document).on('click', 'a[data-role=view_data]', function(){
             var id = $(this).data('id');
-            $('#transaction_content').load('/financial-transaction/view_dv_number/' + id); //pass data, and stay still in the body
+            console.log(id)
+            $('#transaction_content').load('/financial-transaction/disbursement/data/' + id); //pass data, and stay still in the body
         });
-        $('#filter-dropdown').on('click', function(){
-			if($('#without-dv').val() == "") {
-				Swal.fire("Ooops!", "The dropdown must not be empty", "warning");
-			} else {
-				$('#voucher-title').DataTable().ajax.url('/api/requests/finance/voucher/?format=datatables&dropdown=' + $('#without-dv').val()).load();
-			}
-		});
     });
     
     function validationForm(){
