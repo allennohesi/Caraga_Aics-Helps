@@ -449,10 +449,37 @@
     $(document).on('click','a[data-role=edit_data]', function(){ // For assessmentStatus
         var id = $(this).data('id');
         var dv_number = $('#'+id).children('td:eq(2)').text();
-        var remarks = $('#'+id).children('td:eq(9)').text();
+        var remarks = $('#'+id).children('td:eq(10)').text();
+
+        var date = $('#' + id).children('td:eq(6)').text(); // Extract the date
+    
+        console.log("Original date from table:", date);
+
+        var formattedDate = "";
+    
+        // Parse the date manually to avoid timezone issues
+        var dateParts = date.split(" "); // Assuming the format is 'MMM DD, YYYY'
+        var monthMap = {
+            "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+            "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11
+        };
+        if (dateParts.length === 3) {
+            var month = monthMap[dateParts[0]]; // Convert month to number
+            var day = parseInt(dateParts[1].replace(",", ""), 10); // Remove comma and parse day
+            var year = parseInt(dateParts[2], 10); // Parse year
+    
+            // Construct the date in the format YYYY-MM-DD
+            formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        } else {
+            console.error("Unexpected date format. Please ensure it matches 'MMM DD, YYYY'.");
+        }
+    
+        console.log("Formatted date:", formattedDate);
+
         $('#dv_id').val(id)
         $('#voucher_title').val(dv_number)
         $('#remarks').val(remarks)
+        $('#street').val(formattedDate);
     });
 </script>
 {% endblock %}

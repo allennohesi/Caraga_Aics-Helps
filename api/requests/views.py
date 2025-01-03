@@ -138,7 +138,7 @@ class TransactionIncoming(generics.ListAPIView):
 			filter_params = dropdown_filters.get(dropdown)
 			if filter_params:
 				queryset = TransactionStatus1.objects.filter(
-					transaction_id__office_station_in_id=requested_in,
+					# transaction_id__office_station_in_id=requested_in,
 					**filter_params
 				).order_by('-id')
 
