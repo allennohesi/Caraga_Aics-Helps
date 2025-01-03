@@ -721,7 +721,7 @@ def personalData(request): #FOR GENERAL
 					'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
 					'Client Category','Client Sub-Category',
 					
-					'Service provider','Purpose', 'Type of Assistance', 'Amount', 
+					'Service provider','Relationship', 'Type of Assistance', 'Amount', 
 					'Mode of Assistance','Source of referral',
 					'Date Interviewed','For case study','Case Study Status','Transaction Status',
 					'Is_PFA', 'Is_SWC'
