@@ -220,7 +220,6 @@ def disbursement_voucher_data(request, pk):
 			added_by_id=request.user.id
 		)
 		finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
-			user_id=request.user.id,
 			date_updated=today
 		)
 		return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
@@ -228,6 +227,42 @@ def disbursement_voucher_data(request, pk):
 		'data': data,
 	}
 	return render(request,'financial/disbursement_voucher_data.html', context)
+
+def printdvobs(request, pk):
+	data = disbursementVoucher.objects.filter(id=pk).first()
+	dv_data = disbursementVoucherData.objects.filter(dv=data).first()
+	if dv_data and dv_data.soa:
+		# Retrieve the related finance voucher
+		finance_voucher = dv_data.soa
+
+		# Get all related finance voucher data objects sorted by transaction date
+		finance_voucher_data_queryset = finance_voucherData.objects.filter(voucher=finance_voucher).order_by('transactionStatus__date_of_transaction')
+
+		# Retrieve the first and last transaction's date_entried
+		first_transaction = finance_voucher_data_queryset.first()
+		last_transaction = finance_voucher_data_queryset.last()
+
+		if first_transaction and first_transaction.transactionStatus:
+			print(first_transaction.transactionStatus.tracking_number)
+			first_transaction_date_entried = first_transaction.transactionStatus.date_of_transaction
+		else:
+			first_transaction_date_entried = None
+
+		if last_transaction and last_transaction.transactionStatus:
+			print(last_transaction.transactionStatus.tracking_number)
+			last_transaction_date_entried = last_transaction.transactionStatus.date_of_transaction
+		else:
+			last_transaction_date_entried = None
+	else:
+		first_transaction_date_entried = None
+		last_transaction_date_entried = None
+
+	context = {
+		'data':data,
+		'covered_date_start': first_transaction_date_entried,
+		'covered_date_end': last_transaction_date_entried
+	}
+	return render(request,'financial/printdvobs.html', context)
 
 @login_required
 @csrf_exempt

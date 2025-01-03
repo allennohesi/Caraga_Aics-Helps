@@ -111,7 +111,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>REMARKS</label>
+                                            <label>Particulars</label>
                                             <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                                         <th>Service Provider</th>
                                         <th>Date Entried</th>
                                         <th>Created By</th>
-                                        <th>Remarks</th>
+                                        <th>Particulars</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -223,7 +223,7 @@
         check($('#provider').val());
     });
     $(document).ready(function(){
-        var printUrl = "{% url 'printStateofAccount' 0 %}".replace("/0/", "/");
+        var printUrl = "{% url 'printdvobs' 0 %}".replace("/0/", "/");
         $('#voucher-title').DataTable({
             'serverSide': true,
             'processing': true,
