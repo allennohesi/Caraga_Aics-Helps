@@ -63,7 +63,7 @@
     <div class="page-title">
         <div class="row">
             <div class="col-6">
-                <h3>Finance</h3>
+                <h3>Disbursement Voucher</h3>
             </div>
             <div class="col-6">
                 <ol class="breadcrumb">
@@ -72,7 +72,7 @@
                     </li>
                     <li class="breadcrumb-item active">Finance</li>
                     {% comment %} <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#fund_source">Fund source</li> {% endcomment %}
-                    <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#sp">Service provider</li>
+                    <li class="breadcrumb-item active" data-bs-toggle="modal" data-bs-target="#sp">Disbursement Voucher</li>
                 </ol>
             </div>
         </div>
@@ -111,7 +111,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>Particulars</label>
+                                            <label>Remarks</label>
                                             <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                                         <th>Service Provider</th>
                                         <th>Date Entried</th>
                                         <th>Created By</th>
-                                        <th>Particulars</th>
+                                        <th>Remarks</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -242,7 +242,6 @@
             {'data': 'id',
                 'render': function(data, type, row, meta) {
                         return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a> | " +
-                        "<a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a> | " +
                         "<a href='" + printUrl + data + "' data-role='print' data-id=" + data + "' target='_blank'>Print</a>";
                     }
             },
