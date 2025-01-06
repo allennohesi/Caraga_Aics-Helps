@@ -46,6 +46,8 @@ class FinanceVoucherSerializer(serializers.ModelSerializer):
     date_updated = serializers.DateField(format="%b %d, %Y", read_only=True)
     user = serializers.CharField(source='user.get_fullname', read_only=True, default=None)
     added_by = serializers.CharField(source='added_by.get_fullname', read_only=True, default=None)
+    dv_name = serializers.CharField(source='dv_data.dv_name', read_only=True, default=None)
+    dv_incoming_date = serializers.DateField(source='dv_data.dv_date', format="%b %d, %Y", read_only=True)
     class Meta:
         model = finance_voucher
         fields = '__all__'
@@ -88,6 +90,7 @@ class TransactionOutsideFOSerializer(serializers.ModelSerializer):
 class DisbursementVoucherSerializer(serializers.ModelSerializer):
     date_entried = serializers.DateField(format="%b %d, %Y", read_only=True)
     added_by = serializers.CharField(source='created_by.get_fullname', read_only=True, default=None)
+    sp = serializers.CharField(source='sp.name', read_only=True, default=None)
     class Meta:
         model = disbursementVoucher
         fields = '__all__'

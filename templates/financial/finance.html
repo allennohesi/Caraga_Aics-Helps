@@ -98,19 +98,19 @@
                                 <div class="row mb-3">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>DV Number / Temporary title</label> <span class="txt-danger" id="required">*</span>
+                                            <label>Title</label> <span class="txt-danger" id="required">*</span>
                                             <input type="text" class="form-control f-w-900 upper" id="voucher_title" name="voucher_title" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>DV Date / Satement of Account Date</label> <span class="txt-danger" id="required">*</span>
+                                            <label>Satement of Account Date</label> <span class="txt-danger" id="required">*</span>
                                             <input type="date" class="form-control f-w-900 upper" name="date" id="street" oninput="this.value = this.value.toUpperCase()" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>With DV / Without DV</label>
+                                            <label>Status</label>
                                             <select class="form-select select" name="with_without_dv" aria-label="Default select example" required>
                                                 <option></option>
                                                 <option value="WITH-DV">WITH-DV</option>
@@ -139,12 +139,14 @@
                                         <th>Action</th>
                                         <th>AICS-DV tracking</th>
                                         <th>Finance DV-number</th>
+                                        <th>DV name</th>
                                         <th>Status</th>
                                         <th>Created by</th>
                                         <th>Updated by</th>
                                         <th>SOA Date</th>
                                         <th>Date Encoded</th>
                                         <th>DV Created</th>
+                                        <th>DV Incoming Date</th>
                                         <th>Total Amount </th>
                                         <th>Remarks</th>
                                     </tr>
@@ -347,12 +349,22 @@
             },
             {'data': 'voucher_code', 'className': 'text-start', 'sortable': false },
             {'data': 'voucher_title','className': 'text-start', 'sortable': false },
+            {'data': 'dv_name','name':'dv_data.dv_name', 'className': 'text-start', 'sortable': false },
             {'data': 'with_without_dv','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
             {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
             {'data': 'date', 'className': 'text-start', 'sortable': false },
             {'data': 'date_added', 'className': 'text-start', 'sortable': false },
             {'data': 'date_updated', 'className': 'text-start', 'sortable': false },
+            {
+                'data': 'dv_incoming_date',
+                'name': 'dv_data.dv_name',
+                'className': 'text-start',
+                'sortable': false,
+                'render': function(data, type, row, meta) {
+                    return data ? data : "";
+                }
+            },
             {
                 'data': 'soa_total_amount',
                 'className': 'text-start',
