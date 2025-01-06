@@ -213,16 +213,30 @@ def disbursement_voucher_data(request, pk):
 	data.amount = total_values
 	data.save()
 	if request.method == "POST":
-		create = disbursementVoucherData.objects.create(
-			dv_id=data.id,
-			soa_id=request.POST.get('soa_id'),
-			date_added=today,
-			added_by_id=request.user.id
-		)
-		finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
-			date_updated=today
-		)
-		return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
+		if request.POST.get('function') == "update": #UPDATING NI SIR JOSHUA PAG NAA NAY DV
+			print(request.POST.get('dv_date_updated'))
+			disbursementVoucher.objects.filter(id=data.id).update( 
+				dv_name=request.POST.get('dv_name'),
+				dv_date=request.POST.get('dv_date_updated')
+			)
+			dvdata = disbursementVoucherData.objects.filter(dv_id=data.id).all()
+			for row in dvdata:
+				finance_voucher.objects.filter(id=row.soa_id).update(
+					dv_data_id=data.id,
+					with_without_dv="WITH-DV"
+				)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully updated this data'})
+		else:
+			disbursementVoucherData.objects.create(
+				dv_id=data.id,
+				soa_id=request.POST.get('soa_id'),
+				date_added=today,
+				added_by_id=request.user.id
+			)
+			finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
+				date_updated=data.date_entried
+			)
+			return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
 	context = {
 		'data': data,
 	}
@@ -234,33 +248,40 @@ def printdvobs(request, pk):
 	if dv_data and dv_data.soa:
 		# Retrieve the related finance voucher
 		finance_voucher = dv_data.soa
-
 		# Get all related finance voucher data objects sorted by transaction date
-		finance_voucher_data_queryset = finance_voucherData.objects.filter(voucher=finance_voucher).order_by('transactionStatus__date_of_transaction')
-
+		finance_voucher_data_queryset = finance_voucherData.objects.filter(voucher=finance_voucher).order_by('transactionStatus__date_of_transaction').first()
 		# Retrieve the first and last transaction's date_entried
-		first_transaction = finance_voucher_data_queryset.first()
-		last_transaction = finance_voucher_data_queryset.last()
-
+		first_transaction = finance_voucher_data_queryset
 		if first_transaction and first_transaction.transactionStatus:
-			print(first_transaction.transactionStatus.tracking_number)
 			first_transaction_date_entried = first_transaction.transactionStatus.date_of_transaction
 		else:
 			first_transaction_date_entried = None
+	else:
+		first_transaction_date_entried = None
 
+	dv_data = disbursementVoucherData.objects.filter(dv=data).last()
+
+	if dv_data and dv_data.soa:
+		# Retrieve the related finance voucher
+		finance_voucher = dv_data.soa
+
+		# Get the last related finance voucher data object sorted by transaction date
+		last_transaction = finance_voucherData.objects.filter(
+			voucher=finance_voucher
+		).order_by('-transactionStatus__date_of_transaction').first()
+
+		# Retrieve the last transaction's date_entried
 		if last_transaction and last_transaction.transactionStatus:
-			print(last_transaction.transactionStatus.tracking_number)
 			last_transaction_date_entried = last_transaction.transactionStatus.date_of_transaction
 		else:
 			last_transaction_date_entried = None
 	else:
-		first_transaction_date_entried = None
 		last_transaction_date_entried = None
 
 	context = {
 		'data':data,
 		'covered_date_start': first_transaction_date_entried,
-		'covered_date_end': last_transaction_date_entried
+		'covered_date_end': last_transaction_date_entried,
 	}
 	return render(request,'financial/printdvobs.html', context)
 
@@ -269,7 +290,7 @@ def printdvobs(request, pk):
 def get_all_soa(request):
 	json = []
 	if request.GET.get('searchTerm', ''):
-		sp = finance_voucher.objects.filter(Q(voucher_code__icontains=request.GET.get('searchTerm')))[:10]
+		sp = finance_voucher.objects.filter(Q(voucher_code__icontains=request.GET.get('searchTerm')) & Q(soa_total_amount__isnull=False))[:10]
 		if sp:
 			for row in sp:
 				json.append({'id': row.id, 'text': row.voucher_code })

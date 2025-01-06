@@ -19,7 +19,7 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>Disrbursement Voucher: {{data.dv_name}} </u> 
+                        <label>Disrbursement Voucher: {{data.dv_name}} <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#update">(Update)</a></u> 
                             <br>Payee: {{data.sp.name}}</u></label>
                     </div>
                 </div>
@@ -27,34 +27,10 @@
             <form id="submitVoucherData">
                 {% csrf_token %}
                 <div class="row mb-3">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Search Statement of Account <span class="txt-danger">*</span></label>
                             <select class="form-control select soa" id="transaction" name="soa_id" required></select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Assistance category <span class="txt-danger">*</span></label>
-                            <input type="text" class="form-control" id="category_assistance" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Assistance type <span class="txt-danger">*</span></label>
-                            <input type="text" class="form-control" id="type_of_assistance" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Service provider <span class="txt-danger">*</span></label>
-                            <input type="text" class="form-control" id="service_provider" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Fund source</label>
-                            <input type="text" class="form-control" id="fund_source_data" readonly>
                         </div>
                     </div>
                     <input type="text" class="form-control" name="soa_total_amount" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" hidden>
@@ -64,69 +40,53 @@
                             <input type="submit" class="form-control f-w-900">
                         </div>
                     </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label>OUTSIDE FO</label>
-                            <a type="button" class="btn btn-primary" data-role='outsidefo' data-id="{{finance_datas.id}}">Open</a>
-                        </div>
-                    </div>
                 </div>
             </form>
             <hr>
-            <small>DV Data</small>
             <div class="row mb-3">
                 <div class="table-responsive">
-                    <table class="table table-responsive table-sm table-bordered" id="">
+                    <table class="table table-responsive table-sm table-bordered" id="voucher-data">
                         <thead>
                             <tr>
                                 <th>Remove</th>
-                                <th>Edit</th>
-                                <th class="text-center">Tracking number</th>
-                                <th class="text-center">Client name</th>
-                                <th class="text-center">Service provider</th>
-                                <th class="text-center">Assistance category</th>
-                                <th class="text-center">Assistance type</th>
-                                <th class="text-center">Amount of assistance</th>
+                                <th class="text-center">Statement of Account Tracking</th>
+                                <th class="text-center">Statement of Account Name</th>
+                                <th class="text-center">Total Amount</th>
                             </tr>
                         </thead>
                     </table>
                 </div>
             </div>
             <br>
-            <p class="text-end">
-                Final total: <u><b style="color:red;">{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}</b></u>
-            </p>
-            <div class="modal fade bd-example-modal-xl" id="modal_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="close"><i class="fa fa-angle-double-left"></i>Back</a>
+            <div class="modal fade" id="update" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Update Disbursement Voucher</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="load_data">
-                    </div>
-                  </div>
+                    <form id="updateDV">
+                        {% csrf_token %}
+                        <input type="text" value="update" name="function" hidden>
+                        <div class="modal-body">
+                            <div class="row mb-2">
+                                <div class="form-group">
+                                    <label>DV - Name</label>
+                                    <input type="text" class="form-control" name="dv_name" required>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="form-group">
+                                    <label>DV - Date</label>
+                                    <input type="date" class="form-control" name="dv_date_updated" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
                 </div>
-            </div>
-            <div class="modal fade bd-example-modal-xxl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xxl">
-                    <div class="modal-content">
-                    <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="exit"><i class="fa fa-angle-double-left"></i>Back</a>
-                    </div>
-                    <div class="modal-body" id="load_data">
-                    </div>
-                  </div>
-                </div>
-            </div>
-            <div class="modal fade bd-example-modal-xl" id="updated_outside_fo" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header text-end">
-                        <a href="javascript:void(0);" id="close_voucher"><i class="fa fa-angle-double-left"></i>Back</a>
-                    </div>
-                    <div class="modal-body" id="load_data">
-                    </div>
-                  </div>
                 </div>
             </div>
         </div>
@@ -143,7 +103,7 @@
             'order': [[0, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/finance/voucher/data/?format=datatables&data={{ finance_datas.id }}',
+                'url': '/api/requests/finance/disbursement/voucher/data/?format=datatables&data={{ data.id }}',
                 'type': 'GET',
             },
             'fnCreatedRow': function (row, data, index) {
@@ -157,34 +117,69 @@
                     'sortable': false,
                     'searchable': false
                 },
-                {'data': 'transactionStatus',
-                    'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='edit_amount' data-id="+ row['transactionStatus'] + ">EDIT</a>"
-                    },
+                {'data': 'soa_code','name':'soa.voucher_code', 'className': 'text-center','searchable':false, 'sortable': false},
+                {'data': 'soa_name','name':'soa.voucher_title', 'className': 'text-center','searchable':false, 'sortable': false},
+                {
+                    'data': 'soa_amount',
+                    'className': 'text-center',
                     'sortable': false,
-                    'searchable': false
-                },
-                {'data': 'transaction_code','name':'transactionStatus.tracking_number', 'className': 'text-center', 'sortable': false },
-                {'data': 'client_fullname','name':'transactionStatus.client.client_bene_fullname', 'className': 'text-center','searchable':false, 'sortable': false},
-                {'data': 'service_provider','name':'transactionStatus.service_provider.name', 'className': 'text-center','searchable':false, 'sortable': false},
-                {'data': 'Assistance_type','name':'transactionStatus.lib_type_of_assistance.type_name', 'className': 'text-center','searchable':false, 'sortable': false},
-                {'data': 'Assistance_category','name':'transactionStatus.lib_assistance_category.name', 'className': 'text-center','searchable':false, 'sortable': false},
-                {'data': 'total', 'name': 'transactionStatus.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
-                    'render': function(data, type, row, meta) {
-                        // Check if total_amount is null or undefined
-                        if (data === null || data === undefined) {
-                            return 'N/a';
-                        }
-                        // Check if data already contains commas
-                        if (data.includes(',')) {
+                    'render': function (data, type, row, meta) {
+                        if (data) {
+                            // Remove decimal places if the number is a whole number
+                            var formattedAmount = parseFloat(data).toFixed(2); // Ensure two decimal places
+                            if (formattedAmount.indexOf('.00') !== -1) {
+                                // Remove the decimal places if the amount is a whole number
+                                formattedAmount = formattedAmount.replace('.00', '');
+                            }
+                            // Format with commas
+                            return formattedAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        } else {
                             return data;
                         }
-                        // Format the total_amount with commas for thousands (PHP currency) without the "P" symbol
-                        return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
             ]
         });
+    });
+    $('#updateDV').on('submit', function(e){
+        e.preventDefault();
+        var form = new FormData(this);
+        if (!validationForm()){
+            Swal.fire({
+                title: "Are you sure",
+                text: "You want to submit add this data?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
+                showLoaderOnConfirm: true,
+                preConfirm: function (){
+                    return $.post({
+                        url: "{% url 'disbursement_voucher_data' data.id %}",
+                        data: form,
+                        success : function (response){
+                            if(!response.error){
+                                Swal.fire({
+                                    title: "Good job!",
+                                    html:  response.msg,
+                                    icon: "success",
+                                    allowOutsideClick: false,
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                                        $('#update').modal('hide');
+
+                                    }
+                                });
+                            }
+                        },
+                        cache       : false,
+                        contentType : false,
+                        processData : false,
+                    });
+                },
+            });
+        }
     });
     $('#submitVoucherData').on('submit', function(e){
         e.preventDefault();
@@ -231,7 +226,7 @@
             containerCssClass: 'select'
         });
         $('#back, #close_modal').on('click', function(){
-            window.location.href = "{% url 'financial_transaction' %}"
+            window.location.href = "{% url 'dibursement_voucher' %}"
         });
         $('.soa').select2({
             width: '100%',

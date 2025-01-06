@@ -2,7 +2,7 @@ from decimal import DefaultContext
 from rest_framework import serializers
 
 from app.requests.models import Transaction, transaction_description, TransactionStatus1
-from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo, disbursementVoucher
+from app.finance.models import finance_voucher, finance_voucherData, finance_outsideFo, disbursementVoucher, disbursementVoucherData
 
 class TransactionSerializer(serializers.ModelSerializer):
     tracking_number = serializers.CharField(source='transaction.tracking_number')
@@ -90,4 +90,13 @@ class DisbursementVoucherSerializer(serializers.ModelSerializer):
     added_by = serializers.CharField(source='created_by.get_fullname', read_only=True, default=None)
     class Meta:
         model = disbursementVoucher
+        fields = '__all__'
+
+class DisbursementVoucherDataSerializer(serializers.ModelSerializer):
+    soa_code = serializers.CharField(source='soa.voucher_code', read_only=True, default=None)
+    soa_name = serializers.CharField(source='soa.voucher_title', read_only=True, default=None)
+    soa_amount = serializers.CharField(source='soa.soa_total_amount', read_only=True, default=None)
+
+    class Meta:
+        model = disbursementVoucherData
         fields = '__all__'

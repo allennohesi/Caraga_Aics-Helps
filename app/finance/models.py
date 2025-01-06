@@ -25,6 +25,7 @@ class finance_voucher(models.Model):
     date_added = models.DateField(default=timezone.now)
     date_updated = models.DateField()
     soa_total_amount = models.CharField(max_length=255, blank=True, null=True)
+    dv_data = models.ForeignKey('disbursementVoucherData', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -60,6 +61,8 @@ class disbursementVoucher(models.Model):
     created_by = models.ForeignKey(AuthUser, models.DO_NOTHING)
     sp = models.ForeignKey(ServiceProvider, models.DO_NOTHING, blank=True, null=True)
     amount = models.CharField(max_length=255, blank=True, null=True)
+    dv_date = models.DateField()
+    
     class Meta:
         managed = False
         db_table = 'finance_dv_tbl'
