@@ -214,7 +214,6 @@ def disbursement_voucher_data(request, pk):
 	data.save()
 	if request.method == "POST":
 		if request.POST.get('function') == "update": #UPDATING NI SIR JOSHUA PAG NAA NAY DV
-			print(request.POST.get('dv_date_updated'))
 			disbursementVoucher.objects.filter(id=data.id).update( 
 				dv_name=request.POST.get('dv_name'),
 				dv_date=request.POST.get('dv_date_updated')
