@@ -158,6 +158,7 @@ def financial_transaction(request):
 
 
 	context = {
+		'title':'SOA',
 		'service_provider': ServiceProvider.objects.all(),
 		'fund_source': FundSource.objects.all()
 	}
@@ -198,7 +199,7 @@ def dibursement_voucher(request):
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 	context = {
-		'title':'disbursement',
+		'title':'Disbursement Voucher',
 		'service_provider': ServiceProvider.objects.all(),
 		'fund_source': FundSource.objects.all()
 	}
