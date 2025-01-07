@@ -25,7 +25,11 @@ class ActiveSwoView(generics.ListAPIView):
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        queryset = SocialWorker_Status.objects.filter(user__authuserdetails__OfficeStationLib__name=self.request.query_params.get('address'),status=2,date_transaction=today).order_by('-id')
+        if self.request.query_params.get('filter'):
+            print(self.request.query_params.get('filter'))
+            queryset = SocialWorker_Status.objects.filter(user__authuserdetails__OfficeStationLib__id=self.request.query_params.get('filter'),status=2,date_transaction=today).order_by('-id')
+        else:
+            queryset = SocialWorker_Status.objects.filter(user__authuserdetails__OfficeStationLib__name=self.request.query_params.get('address'),status=2,date_transaction=today).order_by('-id')
         return queryset
     
 class ErrorViews(generics.ListAPIView):
