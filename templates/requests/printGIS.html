@@ -738,17 +738,18 @@
                 <label ><u style="background-color:#FFFAA0; font-size:14px;">{{data.client.get_client_fullname}}</u><br>Buong Pangalan at Pirma<br><small>(Signature over Printed Name)</label>
               </td>
               <td width="150px" rowspan="2"><br><br><br>
-                <label><br><br><u>{{data.swo.get_fullname}}</u><br>Social Worker<br><small>(Signature over Printed Name)</small></label>
+                <label><br><br><u>{{data.swo.get_fullname|upper}}</u><br>Social Worker<br><small>(Signature over Printed Name)</small></label>
               </td>
               <td width="150px" rowspan="2"><br><br><br>
                 <label>
                   <br><br><u>
-                    {% with get_signatories=data.requested_in %}
+                    {% comment %} {% with get_signatories=data.requested_in %}
                     {% get_signatories get_signatories as province %}
                     {% if province %}
                     {{ province }}
                     {% endif %}
-                    {% endwith %}
+                    {% endwith %} {% endcomment %}
+                    {{data.signatories.get_fullname|upper}}
                   </u><br>
                   Approving Authority<br>
                   <small>(Signature over Printed Name)</small>

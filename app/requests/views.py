@@ -1070,12 +1070,11 @@ def confirmAmount(request):
 
 				# Get the transaction record
 				area_of_assignment = Transaction.objects.filter(id=transaction_id).first()
-
 				# Determine the signatory based on the total amount and area of assignment
 				signatories_map = {
 					"AGUSAN DEL NORTE": 17,  # ANA T. SEMACIO
 					"SURIGAO DEL SUR": 106,  # Arlene M. Ontua
-					"AGUSAN DEL SUR": 1,    # Michael John ANDOHUYAN
+					"AGUSAN DEL SUR": 128,    # Michael John ANDOHUYAN
 					"DINAGAT ISLANDS": 1,   # Placeholder
 					"SURIGAO DEL NORTE": 1, # THESA MUSA
 				}
