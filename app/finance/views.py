@@ -441,6 +441,8 @@ def generate_csv_data(queryset):
 			else "N/a"
 		)
 		dv_number_str = smart_str(transaction.dv_number).replace(",", "") if transaction.dv_number else ""
+		client_barangay_str = smart_str(transaction.client.barangay_value).replace(",", "") if transaction.client.barangay_value else ""
+		bene_barangay_str = smart_str(transaction.bene.barangay_value).replace(",", "") if transaction.bene.barangay_value else ""
 		# Yield CSV data
 		yield ','.join([
 			smart_str(transaction.date_of_transaction),
@@ -454,7 +456,7 @@ def generate_csv_data(queryset):
 			smart_str(transaction.client.birthdate),
 			smart_str(transaction.client.sex.name),
 			client_street_str,
-			smart_str(transaction.client.barangay_value),
+			client_barangay_str,
 			smart_str(transaction.client.city),
 			#smart_str(transaction.client.barangay.brgy_name),
 			#smart_str(transaction.client.barangay.city_code.city_name),
@@ -472,7 +474,7 @@ def generate_csv_data(queryset):
 			smart_str(transaction.bene.birthdate),
 			smart_str(transaction.bene.suffix.name) if transaction.bene.suffix and transaction.bene.suffix.name else "N/a",
 			bene_street_str,
-			smart_str(transaction.bene.barangay_value),
+			bene_barangay_str,
 			smart_str(transaction.bene.city),
 			#smart_str(transaction.bene.barangay.brgy_name),
 			#smart_str(transaction.bene.barangay.city_code.city_name),

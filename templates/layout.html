@@ -471,9 +471,10 @@
                                         <label>Office Station</label><span class="txt-danger">*</span>
                                         <select class="form-control fund_source hidden" name="station" id="station" required>
                                             <option></option>
-                                            <option value="1">Regional Office Caraga</option>
-                                            <option value="2">Butuan Medical Center</option>
-                                            <option value="3">SWAD TANDAG SDS</option>
+                                            {% get_office_stations as office_stations %}
+                                            {% for station in office_stations %}
+                                                <option value="{{ station.id }}">{{ station.name }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
