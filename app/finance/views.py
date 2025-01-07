@@ -125,16 +125,30 @@ def financial_transaction(request):
 							)
 						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the transaction'})
 					else:
-						finance_voucher.objects.create(
-							voucher_code=str(unique_id).upper(),
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-							added_by_id=request.user.id
-						)
-						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
+						if request.POST.get('with_without_dv') == "WITH-DV":
+							finance_voucher.objects.create(
+								voucher_code=str(unique_id).upper(),
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								added_by_id=request.user.id,
+								date_updated=today,
+							)
+							return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
+						else:
+							finance_voucher.objects.create(
+								voucher_code=str(unique_id).upper(),
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								added_by_id=request.user.id
+							)
+							return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
 					return JsonResponse({'error': True, 'msg': 'This Title/DV-name already exists, please double check.'})
 
