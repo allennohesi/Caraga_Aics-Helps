@@ -112,6 +112,8 @@ def get_signatories(province):
 		signatories = "ANA T. SEMACIO"
 	elif province == "SURIGAO DEL SUR":
 		signatories = "ARLENE M. ONTUA"
+	elif province == "AGUSAN DEL SUR":
+		signatories = "MICHAEL JOHN B. ANDOHUYAN"
 	return signatories
 
 @register.simple_tag
