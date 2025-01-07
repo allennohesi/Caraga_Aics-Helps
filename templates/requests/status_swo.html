@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
+{% load tags %}
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
@@ -23,9 +24,9 @@
             <div class="card">
                 <div class="card-body" id="transaction_content">
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
-                        <li class="nav-item">
+                        <li class="nav-item" data-bs-toggle="modal" data-bs-target="#filteriningmodal">
                             <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
-                                <i class="fa fa-file-o"></i> Summary of Transactions
+                                <i class="fa fa-file-o"></i> Filtering Area of Assignment
                             </a>
                         </li>
                     </ul>
@@ -49,6 +50,30 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="modal fade" id="filteriningmodal" tabindex="-1" aria-labelledby="filteriningmodalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filteriningmodallLabel">Filtering Summary by Office Station</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <select class="form-select select2" id="office_station">
+                    <option></option>
+                    {% get_office_stations as office_stations %}
+                    {% for station in office_stations %}
+                        <option value="{{ station.id }}">{{ station.name }}</option>
+                    {% endfor %}
+                  </select>
+            </div>
+            <div class="input-group mb-3">
+                <button class="btn btn-outline-primary" type="button" id="filter-dropdown" style="width:100%;">Filter</button>
+            </div>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
@@ -92,11 +117,23 @@
         $('#swo_id').val(selectedUserId);
         // You can perform other actions with the selectedUserId as needed
     }
+    $('#filter-dropdown').on('click', function(){
+        if($('#office_station').val() == "") {
+            Swal.fire("Ooops!", "The dropdown must not be empty", "warning");
+        } else {
+            $('#active-swo').DataTable().ajax.url('/api/user/active/swo/?format=datatables&filter=' + $('#office_station').val()).load();
+        }
+    });
     $(document).ready(function() {
         $('#queu_number').on('input', function() {
             // Remove non-numeric characters using a regular expression
             $(this).val($(this).val().replace(/\D/g, ''));
         });
+    });
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Please Select Office Station',
+        containerCssClass: 'select'
     });
 </script>
 
