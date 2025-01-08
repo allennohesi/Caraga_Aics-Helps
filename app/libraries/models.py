@@ -238,6 +238,8 @@ class OfficeStation(models.Model):
     is_active = models.IntegerField()
     billing_signatories = models.CharField(max_length=255, blank=True, null=True)
     cash_signatories = models.CharField(max_length=255, blank=True, null=True)
+    region = models.CharField(max_length=255, blank=True, null=True)
+    signatories = models.ForeignKey('AuthUser', models.DO_NOTHING)
     
     class Meta:
         managed = False
