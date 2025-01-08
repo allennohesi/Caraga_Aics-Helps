@@ -305,10 +305,10 @@
                                     </li>
                                     {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#my_data"><i data-feather="git-pull-request"></i><span>My Data</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#my_data"><span>My Data</span></a>
                                     </li>
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#purpose_summary"><i data-feather="git-pull-request"></i><span>By Purpose Summary</span></a>
+                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#purpose_summary"><span>By Purpose Summary</span></a>
                                     </li>
                                     {% endif %}
                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
