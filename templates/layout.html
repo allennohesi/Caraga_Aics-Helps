@@ -308,6 +308,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#my_data"><i data-feather="git-pull-request"></i><span>My Data</span></a>
                                     </li>
                                     {% endif %}
+                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Finance billing</span></a>
                                         <ul class="sidebar-submenu">
@@ -316,14 +317,13 @@
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     <li><a href="{% url 'withDvTransactions' %}" target="_blank">Encoded Data</a></li>
-                                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
                                                     <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
-                                                    {% endif %}
                                                 </ul>
                                             </li>
                                         </ul>
                                     </li>
+                                    {% endif %}
                                     {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Verifier Data</span></a>
