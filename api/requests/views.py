@@ -134,6 +134,7 @@ class TransactionIncoming(generics.ListAPIView):
 				"4": {"case_study_status": 1, "verified_time_start__gte": seven_months_ago},  # SUBMITTED CASE STUDY
 				"5": {"transaction__dv_number__isnull": False, "verified_time_start__gte": seven_months_ago},  # WITH DV
 				"6": {"verified_time_start__gte": seven_months_ago},  # ALL TRANSACTIONS
+				"7": {"verified_time_start__date": today},
 			}
 			filter_params = dropdown_filters.get(dropdown)
 			if filter_params:
