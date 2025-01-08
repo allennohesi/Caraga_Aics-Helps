@@ -3,7 +3,7 @@ from django import template
 
 from app.requests.models import TransactionServiceAssistance, Mail, TransactionStatus1, Transaction
 from app.models import AuthUser, AuthUserGroups, AuthuserProfile
-from app.libraries.models import OfficeStation
+from app.libraries.models import OfficeStation, Purpose
 from num2words import num2words
 
 register = template.Library()
@@ -119,3 +119,7 @@ def get_signatories(province):
 @register.simple_tag
 def get_office_stations():
     return OfficeStation.objects.all()
+
+@register.simple_tag
+def get_Purpose():
+    return Purpose.objects.all()

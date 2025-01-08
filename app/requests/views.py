@@ -1070,7 +1070,6 @@ def confirmAmount(request):
 
 				# Get the transaction record
 				area_of_assignment = Transaction.objects.filter(id=transaction_id).first()
-				print(area_of_assignment.requested_in)
 				matching_office_stations = OfficeStation.objects.filter(region=area_of_assignment.requested_in)
 
 				# Initialize signatories_id
@@ -1081,15 +1080,6 @@ def confirmAmount(request):
 					# Assuming you want the first match
 					signatories = matching_office_stations.first().signatories_id
 					# Determine the signatory based on the total amount and area of assignment
-				# Determine the signatory based on the total amount and area of assignment
-				# signatories_map = {
-				# 	"AGUSAN DEL NORTE": 17,  # ANA T. SEMACIO
-				# 	"SURIGAO DEL SUR": 106,  # Arlene M. Ontua
-				# 	"AGUSAN DEL SUR": 128,    # Michael John ANDOHUYAN
-				# 	"DINAGAT ISLANDS": 1,   # Placeholder
-				# 	"SURIGAO DEL NORTE": 1, # THESA MUSA
-				# }
-				# signatories_id = None
 
 				if integer_value <= 50000:
 					signatories_id = signatories
