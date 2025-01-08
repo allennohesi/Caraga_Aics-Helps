@@ -16,14 +16,14 @@ today = date.today()
 class finance_voucher(models.Model):
     voucher_code = models.CharField(max_length=255, blank=True, null=True)
     voucher_title = models.CharField(max_length=255, blank=True, null=True)
-    date = models.DateField()
+    date = models.DateField() #SOA DATE
     remarks = models.CharField(max_length=255, blank=True, null=True)
     with_without_dv = models.CharField(max_length=255, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True) #UPDATED DATA
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True) #UPDATED BY DATA
     status = models.IntegerField()
     added_by = models.ForeignKey(AuthUser, models.DO_NOTHING, related_name='added_by') #ADDED BY IS ENCODED DATA
-    date_added = models.DateField(default=timezone.now)
-    date_updated = models.DateField()
+    date_added = models.DateField(default=timezone.now) #ENCODED DATE
+    date_updated = models.DateField() #DV CREATED
     soa_total_amount = models.CharField(max_length=255, blank=True, null=True)
     dv_data = models.ForeignKey('disbursementVoucher', models.DO_NOTHING, blank=True, null=True)
 

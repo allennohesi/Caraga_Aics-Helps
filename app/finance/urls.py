@@ -3,7 +3,7 @@ from django.urls import path
 from app.finance.views import financial_transaction, finance_assessment, voucher_modal, get_all_transaction, get_data_transaction, \
     remove_voucherData, print_voucher, print_service_provider,view_dv_number, finance_modal_provided, export_fund_summary, \
     update_amount, voucher_outside_fo, edit_outside_fo, remove_data_outside_fo, list_outside_fo, printStateofAccount, \
-    dibursement_voucher, disbursement_voucher_data, get_all_soa, printdvobs
+    dibursement_voucher, disbursement_voucher_data, get_all_soa, printdvobs, removeSoa
 
 urlpatterns = [
     path('transaction/', financial_transaction, name='financial_transaction'),
@@ -31,6 +31,7 @@ urlpatterns = [
     path('dibursement/voucher', dibursement_voucher, name='dibursement_voucher'),
     path('get_all_soa/', get_all_soa, name='get_all_soa'),
     path('disbursement/data/<int:pk>', disbursement_voucher_data,name='disbursement_voucher_data'),
-    path('printdvobs/<int:pk>', printdvobs, name='printdvobs')
+    path('printdvobs/<int:pk>', printdvobs, name='printdvobs'),
+    path('removesoa/', removeSoa, name='removeSoa'),
 
 ]
