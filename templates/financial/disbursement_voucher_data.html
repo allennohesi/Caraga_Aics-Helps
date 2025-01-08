@@ -219,6 +219,44 @@
             });
         }
     });
+    $(document).on('click', 'a[data-role=remove]', function(){
+        var id = $(this).data('id');
+        Swal.fire({
+          title: "Are you sure",
+          text: "You want to data from this voucher?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3498DB",
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.showLoading()
+                $.ajax({
+                    url: "{% url 'removeSoa' %}",
+                    data: {
+                        id: id
+                    },
+                    type: "POST"
+                })
+                .done(function(data){
+                    if (data.data == 'success'){
+                        Swal.fire({
+                          title: "Good job!",
+                          text: "Data removed in voucher",
+                          icon: "success",
+                          confirmButtonColor: "#3498DB",
+                          allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                              }
+                        });
+                    }
+                });
+            }
+        });
+    });
     $(document).ready(function(){
         $('.select').select2({
             width: '100%',

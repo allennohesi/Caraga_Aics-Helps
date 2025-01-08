@@ -178,6 +178,8 @@ def financial_transaction(request):
 	}
 	return render(request,'financial/finance.html', context)
 
+# FOR DISBURSEMENT VOUCHER
+
 @login_required
 @groups_only('Super Administrator')
 def dibursement_voucher(request):
@@ -299,6 +301,32 @@ def printdvobs(request, pk):
 	}
 	return render(request,'financial/printdvobs.html', context)
 
+@csrf_exempt
+def removeSoa(request):
+	if request.method == "POST":
+		try:
+			data = disbursementVoucherData.objects.filter(id=request.POST.get('id')).first()
+			print(data.soa_id)
+			disbursementVoucherData.objects.filter(id=request.POST.get('id')).delete()
+			finance_voucher.objects.filter(id=data.soa_id).update(
+				dv_data=None,
+				date_updated=None,
+				with_without_dv="WITHOUT-DV",
+			)
+			return JsonResponse({'data': 'success'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST remove_voucherData", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_voucherData", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_voucherData", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+
 @login_required
 @csrf_exempt
 def get_all_soa(request):
@@ -312,6 +340,8 @@ def get_all_soa(request):
 		return JsonResponse(json, safe=False)
 	else:
 		return JsonResponse(json, safe=False)
+
+# END HERE
 
 @login_required
 @groups_only('Super Administrator', 'Biller','Finance')

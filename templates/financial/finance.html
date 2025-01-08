@@ -142,7 +142,6 @@
                                         <th>DV name</th>
                                         <th>Status</th>
                                         <th>Created by</th>
-                                        <th>Updated by</th>
                                         <th>SOA Date</th>
                                         <th>Date Encoded</th>
                                         <th>DV Created</th>
@@ -352,12 +351,11 @@
             {'data': 'dv_name','name':'dv_data.dv_name', 'className': 'text-start', 'sortable': false },
             {'data': 'with_without_dv','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
-            {'data': 'user', 'sortable': false, 'searchable':false,'className': 'text-start' },
-            {'data': 'date', 'className': 'text-start', 'sortable': false },
-            {'data': 'date_added', 'className': 'text-start', 'sortable': false },
-            {'data': 'date_updated', 'className': 'text-start', 'sortable': false },
+            {'data': 'date', 'className': 'text-start', 'sortable': false }, // SOA DATE
+            {'data': 'date_added', 'className': 'text-start', 'sortable': false }, // ENCODED DATE
+            {'data': 'date_updated', 'className': 'text-start', 'sortable': false }, // DV CREATED
             {
-                'data': 'dv_incoming_date',
+                'data': 'dv_incoming_date', // DV INCOMING DATE
                 'name': 'dv_data.dv_name',
                 'className': 'text-start',
                 'sortable': false,
