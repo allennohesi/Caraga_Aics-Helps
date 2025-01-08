@@ -257,7 +257,7 @@
             var id = $(this).data('id');
             $('#empid').val(id)
             $('#voucher').modal('show').find('#load_data').load('/financial-transaction/voucher_modal/modal/' +id);
-           });
+        });
 
         $(document).on('click', 'a[data-role=view_data]', function(){
             var id = $(this).data('id');

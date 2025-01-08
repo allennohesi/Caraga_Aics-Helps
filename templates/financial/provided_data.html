@@ -71,7 +71,7 @@
         {% for row in transaction_history %}
         <tr>
             <th scope="row">{{ forloop.counter }}</th>
-            <td>{{row.updated_by.updated_by.fullname}}</td>
+            <td>{{row.updated_by.fullname}}</td>
             <td>{{row.date_updated}}</td>
             <td>{{row.total_amount|intcomma}}</td>
         </tr>
