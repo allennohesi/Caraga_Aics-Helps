@@ -420,17 +420,20 @@
                         </div>
                         <form action="{% url 'personalData' %}" target="_blank" method="GET">
                         <div class="modal-body">
+                            <div class="alert alert-danger" role="alert">
+                                To export complete details, select the weekly option. For a quick summary, choose monthly, quarterly, or semester. Please specify a start and end date range to minimize loading times due to large data. Thank you for your understanding.
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label for="start_date">Start Date:</label>
-                                    <input class="form-control" type="date" name="start_date" id="start_date">
+                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
                                     <label for="end_date">End Date:</label>
-                                    <input class="form-control" type="date" name="end_date" id="end_date">
+                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
                                     <br>
                                     <select class="form-select by_semester" aria-label="Default select example" name="by_sem" required>
                                         <option></option>
-                                        <option value="1">By Month/Semester</option>
-                                        <option value="2">Selected Date</option>
+                                        <option value="1">By Month/Quarterly/Semester</option>
+                                        <option value="2">By Days/Week Only</option>
                                     </select>
                                 </div>
                                 <br>
