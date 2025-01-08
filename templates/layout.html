@@ -307,6 +307,9 @@
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#my_data"><i data-feather="git-pull-request"></i><span>My Data</span></a>
                                     </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#purpose_summary"><i data-feather="git-pull-request"></i><span>By Purpose Summary</span></a>
+                                    </li>
                                     {% endif %}
                                     {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
@@ -429,6 +432,42 @@
                                         <option value="1">By Month/Semester</option>
                                         <option value="2">Selected Date</option>
                                     </select>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="purpose_summary" aria-labelledby="purpose_summary" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="my_data">By Purpose</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'purposeSummaryReport' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label>Purpose</label><span class="txt-danger">*</span>
+                                    <select class="form-control fund_source hidden" name="purpose" id="purpose" required>
+                                        <option></option>
+                                        {% get_Purpose as purpose %}
+                                        {% for purposeexport in purpose %}
+                                            <option value="{{ purposeexport.name }}">{{ purposeexport.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="end_date"></label>
+                                    <label for="start_date">Start Date:</label>
+                                    <input class="form-control" type="date" name="start_date" id="start_date">
+                                    <label for="end_date">End Date:</label>
+                                    <input class="form-control" type="date" name="end_date" id="end_date">
                                 </div>
                                 <br>
                             </div>

@@ -788,6 +788,71 @@ def personalData(request): #FOR GENERAL
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
+def purposeSummaryReport(request): #FOR GENERAL
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = AssessmentProblemPresented.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),problem_presented=request.GET.get('purpose')
+				).select_related(
+					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo',
+					'transaction__service_provider'
+				)
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['Tracking number',  'Date Accomplished',
+				'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
+				
+				'Purpose','Relationship', 'Type of Assistance', 'Amount', 
+				'Mode of Assistance','Source of referral',
+				'Date Interviewed','Transaction Status',
+				'Is_PFA', 'Is_SWC'
+				]) + '\n'
+			for item in data:
+				total_amount_str = str(item.transaction.total_amount)
+				if ',' in total_amount_str:
+					total_amount_str = total_amount_str.replace(',', '')
+
+				is_pfa_str = item.transaction.is_pfa
+				if is_pfa_str == 1:
+					is_pfa_str = "PROVIDED WITH PFA"
+				else:
+					is_pfa_str = "N/A"
+
+				is_swc_str = item.transaction.is_swc
+				if is_swc_str == 1:
+					is_swc_str = "PROVIDED WITH SWC"
+				else:
+					is_swc_str = "N/A"
+
+				yield ','.join([
+					str(item.transaction.tracking_number),
+					str(item.transaction.swo_date_time_end),
+					str(item.transaction.client.last_name),
+					str(item.transaction.client.first_name),
+					str(item.transaction.client.middle_name),
+					str(item.transaction.client.suffix.name if item.transaction.client.suffix else ""),
+					str(item.transaction.client.sex.name),
+					str(item.transaction.client.civil_status.name),
+					str(item.transaction.client.birthdate),
+					str(item.transaction.client.age),
+					str(item.transaction.purpose),
+					str(item.transaction.relation.name),
+					str(item.transaction.lib_assistance_category.name),
+					total_amount_str,
+					"GL" if item.transaction.is_gl == 1 else "Cash",
+					"Referral" if item.transaction.is_referral else "Walk-in",
+					str(item.transaction.swo_date_time_end),
+					str(item.transaction.exp_status),
+					is_pfa_str,
+					is_swc_str,
+				]) + '\n'
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="By_purpose.csv"'
+		return response
+
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
 def generatePWD(request): #FOR GENERAL
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
