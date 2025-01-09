@@ -868,7 +868,7 @@ def save_assessment(request, pk):
 				date_assessment = datetime.strptime(date_assessment_str, '%Y-%m-%dT%H:%M')
 				check_client_bene = request.POST.get('checking_if_same')
 				if check_client_bene == "same_with_client":
-					#CHECKING IF THE CLIENT AND BENEFICIARY ARE THE SAME
+					#CHECK IF THE CLIENT AND BENEFICIARY ARE THE SAME IF YES, GET THE CATEGORY AND SUB CATEGORY OF THE CLIENT ARE THE SAME ALSO IF NOT THEY WILL BE DIFFERENT
 					bene_category=request.POST.get('client_category')
 					bene_sub_category=request.POST.get('client_subcategory')
 				elif check_client_bene == "not_same_with_client":

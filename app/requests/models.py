@@ -202,7 +202,7 @@ class Transaction(models.Model):
     bene_sub_category = models.ForeignKey(SubCategory, models.DO_NOTHING, related_name='bene_subcategory')
     mode_of_admission = models.ForeignKey(ModeOfAdmission, models.DO_NOTHING, blank=True, null=True)
     fund_source = models.ForeignKey(FundSource, models.DO_NOTHING, blank=True, null=True)
-    purpose = models.ForeignKey(Purpose, models.DO_NOTHING, blank=True, null=True)
+    #purpose = models.ForeignKey(Purpose, models.DO_NOTHING, blank=True, null=True)
     lib_type_of_assistance = models.ForeignKey(LibAssistanceType, models.DO_NOTHING, blank=False, null=False)
     lib_assistance_category = models.ForeignKey(TypeOfAssistance, models.DO_NOTHING, blank=False, null=False)
     date_of_transaction = models.DateField(default=timezone.now) #default=today
