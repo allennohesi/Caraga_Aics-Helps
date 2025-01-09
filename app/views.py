@@ -357,6 +357,8 @@ def dashboard(request): #DASHBOARD AFTER LOGGED IN
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def transactionDashboard(request): #TRANSACTION OVERVIEW
+	search_query = request.GET.get('search', '')
+
 	transactions_per_swo = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6],verified_time_end__year=year)  # Filter transactions with status 3 or 6
@@ -390,16 +392,30 @@ def transactionDashboard(request): #TRANSACTION OVERVIEW
 		.order_by('-transaction_count')[:10]
 	)
 
-	case_study_per_swo = (
-		TransactionStatus1.objects
-		.filter(transaction__is_case_study=2, status__in=[3, 6],verified_time_end__year=year)  # Filter transactions with status 3 or 6
-		.values('transaction__swo_id','transaction__swo__first_name', 'transaction__swo__last_name')
-		.annotate(
-			transaction_count=Count('transaction__swo'),
-			case_study_submitted=Count('case_study_status', filter=Q(case_study_status__isnull=False)),
-		)
-		.order_by('-transaction_count')  # Order by transaction count in descending order
+	# Start with an initial query
+	case_study_per_swo = TransactionStatus1.objects.filter(
+		transaction__is_case_study=2,
+		status__in=[3, 6],
+		verified_time_end__year=year
 	)
+
+	# Apply search filter if search_query is not empty
+	if search_query:
+		case_study_per_swo = case_study_per_swo.filter(
+			Q(transaction__swo__first_name__icontains=search_query) |
+			Q(transaction__swo__last_name__icontains=search_query)
+		)
+
+	# Annotate and order the results
+	case_study_per_swo = case_study_per_swo.values(
+		'transaction__swo_id',
+		'transaction__swo__first_name',
+		'transaction__swo__last_name'
+	).annotate(
+		transaction_count=Count('transaction__swo'),
+		case_study_submitted=Count('case_study_status', filter=Q(case_study_status__isnull=False)),
+	).order_by('-transaction_count')
+
 	page = request.GET.get('page', 1)
 	rows = request.GET.get('rows', 6)
 
