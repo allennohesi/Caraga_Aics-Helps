@@ -178,6 +178,11 @@
       <div class="card-body">
         <div class="row">
             <div class="col-xs-12">
+              <form method="get" action="{% url 'transactionDashboard' %}">
+                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Type Last Name here..." required style="border: none;">
+                <button type="submit" class="btn btn-light">Search</button>
+                <a href="{% url 'transactionDashboard' %}" class="btn btn-light">Refresh</a>
+              </form>
               <div class="pull-right">
                   <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     Showing {{ data.start_index }} - {{ data.end_index }} of {{ data.paginator.count }} entries&emsp;
