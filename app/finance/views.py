@@ -121,9 +121,10 @@ def financial_transaction(request):
 						)
 					return JsonResponse({'data': 'success', 'msg': 'You successfully updated the transaction'})
 				else:
+					soa_code =f"SOA-{str(unique_id).upper()}"
 					if request.POST.get('with_without_dv') == "WITH-DV":
 						finance_voucher.objects.create(
-							voucher_code=str(unique_id).upper(),
+							voucher_code=soa_code,
 							voucher_title=voucher,
 							date=date,
 							remarks=remarks,
@@ -136,7 +137,7 @@ def financial_transaction(request):
 						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 					else:
 						finance_voucher.objects.create(
-							voucher_code=str(unique_id).upper(),
+							voucher_code=soa_code,
 							voucher_title=voucher,
 							date=date,
 							remarks=remarks,
@@ -181,9 +182,10 @@ def dibursement_voucher(request):
 		try:
 			with transaction.atomic():
 				unique_id = uuid.uuid4()
+				tracking = f"DV-A-{str(unique_id).upper()}"
 				disbursementVoucher.objects.create(
 					dv_name=request.POST.get('dv_name'),
-					dv_tracking_code=str(unique_id).upper(),
+					dv_tracking_code=tracking,
 					status=1,
 					remarks=request.POST.get('remarks'),
 					created_by_id=request.user.id,
@@ -300,7 +302,6 @@ def removeSoa(request):
 	if request.method == "POST":
 		try:
 			data = disbursementVoucherData.objects.filter(id=request.POST.get('id')).first()
-			print(data.soa_id)
 			disbursementVoucherData.objects.filter(id=request.POST.get('id')).delete()
 			finance_voucher.objects.filter(id=data.soa_id).update(
 				dv_data=None,
