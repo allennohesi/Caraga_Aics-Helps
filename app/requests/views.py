@@ -65,7 +65,18 @@ def handle_error(error, location, user): #ERROR HANDLING
 def transaction_request(request):
 	try:
 		with transaction.atomic():
-			unique_id = uuid.uuid4()
+			swo = AuthUser.objects.filter(id=request.POST.get('swo_id')).first()
+			if swo:
+				# Function to get initials from the fullname
+				def get_initials(full_name):
+					words = full_name.split()  # Split the fullname into words
+					initials = ''.join([word[0].upper() for word in words if word])  # Get the first letter of each word
+					return initials
+				
+				# Get initials from the fullname
+				initials = get_initials(swo.fullname) if swo.fullname else ''
+
+			unique_id = f"RSW-{initials}-{uuid.uuid4()}"
 			if request.POST.get('same_with_client'):
 				# Checkbox is checked, handle accordingly
 				bene_category=request.POST.get('clients_category') #IF SAME WITH CLIENT, THE CATEGORY IS SAME TO BENE
@@ -466,7 +477,20 @@ def trackingModal(request,pk):
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the beneficiary'})
 		elif request.POST.get("client_bene") == "swo":
+			swo = AuthUser.objects.filter(id=request.POST.get('swo_name')).first()
+			if swo:
+				# Function to get initials from the fullname
+				def get_initials(full_name):
+					words = full_name.split()  # Split the fullname into words
+					initials = ''.join([word[0].upper() for word in words if word])  # Get the first letter of each word
+					return initials
+				
+				# Get initials from the fullname
+				initials = get_initials(swo.fullname) if swo.fullname else ''
+				
+			unique_id = f"RSW-{initials}-{uuid.uuid4()}"
 			Transaction.objects.filter(id=data.id).update(
+				tracking_number=str(unique_id).upper(),
 				swo_id = request.POST.get("swo_name")
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully updated the social worker'})
@@ -1233,7 +1257,7 @@ def printCECASH(request, pk):
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
 def printGL(request, pk):
-	import segno
+	#import segno
 	transaction = Transaction.objects.filter(id=pk).first()
 	EndDate = transaction.date_entried.date() + timedelta(days=3)
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER
@@ -1243,8 +1267,8 @@ def printGL(request, pk):
 	rows = count + 1
 
 	data = "The Client is {}. and the Benefiary is {} and the Social Worker is {}. The service provider is {} ".format(transaction.client.get_client_fullname,transaction.bene.get_client_fullname,transaction.swo.get_fullname, transaction.service_provider.name)
-	qrcode = segno.make_qr(data)
-	qrcode.save('./static/staticfiles/qrcode/GL.png', scale=10)
+	#qrcode = segno.make_qr(data)
+	#qrcode.save('./static/staticfiles/qrcode/GL.png', scale=10)
 
 	context = {
 		'data': transaction,
@@ -1287,7 +1311,7 @@ def printGLHead(request, pk):
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
 def printGLMEDCal(request, pk):
-	import segno
+	#import segno
 	transaction = Transaction.objects.filter(id=pk).first()
 	EndDate = transaction.date_entried.date() + timedelta(days=3)
 	display_provider = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).first() #DISPLAY ONLY SERVICE PROVIDER

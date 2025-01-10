@@ -57,7 +57,7 @@
           </th>  
         </thead>      
       </table>
-      <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u></small>
+      <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":16" }}</u></small>
       <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 8px;">
         <tr>
           <td>Medicine</td>
@@ -198,7 +198,7 @@
             </th>  
           </thead>      
         </table>
-        <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":8" }}</u></small>
+        <small style="font-size:9px">Transaction code: &nbsp;<u>{{ data.tracking_number|stringformat:"s"|slice:":16" }}</u></small>
         <table class="letter-body table table-bordered" style="font-family: Helvetica, sans-serif;margin-top: 20px;border-color: black;background: #EEEEEE; font-size: 8px;">
           <tr>
             <td>Medicine</td>
