@@ -866,7 +866,7 @@
                 <br>
                 <br>
                 <u>{{data.created_by.fullname|upper}}</u>
-                AICS-BILLING
+                AICS-BILLING | Tracking: {{ data.dv_tracking_code|stringformat:"s"|slice:":13" }}
             </div>
         </div>
     </div>
