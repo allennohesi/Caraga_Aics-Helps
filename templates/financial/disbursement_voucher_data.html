@@ -19,7 +19,7 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>Disrbursement Voucher: {{data.dv_name}} <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#update">(Update)</a></u> 
+                        <label>Disrbursement Voucher: {{data.dv_name}} <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#update">(Update)</a>| <a href="{% url 'printdvobs' data.id %}">(Print)</a></u> 
                             <br>Payee: {{data.sp.name}}</u></label>
                     </div>
                 </div>
