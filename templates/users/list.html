@@ -298,7 +298,7 @@
                     'className': 'text-center'
                 },
                 {'data': 'username'},
-                {'data': 'fullname', 'name': 'first_name, middle_name, last_name'},
+                {'data': 'fullname', 'className': 'text-center', 'sortable': false},
                 {'data': 'email', 'className': 'text-center', 'sortable': false},
                 {
                     'data': 'role',
@@ -307,8 +307,8 @@
                         return data ? data : "No Role";
                     },
                     'className': 'text-center',
-                    'searchable': false,
-                    'sortable': false
+                    'searchable': false,   // Make role searchable
+                    'sortable': false       // Make role sortable
                 },
                 {'data': 'is_staff',
                     'render': function(data, type, row, meta) {
