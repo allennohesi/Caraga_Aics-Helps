@@ -246,7 +246,8 @@ def disbursement_voucher_data(request, pk):
 				added_by_id=request.user.id
 			)
 			finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
-				date_updated=data.date_entried
+				date_updated=data.date_entried,
+				dv_data=data.id
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
 	context = {
@@ -257,11 +258,12 @@ def disbursement_voucher_data(request, pk):
 def printdvobs(request, pk):
 	data = disbursementVoucher.objects.filter(id=pk).first()
 	dv_data = disbursementVoucherData.objects.filter(dv=data).first()
+	soa_data = finance_voucher.objects.filter(dv_data__id=pk).all()
 	if dv_data and dv_data.soa:
 		# Retrieve the related finance voucher
-		finance_voucher = dv_data.soa
+		finance_vc = dv_data.soa
 		# Get all related finance voucher data objects sorted by transaction date
-		finance_voucher_data_queryset = finance_voucherData.objects.filter(voucher=finance_voucher).order_by('transactionStatus__date_of_transaction').first()
+		finance_voucher_data_queryset = finance_voucherData.objects.filter(voucher=finance_vc).order_by('transactionStatus__date_of_transaction').first()
 		# Retrieve the first and last transaction's date_entried
 		first_transaction = finance_voucher_data_queryset
 		if first_transaction and first_transaction.transactionStatus:
@@ -275,11 +277,11 @@ def printdvobs(request, pk):
 
 	if dv_data and dv_data.soa:
 		# Retrieve the related finance voucher
-		finance_voucher = dv_data.soa
+		finance_vc = dv_data.soa
 
 		# Get the last related finance voucher data object sorted by transaction date
 		last_transaction = finance_voucherData.objects.filter(
-			voucher=finance_voucher
+			voucher=finance_vc
 		).order_by('-transactionStatus__date_of_transaction').first()
 
 		# Retrieve the last transaction's date_entried
@@ -294,6 +296,7 @@ def printdvobs(request, pk):
 		'data':data,
 		'covered_date_start': first_transaction_date_entried,
 		'covered_date_end': last_transaction_date_entried,
+		'soa_data': soa_data,
 	}
 	return render(request,'financial/printdvobs.html', context)
 

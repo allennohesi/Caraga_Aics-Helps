@@ -868,6 +868,21 @@
                 <u>{{data.created_by.fullname|upper}}</u>
                 AICS-BILLING | Tracking: {{ data.dv_tracking_code|stringformat:"s"|slice:":13" }}
             </div>
+            <br>
+            <div class="container-body3">
+              <table class="obligation">
+              <thead>Statement of Account Data</thead>
+              <tbody>
+                  <tr>
+                    {% for row in soa_data %}
+                    <td style="padding: 13px;">Tracking: <u>{{row.voucher_code}}</u></td>
+                    <td style="padding: 13px;">Title: <u>{{row.voucher_title}}</u></td>
+                    <td style="padding: 13px;">Amount: <u>{{row.soa_total_amount|floatformat:2|intcomma}}</u></td>
+                    {% endfor %}
+                  </tr>
+              </tbody>
+              </table>
+          </div>
         </div>
     </div>
     <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
