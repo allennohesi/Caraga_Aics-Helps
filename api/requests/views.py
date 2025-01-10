@@ -280,10 +280,14 @@ class ServiceProviderMonitoring(generics.ListAPIView):
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
-		if self.request.query_params.get('sp_id'):
-			sp_id = self.request.query_params.get('sp_id')
+		sp_id = self.request.query_params.get('sp_id')
+		if sp_id is not None and sp_id != 'None':  # Check if sp_id is valid and not 'None'
 			queryset = TransactionStatus1.objects.filter(
 				transaction_id__service_provider_id=sp_id,
 				status__in=[3, 6],
 			).order_by('-id')
-			return queryset
+		else:
+			# Handle the case when sp_id is None or invalid
+			queryset = TransactionStatus1.objects.none()  # or other default handling
+
+		return queryset
