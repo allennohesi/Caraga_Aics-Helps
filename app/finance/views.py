@@ -176,7 +176,7 @@ def financial_transaction(request):
 # FOR DISBURSEMENT VOUCHER
 
 @login_required
-@groups_only('Super Administrator')
+@groups_only('Super Administrator', 'Biller','Finance')
 def dibursement_voucher(request):
 	if request.method == "POST":
 		try:
