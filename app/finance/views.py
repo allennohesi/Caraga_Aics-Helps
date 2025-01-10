@@ -595,6 +595,20 @@ def get_all_transaction(request):
 
 	return JsonResponse(json_data, safe=False)
 
+@csrf_exempt
+def get_transaction_advance_search(request):
+	json_data = []
+	search_term = request.GET.get('searchTerm', '')
+	if search_term:
+		transactions = Transaction.objects.filter(
+			Q(tracking_number__icontains=search_term)
+		).order_by('id')[:6]
+
+		if transactions.exists():
+			json_data = list(transactions.values_list('id', 'tracking_number', named=True))
+			json_data = [{'id': row.id, 'text': row.tracking_number} for row in json_data]
+
+	return JsonResponse(json_data, safe=False)
 
 @login_required
 def get_data_transaction(request, pk):

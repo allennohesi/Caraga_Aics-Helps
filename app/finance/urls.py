@@ -3,13 +3,14 @@ from django.urls import path
 from app.finance.views import financial_transaction, finance_assessment, voucher_modal, get_all_transaction, get_data_transaction, \
     remove_voucherData, print_voucher, print_service_provider,view_dv_number, finance_modal_provided, export_fund_summary, \
     update_amount, voucher_outside_fo, edit_outside_fo, remove_data_outside_fo, list_outside_fo, printStateofAccount, \
-    dibursement_voucher, disbursement_voucher_data, get_all_soa, printdvobs, removeSoa
+    dibursement_voucher, disbursement_voucher_data, get_all_soa, printdvobs, removeSoa, get_transaction_advance_search
 
 urlpatterns = [
     path('transaction/', financial_transaction, name='financial_transaction'),
     path('assessment/view/<int:pk>', finance_assessment, name='finance_assessment'),
     path('voucher_modal/modal/<int:pk>', voucher_modal,name='voucher_modal'),
     path('get_transaction/', get_all_transaction, name='get_all_transaction'),
+    path('get_transaction_advance_search/', get_transaction_advance_search, name='get_transaction_advance_search'),
     path('get_data_transaction/<int:pk>', get_data_transaction, name='get_data_transaction'),
     path('remove_voucherData/',remove_voucherData, name='remove_voucherData'),
 
