@@ -133,6 +133,7 @@
                                         <th>Service Provider</th>
                                         <th>Date Entried</th>
                                         <th>Created By</th>
+                                        <th>Amount</th>
                                         <th>Remarks</th>
                                     </tr>
                                 </thead>
@@ -250,6 +251,25 @@
             {'data': 'sp','name':'sp.name', 'className': 'text-start', 'sortable': false },
             {'data': 'date_entried','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
+            {
+                'data': 'amount',
+                'className': 'text-start',
+                'sortable': false,
+                'render': function (data, type, row, meta) {
+                    if (data) {
+                        // Remove decimal places if the number is a whole number
+                        var formattedAmount = parseFloat(data).toFixed(2); // Ensure two decimal places
+                        if (formattedAmount.indexOf('.00') !== -1) {
+                            // Remove the decimal places if the amount is a whole number
+                            formattedAmount = formattedAmount.replace('.00', '');
+                        }
+                        // Format with commas
+                        return formattedAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    } else {
+                        return data;
+                    }
+                }
+            },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
             ]
         });
