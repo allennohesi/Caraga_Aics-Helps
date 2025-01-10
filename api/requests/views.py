@@ -84,11 +84,22 @@ class TransactionAdvanceSearch(generics.ListAPIView):
 	permission_classes = [IsAuthenticated]
 	pagination_class = LargeResultsSetPagination
 	def get_queryset(self):
-		queryset = TransactionStatus1.objects.none() 
+		queryset = TransactionStatus1.objects.none()
 		name = self.request.query_params.get('name')
-		queryset = TransactionStatus1.objects.filter(
-			Q(transaction_id__client_id=name) | Q(transaction_id__bene_id=name)
-		).order_by('-id')
+		socialworker = self.request.query_params.get('socialworker')
+		transaction_id = self.request.query_params.get('tracking_number')
+		if transaction_id:
+			queryset = TransactionStatus1.objects.filter(
+				transaction_id__id=transaction_id
+			).order_by('-id')
+		if name:
+			queryset = TransactionStatus1.objects.filter(
+				Q(transaction_id__client_id=name) | Q(transaction_id__bene_id=name)
+			).order_by('-id')
+		elif socialworker:
+			queryset = TransactionStatus1.objects.filter(
+				transaction_id__swo_id=socialworker
+			).order_by('-id')
 		return queryset
 
 class TransactionIncoming(generics.ListAPIView):
