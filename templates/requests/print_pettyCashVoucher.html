@@ -43,7 +43,7 @@
             <table style="width:750px;">
                 <tr style="font-size:11;">
                     <th width="50%"><center>PETTY CASH VOUCHER </center> <br><br>Entity Name: DSWD-FO Caraga <br> Fund Cluster: {{data.fund_source.name|upper}}</th>
-                    <th width="50%">No <br><br>Date:{{today}}</th>
+                    <th width="50%">Tracking No: {{ data.tracking_number|stringformat:"s"|slice:":16" }} <br><br>Date:{{today}}</th>
                 </tr>
                 <tr style="font-size:11;">
                     <th width="50%">Name of Payee: <u>{{data.client.get_client_fullname}}</u> <br> <br> <u>{{data.client.house_no|upper}} {{data.client.street|upper}} {{data.client.barangay.brgy_name|upper}} {{data.client.barangay.city_code.city_name|upper}} {{data.client.barangay.city_code.prov_code.prov_name|upper}} {{data.client.barangay.city_code.prov_code.region_code.region_name|upper}} </u></th>
