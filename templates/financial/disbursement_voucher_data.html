@@ -83,7 +83,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+
+                            <button type="submit" class="btn btn-primary" {% if not restriction %}disabled{% endif %}>Save changes</button>
                         </div>
                     </form>
                 </div>
