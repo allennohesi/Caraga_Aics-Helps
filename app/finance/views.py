@@ -90,62 +90,68 @@ def financial_transaction(request):
 				remarks=request.POST.get('remarks')
 				
 				unique_id = uuid.uuid4()
-				if request.POST.get('dv_id'):
-					if request.POST.get('with_without_dv') == "WITHOUT-DV":
-						finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							user_id=request.user.id,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-						)
+				check_if_exists = finance_voucher.objects.filter(
+					Q(voucher_title__icontains=request.POST.get('voucher_title'))
+				).first()
+				if not check_if_exists:
+					if request.POST.get('dv_id'):
+						if request.POST.get('with_without_dv') == "WITHOUT-DV":
+							finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+							)
 
+						else:
+							finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								date_updated=today
+							)
+							
+						data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
+						voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
+						for row in voucher_data:
+							Transaction.objects.filter(id=row.transactionStatus_id).update(
+								dv_number=voucher,
+								dv_date=date
+							)
+						return JsonResponse({'data': 'success', 'msg': 'You successfully updated the transaction'})
 					else:
-						finance_voucher.objects.filter(id=request.POST.get('dv_id')).update(
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							user_id=request.user.id,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-							date_updated=today
-						)
-						
-					data = finance_voucher.objects.get(id=request.POST.get('dv_id'))
-					voucher_data = finance_voucherData.objects.filter(voucher_id=data.id).all()
-					for row in voucher_data:
-						Transaction.objects.filter(id=row.transactionStatus_id).update(
-							dv_number=voucher,
-							dv_date=date
-						)
-					return JsonResponse({'data': 'success', 'msg': 'You successfully updated the transaction'})
+						soa_code =f"SOA-{str(unique_id).upper()}"
+						if request.POST.get('with_without_dv') == "WITH-DV":
+							finance_voucher.objects.create(
+								voucher_code=soa_code,
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								user_id=request.user.id,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								added_by_id=request.user.id,
+								date_updated=today,
+							)
+							return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
+						else:
+							finance_voucher.objects.create(
+								voucher_code=soa_code,
+								voucher_title=voucher,
+								date=date,
+								remarks=remarks,
+								with_without_dv=request.POST.get('with_without_dv'),
+								status=1,
+								added_by_id=request.user.id
+							)
+							return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
 				else:
-					soa_code =f"SOA-{str(unique_id).upper()}"
-					if request.POST.get('with_without_dv') == "WITH-DV":
-						finance_voucher.objects.create(
-							voucher_code=soa_code,
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							user_id=request.user.id,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-							added_by_id=request.user.id,
-							date_updated=today,
-						)
-						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
-					else:
-						finance_voucher.objects.create(
-							voucher_code=soa_code,
-							voucher_title=voucher,
-							date=date,
-							remarks=remarks,
-							with_without_dv=request.POST.get('with_without_dv'),
-							status=1,
-							added_by_id=request.user.id
-						)
-						return JsonResponse({'data': 'success', 'msg': 'You successfully saved a data.'})
+					return JsonResponse({'error': True, 'msg': 'This Title/DV-name already exists, please double check.'})
 
 		except ConnectionError as ce:
 			# Handle loss of connection (e.g., log the error)
