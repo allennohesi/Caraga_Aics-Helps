@@ -209,11 +209,11 @@ def dibursement_voucher(request):
 		except Exception as e:
 			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
-
+		
 	context = {
 		'title':'Disbursement Voucher',
 		'service_provider': ServiceProvider.objects.all(),
-		'fund_source': FundSource.objects.all()
+		'fund_source': FundSource.objects.all(),
 	}
 	return render(request,'financial/disbursement_voucher.html', context)
 
@@ -250,8 +250,10 @@ def disbursement_voucher_data(request, pk):
 				dv_data=data.id
 			)
 			return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
+	restriction = request.user.groups.filter(name__in=['Finance', 'Super Administrator']).exists()
 	context = {
 		'data': data,
+		'restriction': restriction,
 	}
 	return render(request,'financial/disbursement_voucher_data.html', context)
 
