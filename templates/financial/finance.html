@@ -113,7 +113,7 @@
                                             <label>Status</label>
                                             <select class="form-select select" name="with_without_dv" aria-label="Default select example" required>
                                                 <option></option>
-                                                <option value="WITH-DV">WITH-DV</option>
+                                                {% comment %} <option value="WITH-DV">WITH-DV</option> {% endcomment %}
                                                 <option value="WITHOUT-DV">WITHOUT-DV</option>
                                               </select>
                                         </div>
@@ -133,24 +133,26 @@
                                 </div>
                             </form>
                             <hr>
-                            <table class="table table-responsive table-sm table-bordered" id="voucher-title">
-                                <thead>
-                                    <tr>
-                                        <th>Action</th>
-                                        <th>AICS-DV tracking</th>
-                                        <th>Finance DV-number</th>
-                                        <th>DV name</th>
-                                        <th>Status</th>
-                                        <th>Created by</th>
-                                        <th>SOA Date</th>
-                                        <th>Date Encoded</th>
-                                        <th>DV Created</th>
-                                        <th>DV Incoming Date</th>
-                                        <th>Total Amount </th>
-                                        <th>Remarks</th>
-                                    </tr>
-                                </thead>
-                            </table>
+                            <div class="table-responsive text-nowrap table-scroll">
+                                <table class="table table-responsive table-sm table-bordered" id="voucher-title">
+                                    <thead>
+                                        <tr>
+                                            <th>Action</th>
+                                            <th>AICS-DV tracking</th>
+                                            <th>Finance DV-number</th>
+                                            <th>DV name</th>
+                                            <th>Status</th>
+                                            <th>Created by</th>
+                                            <th>SOA Date</th>
+                                            <th>Date Encoded</th>
+                                            <th>DV Created</th>
+                                            <th>DV Incoming Date</th>
+                                            <th>Total Amount </th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                         <div class="tab-pane fade m-t-30" id="transaction_all" role="tabpanel">
                             <form id="searchingData">
