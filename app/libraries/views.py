@@ -286,7 +286,7 @@ def get_all_user(request):
     
     if search_term:
         users = AuthUser.objects.filter(
-            (Q(first_name__icontains=search_term) | Q(last_name__icontains=search_term)) & Q(is_active=1)
+            (Q(fullname__icontains=search_term)) & Q(is_active=1)
         ).order_by('last_name')[:6]
 
         json_data = [{'id': user.id, 'text': user.get_fullname} for user in users]

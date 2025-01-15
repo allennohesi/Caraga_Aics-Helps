@@ -329,7 +329,7 @@
                                     {% endif %}
                                     {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Verifier Data</span></a>
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Encoder Data</span></a>
                                         <ul class="sidebar-submenu">
                                             <li><a href="javascript:void(0);" class="submenu-title">CSV <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
@@ -342,6 +342,7 @@
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
                                                     <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     {% endif %} {% endcomment %}
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#encoder_data">Encoded</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
@@ -355,6 +356,39 @@
                             </div>
                             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
                         </nav>
+                    </div>
+                </div>
+                <div class="modal fade" id="encoder_data" aria-labelledby="fundsource" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="fundsource">GENERATE ENCODER DATA</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'myEncodedData' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="start_date">Start Date:</label>
+                                    <input class="form-control" type="date" name="start_date" id="start_date" required>
+                                    <label for="end_date">End Date:</label>
+                                    <input class="form-control" type="date" name="end_date" id="end_date" required>
+                                </div>
+                                <br>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                       <label>Search name</label> <span class="txt-danger">*</span>
+                                       <select class="form-control select get_user_for_export" id="encoder_name" name="encoder_name" required></select>
+                                    </div>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
                     </div>
                 </div>
                 <div class="modal fade" id="generate_transactions" aria-labelledby="fundsource" aria-hidden="true">
@@ -747,6 +781,30 @@
 
                 return true;
             }
+        </script>
+        <script>
+            $('.get_user_for_export').select2({
+                width: '100%',
+                placeholder: 'CHOOSE',
+                containerCssClass: 'select',
+                allowClear: true,
+                ajax: {
+                    url: "{% url 'get_all_user' %}",
+                    method: "GET",
+                    dataType: "json",  // Corrected the property name to "dataType"
+                    data: function(params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
+                }
+              });
         </script>
         {% block script %}{% endblock %}
     </body>
