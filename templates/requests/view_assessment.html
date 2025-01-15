@@ -752,16 +752,18 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Service Provider <span class="txt-danger">*</span></label>
-                            <select class="form-control select" name="service_provider" id="service_pr" required>
+                            <select class="form-control select get_sp" name="service_provider" id="service_pr" required>
+                            </select>
+                            {% comment %} <select class="form-control select get_service_provider" name="service_provider" id="service_pr" required>
                                 <option></option>
-                                {% for row in service_provider  %}
+                                 {% for row in service_provider  %}
                                 {% if row.id == transaction.service_provider_id %}
                                 <option value="{{ row.id }}" selected>{{ row.name|upper }} {% if row.address %} - {{ row.address|upper }}{% endif %}</option>
                                 {% else %}
                                 <option value="{{ row.id }}">{{ row.name|upper }} {% if row.address %} - {{ row.address|upper }}{% endif %}</option>
                                 {% endif %}
                                 {% endfor %}
-                            </select>
+                            </select> {% endcomment %}
                         </div>
                     </div>
                 </div>
@@ -1329,6 +1331,38 @@
                 cache: true
             }
         });
+        let preSelectedValue = {{ transaction.service_provider_id|default:'null' }}; // Safely output ID
+        let preSelectedText = "{{ transaction.service_provider.name|default:'' }}";  // This should be the text of the pre-selected option
+    
+        // Initialize Select2 with AJAX
+        $('.get_sp').select2({
+            width: '100%',
+            placeholder: 'Choose',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: "{% url 'get_all_service_provider' %}",
+                method: "GET",
+                datatype: "json",
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    
+        // Manually add the pre-selected option if it's not in the AJAX-loaded options
+        if (preSelectedValue) {
+            let newOption = new Option(preSelectedText, preSelectedValue, true, true);
+            $('#service_pr').append(newOption).trigger('change');
+        }
         $('#submitAssessmentForm').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
