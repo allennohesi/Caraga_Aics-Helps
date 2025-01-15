@@ -297,6 +297,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'clientupdatehistory' %}"><i data-feather="server"></i><span>Client Update history</span></a>
                                     </li>
                                     {% endif %}
+                                    {% if request.path == '/dashboard/' %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>Generate report</h6>
@@ -351,6 +352,7 @@
                                             </li>
                                         </ul>
                                     </li>
+                                    {% endif %}
                                     {% endif %}
                                 </ul>
                             </div>
