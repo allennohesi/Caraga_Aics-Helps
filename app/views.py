@@ -82,20 +82,30 @@ def queuing(request):
 	}
 	return render(request, 'queuing.html', context)
 
-def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
-	transaction_counts = (
+def get_transaction_summary(request): #THIS IS FOR THE DASHBOARD
+	office_station = request.GET.get('office_station', None)
+	year = request.GET.get('year', '2025')
+	try:
+		year = int(year)  # Attempt to convert the year to an integer
+	except ValueError:
+		year = 2025  
+ 
+	transaction_counts_by_mounth = (
 		TransactionStatus1.objects
 		.filter(status__in=[3, 6], verified_time_start__year=year)
 		.values('verified_time_start__month')
 		.annotate(count=Count('id'))
 		.order_by('verified_time_start__month')
 	)
+ 
+	if office_station:
+		transaction_counts_by_mounth = transaction_counts_by_mounth.filter(transaction__office_station_in__name=office_station)
 
 	# Initialize a dictionary to hold the counts for each month
 	monthly_transactions = {month: {'name': month_name[month], 'count': 0} for month in range(1, 13)}
 
 	# Update the dictionary with the actual counts from the query
-	for transaction in transaction_counts:
+	for transaction in transaction_counts_by_mounth:
 		month = transaction['verified_time_start__month']
 		monthly_transactions[month]['count'] = transaction['count']
 
@@ -119,18 +129,20 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 	]
 
 	# Get the count of transactions for each client category in a single query
-	transaction_counts = (
+	transaction_counts_category = (
 		TransactionStatus1.objects
 		.filter(Q(status=3) | Q(status=6),verified_time_start__year=year)
 		.values('transaction_id__client_category_id__acronym')
 		.annotate(count=Count('id'))
 	)
+	if office_station:
+		transaction_counts_category = transaction_counts_category.filter(transaction__office_station_in__name=office_station)
 
 	# Initialize a dictionary to hold the counts for each client category
 	summary_data_dict = {category: {'category': category, 'count': 0} for category in client_categories}
 
 	# Update the dictionary with the actual counts from the query
-	for transaction in transaction_counts:
+	for transaction in transaction_counts_category:
 		category = transaction['transaction_id__client_category_id__acronym']
 		if category in summary_data_dict:
 			summary_data_dict[category]['count'] = transaction['count']
@@ -155,11 +167,13 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 		"CNSP-Sexually-Exploited",
 		"CNSP-Physically-abused/maltreated/battered",
 		"CNSP-Children in Situations of Armed Conflict",
+		"Mute and Deaf",
+		"Dialysis"
 		# Add more categories here
 	]
 
 	# Create a queryset that annotates the count of transactions for each sub-category
-	transaction_counts = TransactionStatus1.objects.filter(
+	transaction_counts_sub_category = TransactionStatus1.objects.filter(
 		Q(status=3) | Q(status=6), verified_time_start__year=year
 	).values('transaction_id__client_sub_category_id__acronym').annotate(
 		count=Count('id')
@@ -167,32 +181,46 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 		transaction_id__client_sub_category_id__acronym__in=client_sub_category
 	)
 
+	if office_station:
+		transaction_counts_sub_category = transaction_counts_sub_category.filter(
+			transaction_id__office_station_in__name=office_station
+		)
 	# Convert the queryset to a dictionary for easier processing
-	transaction_counts_dict = {
+	transaction_counts_sub_category_dict = {
 		item['transaction_id__client_sub_category_id__acronym']: item['count']
-		for item in transaction_counts
+		for item in transaction_counts_sub_category
 	}
 
 	# Generate the sub_category list
 	sub_category = [
-		{'category': category, 'count': transaction_counts_dict.get(category, 0)}
+		{'category': category, 'count': transaction_counts_sub_category_dict.get(category, 0)}
 		for category in client_sub_category
 	]
 
 	# Count male and female transactions in a single query
-	transaction_counts = TransactionStatus1.objects.filter(
+	transaction_counts_male_female_clients = TransactionStatus1.objects.filter(
 		status__in=[3, 6], verified_time_start__year=year
-	).aggregate(
-	count_male=Count('transaction__client__id', filter=Q(transaction__client__sex__name="MALE"), distinct=True),
-	count_female=Count('transaction__client__id', filter=Q(transaction__client__sex__name="FEMALE"), distinct=True),
-	total_clients=Count('transaction__client__id', distinct=True),  # DISTINCT CLIENT COUNT AS ONE
-	total_bene=Count('transaction__bene__id', distinct=True),
 	)
 
-	count_male = transaction_counts['count_male']
-	count_female = transaction_counts['count_female']
-	count_client = transaction_counts['total_clients']
-	count_bene = transaction_counts['total_bene']
+	# Apply office_station filter if provided
+	if office_station:
+		transaction_counts_male_female_clients = transaction_counts_male_female_clients.filter(
+			transaction__office_station_in__name=office_station
+		)
+
+	# Perform the aggregation
+	transaction_counts_male_female_clients = transaction_counts_male_female_clients.aggregate(
+		count_male=Count('transaction__client__id', filter=Q(transaction__client__sex__name="MALE"), distinct=True),
+		count_female=Count('transaction__client__id', filter=Q(transaction__client__sex__name="FEMALE"), distinct=True),
+		total_clients=Count('transaction__client__id', distinct=True),  # DISTINCT CLIENT COUNT AS ONE
+		total_bene=Count('transaction__bene__id', distinct=True),
+	)
+
+	# Extract the aggregated values
+	count_male = transaction_counts_male_female_clients['count_male']
+	count_female = transaction_counts_male_female_clients['count_female']
+	count_client = transaction_counts_male_female_clients['total_clients']
+	count_bene = transaction_counts_male_female_clients['total_bene']
 
 
 	# Define the list of disabilities
@@ -214,7 +242,14 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 	# Create a queryset that annotates the count of transactions for each disability
 	disability_counts = TransactionStatus1.objects.filter(
 		Q(status=3) | Q(status=6), verified_time_start__year=year
-	).values('transaction_id__client_sub_category_id__name').annotate(
+	)
+
+	# Apply office_station filter if provided
+	if office_station:
+		disability_counts = disability_counts.filter(transaction_id__office_station_in__name=office_station)
+
+	# Now apply the client subcategory and disability filter
+	disability_counts = disability_counts.values('transaction_id__client_sub_category_id__name').annotate(
 		count=Count('id')
 	).filter(
 		transaction_id__client_sub_category_id__name__in=disability
@@ -240,26 +275,52 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 	# Format the total amount
 	formatted_total_amount = "{:,.2f}".format(summary['total_amount'] if summary['total_amount'] else 0)
 
-	billed_transactions = finance_voucher.objects.aggregate(
-		with_dv=Count(Case(When(with_without_dv="WITH-DV", then=1), output_field=IntegerField())),
-		without_dv=Count(Case(When(with_without_dv="WITHOUT-DV", then=1), output_field=IntegerField()))
-	)
+	# billed_transactions = finance_voucher.objects.aggregate(
+	# 	with_dv=Count(Case(When(with_without_dv="WITH-DV", then=1), output_field=IntegerField())),
+	# 	without_dv=Count(Case(When(with_without_dv="WITHOUT-DV", then=1), output_field=IntegerField()))
+	# )
 
 	# Get the total amount for transactions in the specified year
-	billed_total_amount = TransactionStatus1.objects.filter(verified_time_start__year=year, transaction__dv_number__isnull=False,status__in=[3, 6]).aggregate(
+# Start with the basic query filtering by year, status, and dv_number is not null
+	billed_total_amount = TransactionStatus1.objects.filter(
+		verified_time_start__year=year,
+		transaction__dv_number__isnull=False,
+		status__in=[3, 6]
+	)
+
+	# Apply office_station filter if provided
+	if office_station:
+		billed_total_amount = billed_total_amount.filter(transaction__office_station_in__name=office_station)
+
+	# Aggregate the total amount
+	billed_total_amount = billed_total_amount.aggregate(
 		total_amount=Sum('transaction__total_amount')
 	)
 
 	# Format the total amount
 	billed_total = "{:,.2f}".format(billed_total_amount['total_amount'] if billed_total_amount['total_amount'] else 0)
 
+
 	# Get the total amount for transactions in the specified year
-	unbilled_total_amount = TransactionStatus1.objects.filter(verified_time_start__year=year, transaction__dv_number__isnull=True, status__in=[3, 6]).aggregate(
+	# Start with the basic query filtering by year, status, and dv_number is null
+	unbilled_total_amount = TransactionStatus1.objects.filter(
+		verified_time_start__year=year,
+		transaction__dv_number__isnull=True,
+		status__in=[3, 6]
+	)
+
+	# Apply office_station filter if provided
+	if office_station:
+		unbilled_total_amount = unbilled_total_amount.filter(transaction__office_station_in__name=office_station)
+
+	# Aggregate the total amount
+	unbilled_total_amount = unbilled_total_amount.aggregate(
 		total_amount=Sum('transaction__total_amount')
 	)
 
 	# Format the total amount
 	unbilled_total = "{:,.2f}".format(unbilled_total_amount['total_amount'] if unbilled_total_amount['total_amount'] else 0)
+
 
 	return {
 		'monthly_transactions': monthly_transactions,
@@ -271,7 +332,6 @@ def get_transaction_summary(): #THIS IS FOR THE DASHBOARD
 		'count_bene': count_bene,
 		'disability_storage': disability_storage,
 		'formatted_total_amount': formatted_total_amount,
-		'billed_transactions': billed_transactions,
 		'billed_total':billed_total,
 		'unbilled_total':unbilled_total,
 	}
@@ -321,7 +381,7 @@ def media_access(request, path):
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def dashboard(request): #DASHBOARD AFTER LOGGED IN
+def dashboard(request): #DASHBOARD AFTER LOGGED IN #HOME FUNCTION NAME
 
 	no_role = False
 	user = request.user
@@ -331,7 +391,7 @@ def dashboard(request): #DASHBOARD AFTER LOGGED IN
 		no_role = True
 
 	# Call the get_transaction_summary function to get the summary data
-	transaction_summary = get_transaction_summary()
+	transaction_summary = get_transaction_summary(request)
 
 	# Build the context using the data returned from the function
 	context = {
@@ -346,8 +406,6 @@ def dashboard(request): #DASHBOARD AFTER LOGGED IN
 		'count_bene': transaction_summary['count_bene'],
 		'formatted_total_amount': transaction_summary['formatted_total_amount'],
 		'no_role': no_role,
-		'with_dv': transaction_summary['billed_transactions']['with_dv'],
-		'without_dv': transaction_summary['billed_transactions']['without_dv'],
 		'billed_total': transaction_summary['billed_total'],
 		'unbilled_total': transaction_summary['unbilled_total'],
 	}
@@ -1073,4 +1131,40 @@ def ExportBilledUnbilled(request):  # FOR GENERAL
 
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="billed_unbilled.csv"'
+		return response
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
+def myEncodedData(request): #FOR GENERAL
+	if request.method == "GET":
+		start_date_str = request.GET.get("start_date")
+		end_date_str = request.GET.get("end_date")
+		data = ClientBeneficiary.objects.filter(registered_by_id=request.GET.get('encoder_name'),
+					date_of_registration__range=(start_date_str, end_date_str)
+				)
+
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['UUID',
+				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
+				   'Date of Registration', 'Registered By'
+				   ]) + '\n'
+			for item in data:
+				yield ','.join([
+					str(item.unique_id_number),
+					str(item.last_name),
+					str(item.first_name),
+					str(item.middle_name),
+					str(item.suffix.name if item.suffix else ""),
+					str(item.sex.name),
+					str(item.civil_status.name),
+					str(item.birthdate),
+					str(item.age),
+					str(item.date_of_registration),
+					str(item.registered_by.fullname)
+
+				]) + '\n'
+
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="general_data.csv"'
 		return response
