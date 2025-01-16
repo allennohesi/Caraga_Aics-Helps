@@ -315,7 +315,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#purpose_summary"><span>By Purpose Summary</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Biller" %}
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Finance billing</span></a>
                                         <ul class="sidebar-submenu">
