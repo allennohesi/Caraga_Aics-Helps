@@ -156,6 +156,26 @@
                                             <p>On-site transaction</p>
                                         </div>
                                     </li>
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="users"></i><span>Client / Beneficiary</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a href="{% url 'client_beneficiary' %}" id="list-link">List</a></li>
+                                            <li><a href="{% url 'client_bene_registration' %}" id="registration-link">Registration</a></li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Signatories" %}
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'advanceSearch' %}"><i data-feather="search"></i><span>Advance search</span></a>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'new_requests' %}"><i data-feather="file-text"></i><span>New Requests</span></a>
+                                    </li>
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'view_online_swo' %}"><i data-feather="globe"></i><span>Social Worker Summary</span></a>
+                                    </li>
+                                    {% endif %}
                                     {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-primary">Click me !</label>
@@ -168,24 +188,7 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Signatories" %}
-                                    <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'new_requests' %}"><i data-feather="file-text"></i><span>New Requests</span></a>
-                                    </li>
-                                    <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'view_online_swo' %}"><i data-feather="globe"></i><span>Social Worker Summary</span></a>
-                                    </li>
-                                    {% endif %}
-                                    {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
-                                    <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="users"></i><span>Client / Beneficiary</span></a>
-                                        <ul class="sidebar-submenu">
-                                            <li><a href="{% url 'client_beneficiary' %}" id="list-link">List</a></li>
-                                            <li><a href="{% url 'client_bene_registration' %}" id="registration-link">Registration</a></li>
-                                            <li><a href="{% url 'advanceSearch' %}" id="registration-link">Advance Search</a></li>
-                                        </ul>
-                                    </li>
-                                    {% endif %}
+
                                     {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Cash" %}
                                     <li class="sidebar-main-title">
                                         <div>
