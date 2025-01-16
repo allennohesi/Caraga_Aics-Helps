@@ -176,19 +176,18 @@
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'view_online_swo' %}"><i data-feather="globe"></i><span>Social Worker Summary</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
-                                    <li class="sidebar-list">
-                                        <label class="badge badge-primary">Click me !</label>
-                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
-                                    </li>
-                                    {% endif %}
                                     {% if user|check_group_permission:"Verifier" or user|check_group_permission:"Surveyor" or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Finance" or user|check_group_permission:"Biller" or user|check_group_permission:"Signatories" %}
                                     <li class="sidebar-list">
                                         <label class="badge badge-info">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'incoming' %}"><i data-feather="download"></i><span>Incoming</span></a>
                                     </li>
                                     {% endif %}
-
+                                    {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator" %}
+                                    <li class="sidebar-list">
+                                        <label class="badge badge-primary">Click me !</label>
+                                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'assessment' %}"><i data-feather="edit"></i><span>Assessment</span></a>
+                                    </li>
+                                    {% endif %}
                                     {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Cash" %}
                                     <li class="sidebar-main-title">
                                         <div>
