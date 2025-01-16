@@ -32,7 +32,7 @@
                         <div class="row mb-3">
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <label>Type Tracking Number <span class="txt-danger">*</span></label>
+                                    <label>Enter Tracking Number <span class="txt-danger">*</span></label>
                                     <select class="form-control select transaction" id="tracking_number" name="tracking_number" required></select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -53,7 +53,7 @@
                         <div class="row mb-3">
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <label>Type Social Worker <span class="txt-danger">*</span></label>
+                                    <label>Enter Social Worker <span class="txt-danger">*</span></label>
                                     <select class="form-control select get_user" id="socialworker" name="socialworker" required></select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -74,7 +74,7 @@
                         <div class="row mb-3">
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <label>Client name or Beneficiary name <span class="txt-danger">*</span></label>
+                                    <label>Enter Client / Beneficiary <span class="txt-danger">*</span></label>
                                     <select class="form-control select client_beneficiary" id="name" name="name" required></select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -99,20 +99,24 @@
                     <div class="tab-content" id="pills-icontabContent">
                         <div class="tab-pane fade show active m-t-30" id="ongoing" role="tabpanel">
                             <div class="table-responsive text-nowrap table-scroll">
-                                <table class="table table-responsive" width="100%" id="all-transaction">
+                                <table class="table table-responsive" width="100%" id="incoming-table">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">#</th>
-                                            <th class="text-center">Status</th>
-                                            <th>Tracking Number</th>
+                                            <th class="text-center">Action</th>
+                                            <th class="text-center">Transaction Status</th>
+                                            <th>Tracking Code</th>
                                             <th>Client Name</th>
                                             <th>Beneficiary Name</th>
+                                            <th class="text-center">Date of Transaction</th>
+                                            <th>SOCIAL WORKER LAST NAME</th>
+                                            {% comment %} <th class="display-none">Case Study</th> {% endcomment %}
+                                            <th>Case study</th>
+                                            <th>Case study status</th>
+                                            <th class="text-center">Assistance type</th>
                                             <th>Service provider</th>
-                                            <th>Assistance Type</th>
-                                            <th>Date of Transaction</th>
-                                            <th class="text-center">Assigned to SWO</th>
+                                            <th>Mode of release</th>
+                                            <th>Amount</th>
                                             <th class="text-center">DV - Title</th>
-                                            <th class="text-center">Total amount</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -124,7 +128,22 @@
         </div>
     </div>
 </div>
-<div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-xl" id="Tracking_modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+    <div class="modal-dialog modal-xl">
+        <form id="startTransaction">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title" id="staticBackdropLabel">Tracking of Transaction</h6>
+                <button type="button" class="btn-close" id="close_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="load_data">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modalProvided" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
         <div class="modal-header">
@@ -209,7 +228,7 @@
     });
     $(document).ready(function () {
         function check(param, paramName) {
-            $('#all-transaction').DataTable({
+            $('#incoming-table').DataTable({
                 'serverSide': true,
                 'processing': true,
                 'deferRender': true,
@@ -228,12 +247,14 @@
                     $(row).attr('id', data['id']);
                 },
                 'columns': [
-                {'data': 'id',
+                {'data': 'transaction',
                     'render': function(data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
+                        return "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a>";
                     },
+                    'sortable': false,
+                    'searchable': false
                 },
-                {'data': 'status', 'className': 'text-center', 'searchable': false,
+                {'data': 'status', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data,type,row,meta){
                         if(row['status'] == null){
                             return "<button class='badge badge-dark'><i class='fa fa-check-circle'> N/a</i></button>"
@@ -257,11 +278,45 @@
                 {'data': 'tracking_number','name':'transaction.tracking_number', 'className': 'text-start', 'sortable': false },
                 {'data': 'client', 'name': 'transaction.client.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
-                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false },
-                {'data': 'assistance_type', 'name': 'transaction.lib_assistance_category.name', 'className': 'text-start', 'sortable': false },
-                {'data': 'verified_time_start', 'className': 'text-start', 'sortable': false },
-                {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center'},
+                {'data': 'verified_time_start', 'className': 'text-center', 'searchable':false, 'sortable':false},
+                {'data': 'swo_fullname', 'name': 'transaction.swo.fullname', 'className': 'text-center', 'sortable': false},
+                {'data': 'case_study','name':'transaction.is_case_study', 'className': 'text-center', 'searchable':false,  'sortable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['case_study'] == '2'){
+                            if(row['status'] == 6){
+                                if(row['case_study_status'] == '1'){
+                                    return "<a href='#' data-role='remove_case_study', 'className': 'text-start', data-id="+ row['transaction'] + ">Remove</a>"+ " - " +"Case study submitted"
+                                }else{
+                                    return "For Case Study"
+                                }
+                            }else{
+                                return "For Case Study"
+                            }
+                        }else{
+                            return "Not Case Study"
+                        }
+                    }
+                },
+                {'data': 'case_study_status', 'className': 'text-center', 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['case_study_status'] == 1){
+                            return "<span class='badge badge-dark'>Submitted</span>"
+                        }else{
+                            return "<span class='badge badge-dark'>N/a</span>"
+                        }
+                    }
+                },
+                {'data': 'assistance_type', 'className': 'text-center', 'searchable': false, 'sortable': false },
+                {'data': 'service_provider', 'name': 'transaction.service_provider.name', 'className': 'text-start', 'sortable': false, 'searchable': false},
+                {'data': 'mode_of_release', 'name': 'transaction.mode_of_release', 'className': 'text-center', 'sortable': false, 'searchable': false,
+                    'render': function(data,type,row,meta){
+                        if(row['mode_of_release'] == 0){
+                            return "<span class='badge bg-light text-dark'>CASH</span>"
+                        }else{
+                            return "<span class='badge bg-light text-dark'>GL</span>"
+                        }
+                    }
+                },
                 {'data': 'total_amount', 'name': 'transaction.total_amount', 'className': 'text-center', 'searchable': false, 'sortable': false,
                     'render': function(data, type, row, meta) {
                         // Check if total_amount is null or undefined
@@ -277,7 +332,8 @@
                         return parseFloat(data).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     }
                 },
-            ]
+                {'data': 'dv_number', 'name': 'transaction.dv_number', 'className': 'text-center', 'searchable': false, 'sortable': false},
+            ],
             });
         }
         $('#searchTrackingNumber').on('submit', function (e) {
@@ -296,7 +352,10 @@
             check(name, 'name');
         });
     });
-    
+    $(document).on('click','a[data-role=direct]', function(){ // FOR MODAL SUMMARY
+        var id = $(this).data('id');
+        $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
+    });
     $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
         var id = $(this).data('id');
         $('#empid').val(id)
@@ -329,7 +388,46 @@
         $('#empid').val(id)
         $('#modalProvided').modal('show').find('#load_data').load('/financial-transaction/update_amount/' +id);
     });
-
+    $(document).on('click', 'a[data-role=remove_case_study]', function(){
+        var id = $(this).data('id');
+        Swal.fire({
+            title: "Are you sure",
+            text: "You want to remove this as case study?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3498DB",
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.showLoading()
+                $.ajax({
+                    url: "{% url 'removeCaseStudy' %}",
+                    data: {
+                        id: id
+                    },
+                    type: "POST"
+                })
+                .done(function(data){
+                    if (data.data == 'success'){
+                        Swal.fire({
+                            title: "Good job!",
+                            text: "Case study updated",
+                            icon: "success",
+                            confirmButtonColor: "#3498DB",
+                            allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#incoming-table').DataTable().ajax.reload();
+                                }
+                        });
+                    }else{
+                        Swal.fire("Oops...", response.msg, "warning");
+                    }
+                });
+            }
+        });
+    });
 
 </script>
 {% endblock %}
