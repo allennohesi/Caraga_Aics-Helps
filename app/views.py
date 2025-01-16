@@ -1092,7 +1092,7 @@ def withDvTransactions(request): #FOR GENERAL
 					str(item.soa_total_amount),
 					str(item.with_without_dv),
 					str(item.added_by.fullname if hasattr(item, 'added_by') and item.added_by else "N/A"),
-					str(item.user.fullname)
+					str(item.user.fullname if item.user and item.user.fullname else "")
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
