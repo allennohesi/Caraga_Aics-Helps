@@ -240,6 +240,7 @@ class OfficeStation(models.Model):
     cash_signatories = models.CharField(max_length=255, blank=True, null=True)
     region = models.CharField(max_length=255, blank=True, null=True)
     signatories = models.ForeignKey('AuthUser', models.DO_NOTHING)
+    main_signatories = models.CharField(max_length=255, blank=True, null=True)
     
     class Meta:
         managed = False
