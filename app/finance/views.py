@@ -235,7 +235,8 @@ def disbursement_voucher_data(request, pk):
 		if request.POST.get('function') == "update": #UPDATING NI SIR JOSHUA PAG NAA NAY DV
 			disbursementVoucher.objects.filter(id=data.id).update( 
 				dv_name=request.POST.get('dv_name'),
-				dv_date=request.POST.get('dv_date_updated')
+				dv_date=request.POST.get('dv_date_updated'),
+				updated_by_id=request.user.id
 			)
 			dvdata = disbursementVoucherData.objects.filter(dv_id=data.id).all()
 			for row in dvdata:
