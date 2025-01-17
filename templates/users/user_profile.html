@@ -171,12 +171,14 @@
                     </div>
                 </div>
                 {% if user|check_group_permission:"Social Worker" or user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Verifier"  or user|check_group_permission:"Finance" or user|check_group_permission:"Signatories"  %}
+                {% if restriction %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
                     <label class="form-label">SWO License No.</label>
                     <input class="form-control" type="text" name='license_no' value="{% if information.license_no %}{{information.license_no}}{% endif %}">
                   </div>
                 </div>
+                {% endif %}
                 <div class="col-sm-4 col-md-3">
                   <div class="mb-3">
                     <label>Office / Station <span class="txt-danger">*</span></label>

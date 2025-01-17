@@ -156,7 +156,7 @@ def edit_user(request, pk):
 def user_profile(request):
 	user_data = AuthUser.objects.filter(id=request.user.id).first()
 	check_if_details_exists = AuthuserDetails.objects.filter(user_id=request.user.id)
-	restriction = request.user.groups.filter(name__in=['Super Administrator']).exists()
+	restriction = request.user.groups.filter(name__in=['Super Administrator', 'Social Worker']).exists()
 	if request.method == "POST":
 		try:
 			#CHANGE THE PASSWORD ONLY
@@ -220,7 +220,7 @@ def user_profile(request):
 			handle_error(e, "EXCEPTION ERROR IN CLIENT UPLOADING OF PICTURE", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 			
-		
+
 	context = {
 		'user_data': user_data,
 		'OfficeStation': OfficeStation.objects.filter(is_active=1),
