@@ -208,8 +208,8 @@
                                     allowOutsideClick: false,
                                 }).then((result) => {
                                     if (result.isConfirmed){
-                                        $('#voucher-data').DataTable().ajax.reload();
-                                        //$('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                                        //$('#voucher-data').DataTable().ajax.reload();
+                                        $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
                                     }
                                 });
                             }
@@ -252,8 +252,8 @@
                           allowOutsideClick: false,
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                $('#voucher-data').DataTable().ajax.reload();
-                                //$('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                                //$('#voucher-data').DataTable().ajax.reload();
+                                $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
                               }
                         });
                     }
