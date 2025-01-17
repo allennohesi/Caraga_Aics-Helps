@@ -62,7 +62,8 @@ class disbursementVoucher(models.Model):
     sp = models.ForeignKey(ServiceProvider, models.DO_NOTHING, blank=True, null=True)
     amount = models.CharField(max_length=255, blank=True, null=True)
     dv_date = models.DateField(blank=True, null=True)
-    
+    updated_by = models.ForeignKey(AuthUser,models.DO_NOTHING, related_name='updated_disbursement_vouchers')
+
     class Meta:
         managed = False
         db_table = 'finance_dv_tbl'
