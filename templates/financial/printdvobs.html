@@ -387,7 +387,7 @@
                         <b>Address</b>
                     </td>
                     <td colspan="3" rowspan="2" style="font-size: 12px;">
-                        <b>{% if data.sp.address %}{{data.sp.name}}{% else %}Butuan City{% endif %}</b>
+                        <b>{% if data.sp.address %}{{data.sp.address}}{% else %}Butuan City{% endif %}</b>
                     </td>
                     <td colspan="2" class="lastRow" style="font-size: 12px;">
                         <b>Initiator:</b>
@@ -612,7 +612,7 @@
                         Address
                     </td>
                     <td width="130" colspan="10" style="font-size: 15px;">
-                        <b>DSWD, CAPITOL SITE, BUTUAN CITY</b>
+                        <b>{% if data.sp.address %}{{data.sp.address}}{% else %}Butuan City{% endif %}</b>
                     </td>
                     </tr> 
             
