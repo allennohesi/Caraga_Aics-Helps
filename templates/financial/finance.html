@@ -143,10 +143,10 @@
                                             <th>DV name</th>
                                             <th>Status</th>
                                             <th>Created by</th>
-                                            <th>SOA Date</th>
-                                            <th>Date Encoded</th>
-                                            <th>DV Created</th>
-                                            <th>DV Incoming Date</th>
+                                            <th>SOA STATUS</th>
+                                            <th>ENCODED STATUS</th>
+                                            <th>DV Created STATUS</th>
+                                            <th>DV Incoming STATUS</th>
                                             <th>Total Amount </th>
                                             <th>Remarks</th>
                                         </tr>
@@ -325,6 +325,7 @@
         check($('#provider').val());
     });
     $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
         var printUrl = "{% url 'printStateofAccount' 0 %}".replace("/0/", "/");
         $('#voucher-title').DataTable({
             'serverSide': true,
@@ -353,16 +354,53 @@
             {'data': 'dv_name','name':'dv_data.dv_name', 'className': 'text-start', 'sortable': false },
             {'data': 'with_without_dv','className': 'text-start'},
             {'data': 'added_by', 'sortable': false, 'searchable':false,'className': 'text-start' },
-            {'data': 'date', 'className': 'text-start', 'sortable': false }, // SOA DATE
-            {'data': 'date_added', 'className': 'text-start', 'sortable': false }, // ENCODED DATE
-            {'data': 'date_updated', 'className': 'text-start', 'sortable': false }, // DV CREATED
+            {
+                'data': 'date', // SOA DATE
+                'className': 'text-center',
+                'sortable': false,
+                'render': function(data, type, row, meta) {
+                    return data ? `
+                        <span class="tooltip-container">
+                            <i class="fa fa-check-circle" style="cursor: pointer; color: green;" data-toggle="tooltip" data-placement="top" title="${data}"></i>
+                        </span>
+                    ` : '';  // Only show check icon if data is available
+                }
+            },                     
+            {
+                'data': 'date_added', // ENCODED DATE
+                'className': 'text-center',
+                'sortable': false,
+                'render': function(data, type, row, meta) {
+                    return data ? `
+                        <span class="tooltip-container">
+                            <i class="fa fa-check-circle" style="cursor: pointer; color: green;" data-toggle="tooltip" data-placement="top" title="${data}"></i>
+                        </span>
+                    ` : '';  // Only show check icon if data is available
+                }
+            },            
+            {
+                'data': 'date_updated', // DV CREATED
+                'className': 'text-center',
+                'sortable': false,
+                'render': function(data, type, row, meta) {
+                    return data ? `
+                        <span class="tooltip-container">
+                            <i class="fa fa-check-circle" style="cursor: pointer; color: green;" data-toggle="tooltip" data-placement="top" title="${data}"></i>
+                        </span>
+                    ` : '';  // Only show check icon if data is available
+                }
+            },         
             {
                 'data': 'dv_incoming_date', // DV INCOMING DATE
                 'name': 'dv_data.dv_name',
-                'className': 'text-start',
+                'className': 'text-center',
                 'sortable': false,
                 'render': function(data, type, row, meta) {
-                    return data ? data : "";
+                    return data ? `
+                        <span class="tooltip-container">
+                            <i class="fa fa-check-circle" style="cursor: pointer; color: green;" data-toggle="tooltip" data-placement="top" title="${data}"></i>
+                        </span>
+                    ` : ''; // Only show check icon if data is available
                 }
             },
             {
