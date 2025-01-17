@@ -2,7 +2,7 @@ import os
 from django import template
 
 from app.requests.models import TransactionServiceAssistance, Mail, TransactionStatus1, Transaction
-from app.models import AuthUser, AuthUserGroups, AuthuserProfile
+from app.models import AuthUser, AuthUserGroups, AuthuserProfile, AuthuserDetails
 from app.libraries.models import OfficeStation, Purpose
 from num2words import num2words
 
@@ -18,8 +18,8 @@ def check_group_permission(user, group_name):
 
 @register.simple_tag
 def profile_picture_dashboard(user_id):
-    profile = AuthuserProfile.objects.filter(user_id=user_id).first()  # Use .first() to get a single object
-    return profile
+	profile = AuthuserProfile.objects.filter(user_id=user_id).first()  # Use .first() to get a single object
+	return profile
 
 
 @register.filter
@@ -41,15 +41,15 @@ def get_user_info(user_id):
 
 @register.simple_tag
 def get_user_role(user_id):
-    # Fetch the first AuthUserGroups object for the given user_id
-    user_group = AuthUserGroups.objects.filter(user_id=user_id).first()
-    
-    # Check if user_group is None
-    if user_group is None:
-        return None  # or return a default value, e.g., 'No Role Assigned'
-    
-    # Return the group name
-    return user_group.group.name
+	# Fetch the first AuthUserGroups object for the given user_id
+	user_group = AuthUserGroups.objects.filter(user_id=user_id).first()
+	
+	# Check if user_group is None
+	if user_group is None:
+		return None  # or return a default value, e.g., 'No Role Assigned'
+	
+	# Return the group name
+	return user_group.group.name
 
 
 
@@ -118,8 +118,22 @@ def get_signatories(province):
 
 @register.simple_tag
 def get_office_stations():
-    return OfficeStation.objects.all()
+	return OfficeStation.objects.all()
 
 @register.simple_tag
 def get_Purpose():
-    return Purpose.objects.all()
+	return Purpose.objects.all()
+
+@register.simple_tag
+def get_office_station_signatories(user_id):
+	"""
+	Retrieves the office station signatory details for the given user.
+	"""
+	try:
+		# Fetch the AuthuserDetails instance for the given user_id
+		data = AuthuserDetails.objects.get(user_id=user_id).OfficeStationLib.main_signatories
+	except AuthuserDetails.DoesNotExist:
+		# Return None or a default value if no matching record is found
+		data = None
+	
+	return data
