@@ -128,6 +128,15 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="PrintingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            {% csrf_token %}
+            <div class="modal-body" id="load_data">
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade bd-example-modal-xl" id="Tracking_modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
     <div class="modal-dialog modal-xl">
         <form id="startTransaction">
@@ -249,7 +258,8 @@
                 'columns': [
                 {'data': 'transaction',
                     'render': function(data, type, row, meta) {
-                        return "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a>";
+                        return "<a href='javascript:void(0);' data-role='direct' data-id='"+ row['transaction'] + "'>Track</a> |" +
+                        "<a href='javascript:void(0);' data-role='print' data-id='"+ row['transaction'] + "'>Print</a>";
                     },
                     'sortable': false,
                     'searchable': false
@@ -356,21 +366,16 @@
         var id = $(this).data('id');
         $('#Tracking_modal').modal('show').find('#load_data').load('/requests/tracking/' +id);
     });
-    $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
-        var id = $(this).data('id');
-        $('#empid').val(id)
-        $('#myModal').modal('show')
-    });
-    $(document).on('click','a[data-role=PrintingModal]', function(){ // For Printing Purposes Only
+    $(document).on('click','a[data-role=print]', function(){ // For Printing Purposes Only
         var id = $(this).data('id');
         var tracking = $('#'+id).children('td:eq(2)').text();
         $('#Eid').val(id)
         $('#PrintingModal').modal('show').find('#load_data').load('/requests/printingModal/' +id);
     });
-    $(document).on('click','a[data-role=AssessmentStatus]', function(){ // For assessmentStatus
+    $(document).on('click','a[data-role=hold]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
         var id = $(this).data('id');
-        $('#Eid').val(id)
-        $('#PrintingModal').modal('show').find('#load_data').load('/requests/assessmentStatusModal/' +id);
+        $('#empid').val(id)
+        $('#myModal').modal('show')
     });
     function validationForm(){
         var invalid = false;
