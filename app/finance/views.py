@@ -338,7 +338,7 @@ def removeSoa(request):
 def get_all_soa(request):
 	json = []
 	if request.GET.get('searchTerm', ''):
-		sp = finance_voucher.objects.filter(Q(voucher_code__icontains=request.GET.get('searchTerm')) & Q(soa_total_amount__isnull=False))[:10]
+		sp = finance_voucher.objects.filter(Q(voucher_code__icontains=request.GET.get('searchTerm')) & Q(soa_total_amount__isnull=False) & Q(dv_data__isnull=True))[:10]
 		if sp:
 			for row in sp:
 				json.append({'id': row.id, 'text': row.voucher_code })
