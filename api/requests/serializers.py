@@ -91,6 +91,8 @@ class DisbursementVoucherSerializer(serializers.ModelSerializer):
     date_entried = serializers.DateField(format="%b %d, %Y", read_only=True)
     added_by = serializers.CharField(source='created_by.get_fullname', read_only=True, default=None)
     sp = serializers.CharField(source='sp.name', read_only=True, default=None)
+    updated_by = serializers.CharField(source='updated_by.get_fullname', read_only=True, default=None)
+
     class Meta:
         model = disbursementVoucher
         fields = '__all__'
