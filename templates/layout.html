@@ -332,7 +332,7 @@
                                     {% endif %}
                                     {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Verifier" %}
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Encoder Data</span></a>
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Client / Bene</span></a>
                                         <ul class="sidebar-submenu">
                                             <li><a href="javascript:void(0);" class="submenu-title">CSV <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
@@ -345,7 +345,7 @@
                                                     <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
                                                     <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
                                                     {% endif %} {% endcomment %}
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#encoder_data">Encoded</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#encoder_data">Encoded Data</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_transactions">All report</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#extract_aics_data">General data</a></li>
                                                     <li><a data-bs-toggle="modal" data-bs-target="#generate_case_study">Case study</a></li>
