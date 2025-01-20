@@ -1370,6 +1370,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
 	count = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).count()
 	rows = count + 1
+	userDetails = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	
 	context = {
 		'data': transaction,
@@ -1382,6 +1383,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 		'validity':EndDate,
 		'ct':rows,
 		'today':today,
+		'userDetails':userDetails
 	}
 	return render(request, "requests/printPagpamatuod.html", context)
 
