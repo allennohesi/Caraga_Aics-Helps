@@ -227,37 +227,50 @@ def registration(request):
 			city_name = request.POST.get('city_name')
 			barangay_name = request.POST.get('barangay_name')
 
+			last_name = request.POST.get('last_name', '').strip()
+			first_name = request.POST.get('first_name', '').strip()
+			middle_name = request.POST.get('middle_name', '').strip()
+			suffix = request.POST.get('suffix', '').strip() or None
+			birthdate = request.POST.get('birthdate', '').strip()
+
+			if not last_name or not first_name or not birthdate:
+				return JsonResponse({'error': True, 'msg': 'There was a problem with your input field please review or refresh'})
+
 			with transaction.atomic():
 				check_if_name_exists = ClientBeneficiary.objects.filter(
-					Q(last_name__icontains=request.POST.get('last_name')) &
-					Q(first_name__icontains=request.POST.get('first_name')) &
-					Q(middle_name__icontains=request.POST.get('middle_name')) &
-					Q(suffix_id=request.POST.get('suffix') if request.POST.get('suffix') else None) &
-					Q(birthdate=request.POST.get('birthdate')))
+					Q(last_name__iexact=last_name) &
+					Q(first_name__iexact=first_name) &
+					Q(middle_name__iexact=middle_name) &
+					Q(suffix_id=suffix) &
+					Q(birthdate=birthdate))
 				if not check_if_name_exists:
-					if request.POST.get('suffix'):
-						suffix = Suffix.objects.filter(id=request.POST.get('suffix')).first()
-						if request.POST.get('middle_name'):
-							middle_name = request.POST.get('middle_name')
-							middle_initial = middle_name[0].upper()
-							client_bene_fullname = request.POST.get('first_name') + " " + middle_initial + ". " + request.POST.get('last_name') + ", " + suffix.name
+					if suffix:
+						suffix_obj = Suffix.objects.filter(id=suffix).first()  # Fetch the Suffix object
+						if suffix_obj:
+							# Construct full name with middle initial if provided
+							if middle_name:
+								middle_initial = middle_name[0].upper()
+								client_bene_fullname = f"{first_name} {middle_initial}. {last_name}, {suffix_obj.name}"
+							else:
+								client_bene_fullname = f"{first_name} {last_name}, {suffix_obj.name}"
 						else:
-							client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name') + ", " + suffix.name
+							# If suffix is invalid or not found, just use first and last name
+							client_bene_fullname = f"{first_name} {last_name}"
 					else:
-						if request.POST.get('middle_name'):
-							middle_name = request.POST.get('middle_name')
+						# If no suffix provided, construct the name with middle initial if available
+						if middle_name:
 							middle_initial = middle_name[0].upper()
-							client_bene_fullname = request.POST.get('first_name') + " " + middle_initial + ". " + request.POST.get('last_name')
+							client_bene_fullname = f"{first_name} {middle_initial}. {last_name}"
 						else:
-							client_bene_fullname = request.POST.get('first_name') + " " + request.POST.get('last_name')
-							
+							client_bene_fullname = f"{first_name} {last_name}"
+					
 					unique_id = uuid.uuid4()
 					clientbene = ClientBeneficiary(
-						last_name=request.POST.get('last_name'),
-						first_name=request.POST.get('first_name'),
-						middle_name=request.POST.get('middle_name'),
-						suffix_id=request.POST.get('suffix'),
-						birthdate=request.POST.get('birthdate'),
+						last_name=last_name,
+						first_name=first_name,
+						middle_name=middle_name,
+						suffix_id=suffix,
+						birthdate=birthdate,
 						age=request.POST.get('calculated_age'),
 						sex_id=request.POST.get('sex'),
 						contact_number=request.POST.get('contact_number') if request.POST.get('contact_number') else None,
