@@ -139,7 +139,7 @@ def get_office_station_signatories(user_id):
 	return data
 
 @register.simple_tag(takes_context=True)
-def get_office_station_signatories(context):
+def get_user_details(context):
 	request = context['request']
 	check_user_details = AuthuserDetails.objects.filter(user_id=request.user.id).first()
 	data = check_user_details.OfficeStationLib
