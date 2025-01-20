@@ -504,6 +504,14 @@
                                             <option value="{{ purposeexport.name }}">{{ purposeexport.name }}</option>
                                         {% endfor %}
                                     </select>
+                                    <label>Office Station</label><span class="txt-danger">*</span>
+                                    <select class="form-control fund_source hidden" name="station" id="station" required>
+                                        <option></option>
+                                        {% get_office_stations as office_stations %}
+                                        {% for station in office_stations %}
+                                            <option value="{{ station.id }}">{{ station.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                     <label for="end_date"></label>
                                     <label for="start_date">Start Date:</label>
                                     <input class="form-control" type="date" name="start_date" id="start_date">
