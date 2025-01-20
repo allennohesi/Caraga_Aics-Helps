@@ -866,10 +866,12 @@ def purposeSummaryReport(request): #FOR GENERAL
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
-		data = AssessmentProblemPresented.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),problem_presented=request.GET.get('purpose')
+		station_id = request.GET.get('station')
+		data = AssessmentProblemPresented.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),problem_presented=request.GET.get('purpose'),
+												  transaction__office_station_in=station_id
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo',
-					'transaction__service_provider'
+					'transaction__service_provider', 'transaction__office_station_in'
 				)
 		# Create a generator function to yield CSV rows
 		def generate_csv():
