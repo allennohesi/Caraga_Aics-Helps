@@ -108,12 +108,8 @@ def subtract(value, arg):
 @register.simple_tag
 def get_signatories(province):
 	signatories = ""
-	if province == "AGUSAN DEL NORTE":
-		signatories = "ANA T. SEMACIO"
-	elif province == "SURIGAO DEL SUR":
-		signatories = "ARLENE M. ONTUA"
-	elif province == "AGUSAN DEL SUR":
-		signatories = "MICHAEL JOHN B. ANDOHUYAN"
+	data = OfficeStation.objects.filter(region=province).first()
+	signatories = data.main_signatories
 	return signatories
 
 @register.simple_tag

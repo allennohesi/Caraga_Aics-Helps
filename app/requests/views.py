@@ -463,7 +463,6 @@ def view_incoming(request, pk):
 	
 	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
 	case_study = CaseStudyFile.objects.filter(transaction_id=data.id).first()
-	print(case_study)
 	context = {
 		'transaction': data,
 		'pict': picture,
