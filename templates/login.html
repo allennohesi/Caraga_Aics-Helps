@@ -18,7 +18,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
         <link id="color" rel="stylesheet" href="{% static 'css/color-1.css' %}" media="screen" />
         <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        {% comment %} <script src="https://www.google.com/recaptcha/api.js" async defer></script> {% endcomment %}
     </head>
     <body>
         <!-- login page start-->
@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="g-recaptcha" data-sitekey="6LfnEYwpAAAAACbIvh8TaD_fz7jZo3btEXtlz0z_"></div>
+                                    {% comment %} <div class="g-recaptcha" data-sitekey="6LfnEYwpAAAAACbIvh8TaD_fz7jZo3btEXtlz0z_"></div> {% endcomment %}
                                     <div class="form-group mb-0">
                                         <button type="submit" id="submitBtn" class="btn btn-primary btn-block btn-lg w-100" type="submit">Sign in</button>
                                     </div>
@@ -86,18 +86,18 @@
             <script>
                 $(document).ready(function () {
                     $("#loginForm").on("submit", function (e) {
-                        var response = grecaptcha.getResponse();
-                        if (response.length == 0) {
-                            $(".captchaAlert").html(
-                                `
-                                <div class="alert alert-danger dark" role="alert">
-                                    <p><i class="fa fa-info-circle"></i> Please complete the captcha  </p>
-                                </div>
-                                `
-                            );
-                            $("#submitBtn").prop('disabled', false);
-                            return false;
-                        }
+                        // var response = grecaptcha.getResponse();
+                        // if (response.length == 0) {
+                        //     $(".captchaAlert").html(
+                        //         `
+                        //         <div class="alert alert-danger dark" role="alert">
+                        //             <p><i class="fa fa-info-circle"></i> Please complete the captcha  </p>
+                        //         </div>
+                        //         `
+                        //     );
+                        //     $("#submitBtn").prop('disabled', false);
+                        //     return false;
+                        // }
                         var form = new FormData(this);
                         $.ajax({
                             data: form,
@@ -132,7 +132,7 @@
                         e.preventDefault();
                     });
                 });
-            </script>
+            </script>            
         </div>
     </body>
 </html>

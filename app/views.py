@@ -703,8 +703,8 @@ def personalData(request): #FOR GENERAL
 
 					'Service provider','Purpose','Relationship', 'Type of Assistance', 'Amount', 
 					'Mode of Assistance','Source of referral',
-					'Date Interviewed','For case study','Case Study Status','Transaction Status',
-					'Is_PFA', 'Is_SWC'
+					'Date Interviewed','For case study','Case Study Status',
+					'Is_PFA', 'Is_SWC', 'Transaction Status'
 					]) + '\n'
 				for item in data:
 					total_amount_str = str(item.transaction.total_amount)
@@ -749,8 +749,8 @@ def personalData(request): #FOR GENERAL
 						str(item.transaction.client.age),
 						str(item.transaction.client_category.name),
 						str(item.transaction.client_sub_category.name),
-						str(item.transaction.client.barangay.city_code.city_name),
-						str(item.transaction.client.barangay.brgy_name),
+						str(item.transaction.client.city),
+						str(item.transaction.client.barangay_value),
 
 						str(item.transaction.bene.last_name),
 						str(item.transaction.bene.first_name),
@@ -760,8 +760,8 @@ def personalData(request): #FOR GENERAL
 						str(item.transaction.bene.civil_status.name),
 						str(item.transaction.bene.birthdate),
 						str(item.transaction.bene.age),
-						str(item.transaction.bene.barangay.city_code.city_name),
-						str(item.transaction.bene.barangay.brgy_name),
+						str(item.transaction.bene.city),
+						str(item.transaction.bene.barangay_value),
 
 						str(item.transaction.bene_category.name),
 						str(item.transaction.bene_sub_category.name),
@@ -775,9 +775,9 @@ def personalData(request): #FOR GENERAL
 						str(item.transaction.swo_date_time_end),
 						category_of_study_str,
 						case_study_result_str,
-						str(item.transaction.exp_status),
 						is_pfa_str,
 						is_swc_str,
+						str(item.transaction.exp_status),
 					]) + '\n'
 			response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 			response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
@@ -797,8 +797,8 @@ def personalData(request): #FOR GENERAL
 					
 					'Service provider','Relationship', 'Type of Assistance', 'Amount', 
 					'Mode of Assistance','Source of referral',
-					'Date Interviewed','For case study','Case Study Status','Transaction Status',
-					'Is_PFA', 'Is_SWC'
+					'Date Interviewed','For case study','Case Study Status',
+					'Is_PFA', 'Is_SWC','Transaction Status'
 					]) + '\n'
 				for item in data:
 					total_amount_str = str(item.transaction.total_amount)
@@ -852,9 +852,9 @@ def personalData(request): #FOR GENERAL
 						str(item.transaction.swo_date_time_end),
 						category_of_study_str,
 						case_study_result_str,
-						str(item.transaction.exp_status),
 						is_pfa_str,
 						is_swc_str,
+						str(item.transaction.exp_status),
 					]) + '\n'
 			response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 			response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
