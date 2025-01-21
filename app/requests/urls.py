@@ -7,7 +7,7 @@ from app.requests.views import requests, get_client_info, incoming, view_incomin
     printQueueing, queueIngDisplay, printPettyCashVoucher, assessmentStatusModal, confirmAmount, \
     transactions, viewSignatoriesTransactions, approveTransactions, remove_family_composition, \
     printPagPamatuod, view_online_swo, all_transactions, submitCaseStudy, removeCaseStudy, view_online_swo_data, \
-    printAttestation, queuingCall, advanceSearch
+    printAttestation, queuingCall, advanceSearch, UploadCaseStudy
 
 urlpatterns = [
     path('new/', requests, name='new_requests'),
@@ -47,6 +47,7 @@ urlpatterns = [
     path('printAttestation/<int:pk>', printAttestation, name='printAttestation'),
     path('advance-search/', advanceSearch, name='advanceSearch'),
     #SubmitCaseStudy
+    path('uploadCaseStudy/<int:pk>', UploadCaseStudy, name='UploadCaseStudy'),
     path('submitCaseStudy', submitCaseStudy, name='submitCaseStudy'),
     path('removeCaseStudy', removeCaseStudy, name='removeCaseStudy'),
     #SIGNATORIES

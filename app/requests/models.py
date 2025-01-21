@@ -431,6 +431,26 @@ class requirements_client(models.Model):
         managed = False
         db_table = 'tbl_transaction_file_requirements'
 
+def case_study_file_uploaded(instance, filename):
+    ext = filename.split('.')[-1]
+    filename_start = filename.replace('.'+ext,'')
+    filename = "%s__%s.%s" % (uuid.uuid4(),filename_start, ext)
+    return os.path.join('case_study', filename)
+
+class CaseStudyFile(models.Model):
+    case_study_file = models.FileField(upload_to=case_study_file_uploaded,verbose_name=(u'File'))
+    transaction = models.ForeignKey('Transaction', models.DO_NOTHING)
+    date_submission = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'tbl_transaction_case_study'
+
+@receiver(models.signals.post_delete, sender=CaseStudyFile)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.case_study_file:
+        if os.path.isfile(instance.case_study_file.path):
+            os.remove(instance.case_study_file.path)
+
 class TransactionServiceAssistance(models.Model):
     transaction_id = models.IntegerField(blank=True, null=True)
     service_assistance_id = models.IntegerField(blank=True, null=True)
