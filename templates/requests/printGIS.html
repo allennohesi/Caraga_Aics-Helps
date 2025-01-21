@@ -743,13 +743,13 @@
               <td width="150px" rowspan="2"><br><br><br>
                 <label>
                   <br><br><u>
-                    {% comment %} {% with get_signatories=data.requested_in %}
+                    {% with get_signatories=data.requested_in %}
                     {% get_signatories get_signatories as province %}
                     {% if province %}
                     {{ province }}
                     {% endif %}
-                    {% endwith %} {% endcomment %}
-                    {{data.signatories.get_fullname|upper}}
+                    {% endwith %}
+                    {% comment %} {{data.signatories.get_fullname|upper}} {% endcomment %}
                   </u><br>
                   Approving Authority<br>
                   <small>(Signature over Printed Name)</small>
