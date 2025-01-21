@@ -610,7 +610,7 @@ def generateAICSData(request): #FOR GENERAL
 				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
 				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
 				   
-				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
 				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
 				   'Region', 'Province', 'Municipality', 'Barangay', 'District', 
 
@@ -698,7 +698,7 @@ def personalData(request): #FOR GENERAL
 					'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
 					'Client Category','Client Sub-Category', 'Client Address', 'Client Barangay',
 					
-					'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+					'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
 					'Bene Address', 'Bene Barangay', 'Bene Category','Bene Sub-Category', 
 
 					'Service provider','Purpose','Relationship', 'Type of Assistance', 'Amount', 
@@ -868,7 +868,7 @@ def purposeSummaryReport(request): #FOR GENERAL
 		end_date_str = request.GET.get("end_date")
 		station_id = request.GET.get('station')
 		data = AssessmentProblemPresented.objects.filter(transaction__date_of_transaction__range=(start_date_str, end_date_str),problem_presented=request.GET.get('purpose'),
-												  transaction__office_station_in=station_id
+												  transaction__office_station_in=station_id, transaction__status__in=[3, 6]
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo',
 					'transaction__service_provider', 'transaction__office_station_in'
@@ -877,28 +877,13 @@ def purposeSummaryReport(request): #FOR GENERAL
 		def generate_csv():
 			yield ','.join(['Tracking number',  'Date Accomplished',
 				'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
-				
-				'Purpose','Relationship', 'Type of Assistance', 'Amount', 
-				'Mode of Assistance','Source of referral',
-				'Date Interviewed','Transaction Status',
-				'Is_PFA', 'Is_SWC'
+				'Purpose', 'Type of Assistance', 'Amount', 
+				'Mode of Assistance','Source of referral','Transaction Status',
 				]) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
 				if ',' in total_amount_str:
 					total_amount_str = total_amount_str.replace(',', '')
-
-				is_pfa_str = item.transaction.is_pfa
-				if is_pfa_str == 1:
-					is_pfa_str = "PROVIDED WITH PFA"
-				else:
-					is_pfa_str = "N/A"
-
-				is_swc_str = item.transaction.is_swc
-				if is_swc_str == 1:
-					is_swc_str = "PROVIDED WITH SWC"
-				else:
-					is_swc_str = "N/A"
 
 				yield ','.join([
 					str(item.transaction.tracking_number),
@@ -911,16 +896,12 @@ def purposeSummaryReport(request): #FOR GENERAL
 					str(item.transaction.client.civil_status.name),
 					str(item.transaction.client.birthdate),
 					str(item.transaction.client.age),
-					str(item.transaction.purpose),
-					str(item.transaction.relation.name),
+					str(item.problem_presented),
 					str(item.transaction.lib_assistance_category.name),
 					total_amount_str,
 					"GL" if item.transaction.is_gl == 1 else "Cash",
 					"Referral" if item.transaction.is_referral else "Walk-in",
-					str(item.transaction.swo_date_time_end),
 					str(item.transaction.exp_status),
-					is_pfa_str,
-					is_swc_str,
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="By_purpose.csv"'
@@ -933,20 +914,19 @@ def generatePWD(request): #FOR GENERAL
 	if request.method == "GET":
 		start_date_str = request.GET.get("start_date")
 		end_date_str = request.GET.get("end_date")
-		data = TransactionStatus1.objects.filter(transaction__client_sub_category__acronym="Disability"
+		data = TransactionStatus1.objects.filter(Q(status=3) | Q(status=6),transaction__date_of_transaction__year=year,transaction__client_sub_category__acronym="Disability"
 				).select_related(
 					'transaction__client', 'transaction__bene', 'transaction__relation', 'transaction__lib_assistance_category', 'transaction__fund_source', 'transaction__swo'
 				)
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['Tracking number','UUID',  'Date Accomplished',
+			yield ','.join(['Tracking number',  'Date Accomplished',
 				   'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'Civil Status', 'DOB', 'Age',
-				   '4ps member', '4ps ID no.', 'Client Category','Client Sub-Category',
+				   'Client Category','Client Sub-Category',
 				   
-				   'Bene UUID','Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
-				   'Bene 4ps member', 'Bene 4ps ID no.', 'Bene Category','Bene Sub-Category',
-
+				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex', 'Bene Civil Status', 'Bene DOB', 'Bene Age',
+				   'Bene Category', 'Bene Sub-Category',
 				   'Relationship', 'Type of Assistance', 'Amount', 
 				   'Mode of Assistance','Source of referral','Source of Fund',
 				   'Date Interviewed', 'Interviewer/Swo','Service Provider',
@@ -958,21 +938,8 @@ def generatePWD(request): #FOR GENERAL
 					total_amount_str = total_amount_str.replace(',', '')
 				service_provider = str(item.transaction.service_provider.name).replace(",", "") if item.transaction.service_provider is not None else "N/a"
 
-				case_study_str = str(item.transaction.is_case_study)
-				if case_study_str == "2":
-					category_of_study_str = "CASE STUDY"
-				else:
-					category_of_study_str = "NOT CASE STUDY"
-
-				case_study_status = str(item.case_study_status)
-				if case_study_status == "1":
-					case_study_result_str = "SUBMITTED"
-				else:
-					case_study_result_str = ""
-
 				yield ','.join([
 					str(item.transaction.tracking_number),
-					str(item.transaction.client.unique_id_number),
 					str(item.swo_time_end),
 					str(item.transaction.client.last_name),
 					str(item.transaction.client.first_name),
@@ -982,11 +949,8 @@ def generatePWD(request): #FOR GENERAL
 					str(item.transaction.client.civil_status.name),
 					str(item.transaction.client.birthdate),
 					str(item.transaction.client.age),
-					str(item.transaction.client.is_4ps if item.transaction.client.number_4ps_id_number else "N/a"),
-					str(item.transaction.client.number_4ps_id_number if item.transaction.client.number_4ps_id_number else "N/a"),
 					str(item.transaction.client_category.name),
 					str(item.transaction.client_sub_category.name),
-					str(item.transaction.bene.unique_id_number),
 					str(item.transaction.bene.last_name),
 					str(item.transaction.bene.first_name),
 					str(item.transaction.bene.middle_name),
@@ -995,8 +959,6 @@ def generatePWD(request): #FOR GENERAL
 					str(item.transaction.bene.civil_status.name),
 					str(item.transaction.bene.birthdate),
 					str(item.transaction.bene.age),
-					str(item.transaction.bene.is_4ps if item.transaction.bene.number_4ps_id_number else "N/a"),
-					str(item.transaction.bene.number_4ps_id_number if item.transaction.bene.number_4ps_id_number else "N/a"),
 					str(item.transaction.bene_category.name),
 					str(item.transaction.bene_sub_category.name),
 					str(item.transaction.relation.name),
@@ -1028,7 +990,7 @@ def generate_case_study(request):
 		# Create a generator function to yield CSV rows
 		def generate_csv():
 			yield ','.join(['Tracking number', 'Date Accomplished', 'Last Name', 'First Name', 'Middle Name', 'Ext Name', 'Sex Name', 'DOB', 'Age', 
-				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex Name', 'Bene DOB', 'Bene Age',
+				   'Bene Last Name', 'Bene First Name', 'Bene Middle Name', 'Bene Ext Name', 'Bene Sex', 'Bene DOB', 'Bene Age',
 					'Social Worker','Case Study','Amount','Status of Case Study','Date submitted']) + '\n'
 			for item in data:
 				total_amount_str = str(item.transaction.total_amount)
