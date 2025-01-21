@@ -12,7 +12,8 @@ from app.libraries.models import FileType, Relation, Category, SubCategory, Serv
 	Sex, occupation_tbl, OfficeStation
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
-	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData
+	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData, \
+	CaseStudyFile
 from django.contrib.sessions.models import Session
 from app.models import AuthUser, AuthUserGroups, AuthtokenToken, AuthuserDetails
 from django.db.models import Value, Sum, Count, Q
@@ -363,6 +364,29 @@ def incoming(request):
 	}
 	return render(request, 'requests/incoming.html', context)
 
+@login_required
+@groups_only('Social Worker', 'Super Administrator')
+def UploadCaseStudy(request, pk):
+	if request.method == "POST":
+		transaction_id = pk
+		existing_file = CaseStudyFile.objects.filter(transaction_id=transaction_id).first()
+		if existing_file:
+			existing_file.case_study_file.delete()  # Delete the file from storage
+			existing_file.delete()  # Remove the database record
+
+		# Create a new record with the uploaded file
+		CaseStudyFile.objects.create(
+			case_study_file=request.FILES.get('casestudyfile'),
+			transaction_id=transaction_id,
+			date_submission=request.POST.get('date_submission')
+		)
+		TransactionStatus1.objects.filter(transaction_id=transaction_id).update(
+			case_study_status=1,
+			case_study_date=request.POST.get('date_submission')
+		)
+		
+		return JsonResponse({'data': 'success', 'msg': 'Case study successfully uploaded'})
+
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
 	filename_start = filename.replace('.' + ext, '')
@@ -438,6 +462,8 @@ def view_incoming(request, pk):
 	calculate = transaction_description.objects.filter(tracking_number_id=data.tracking_number).aggregate(total_payment=Sum('total'))
 	
 	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
+	case_study = CaseStudyFile.objects.filter(transaction_id=data.id).first()
+	print(case_study)
 	context = {
 		'transaction': data,
 		'pict': picture,
@@ -458,6 +484,7 @@ def view_incoming(request, pk):
 		'PriorityLine': PriorityLine.objects.filter(is_active=1).order_by('id'),
 		'Problem_Assessment':AssessmentProblemPresented.objects.filter(transaction_id=pk).first(),
 		'service_provider': ServiceProvider.objects.filter(status=1),
+		'case_study': case_study,
 	}
 	return render(request, 'requests/view_incoming.html', context)
 

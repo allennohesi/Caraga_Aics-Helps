@@ -115,8 +115,31 @@
 </ul>
 <div class="tab-content" id="pills-icontabContent">
     <div class="tab-pane fade show active m-t-30" id="information" role="tabpanel">
-        <small>Client's Identifying Information</small>
+        <small>Client's Identifying Information </small>
         <br><br>
+        {% if transaction.is_case_study == 2 %}
+        <form id="uploadCaseStudy">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="formFile" class="form-label">Upload Case Study {% if case_study %}
+                        | Click File: <a href="{{ case_study.case_study_file.url }}" target="_blank">Case Study File</a>
+                    {% else %}
+                        No file available.
+                    {% endif %}</label>
+                    <input class="form-control" type="file" name="casestudyfile" id="formFile">
+                </div>
+                <div class="col-md-3">
+                    <label>Date submitted</label> <span class="txt-danger">*</span>
+                    <input type="date" class="form-control f-w-900 upper" name="date_submission" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="formFile" class="form-label">Action</label><br>
+                    <button type="submit" class="btn btn-primary mb-3">Submit</button>
+                </div>
+            </div>
+        </form>
+        {% endif %}
         <div class="row mb-3">
             <div class="col-md-4">
                 <label>CLIENT GENERATED ID</label>
@@ -909,7 +932,47 @@
                 });
             }
         });
-
+        $('#uploadCaseStudy').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            if (!validationForm()){
+                Swal.fire({
+                    title: "Are you sure",
+                    text: "You want to update this client data?",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    allowOutsideClick: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (){
+                        return $.post({
+                            url: "{% url 'UploadCaseStudy' transaction.id %}",
+                            data: form,
+                            success : function (response){
+                                if(!response.error){
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        html:  response.msg,
+                                        icon: "success",
+                                        allowOutsideClick: false,
+                                    }).then((result) => {
+                                        if (result.isConfirmed){
+                                            $("#check").modal('hide');
+                                            $('#transaction_content').load('/requests/incoming/view/{{ transaction.id }}');
+                                        }
+                                    });
+                                }else{
+                                    Swal.fire("Oops...", response.msg, "warning");
+                                }
+                            },
+                            cache       : false,
+                            contentType : false,
+                            processData : false,
+                        });
+                    },
+                });
+            }
+        });
         // Camera setup
         let video = document.getElementById("video");
         let camera_button = document.getElementById("start-camera");
