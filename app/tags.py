@@ -142,5 +142,5 @@ def get_office_station_signatories(user_id):
 def get_user_details(context):
 	request = context['request']
 	check_user_details = AuthuserDetails.objects.filter(user_id=request.user.id).first()
-	data = check_user_details.OfficeStationLib
+	data = check_user_details.OfficeStationLib if check_user_details else None
 	return data  # or any other value you want to return
