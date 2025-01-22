@@ -1400,7 +1400,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 	
 	context = {
 		'data': transaction,
-		'service_provider': ServiceProvider.objects.filter(category="PHARMACY",status=1)[:17],
+		'service_provider': ServiceProvider.objects.filter(category="PHARMACY",status=1)[:14],
 		'data': transaction,
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
