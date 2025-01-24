@@ -500,27 +500,18 @@ class SocialWorker_Status(models.Model):
 
     @property
     def get_total(self):
-        return TransactionStatus1.objects.filter(
-            transaction_id__swo_id=self.user,
-            transaction_id__date_of_transaction=date.today(),
-            status=1
-        ).count()
+        # Optimized to use a count of 'Transaction' directly
+        return self.get_transaction_count(exp_status="Pending")
 
     @property
     def get_ongoing(self):
-        return TransactionStatus1.objects.filter(
-            transaction_id__swo_id=self.user,
-            transaction_id__date_of_transaction=date.today(),
-            status=2
-        ).count()
+        # Optimized to use a count of 'Transaction' directly
+        return self.get_transaction_count(exp_status="Ongoing")
 
     @property
     def get_complete(self):
-        return TransactionStatus1.objects.filter(
-            Q(transaction_id__swo_id=self.user) &
-            Q(transaction_id__date_of_transaction=date.today()) &
-            (Q(status=6) | Q(status=3))
-        ).count()
+        # Optimized to use a count of 'Transaction' directly
+        return self.get_transaction_count(exp_status__in=["For uploading Picture", "Completed"])
 
     @property
     def case_study(self):
@@ -531,6 +522,29 @@ class SocialWorker_Status(models.Model):
             Q(transaction_id__is_case_study=2)
         ).count()
 
+    def get_transaction_count(self, **filters):
+        """
+        Helper function to get count of transactions based on given filters.
+        This reduces code duplication in get_total, get_ongoing, and get_complete.
+        """
+        return Transaction.objects.filter(
+            swo_id=self.user,
+            date_of_transaction=date.today(),
+            **filters
+        ).count()
+
+    # Additional methods for optimized aggregation if needed
+    def annotate_transaction_counts(self):
+        """
+        Annotate the counts for transactions related to this social worker.
+        This is for batch retrieval or queryset-level operations.
+        """
+        return self.__class__.objects.annotate(
+            total=Count('transaction__id', filter=Q(transaction__exp_status="Pending")),
+            ongoing=Count('transaction__id', filter=Q(transaction__exp_status="Ongoing")),
+            complete=Count('transaction__id', filter=Q(transaction__exp_status__in=["For uploading Picture", "Completed"]))
+        )
+    
     class Meta:
         managed = False
         db_table = 'swo_status_tbl'
