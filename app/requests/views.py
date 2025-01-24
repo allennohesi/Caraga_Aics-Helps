@@ -365,7 +365,6 @@ def incoming(request):
 	return render(request, 'requests/incoming.html', context)
 
 @login_required
-@groups_only('Social Worker', 'Super Administrator')
 def UploadCaseStudy(request, pk):
 	if request.method == "POST":
 		transaction_id = pk
