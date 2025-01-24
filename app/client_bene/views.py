@@ -234,15 +234,18 @@ def registration(request):
 			birthdate = request.POST.get('birthdate', '').strip()
 
 			if not last_name or not first_name or not birthdate:
-				return JsonResponse({'error': True, 'msg': 'There was a problem with your input field please review or refresh'})
+				return JsonResponse({'error': True, 'msg': 'Please review or refresh, required fields are missing.'})
 
 			with transaction.atomic():
+				middle_initial_validation = middle_name
+				middle_initial_only = middle_initial_validation[0] if middle_initial_validation else ''
 				check_if_name_exists = ClientBeneficiary.objects.filter(
-					Q(last_name__iexact=last_name) &
-					Q(first_name__iexact=first_name) &
-					Q(middle_name__iexact=middle_name) &
-					Q(suffix_id=suffix) &
-					Q(birthdate=birthdate))
+					last_name__iexact=last_name,
+					first_name__iexact=first_name,
+					middle_name__startswith=middle_initial_only,
+					suffix_id=suffix,
+					birthdate=birthdate
+				)
 				if not check_if_name_exists:
 					if suffix:
 						suffix_obj = Suffix.objects.filter(id=suffix).first()  # Fetch the Suffix object
