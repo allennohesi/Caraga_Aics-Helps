@@ -241,7 +241,7 @@
             </div>
           </div>
         </div>
-        {% if user|check_group_permission:"Super Administrator"  or user|check_group_permission:"Social Worker" %}
+        {% if restriction %}
         <div class="col-xl-8">
           <div class="card">
             <div class="card-body">
@@ -548,7 +548,7 @@ $('#submitFeedback').on('submit', function(e){
     'order': [[ 0, 'desc' ]],
     'bDestroy': true,
     'ajax': {
-        'url': '{% if restriction %}/api/requests/admin_monitoring/list/?format=datatables&ongoing=ongoing{% else %}/api/requests/case_study/deadline/?format=datatables&user={{ request.user.id }}{% endif %}',
+        'url': '/api/requests/case_study/deadline/?format=datatables&user={{ request.user.id }}',
         'type': 'GET',
         'data': function(d) {
           d.page = d.start / d.length + 1;  // Calculate the current page based on start and length

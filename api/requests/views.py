@@ -78,6 +78,11 @@ class CaseStudyDeadline(generics.ListAPIView):
 				status__in=[3, 6],
 			).order_by('-id')
 			return queryset
+		else:
+			# Default to an empty queryset if no user is provided
+			queryset = TransactionStatus1.objects.none()
+		
+		return queryset
 
 class TransactionAdvanceSearch(generics.ListAPIView):
 	serializer_class = TransactionSerializer
