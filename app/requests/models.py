@@ -438,7 +438,7 @@ def case_study_file_uploaded(instance, filename):
     return os.path.join('case_study', filename)
 
 class CaseStudyFile(models.Model):
-    case_study_file = models.FileField(upload_to=case_study_file_uploaded,verbose_name=(u'File'))
+    case_study_file = models.FileField(upload_to=case_study_file_uploaded,verbose_name=(u'File'),blank=False, null=False)
     transaction = models.ForeignKey('Transaction', models.DO_NOTHING)
     date_submission = models.DateTimeField()
     class Meta:
