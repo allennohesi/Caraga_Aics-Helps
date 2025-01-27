@@ -781,6 +781,7 @@ def view_assessment(request, pk):
 	transactionProvided = transaction_description.objects.filter(tracking_number_id=data.tracking_number).first()
 	picture = uploadfile.objects.filter(client_bene_id=data.client_id).first()
 	
+	case_study = CaseStudyFile.objects.filter(transaction_id=data.id).first()
 	#alert_the_swo = TransactionStatus1.objects.filter(transaction_id=pk,swo_time_end__isnull=True).first() # THIS IS TO ALERT IF TRANSACTION LAPAS NAG 15 MINUTES
 
 	context = {
@@ -813,6 +814,7 @@ def view_assessment(request, pk):
 		'suffix': Suffix.objects.filter(status=1).order_by('name'),
 		'sex': Sex.objects.filter(status=1).order_by('name'),
 		'occupation': occupation_tbl.objects.filter(is_active=1).order_by('id'),
+		'case_study':case_study,
 		#'alert_the_swo': alert_the_swo,
 	}
 	return render(request, 'requests/view_assessment.html', context)
