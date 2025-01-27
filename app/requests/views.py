@@ -1166,7 +1166,6 @@ def confirmAmount(request):
 
 					# Fetch signatory based on position
 					office_signatories = OfficeSignatories.objects.filter(position=position).first()
-					print("TRY",office_signatories.signatory_user.id)
 					signatories_id = office_signatories.signatory_user if office_signatories else None
 
 				# Update signatories_id for the transaction
