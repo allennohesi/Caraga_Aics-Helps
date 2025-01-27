@@ -99,7 +99,7 @@ def transaction_request(request):
 				lib_assistance_category_id=request.POST.get('assistance_category'),
 				date_entried=request.POST.get('date_entried'),
 				swo_id=request.POST.get('swo_id'),
-				is_case_study=request.POST.get('case_study'),
+				is_case_study=1,
 				priority_id=request.POST.get('priority_name'),
 				is_return_new=request.POST.get('new_returning'), 
 				is_onsite_offsite=request.POST.get('site'),
