@@ -367,24 +367,44 @@ def incoming(request):
 @login_required
 def UploadCaseStudy(request, pk):
 	if request.method == "POST":
-		transaction_id = pk
-		existing_file = CaseStudyFile.objects.filter(transaction_id=transaction_id).first()
-		if existing_file:
-			existing_file.case_study_file.delete()  # Delete the file from storage
-			existing_file.delete()  # Remove the database record
+		try:
+			transaction_id = pk
+			existing_file = CaseStudyFile.objects.filter(transaction_id=transaction_id).first()
+			if existing_file:
+				existing_file.case_study_file.delete()  # Delete the file from storage
+				existing_file.delete()  # Remove the database record
 
-		# Create a new record with the uploaded file
-		CaseStudyFile.objects.create(
-			case_study_file=request.FILES.get('casestudyfile'),
-			transaction_id=transaction_id,
-			date_submission=request.POST.get('date_submission')
-		)
-		TransactionStatus1.objects.filter(transaction_id=transaction_id).update(
-			case_study_status=1,
-			case_study_date=request.POST.get('date_submission')
-		)
+			# Create a new record with the uploaded file
+			CaseStudyFile.objects.create(
+				case_study_file=request.FILES.get('casestudyfile'),
+				transaction_id=transaction_id,
+				date_submission=request.POST.get('date_submission')
+			)
+			TransactionStatus1.objects.filter(transaction_id=transaction_id).update(
+				case_study_status=1,
+				case_study_date=request.POST.get('date_submission')
+			)
+			
+			return JsonResponse({'data': 'success', 'msg': 'Case study successfully uploaded'})
+		except ConnectionError as ce:
+			# Handle loss of connection (e.g., log the error)
+			handle_error(ce, "CONNECTION ERROR IN CLIENT UPLOADING OF CASE STUDY", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem within your connection, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN CLIENT UPLOADING OF CASE STUDY", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN CLIENT UPLOADING OF CASE STUDY", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except RequestException as re:
+			# Handle other network-related errors (e.g., log the error)
+			handle_error(re, "NETWORK RELATED ISSUE IN CLIENT UPLOADING OF CASE STUDY", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem with network, please refresh'})
+		except Exception as e:
+			# Handle other unexpected errors (e.g., log the error)
+			handle_error(e, "EXCEPTION ERROR IN CLIENT UPLOADING OF CASE STUDY", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 		
-		return JsonResponse({'data': 'success', 'msg': 'Case study successfully uploaded'})
 
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
