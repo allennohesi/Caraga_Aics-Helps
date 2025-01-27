@@ -339,3 +339,13 @@ class presented_id(models.Model):
     class Meta:
         managed = False
         db_table = 'lib_presented_id'
+
+class OfficeSignatories(models.Model):
+    position = models.CharField(max_length=64, blank=True, null=True)
+    signatory_user = models.ForeignKey('AuthUser', models.DO_NOTHING, related_name='user')
+    created_by = models.ForeignKey('AuthUser', models.DO_NOTHING, related_name='created_by')
+    updated_by = models.ForeignKey('AuthUser', models.DO_NOTHING, related_name='updated_by_user')
+    
+    class Meta:
+        managed = False
+        db_table = 'lib_official_signatories'
