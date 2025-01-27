@@ -1714,13 +1714,55 @@
                 }
             });
         });
-        $(document).on('click','a[data-role=add_provided]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
-            var id = $(this).data('id');
-            $('#empid').val(id)
-            $('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
-        });
-
+        //$(document).on('click','a[data-role=add_provided]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
+        //    var id = $(this).data('id');
+        //    $('#empid').val(id)
+        //    $('#modalProvided').modal('show').find('#load_data').load('/requests/provided/' +id);
+        //});
     });
+</script>
+<script>
+    $(document).ready(function() {
+        // Cache modal and load_data container
+        var $modalProvided = $('#modalProvided');
+        var $loadData = $modalProvided.find('#load_data');
+    
+        // Cache all anchor elements to avoid querying them multiple times
+        var $anchorTags = $('a[data-role="add_provided"]');
+    
+        // Use event delegation only if elements are added dynamically (not needed if elements are static)
+        $anchorTags.on('click', function() {
+            var id = $(this).data('id');
+            
+            // Set empid value without triggering reflows unnecessarily
+            $('#empid').val(id);
+    
+            // Only load data if it's not already loaded for this ID
+            if ($loadData.data('loaded') !== id) {
+                $loadData.data('loading', true);  // Mark as loading to prevent repeated requests
+    
+                // Perform the AJAX request
+                $.ajax({
+                    url: '/requests/provided/' + id,
+                    method: 'GET',
+                    dataType: 'html',
+                    success: function(data) {
+                        $loadData.html(data);
+                        $loadData.data('loaded', id); // Mark as loaded for this ID
+                        $loadData.data('loading', false);  // Mark as done loading
+                    },
+                    error: function() {
+                        $loadData.data('loading', false);  // Reset loading state if error occurs
+                        alert('Failed to load content.');
+                    }
+                });
+            }
+    
+            // Show the modal immediately without waiting for data to load
+            $modalProvided.modal('show');
+        });
+    });
+    
 </script>
 <script>
     var template = `
