@@ -9,7 +9,7 @@ from app.global_variable import groups_only
 from app.libraries.models import FileType, Relation, Category, SubCategory, ServiceProvider, ServiceAssistance, \
 	TypeOfAssistance, Purpose, ModeOfAssistance, ModeOfAdmission, FundSource, SubModeofAssistance, TypeOfAssistance, \
 	SubModeofAssistance, LibAssistanceType, PriorityLine, region, medicine, AssistanceProvided, SignatoriesTbl, Suffix, \
-	Sex, occupation_tbl, OfficeStation
+	Sex, occupation_tbl, OfficeStation, OfficeSignatories
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, requirements_client, \
 	uploadfile, TransactionStatus1, SocialWorker_Status, AssessmentProblemPresented, ErrorLogData, \
@@ -1152,15 +1152,22 @@ def confirmAmount(request):
 					signatories = matching_office_stations.first().signatories_id
 					# Determine the signatory based on the total amount and area of assignment
 
-				if integer_value <= 50000:
+				if integer_value <= 50000: #THIS CAN BE CHANGE ONLY DEPENDS ON THE AREA OF ASSIGNMENT SUPERVISOR THE OTHERS ARE FIXED
 					signatories_id = signatories
 					#signatories_id = signatories_map.get(area_of_assignment.requested_in, None)
-				elif 50001 <= integer_value <= 75000:
-					signatories_id = 18  # JESSIE CATHERINE B. ARANAS
-				elif 75001 <= integer_value <= 100000:
-					signatories_id = 19  # ARDO
 				else:
-					signatories_id = 20  # RD
+					# Determine the position based on the integer value
+					if 50001 <= integer_value <= 75000:  # JESSIE CATHERINE B. ARANAS
+						position = "DC"
+					elif 75001 <= integer_value <= 100000:  # ARDO
+						position = "ARDO"
+					else:  # RD
+						position = "RD"
+
+					# Fetch signatory based on position
+					office_signatories = OfficeSignatories.objects.filter(position=position).first()
+					print("TRY",office_signatories.signatory_user.id)
+					signatories_id = office_signatories.signatory_user if office_signatories else None
 
 				# Update signatories_id for the transaction
 				Transaction.objects.filter(id=transaction_id).update(signatories_id=signatories_id)
