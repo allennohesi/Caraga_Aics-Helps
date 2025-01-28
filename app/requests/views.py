@@ -970,7 +970,8 @@ def save_assessment(request, pk):
 					is_referral=1 if request.POST.get('is_referral') else None,
 					is_pfa=request.POST.get('pfa') if request.POST.get('pfa') else 0,
 					is_swc=request.POST.get('swc') if request.POST.get('swc') else 0,
-					exp_status="For uploading Picture"
+					exp_status="For uploading Picture",
+					type_of_service=request.POST.get('type_of_service'),
 				)
 				AssessmentProblemPresented.objects.filter(transaction_id=pk).update(
 					sw_assessment=request.POST.get('sw_asessment'),
