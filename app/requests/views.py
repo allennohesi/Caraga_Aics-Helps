@@ -1212,6 +1212,7 @@ def removeTransactionData(request):
 @groups_only('Social Worker', 'Super Administrator')
 def printAttestation(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
+
 	transaction_data = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
 	display_family_roster = ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=transaction.bene_id)[:2]
@@ -1238,8 +1239,16 @@ def printAttestation(request, pk):
 @groups_only('Social Worker', 'Super Administrator')
 def printGIS(request, pk):
 	transaction = Transaction.objects.filter(id=pk).first()
-	transaction_data = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 	transactionStartEnd = TransactionStatus1.objects.filter(transaction_id=pk).first()
+	if transaction and transactionStartEnd and transaction.exp_status not in ["Completed", "For uploading Picture"]:
+		transaction.status = 3  # Update the desired field
+		transaction.exp_status = 'For uploading Picture'
+		transaction.save()  # Save the changes
+
+		transactionStartEnd.status = 3
+		transactionStartEnd.save()
+
+	transaction_data = AssessmentProblemPresented.objects.filter(transaction_id=pk).first()
 	display_family_roster = ClientBeneficiaryFamilyComposition.objects.filter(clientbene_id=transaction.bene_id)[:2]
 	display_provided_data = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number)
 	calculate = transaction_description.objects.filter(tracking_number_id=transaction.tracking_number).aggregate(total_payment=Sum('total'))
