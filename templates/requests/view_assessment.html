@@ -799,10 +799,20 @@
                         <textarea class="form-control" id="exampleFormControlTextarea1" name="other_requirements" rows="2" {% if Problem_Assessment.other_requirements == None %} disabled="true" {% endif%}>{% if Problem_Assessment.other_requirements %}{{Problem_Assessment.other_requirements}}{% endif %}</textarea>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Date of assessment <span class="txt-danger">*</span></label>
-                        <input type="datetime-local" class="form-control f-w-900 upper" name="date_assessment" value="{{ transaction.swo_date_time_end|date:'Y-m-d\TH:i' }}" required min="1900-05-11T00:00" max="{{ today|date:'Y-m-d' }}T23:59" onkeydown="return false">
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label>Type of service <span class="txt-danger">*</span></label>
+                        <select class="form-control select" name="type_of_service" id="type_of_service" required>
+                            <option></option>
+                            <option value="AICS" {% if transaction.type_of_service == "AICS" %}selected{% endif %}>AICS</option>
+                            <option value="AKAP" {% if transaction.type_of_service == "AKAP" %}selected{% endif %}>AKAP</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Date of assessment <span class="txt-danger">*</span></label>
+                            <input type="datetime-local" class="form-control f-w-900 upper" name="date_assessment" value="{{ transaction.swo_date_time_end|date:'Y-m-d\TH:i' }}" required min="1900-05-11T00:00" max="{{ today|date:'Y-m-d' }}T23:59" onkeydown="return false">
+                        </div>
                     </div>
                 </div>
                 {% if requirements %}
