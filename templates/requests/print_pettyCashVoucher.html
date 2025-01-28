@@ -85,7 +85,11 @@
                                 {% endif %}
                                 {% endwith %}</u>
                                 <p>Signature Over Printed Name <br>
+                                    {% if data.requested_in != "AGUSAN DEL NORTE" %}
+                                    DIVISION CHIEF
+                                    {% else %}
                                     CIS HEAD
+                                    {% endif %}
                                 </p>
                             </center>                            
                         <br>
