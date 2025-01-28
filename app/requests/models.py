@@ -239,6 +239,7 @@ class Transaction(models.Model):
     is_pfa = models.SmallIntegerField(blank=True, null=True)
     is_swc = models.SmallIntegerField(blank=True, null=True)
     exp_status = models.CharField(max_length=255, blank=True, null=True)
+    type_of_service = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def get_action_action(self):

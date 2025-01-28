@@ -135,7 +135,16 @@
           <td></td>
           <td></td>
           <td></td>
-          <td></td>
+          <td>
+            <span>
+              <input type="checkbox" name="type_of_service" value="AICS" 
+                     {% if data.type_of_service == "AICS" %}checked{% endif %}> AICS
+          </span>
+          <span>
+              <input type="checkbox" name="type_of_service" value="AKAP" 
+                     {% if data.type_of_service == "AKAP" %}checked{% endif %}> AKAP
+          </span>
+          </td>
           <td>
             {% if data.is_return_new == 1 %}
             <input type="radio" name="new" value="1" checked> NEW &nbsp; <input type="radio" name="status" value="2"> RETURNING
