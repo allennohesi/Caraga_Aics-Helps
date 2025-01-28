@@ -117,7 +117,8 @@
           <td></td>
           <td></td>
           <td></td>
-          <td></td>
+          <td><span> <input type="checkbox" name="" > AICS</span>           
+            <span> <input type="checkbox" name="" > AKAP</span></td>
           <td>
             {% if data.is_return_new == 1 %}
             <input type="radio" name="new" value="1" checked> NEW &nbsp; <input type="radio" name="status" value="2"> RETURNING
@@ -125,7 +126,6 @@
             <input type="radio" name="new" value="1"> NEW &nbsp; <input type="radio" name="status" value="2" checked> RETURNING
             {% endif %}
           </td>
-          <td></td>
           <td></td>
           <td>
             <span> <input type="radio" name="" checked> Onsite</span>&nbsp;&nbsp;&nbsp;
@@ -135,8 +135,6 @@
             <span> <input type="checkbox" name="" {% if data.is_referral %} checked {% else %} {% endif %}> Referral</span>&nbsp;&nbsp;&nbsp;
             <span> <input type="radio" name=""> Off-site</span>
           </td>
-          <td></td>
-          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -366,8 +364,12 @@
             </td>
             <td></td>
             <td colspan="2" width="135px" style="border-bottom:1px solid black;">
-              {% if esignature.signature_file.url %}<img height="40px" style="float:center;" src="{{esignature.signature_file.url}}"><br>{% endif %}
-              <label>{{data.signatories.get_fullname|upper}}</label>
+                {% with get_signatories=data.requested_in %}
+                {% get_signatories get_signatories as province %}
+                {% if province %}
+                {{ province }}
+                {% endif %}
+                {% endwith %}
             </td>
             <td></td>
           </tr>
