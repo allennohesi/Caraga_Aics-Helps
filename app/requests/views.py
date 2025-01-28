@@ -1412,7 +1412,6 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	get_signatories_library = OfficeStation.objects.filter(id=transaction.office_station_in.id).first()
 	context = {
 		'data': transaction,
-		'data': transaction,
 		'categoryMedical': TypeOfAssistance.objects.filter(type_assistance_id=1,status=1),
 		'provided_data': display_provided_data,
 		'display_provider': display_provider,
