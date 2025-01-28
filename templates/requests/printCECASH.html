@@ -117,8 +117,8 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><span> <input type="checkbox" name="" > AICS</span>           
-            <span> <input type="checkbox" name="" > AKAP</span></td>
+          <td><span> <input type="checkbox" name=""> AICS</span>           
+            <span> <input type="checkbox" name=""> AKAP</span></td>
           <td>
             {% if data.is_return_new == 1 %}
             <input type="radio" name="new" value="1" checked> NEW &nbsp; <input type="radio" name="status" value="2"> RETURNING
@@ -290,7 +290,7 @@
             <td colspan="3" width="75px;">
               <label>assistance for</label>
             </td>
-            <td colspan="3" width="100px;" style="border-bottom: 1px solid black;font-weight: bold;">
+            <td colspan="3" width="100px;" style="border-bottom: 1px solid black;font-weight: bold;" contenteditable="true">
               <label>{{purpose_assessment.problem_presented}}</label>
             </td>     
           </tr>                   
@@ -528,7 +528,7 @@
               <label>{{cash_signatories}}</label>
             </td>
             <td></td>
-            <td colspan="2" width="130px" style="border-bottom:1px solid black;">
+            <td colspan="2" width="130px" style="border-bottom:1px solid black;" contenteditable="true">
               <label>{{data.swo.get_fullname|upper}}</label>
             </td>
             <td></td>
