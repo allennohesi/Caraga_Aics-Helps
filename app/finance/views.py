@@ -187,15 +187,24 @@ def dibursement_voucher(request):
 			with transaction.atomic():
 				unique_id = uuid.uuid4()
 				tracking = f"DV-A-{str(unique_id).upper()}"
-				disbursementVoucher.objects.create(
-					dv_name=request.POST.get('dv_name'),
-					dv_tracking_code=tracking,
-					status=1,
-					remarks=request.POST.get('remarks'),
-					created_by_id=request.user.id,
-					sp_id=request.POST.get('service_provider_id')
-				)
-				return JsonResponse({'data': 'success', 'msg': 'You successfully submitted the data.'})
+				if request.POST.get('dv_id'):
+					disbursementVoucher.objects.filter(id=request.POST.get('dv_id')).update(
+						dv_name=request.POST.get('dv_name'),
+						remarks=request.POST.get('remarks'),
+						created_by_id=request.user.id,
+						sp_id=request.POST.get('service_provider_id')
+					)
+					return JsonResponse({'data': 'success', 'msg': 'You successfully updated the disbursement voucher'})
+				else:
+					disbursementVoucher.objects.create(
+						dv_name=request.POST.get('dv_name'),
+						dv_tracking_code=tracking,
+						status=1,
+						remarks=request.POST.get('remarks'),
+						created_by_id=request.user.id,
+						sp_id=request.POST.get('service_provider_id')
+					)
+					return JsonResponse({'data': 'success', 'msg': 'You successfully submitted the data.'})
 
 		except ConnectionError as ce:
 			# Handle loss of connection (e.g., log the error)
