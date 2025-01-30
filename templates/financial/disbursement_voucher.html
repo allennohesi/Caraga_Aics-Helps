@@ -255,7 +255,8 @@
             'columns': [
             {'data': 'id',
                 'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a>";
+                        return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a>| " +
+                        "<a href='#' data-role='edit_data'' data-id="+ data + ">Edit</a> ";
                     }
             },
             {'data': 'dv_tracking_code', 'className': 'text-start', 'sortable': false },
@@ -352,10 +353,10 @@
     });
     $(document).on('click','a[data-role=edit_data]', function(){ // For assessmentStatus
         var id = $(this).data('id');
-        var dv_number = $('#'+id).children('td:eq(2)').text();
-        var remarks = $('#'+id).children('td:eq(9)').text();
+        var dv_name = $('#'+id).children('td:eq(2)').text();
+        var remarks = $('#'+id).children('td:eq(8)').text();
         $('#dv_id').val(id)
-        $('#voucher_title').val(dv_number)
+        $('#dv_name').val(dv_name)
         $('#remarks').val(remarks)
     });
 </script>
