@@ -27,9 +27,9 @@
                         <option></option>
                         {% for row in service_provider  %}
                         {% if row.id == transaction.service_provider_id %}
-                        <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                        <option value="{{ row.id }}" selected>{{ row.name|upper }} - {{ row.address|upper }}</option>
                         {% else %}
-                        <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                        <option value="{{ row.id }}">{{ row.name|upper }} - {{ row.address|upper }}</option>
                         {% endif %}
                         {% endfor %}
                     </select>

@@ -357,7 +357,6 @@ def printdvobs(request, pk):
 def removeSoa(request):
 	if request.method == "POST":
 		try:
-			print(request.POST.get('dv_id'))
 			dv_data = disbursementVoucher.objects.filter(id=request.POST.get('dv_id')).first()
 			if dv_data:
 				dv_data.amount = None
@@ -618,6 +617,10 @@ def voucher_modal(request, pk):
 def remove_voucherData(request):
 	if request.method == "POST":
 		try:
+			update = finance_voucher.objects.filter(id=request.POST.get('soa_id')).first()
+			if update:
+				update.soa_total_amount = None
+				update.save()
 			data = finance_voucherData.objects.filter(id=request.POST.get('id')).first()
 			TransactionStatus1.objects.filter(id=data.transactionStatus_id).update(
 				finance_status=None,
@@ -751,25 +754,46 @@ def print_service_provider(request):
 	}
 	return render(request,'financial/print_sprovider.html', context)
 
+@csrf_exempt
+def confirmSoa(request, pk):
+	if request.method == "POST":
+		try:
+			finance_data = finance_voucher.objects.filter(id=pk).first()
+			voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
+			outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
+
+			total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
+			outside_fo_data = outside_fo.values_list('amount', flat=True)
+
+			# Convert to numeric in Python and calculate sum
+			total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
+			total_amount = sum(float(value.replace(',', '')) if value else 0 for value in outside_fo_data)
+
+			# Calculate total sum
+			total_sum = total_values + total_amount
+
+			finance_voucher.objects.filter(id=pk).update(
+				soa_total_amount = total_sum
+			)
+			return JsonResponse({'data': 'success', 'msg': 'Data successfully added to Voucher'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN confirmSoa", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST confirmSoa", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST confirmSoa", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST confirmSoa", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
 
 def view_dv_number(request,pk):
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
 	outside_fo = finance_outsideFo.objects.filter(voucher_id=finance_data.id)
 
-	total_values_data = voucher_data.values_list('transactionStatus__total_amount', flat=True)
-	outside_fo_data = outside_fo.values_list('amount', flat=True)
-
-	# Convert to numeric in Python and calculate sum
-	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
-	total_amount = sum(float(value.replace(',', '')) if value else 0 for value in outside_fo_data)
-
-	# Calculate total sum
-	total_sum = total_values + total_amount
-
-	finance_voucher.objects.filter(id=pk).update(
-		soa_total_amount = total_sum
-	)
 	if request.method == "POST":
 		try:
 			with transaction.atomic():
@@ -795,20 +819,39 @@ def view_dv_number(request,pk):
 		except Exception as e:
 			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
-
+	validation = finance_voucherData.objects.filter(voucher_id=pk).exists()
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
 		'outside_fo':outside_fo,
-		'total_sum':total_sum,
+		'total_sum':finance_data.soa_total_amount,
+		'validation': validation,
 	}
 	return render(request, 'financial/view_voucher.html',context)
 
 @csrf_exempt
 def remove_data_outside_fo(request):
 	if request.method == "POST":
-		finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
-	return JsonResponse({'data': 'success'})
+		try:
+			dv_data = disbursementVoucher.objects.filter(id=request.POST.get('dv_id')).first()
+			if dv_data:
+				dv_data.amount = None
+				dv_data.save()
+			finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
+			return JsonResponse({'data': 'success'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_data_outside_fo", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST remove_data_outside_fo", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_data_outside_fo", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_data_outside_fo", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+
 
 def list_outside_fo(request):
 	return render(request, "financial/outside_fo_list.html")
