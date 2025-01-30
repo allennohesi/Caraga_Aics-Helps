@@ -1321,8 +1321,8 @@
             {% endif%}
         {% endif %}
 
-        var $option = $("<option selected></option>").val('{{ transaction.service_provider_id }}').text('{{ transaction.service_provider.name }}');
-        $('#service_provider').append($option).trigger('change');
+        //var $option = $("<option selected></option>").val('{{ transaction.service_provider_id }}').text('{{ transaction.service_provider.name }} - {{ transaction.service_provider.address }}');
+        //$('#service_provider').append($option).trigger('change');
 
         $('.select').select2({
             width: '100%',
@@ -1367,7 +1367,7 @@
             }
         });
         let preSelectedValue = {{ transaction.service_provider_id|default:'null' }}; // Safely output ID
-        let preSelectedText = "{{ transaction.service_provider.name|default:'' }}";  // This should be the text of the pre-selected option
+        let preSelectedText = "{{ transaction.service_provider.name|default:'' }} - {{ transaction.service_provider.address|default:'' }}";  // This should be the text of the pre-selected option
     
         // Initialize Select2 with AJAX
         $('.get_sp').select2({
@@ -1376,17 +1376,23 @@
             containerCssClass: 'select',
             allowClear: true,
             ajax: {
-                url: "{% url 'get_all_service_provider' %}",
+                url: "{% url 'get_all_service_provider' %}",  // Ensure this is correct
                 method: "GET",
-                datatype: "json",
+                dataType: "json",
                 data: function(params) {
                     return {
-                        searchTerm: params.term
+                        searchTerm: params.term  // Sends the search term to the view
                     };
                 },
                 processResults: function(response) {
+                    // Process the response from the server and return results
                     return {
-                        results: response
+                        results: response.map(function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text + ' - ' + item.address // Combine name and address (or display address in some way)
+                            };
+                        })
                     };
                 },
                 cache: true

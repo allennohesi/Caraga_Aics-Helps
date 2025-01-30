@@ -95,33 +95,33 @@
                             <form id="submitVoucher">
                             <input type="text" id="dv_id" name="dv_id" hidden>
                             {% csrf_token %}
-                                <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>Disbursement voucher name</label> <span class="txt-danger" id="required">*</span>
-                                            <input type="text" class="form-control f-w-900 upper" id="dv_name" name="dv_name" oninput="this.value = this.value.toUpperCase()" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Service Provider</label> <span class="txt-danger" id="required">*</span>
-                                            <select class="form-control select get_service_provider" name="service_provider_id" id="service_provider_id" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>Remarks</label>
-                                            <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label>SAVE</label>
-                                            <input type="submit" class="form-control f-w-900">
-                                        </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Disbursement voucher name</label> <span class="txt-danger" id="required">*</span>
+                                        <input type="text" class="form-control f-w-900 upper" id="dv_name" name="dv_name" oninput="this.value = this.value.toUpperCase()" required>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Service Provider</label> <span class="txt-danger" id="required">*</span>
+                                        <select class="form-control select get_service_provider" name="service_provider_id" id="service_provider_id" required>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
+                                        <input type="text" class="form-control f-w-900 upper" name="remarks" id="remarks" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>SAVE</label>
+                                        <input type="submit" class="form-control f-w-900">
+                                    </div>
+                                </div>
+                            </div>
                             </form>
                             <hr>
                             <div class="table-responsive text-nowrap table-scroll">
@@ -190,17 +190,23 @@
         containerCssClass: 'select',
         allowClear: true,
         ajax: {
-            url: "{% url 'get_all_service_provider' %}",
+            url: "{% url 'get_all_service_provider' %}",  // Ensure this is correct
             method: "GET",
-            dataType: "json",  // Corrected the property name to "dataType"
+            dataType: "json",
             data: function(params) {
                 return {
-                    searchTerm: params.term
+                    searchTerm: params.term  // Sends the search term to the view
                 };
             },
             processResults: function(response) {
+                // Process the response from the server and return results
                 return {
-                    results: response
+                    results: response.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.text + ' - ' + item.address // Combine name and address (or display address in some way)
+                        };
+                    })
                 };
             },
             cache: true

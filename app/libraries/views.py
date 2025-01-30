@@ -394,10 +394,10 @@ def get_all_client_beneficiary(request):
 def get_all_service_provider(request):
     json = []
     if request.GET.get('searchTerm', ''):
-        client = ServiceProvider.objects.filter(Q(name__icontains=request.GET.get('searchTerm')) & Q(status=1)).order_by('name')[:10]
-        if client:
-            for row in client:
-                json.append({'id': row.id, 'text': row.name })
+        service_provider = ServiceProvider.objects.filter(Q(name__icontains=request.GET.get('searchTerm')) & Q(status=1)).order_by('name')[:10]
+        if service_provider:
+            for row in service_provider:
+                json.append({'id': row.id, 'text': row.name, 'address': row.address })
 
         return JsonResponse(json, safe=False)
     else:
@@ -414,6 +414,7 @@ def service_provider(request):
                 acronym=request.POST.get('acronym'),
                 address=request.POST.get('address'),
                 contact_number=request.POST.get('contactnumber'),
+                category=request.POST.get('category'),
                 updated_by_id=request.user.id,
                 status=True,
                 date_updated=datetime.now()

@@ -14,12 +14,12 @@
         <div class="form-group mb-3">
             <label>Category</label>
             <select class="form-select form-select-lg mb-3 select-pharmacy" name="category" aria-label=".form-select-lg example">
-                {% if service_provider.pharmacy == "" %}
-                <option selected></option>
-                <option value="PHARMACY">PHARMACY</option>
-                {% else %}
-                <option></option>
+                {% if service_provider.category == "PHARMACY" %}
+                <option>N/A</option>
                 <option value="PHARMACY" selected>PHARMACY</option>
+                {% else %}
+                <option selected>N/A</option>
+                <option value="PHARMACY" >PHARMACY</option>
                 {% endif %}
             </select>
         </div>
