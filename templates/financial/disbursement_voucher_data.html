@@ -273,7 +273,7 @@
         var id = $(this).data('id');
         Swal.fire({
           title: "Are you sure",
-          text: "This data is already finalize?",
+          text: "Is this data officially confirmed?",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3498DB",
@@ -341,22 +341,6 @@
                 cache: true
             }
         });
-        //$('#transaction').on('change', function(){
-        //    var id = $(this).val();
-        //       $.ajax({
-        //            url: '/financial-transaction/get_data_transaction/' + id,
-        //            type: 'GET',
-        //            success: function(response){
-        //                $('#fullname').val(response.fullname);
-        //                $('#category_assistance').val(response.toa);
-        //                $('#type_of_assistance').val(response.ta);
-        //                $('#client_category').val(response.ct);
-        //                $('#client_sub_category').val(response.csc);
-        //                $('#service_provider').val(response.service_provider);
-        //                $('#fund_source_data').val(response.fund_source);
-        //            }
-        //       });
-        //});
         function validationForm(){
             var invalid = false;
             $('.form-control').each(function() {

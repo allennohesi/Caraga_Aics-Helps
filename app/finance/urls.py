@@ -4,7 +4,7 @@ from app.finance.views import financial_transaction, finance_assessment, voucher
     remove_voucherData, print_voucher, print_service_provider,view_dv_number, finance_modal_provided, export_fund_summary, \
     update_amount, voucher_outside_fo, edit_outside_fo, remove_data_outside_fo, list_outside_fo, printStateofAccount, \
     dibursement_voucher, disbursement_voucher_data, get_all_soa, printdvobs, removeSoa, get_transaction_advance_search, \
-    confirmVoucher
+    confirmVoucher, confirmSoa
 
 urlpatterns = [
     path('transaction/', financial_transaction, name='financial_transaction'),
@@ -25,6 +25,7 @@ urlpatterns = [
     path('outside/fo/voucher/<int:pk>',voucher_outside_fo, name='voucher_outside_fo'),
     
     path('view_dv_number/<int:pk>', view_dv_number,name='view_dv_number'),
+    path('confirmSoa/<int:pk>', confirmSoa, name='confirmSoa'),
     path('finance_modal_provided/<int:pk>',finance_modal_provided,name='finance_modal_provided'),
     path('update_amount/<int:pk>', update_amount, name='update_amount'),
 
