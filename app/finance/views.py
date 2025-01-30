@@ -170,8 +170,6 @@ def financial_transaction(request):
 			handle_error(e, "EXCEPTION ERROR IN REQUEST financial_transaction", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
-
-
 	context = {
 		'title':'SOA',
 		'service_provider': ServiceProvider.objects.all(),
@@ -223,44 +221,81 @@ def dibursement_voucher(request):
 	}
 	return render(request,'financial/disbursement_voucher.html', context)
 
+@csrf_exempt
+def confirmVoucher(request, pk):
+	if request.method == "POST":
+		try:
+			data = disbursementVoucher.objects.filter(id=pk).first()
+			dv_data = disbursementVoucherData.objects.filter(dv_id=data.id)
+			total_values_data = dv_data.values_list('soa__soa_total_amount', flat=True)
+			total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
+			data.amount = total_values
+			data.save()
+			return JsonResponse({'data': 'success', 'msg': 'This data successfully saved'})
+		
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN confirmVoucher", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST confirmVoucher", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST confirmVoucher", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST confirmVoucher", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+		
+
 @login_required
 def disbursement_voucher_data(request, pk):
 	data = disbursementVoucher.objects.filter(id=pk).first()
-	dv_data = disbursementVoucherData.objects.filter(dv_id=data.id)
-	total_values_data = dv_data.values_list('soa__soa_total_amount', flat=True)
-	total_values = sum(float(value.replace(',', '')) if value else 0 for value in total_values_data)
-	data.amount = total_values
-	data.save()
 	if request.method == "POST":
-		if request.POST.get('function') == "update": #UPDATING NI SIR JOSHUA PAG NAA NAY DV
-			disbursementVoucher.objects.filter(id=data.id).update( 
-				dv_name=request.POST.get('dv_name'),
-				dv_date=request.POST.get('dv_date_updated'),
-				updated_by_id=request.user.id
-			)
-			dvdata = disbursementVoucherData.objects.filter(dv_id=data.id).all()
-			for row in dvdata:
-				finance_voucher.objects.filter(id=row.soa_id).update(
-					dv_data_id=data.id,
-					with_without_dv="WITH-DV"
+		try:
+			if request.POST.get('function') == "update": #UPDATING NI SIR JOSHUA PAG NAA NAY DV
+				disbursementVoucher.objects.filter(id=data.id).update( 
+					dv_name=request.POST.get('dv_name'),
+					dv_date=request.POST.get('dv_date_updated'),
+					updated_by_id=request.user.id
 				)
-			return JsonResponse({'data': 'success', 'msg': 'You successfully updated this data'})
-		else:
-			disbursementVoucherData.objects.create(
-				dv_id=data.id,
-				soa_id=request.POST.get('soa_id'),
-				date_added=today,
-				added_by_id=request.user.id
-			)
-			finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
-				date_updated=data.date_entried,
-				dv_data=data.id
-			)
-			return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
+				dvdata = disbursementVoucherData.objects.filter(dv_id=data.id).all()
+				for row in dvdata:
+					finance_voucher.objects.filter(id=row.soa_id).update(
+						dv_data_id=data.id,
+						with_without_dv="WITH-DV"
+					)
+				return JsonResponse({'data': 'success', 'msg': 'You successfully updated this data'})
+			else:
+				disbursementVoucherData.objects.create(
+					dv_id=data.id,
+					soa_id=request.POST.get('soa_id'),
+					date_added=today,
+					added_by_id=request.user.id
+				)
+				finance_voucher.objects.filter(id=request.POST.get('soa_id')).update(
+					date_updated=data.date_entried,
+					dv_data=data.id
+				)
+				return JsonResponse({'data': 'success', 'msg': 'You successfully added this data'})
+		except RequestException as e:
+			handle_error(e, "REQUEST EXCEPTION ERROR IN disbursement_voucher_data", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except ValidationError as e:
+			handle_error(e, "VALIDATION ERROR IN REQUEST disbursement_voucher_data", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
+		except IntegrityError as e:
+			handle_error(e, "INTEGRITY ERROR IN REQUEST disbursement_voucher_data", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
+		except Exception as e:
+			handle_error(e, "EXCEPTION ERROR IN REQUEST disbursement_voucher_data", request.user.id)
+			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
+		
 	restriction = request.user.groups.filter(name__in=['Finance', 'Super Administrator']).exists()
+	validation = disbursementVoucherData.objects.filter(dv_id=data.id).exists()
 	context = {
 		'data': data,
 		'restriction': restriction,
+		'validation':validation,
 	}
 	return render(request,'financial/disbursement_voucher_data.html', context)
 
@@ -313,13 +348,20 @@ def printdvobs(request, pk):
 def removeSoa(request):
 	if request.method == "POST":
 		try:
-			data = disbursementVoucherData.objects.filter(id=request.POST.get('id')).first()
-			disbursementVoucherData.objects.filter(id=request.POST.get('id')).delete()
-			finance_voucher.objects.filter(id=data.soa_id).update(
-				dv_data=None,
-				date_updated=None,
-				with_without_dv="WITHOUT-DV",
-			)
+			print(request.POST.get('dv_id'))
+			dv_data = disbursementVoucher.objects.filter(id=request.POST.get('dv_id')).first()
+			if dv_data:
+				dv_data.amount = None
+				dv_data.save()
+			data = disbursementVoucherData.objects.filter(id=request.POST.get('id')).values('soa_id').first()
+
+			if data:
+				disbursementVoucherData.objects.filter(id=request.POST.get('id')).delete()
+				finance_voucher.objects.filter(id=data['soa_id']).update(
+					dv_data=None,
+					date_updated=None,
+					with_without_dv="WITHOUT-DV",
+				)
 			return JsonResponse({'data': 'success'})
 		except RequestException as e:
 			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData", request.user.id)
