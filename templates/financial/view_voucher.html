@@ -19,8 +19,8 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>{% if finance_datas.with_without_dv == "WITHOUT-DV" %} Temporary name: {% else %} DV-name: {% endif %}<u>{{finance_datas.voucher_title}} </u> 
-                            <br>{% if finance_datas.with_without_dv == "WITHOUT-DV" %} Temporary date: {% else %} DV-date: {% endif %}<u>{{finance_datas.date}}</u></label>
+                        <label>Name: {{finance_datas.voucher_title}} {% if validation %}<a href="#" data-role='confirm'>(CONFIRM)</a> {% endif %}
+                            <br>Date: {{finance_datas.date}} </label>
                     </div>
                 </div>
             </div>
@@ -321,6 +321,7 @@
         });
         $(document).on('click', 'a[data-role=remove]', function(){
             var id = $(this).data('id');
+            var soa_id = "{{finance_datas.id}}";
             Swal.fire({
               title: "Are you sure",
               text: "You want to data from this voucher?",
@@ -335,7 +336,8 @@
                     $.ajax({
                         url: "{% url 'remove_voucherData' %}",
                         data: {
-                            id: id
+                            id: id,
+                            soa_id: soa_id
                         },
                         type: "POST"
                     })
@@ -360,6 +362,7 @@
         });
         $(document).on('click', 'a[data-role=delete]', function(){ //OUTSIDE THE REGION DELETE 
             var id = $(this).data('id');
+            var soa_id = "{{finance_datas.id}}";
             Swal.fire({
               title: "Are you sure",
               text: "You want to data from this voucher?",
@@ -374,7 +377,8 @@
                     $.ajax({
                         url: "{% url 'remove_data_outside_fo' %}",
                         data: {
-                            id: id
+                            id: id,
+                            soa_id: soa_id
                         },
                         type: "POST"
                     })
@@ -435,6 +439,47 @@
                     },
                 });
             }
+        });
+        $(document).on('click', 'a[data-role=confirm]', function(){
+            var id = $(this).data('id');
+            Swal.fire({
+              title: "Are you sure",
+              text: "Is this data officially confirmed?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3498DB",
+              confirmButtonText: "Yes",
+              allowOutsideClick: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading()
+                    $.ajax({
+                        url: "{% url 'confirmSoa' finance_datas.id %}",
+                        data: {
+                            id: id
+                        },
+                        type: "POST"
+                    })
+                    .done(function(data){
+                        if (data.data == 'success'){
+                            Swal.fire({
+                              title: "Good job!",
+                              text: "Data is confirmed",
+                              icon: "success",
+                              confirmButtonColor: "#3498DB",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    //$('#voucher-data').DataTable().ajax.reload();
+                                    $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
+                                  }
+                            });
+                        }else {
+                            Swal.fire("Oops...", response.msg, "warning");
+                        }
+                    });
+                }
+            });
         });
         $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
