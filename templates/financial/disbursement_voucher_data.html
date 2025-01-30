@@ -19,7 +19,7 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>Disrbursement Voucher: {{data.dv_name}} <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#update">(Update)</a>| <a href="{% url 'printdvobs' data.id %}" target="_blank">(Print)</a></u> 
+                        <label>Disrbursement Voucher: {{data.dv_name}} {% if validation %}<a href="#" data-role='confirm'>(CONFIRM)</a>|{% endif %} <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#update">(UPDATE)</a> {% if data.amount %}| <a href="{% url 'printdvobs' data.id %}" target="_blank">(PRINT)</a> {% endif %}</u> 
                             <br>Payee: {{data.sp.name}}</u></label>
                     </div>
                 </div>
@@ -173,6 +173,8 @@
 
                                     }
                                 });
+                            }else{
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
@@ -212,6 +214,8 @@
                                         $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
                                     }
                                 });
+                            }else {
+                                Swal.fire("Oops...", response.msg, "warning");
                             }
                         },
                         cache       : false,
@@ -224,6 +228,7 @@
     });
     $(document).on('click', 'a[data-role=remove]', function(){
         var id = $(this).data('id');
+        var dv_id = "{{data.id}}";
         Swal.fire({
           title: "Are you sure",
           text: "You want to data from this voucher?",
@@ -238,7 +243,8 @@
                 $.ajax({
                     url: "{% url 'removeSoa' %}",
                     data: {
-                        id: id
+                        id: id,
+                        dv_id: dv_id
                     },
                     type: "POST"
                 })
@@ -256,6 +262,49 @@
                                 $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
                               }
                         });
+                    }else {
+                        Swal.fire("Oops...", response.msg, "warning");
+                    }
+                });
+            }
+        });
+    });
+    $(document).on('click', 'a[data-role=confirm]', function(){
+        var id = $(this).data('id');
+        Swal.fire({
+          title: "Are you sure",
+          text: "This data is already finalize?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3498DB",
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.showLoading()
+                $.ajax({
+                    url: "{% url 'confirmVoucher' data.id %}",
+                    data: {
+                        id: id
+                    },
+                    type: "POST"
+                })
+                .done(function(data){
+                    if (data.data == 'success'){
+                        Swal.fire({
+                          title: "Good job!",
+                          text: "Data is confirmed",
+                          icon: "success",
+                          confirmButtonColor: "#3498DB",
+                          allowOutsideClick: false,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                //$('#voucher-data').DataTable().ajax.reload();
+                                $('#client_content').load('/financial-transaction/disbursement/data/{{data.id}}');
+                              }
+                        });
+                    }else {
+                        Swal.fire("Oops...", response.msg, "warning");
                     }
                 });
             }

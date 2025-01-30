@@ -249,8 +249,7 @@
             'columns': [
             {'data': 'id',
                 'render': function(data, type, row, meta) {
-                        return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a> | " +
-                        "<a href='" + printUrl + data + "' data-role='print' data-id=" + data + "' target='_blank'>Print</a>";
+                        return "<a href='#' data-role='view_data' data-id="+ data + ">Details</a>";
                     }
             },
             {'data': 'dv_tracking_code', 'className': 'text-start', 'sortable': false },
@@ -289,7 +288,6 @@
 
         $(document).on('click', 'a[data-role=view_data]', function(){
             var id = $(this).data('id');
-            console.log(id)
             $('#transaction_content').load('/financial-transaction/disbursement/data/' + id); //pass data, and stay still in the body
         });
     });
