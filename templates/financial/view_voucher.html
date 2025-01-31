@@ -19,7 +19,7 @@
             <div class="row mb-3">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>Name: {{finance_datas.voucher_title}} {% if validation %}<a href="#" data-role='confirm'>(CONFIRM)</a> {% endif %}
+                        <label>Name: {{finance_datas.voucher_title}} {% if validation %}<a href="#" data-role='confirm'>(CONFIRM)</a> | {% endif %} <a href="#" data-role='outsidefo' data-id="{{finance_datas.id}}">(OUTSIDE FO ENCODING)</a>
                             <br>Date: {{finance_datas.date}} </label>
                     </div>
                 </div>
@@ -73,7 +73,9 @@
                 </div>
             </form>
             <hr>
-            <small>DV Data</small>
+            <div class="alert alert-primary dark" role="alert">
+                <p><i class="fa fa-info-circle"></i>Please make sure to click the confirmation link below if this is final to reflect the total.</p>
+            </div>
             <div class="row mb-3">
                 <div class="table-responsive">
                     <table class="table table-responsive table-sm table-bordered" id="voucher-data">
@@ -94,8 +96,8 @@
             </div>
             {% if outside_fo %}
             <hr>
-            <div class="alert alert-dark" role="alert">
-                Data below are outside the FO transactions that are billed here in the office.
+            <div class="alert alert-primary dark" role="alert">
+                <p><i class="fa fa-info-circle"></i>The data below is outside the HELPS transaction.</p>
             </div>
             <div class="row mb-3">
                 <div class="table-responsive">
