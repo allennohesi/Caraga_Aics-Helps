@@ -58,16 +58,9 @@
                         </div>
                     </div>
                     <input type="text" class="form-control" name="soa_total_amount" value="{% if total_sum %}{{total_sum|floatformat:2|intcomma}}{% else %}0{% endif %}" hidden>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label>SAVE</label>
-                            <input type="submit" class="form-control f-w-900">
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <label>OUTSIDE FO</label>
-                            <a type="button" class="btn btn-primary" data-role='outsidefo' data-id="{{finance_datas.id}}">Open</a>
+                            <input type="submit" class="form-control f-w-900" style="margin-top: 28px;">
                         </div>
                     </div>
                 </div>
