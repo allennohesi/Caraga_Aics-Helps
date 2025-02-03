@@ -29,6 +29,8 @@
           <th scope="col">Representative Category</th>
           <th scope="col">Assistance Type</th>
           <th scope="col">Date of Transaction</th>
+          <th scope="col">Client</th>
+          <th scope="col">Beneficiary</th>
           <th class="text-center">Status</th>
         </tr>
       </thead>
@@ -40,6 +42,8 @@
             <td>{{row.transaction.bene_category.name|upper}}</td>
             <td>{{row.transaction.lib_assistance_category.name|upper}}</td>
             <td>{{row.verified_time_start|date:"Y-m-d"|upper}}</td>
+            <td>{{row.transaction.client.client_bene_fullname|upper}}</td>
+            <td>{{row.transaction.bene.client_bene_fullname|upper}}</td>
             <td>
               {% if row.status == 1 %}
               Pending
@@ -63,49 +67,4 @@
         {% endfor%}
       </tbody>
     </table>
-    <br>
-    <hr>
-    <br>
-    <table class="table">
-        <thead>
-          <tr>
-            <p>As Benefiary Data</p>
-            <th scope="col">Tracking Number</th>
-            <th class="text-center">Relationship</th>
-            <th scope="col">Benefiary Category</th>
-            <th scope="col">Assistance Type</th>
-            <th scope="col">Date of Transaction</th>
-            <th class="text-center">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for row in transactionBeneData %}
-          <tr>
-            <th>{{row.transaction.tracking_number|upper}}</th>
-            <th class="text-center">{{row.transaction.relation.name|upper}}</th>
-            <td>{{row.transaction.bene_category.name|upper}}</td>
-            <td>{{row.transaction.lib_assistance_category.name|upper}}</td>
-            <td>{{row.verified_time_start|date:"Y-m-d"|upper}}</td>
-            <td>
-              {% if row.status == 1 %}
-              Pending
-              {% elif row.status == 2 %}
-              Ongoing
-              {% elif row.status == 3 %}
-              For uploading picture
-              {% elif row.status == 4 %}
-              Hold
-              {% elif row.status == 5 %}
-              Cancelled
-              {% elif row.status == 6 %}
-              Completed
-              {% elif row.status == 7 %}
-              Resumed
-              {% else %}
-              Pending
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor%}
-      </table>
 </form>
