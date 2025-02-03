@@ -360,7 +360,7 @@ def incoming(request):
 		'title': 'Incoming',
 		'user_address': user_address,
 		'current_year':current_year,
-		'officestation': OfficeStation.objects.all()
+		# 'officestation': OfficeStation.objects.all()
 	}
 	return render(request, 'requests/incoming.html', context)
 

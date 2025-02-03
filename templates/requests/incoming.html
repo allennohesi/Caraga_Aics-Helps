@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 {% load static %}
+{% load tags %}
 <style>
     /* Styling for DataTable */
     #incoming-table_wrapper {
@@ -158,8 +159,9 @@
             <div class="input-group mb-3">
                 <select class="form-select" aria-label="Default select example" id="aoa" class="aoa">
                     <option value="" selected>Choose area of assignment</option>
-                    {% for row in officestation %}
-                    <option value="{{row.id}}">{{row.name}}</option>
+                    {% get_office_stations as office_stations %}
+                    {% for station in office_stations %}
+                        <option value="{{ station.id }}">{{ station.name }}</option>
                     {% endfor %}
                   </select>
                   <button class="btn btn-outline-primary" type="button" id="filter-area">Filter</button>
