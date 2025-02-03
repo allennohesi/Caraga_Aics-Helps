@@ -274,8 +274,11 @@ class CashTransactionViews(generics.ListAPIView):
 	pagination_class = LargeResultsSetPagination
 
 	def get_queryset(self):
-		region = self.request.query_params.get('region')
-		queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=0,transaction_id__requested_in=region, status__in=[6, 3]).order_by('-id')
+		aoa = self.request.query_params.get('aoa')
+		if aoa:
+			queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=0,transaction_id__office_station_in_id=aoa, status__in=[6, 3]).order_by('-id')
+		else:
+			queryset = TransactionStatus1.objects.filter(transaction_id__is_gl=0, status__in=[6, 3]).order_by('-id')
 		return queryset
 	
 

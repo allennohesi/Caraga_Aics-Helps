@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 {% load static %}
+{% load tags %}
 <style>
     input {border:0;outline:0;}
     input:focus {outline:none!important;}
@@ -83,9 +84,9 @@
             <div class="card">
                 <div class="card-body" id="transaction_content">
                     <ul class="nav nav-pills" id="tabUL" role="tablist">
-                        <li class="nav-item">
+                        <li class="nav-item" data-bs-toggle="modal" data-bs-target="#filteriningmodal">
                             <a class="nav-link active" id="pills-ongoing" data-bs-toggle="pill" href="#ongoing" role="tab">
-                                <i class="fa fa-file-o"></i> Cash Transactions
+                                <i class="fa fa-file-o"></i> Filter Transactions
                             </a>
                         </li>
                     </ul>
@@ -114,6 +115,28 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="filteriningmodal" tabindex="-1" aria-labelledby="filteriningmodalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filteriningmodallLabel">Filter Transaction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <select class="form-select" aria-label="Default select example" id="aoa">
+                    <option value="" selected>Choose area of assignment</option>
+                    {% get_office_stations as office_stations %}
+                    {% for station in office_stations %}
+                        <option value="{{ station.id }}">{{ station.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-outline-primary" type="button" id="filter-area">Filter</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
 {% endblock %}
 {% block script %}
 <script>
@@ -126,7 +149,7 @@
             'order': [[ 3, 'desc' ]],
             'bDestroy': true,
             'ajax': {
-                'url': '/api/requests/cash/transaction/?format=datatables&region={{user_address.barangay.city_code.prov_code.prov_name}}',
+                'url': '/api/requests/cash/transaction/?format=datatables',
                 'type': 'GET',
                 'data': function(d) {
                     d.page = d.start / d.length + 1;  // Calculate the current page based on start and length
@@ -190,6 +213,13 @@
             console.log(id)
             $('#transaction_content').load('/cash-transaction/transaction/view/' + id); //stay still in the body
         });
+        $('#filter-area').on('click', function(){
+			if($('#aoa').val() == "") {
+				Swal.fire("Ooops!", "Fields on filter by area of assignment cannot be blank.", "warning");
+			} else {
+				$('#cash_transaction').DataTable().ajax.url('/api/requests/cash/transaction/?format=datatables&aoa={{user_address.OfficeStationLib.id}}&aoa=' + $('#aoa').val()).load();
+			}
+		});
     });
     function validationForm(){
         var invalid = false;
