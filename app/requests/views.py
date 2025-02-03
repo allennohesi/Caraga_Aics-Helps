@@ -176,7 +176,7 @@ def requests(request):
 			check_client_address = ClientBeneficiary.objects.filter(id=request.POST.get('client')).first()
 			check_bene_address = ClientBeneficiary.objects.filter(id=request.POST.get('beneficiary')).first()
 			if check_client_address.barangay_value == None or check_bene_address.barangay_value == None:
-				return JsonResponse({'error': True, 'msg': 'Kindly press update button in Client/Beneficiary list of this specific client'})
+				return JsonResponse({'error': True, 'msg': 'Kindly search the client/beneficiary name in the list and press update button'})
 			else:
 				if request.POST.get('justification'): #Whatever the condition is as long as nay justification proceed
 					submission=transaction_request(request)

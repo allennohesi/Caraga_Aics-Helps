@@ -376,16 +376,15 @@ def registration(request):
 	return render(request, 'client_bene/registration.html', context)
 
 def modal_transaction(request,pk):
-	transactionClientSide = TransactionStatus1.objects.filter(transaction_id__client_id=pk).order_by('-id')
-	transactionBeneside = TransactionStatus1.objects.filter(transaction_id__bene_id=pk).order_by('-id')
+	transactions = TransactionStatus1.objects.filter(
+		Q(transaction_id__client_id=pk) | Q(transaction_id__bene_id=pk)
+	).order_by('-id')
 
 	picture = uploadfile.objects.filter(client_bene_id=pk).first()
 	data = ClientBeneficiary.objects.filter(id=pk).first()
 	context = {
-		'transactionClientData':transactionClientSide,
-		'transactionBeneData':transactionBeneside,
-		# 'clientNextTransaction':result1,
-		# 'beneNextTransaction':result2,
+		'transactionClientData':transactions,
+
 		'pict':picture,
 		'transaction':data,
 	}
