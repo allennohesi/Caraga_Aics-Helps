@@ -372,16 +372,16 @@ def removeSoa(request):
 				)
 			return JsonResponse({'data': 'success'})
 		except RequestException as e:
-			handle_error(e, "REQUEST EXCEPTION ERROR IN remove_voucherData", request.user.id)
+			handle_error(e, "REQUEST EXCEPTION ERROR IN removeSoa", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except ValidationError as e:
-			handle_error(e, "VALIDATION ERROR IN REQUEST remove_voucherData", request.user.id)
+			handle_error(e, "VALIDATION ERROR IN REQUEST removeSoa", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data validation error, please refresh'})
 		except IntegrityError as e:
-			handle_error(e, "INTEGRITY ERROR IN REQUEST remove_voucherData", request.user.id)
+			handle_error(e, "INTEGRITY ERROR IN REQUEST removeSoa", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a data inconsistency, please refresh'})
 		except Exception as e:
-			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_voucherData", request.user.id)
+			handle_error(e, "EXCEPTION ERROR IN REQUEST removeSoa", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
 @login_required
@@ -833,10 +833,10 @@ def view_dv_number(request,pk):
 def remove_data_outside_fo(request):
 	if request.method == "POST":
 		try:
-			dv_data = disbursementVoucher.objects.filter(id=request.POST.get('dv_id')).first()
-			if dv_data:
-				dv_data.amount = None
-				dv_data.save()
+			update = finance_voucher.objects.filter(id=request.POST.get('soa_id')).first()
+			if update:
+				update.soa_total_amount = None
+				update.save()
 			finance_outsideFo.objects.filter(id=request.POST.get('id')).delete()
 			return JsonResponse({'data': 'success'})
 		except RequestException as e:
