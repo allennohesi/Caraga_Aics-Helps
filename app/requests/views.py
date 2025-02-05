@@ -1367,7 +1367,7 @@ def printGLHead(request, pk):
 		'calculate': calculate,
 		'validity':EndDate,
 		'ct':rows,
-		'billing_signatories':get_signatories_library.billing_signatories,
+		'billing_signatories':get_signatories_library,
 	}
 	return render(request,"requests/printGLHead.html", context)
 
