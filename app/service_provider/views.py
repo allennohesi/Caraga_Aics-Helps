@@ -30,7 +30,9 @@ from rest_framework.authtoken.models import Token
 import os
 import base64
 import uuid
+from maintenance_mode.decorators import force_maintenance_mode_off, force_maintenance_mode_on
 
+@force_maintenance_mode_on
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def monitoring(request):

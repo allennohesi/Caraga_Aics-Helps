@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 import uuid 
 import os
 from django.db.models import Q
+from maintenance_mode.decorators import force_maintenance_mode_off, force_maintenance_mode_on
 today = date.today()
 
 
@@ -43,6 +44,7 @@ def generate_serial_string(oldstring, prefix=None):
 		return "{}-{}-{}-{}-{}".format(str(prefix), str(current_year).zfill(4), str(current_month).zfill(2), str(current_day).zfill(2),
 									str("1").zfill(4)).strip()
 
+@force_maintenance_mode_on
 @login_required
 def registrationOnline(request):
 	if request.method == "POST":
@@ -268,6 +270,7 @@ def registrationOnline(request):
 	}
 	return render(request, "client_bene_online/registration.html", context)
 
+@force_maintenance_mode_on
 @login_required
 def requestsOnline(request):
 	user_data = ClientBeneficiary.objects.filter(user_data_id=request.user.id).first()
