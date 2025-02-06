@@ -106,10 +106,17 @@ def subtract(value, arg):
 	return value - arg
 
 @register.simple_tag
-def get_signatories(province):
+def get_signatories(province): 
 	signatories = ""
 	data = OfficeStation.objects.filter(region=province).first()
 	signatories = data.main_signatories
+	return signatories
+
+@register.simple_tag
+def get_head(province): #ONLY GIS SIGNATORIES IF GL
+	signatories = ""
+	data = OfficeStation.objects.filter(region=province).first()
+	signatories = data.head
 	return signatories
 
 @register.simple_tag
