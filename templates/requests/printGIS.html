@@ -752,12 +752,21 @@
               <td width="150px" rowspan="2"><br><br><br>
                 <label>
                   <br><br><u>
-                    {% with get_signatories=data.requested_in %}
-                    {% get_signatories get_signatories as province %}
-                    {% if province %}
-                    {{ province }}
+                    {% if data.is_gl == 1 %}
+                      {% with get_head=data.requested_in %} {% comment %} IF GL SI MAAM HEAD {% endcomment %}
+                      {% get_head get_head as province %}
+                      {% if province %}
+                      {{ province }}
+                      {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      {% with get_signatories=data.requested_in %} {% comment %} IF CASH SI MA'AM CATHY {% endcomment %}
+                      {% get_signatories get_signatories as province %}
+                      {% if province %}
+                      {{ province }}
+                      {% endif %}
+                      {% endwith %}
                     {% endif %}
-                    {% endwith %}
                     {% comment %} {{data.signatories.get_fullname|upper}} {% endcomment %}
                   </u><br>
                   Approving Authority<br>
