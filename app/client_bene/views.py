@@ -13,7 +13,7 @@ from app.requests.models import ClientBeneficiaryFamilyComposition, ClientBenefi
 from django.core.exceptions import ValidationError
 from django.db import transaction, IntegrityError
 from requests.exceptions import RequestException
-from maintenance_mode.decorators import force_maintenance_mode_off, force_maintenance_mode_on
+#from maintenance_mode.decorators import force_maintenance_mode_off, force_maintenance_mode_on
 
 def handle_error(error, location, user): #ERROR HANDLING
 	ErrorLogData.objects.create(
@@ -515,7 +515,7 @@ def filter_search(request):
 	if request.GET.get('search'):
 		print(search)
 
-@force_maintenance_mode_on
+#@force_maintenance_mode_on
 @login_required
 def PhilysysVerify(request):
 	import requests
