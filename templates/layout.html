@@ -120,7 +120,7 @@
                                     </li>
                                     {% get_user_details as get_user_station %}
                                     {% if get_user_station is not None %}
-                                    {% if user|check_group_permission:"Client" or user|check_group_permission:"Super Administrator" %}
+                                    {% comment %} {% if user|check_group_permission:"Client" or user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>Online Transaction</h6>
@@ -133,8 +133,8 @@
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'requestsOnline' %}"><i data-feather="cast"></i><span>Request assistance</span></a>
                                     </li>
-                                    {% endif %}
-                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Service Provider" %}
+                                    {% endif %} {% endcomment %}
+                                    {% comment %} {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Service Provider" %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>Service Provider</h6>
@@ -151,7 +151,7 @@
                                         <label class="badge badge-info">Click me !</label>
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'get_monitoring' %}"><i data-feather="download"></i><span>Monitoring</span></a>
                                     </li>
-                                    {% endif %}
+                                    {% endif %} {% endcomment %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>On-site Transaction</h6>
@@ -230,7 +230,7 @@
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'transactions' %}"><i data-feather="cast"></i><span>Signatories Transactions</span></a>
                                     </li>
-                                    {% if user|check_group_permission:"Super Administrator" %}
+                                    {% comment %} {% if user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
                                             <h6>Future Features</h6>
@@ -240,7 +240,7 @@
                                     <li class="sidebar-list">
                                         <a class="sidebar-link sidebar-title link-nav" href="{% url 'PhilysysVerify' %}"><i data-feather="cast"></i><span>philsys verification</span></a>
                                     </li>
-                                    {% endif %}
+                                    {% endif %} {% endcomment %}
                                     {% if user|check_group_permission:"Super Administrator" %}
                                     <li class="sidebar-main-title">
                                         <div>
