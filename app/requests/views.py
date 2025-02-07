@@ -1234,7 +1234,7 @@ def printAttestation(request, pk):
 		'purpose_assessment': purpose_assessment,
 		'esignature':esig,
 	}
-	return render(request,"requests/printAttestation.html", context)
+	return render(request,"requests/printableforms/printAttestation.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1267,7 +1267,7 @@ def printGIS(request, pk):
 		'purpose_assessment': purpose_assessment,
 		'esignature':esig,
 	}
-	return render(request,"requests/printGIS.html", context)
+	return render(request,"requests/printableforms/printGIS.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1290,7 +1290,7 @@ def printCEGL(request, pk):
 		'esignature':esig,
 		'purpose_assessment':purpose_assessment,
 	}
-	return render(request,"requests/printCEGL.html", context)
+	return render(request,"requests/printableforms/printCEGL.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1315,7 +1315,7 @@ def printCECASH(request, pk):
 		'purpose_assessment':purpose_assessment,
 		'cash_signatories':get_signatories_library.cash_signatories,
 	}
-	return render(request,"requests/printCECASH.html", context)
+	return render(request,"requests/printableforms/printCECASH.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1342,7 +1342,7 @@ def printGL(request, pk):
 		'validity':EndDate,
 		'ct':rows,
 	}
-	return render(request,"requests/printGL.html", context)
+	return render(request,"requests/printableforms/printGL.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1369,7 +1369,7 @@ def printGLHead(request, pk):
 		'ct':rows,
 		'billing_signatories':get_signatories_library,
 	}
-	return render(request,"requests/printGLHead.html", context)
+	return render(request,"requests/printableforms/printGLHead.html", context)
 
 @login_required
 @groups_only('Social Worker', 'Super Administrator')
@@ -1400,7 +1400,7 @@ def printGLMEDCal(request, pk):
 		'ct':rows,
 		'datas':data,
 	}
-	return render(request,"requests/printGLMEDCal.html", context)
+	return render(request,"requests/printableforms/printGLMEDCal.html", context)
 
 def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	transaction = Transaction.objects.filter(id=pk).first()
@@ -1422,7 +1422,7 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 		'today':today,
 		'get_signatories_library':get_signatories_library.cash_signatories,
 	}
-	return render(request, "requests/print_pettyCashVoucher.html", context)
+	return render(request, "requests/printableforms/print_pettyCashVoucher.html", context)
 
 def printPagPamatuod(request, pk): #PettyCashVoucher
 	transaction = Transaction.objects.filter(id=pk).first()
@@ -1447,7 +1447,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 		'today':today,
 		'userDetails':userDetails
 	}
-	return render(request, "requests/printPagpamatuod.html", context)
+	return render(request, "requests/printableforms/printPagpamatuod.html", context)
 
 def printingModal(request, pk): #ForPrintingPurposesInAssessment
 	data = Transaction.objects.filter(id=pk).first()
