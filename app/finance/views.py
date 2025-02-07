@@ -76,7 +76,7 @@ def printStateofAccount(request,pk):
 		'total_values':total_values,
 		'outside_total_values':outside_total_values,
 	}
-	return render(request,'financial/printsoa.html',context)
+	return render(request,'financial/printableforms/printsoa.html',context)
 
 
 @login_required
@@ -351,7 +351,7 @@ def printdvobs(request, pk):
 		'covered_date_end': last_transaction_date_entried,
 		'soa_data': soa_data,
 	}
-	return render(request,'financial/printdvobs.html', context)
+	return render(request,'financial/printableforms/printdvobs.html', context)
 
 @csrf_exempt
 def removeSoa(request):
@@ -701,7 +701,7 @@ def print_voucher(request, pk):
 		'voucher_data': finance_voucherData.objects.filter(voucher_id=pk).all(),
 		'total': total_values
 	}
-	return render(request,'financial/Print_voucher.html', context)
+	return render(request,'financial/printableforms/Print_voucher.html', context)
 
 def print_service_provider(request):
 	start_date_str = request.GET.get("start_date")
@@ -752,7 +752,7 @@ def print_service_provider(request):
 		'date_filtered':formatted_start_date,
 		'date_end_filtered':formatted_end_date,
 	}
-	return render(request,'financial/print_sprovider.html', context)
+	return render(request,'financial/printableforms/print_sprovider.html', context)
 
 @csrf_exempt
 def confirmSoa(request, pk):
