@@ -57,6 +57,7 @@ def generate_serial_string(oldstring, prefix=None):
 		return "{}-{}-{}-{}-{}".format(str(prefix), str(current_year).zfill(4), str(current_month).zfill(2), str(current_day).zfill(2),
 									str("1").zfill(4)).strip()
 
+@login_required
 def printStateofAccount(request,pk):
 	soa = finance_voucher.objects.filter(id=pk).first()
 	data = finance_voucherData.objects.filter(voucher_id=soa.id)
@@ -308,6 +309,7 @@ def disbursement_voucher_data(request, pk):
 	}
 	return render(request,'financial/disbursement_voucher_data.html', context)
 
+@login_required
 def printdvobs(request, pk):
 	data = disbursementVoucher.objects.filter(id=pk).first()
 	dv_data = disbursementVoucherData.objects.filter(dv=data).first()
@@ -789,6 +791,7 @@ def confirmSoa(request, pk):
 			handle_error(e, "EXCEPTION ERROR IN REQUEST confirmSoa", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
 
+@login_required
 def view_dv_number(request,pk):
 	finance_data = finance_voucher.objects.filter(id=pk).first()
 	voucher_data = finance_voucherData.objects.filter(voucher_id=pk)
@@ -852,10 +855,11 @@ def remove_data_outside_fo(request):
 			handle_error(e, "EXCEPTION ERROR IN REQUEST remove_data_outside_fo", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})
 
-
+@login_required
 def list_outside_fo(request):
 	return render(request, "financial/outside_fo_list.html")
 
+@login_required
 def voucher_outside_fo(request, pk):
 	if request.method == "POST":
 		try:
@@ -891,6 +895,7 @@ def voucher_outside_fo(request, pk):
 	}
 	return render(request, 'financial/outside_fo.html', context)
 
+@login_required
 def edit_outside_fo(request,pk):
 	try:
 		if request.method == "POST":
@@ -922,6 +927,7 @@ def edit_outside_fo(request,pk):
 	}
 	return render(request,'financial/edit_outside_fo.html',context)
 
+@login_required
 def finance_modal_provided(request,pk):
 	voucher_data = finance_voucherData.objects.filter(transactionStatus_id=pk).first()
 	transaction_id = Transaction.objects.filter(id=pk).first()

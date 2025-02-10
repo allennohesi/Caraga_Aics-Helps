@@ -375,6 +375,7 @@ def registration(request):
 	}
 	return render(request, 'client_bene/registration.html', context)
 
+@login_required
 def modal_transaction(request,pk):
 	transactions = TransactionStatus1.objects.filter(
 		Q(transaction_id__client_id=pk) | Q(transaction_id__bene_id=pk)
