@@ -1044,10 +1044,16 @@ def generate_case_study(request):
 @api_view(['GET'])
 def encodedSoa(request): #FOR GENERAL
 	if request.method == "GET":
-		data = finance_voucher.objects.filter(Q(added_by=request.user.id) | Q(user_id=request.user.id)) #WITHOUT DV ENCODED
+		print(year)
+		data = finance_voucher.objects.filter(
+			Q(added_by=request.user.id) | 
+			Q(user_id=request.user.id) | 
+			Q(date_added__year=year)  # Ensure 'date_added' is a DateTimeField or DateField
+		)
+
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['VOUCHER CODE','VOUCHER TITLE', 'DATE','AMOUNT','STATUS','ENCODED BY', 'UPDATED BY']) + '\n'
+			yield ','.join(['VOUCHER CODE', 'VOUCHER TITLE', 'DATE', 'AMOUNT', 'STATUS', 'ENCODED BY', 'UPDATED BY']) + '\n'
 			for item in data:
 				yield ','.join([
 					str(item.voucher_code),
@@ -1058,31 +1064,34 @@ def encodedSoa(request): #FOR GENERAL
 					str(item.added_by.fullname if hasattr(item, 'added_by') and item.added_by else "N/A"),
 					str(item.user.fullname if item.user and item.user.fullname else "")
 				]) + '\n'
+
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
+		response['Content-Disposition'] = 'attachment; filename="my_encoded_soa.csv"'
 		return response
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
 def DVData(request): #FOR GENERAL
 	if request.method == "GET":
-		data = disbursementVoucher.objects.filter(Q(updated_by=request.user.id)) #WITHOUT DV ENCODED
+		data = disbursementVoucher.objects.filter(
+			Q(created_by=request.user.id) |
+			Q(updated_by=request.user.id)) #WITHOUT DV ENCODED
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield ','.join(['DV CODE','DV NAME', 'CREATED BY','AMOUNT','SERVICE PROVIDER','DV DATE', 'DV BY']) + '\n'
+			yield ','.join(['DV CODE','DV NAME','SERVICE PROVIDER','DV DATE','AMOUNT','CREATED BY', 'DV BY']) + '\n'
 			for item in data:
 				service_provider = str(item.sp.name).replace(",", "") if item.sp.name is not None else "N/a"
 				yield ','.join([
 					str(item.dv_tracking_code),
 					str(item.dv_name),
-					str(item.created_by.fullname),
-					str(item.amount),
 					service_provider,
 					str(item.dv_date),
-					str(item.updated_by.fullname),
+					str(item.amount),
+					str(item.created_by.fullname),
+					str(item.updated_by.fullname) if hasattr(item, 'updated_by') and item.updated_by else "N/a",
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
+		response['Content-Disposition'] = 'attachment; filename="my_dv_data.csv"'
 		return response
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
