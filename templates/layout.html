@@ -78,7 +78,7 @@
                                 </div>
                                 <ul class="profile-dropdown onhover-show-div">
                                     <li>
-                                        <a href="#"><i data-feather="user"></i><span>Account </span></a>
+                                        <a href="{% url 'user_profile' %}"><i data-feather="user"></i><span>Profile </span></a>
                                     </li>
                                     <li>
                                         <a href="#"><i data-feather="settings"></i><span>Settings</span></a>
@@ -316,17 +316,32 @@
                                         <a class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#purpose_summary"><span>By Purpose Summary</span></a>
                                     </li>
                                     {% endif %}
-                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" or user|check_group_permission:"Biller" %}
+                                    {% if user|check_group_permission:"Super Administrator" or user|check_group_permission:"Biller" %}
                                     <li class="sidebar-list">
-                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Finance billing</span></a>
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Billing report</span></a>
                                         <ul class="sidebar-submenu">
                                             <li><a href="javascript:void(0);" class="submenu-title">Billing <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
                                                 <ul class="nav-sub-childmenu submenu-content">
                                                     {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
-                                                    <li><a href="{% url 'withDvTransactions' %}" target="_blank">Encoded Data</a></li>
-                                                    <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
+                                                    <li><a href="{% url 'encodedSoa' %}" target="_blank">Encoded Soa</a></li>
                                                     <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                    {% if user|check_group_permission:"Finance"  or user|check_group_permission:"Super Administrator" %}
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="javascript:void(0);"><i data-feather="server"></i><span>Finance report</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a href="javascript:void(0);" class="submenu-title">Finance <span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    {% comment %} <li><a href="{% url 'sync_csv' %}" target="_blank">Sync data</a></li>
+                                                    <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
+                                                    <li><a href="{% url 'DVData' %}" target="_blank">My DV Data</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#fund_source_generate">Finance Report</a></li>
+                                                    {% comment %} <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li> {% endcomment %}
                                                 </ul>
                                             </li>
                                         </ul>
@@ -613,7 +628,7 @@
                           <h5 class="modal-title" id="my_data">Encoded Data</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{% url 'withDvTransactions' %}" target="_blank" method="GET">
+                        <form action="{% url 'encodedSoa' %}" target="_blank" method="GET">
                         <div class="modal-body">
                             <div class="row mb-3">
                             </div>

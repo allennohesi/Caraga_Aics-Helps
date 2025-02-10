@@ -5,8 +5,8 @@ from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
 from app.views import login, dashboard, mail, layout_404, status_activation, landingpage, media_access, print_ProvidedBYSWO, \
-                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, withDvTransactions, \
-                    transactionDashboard, ExportBilledUnbilled, sse_view, purposeSummaryReport, myEncodedData
+                    log_out, generateTransactions, generateAICSData, generate_case_study, personalData, generatePWD, queuing, encodedSoa, \
+                    transactionDashboard, ExportBilledUnbilled, sse_view, purposeSummaryReport, myEncodedData, DVData
 
 urlpatterns = [
     path('', landingpage, name='landingpage'),
@@ -24,9 +24,10 @@ urlpatterns = [
     path('activate/<int:pk>', status_activation, name='status_activation'),
     path('print_ProvidedBYSWO', print_ProvidedBYSWO, name='print_ProvidedBYSWO'),
 
+    #FOR REPORTING
     path('personal/data/', personalData,name='personalData'),
     path("purpose/summary/", purposeSummaryReport, name="purposeSummaryReport"),
-    path('withDvTransactions/', withDvTransactions, name='withDvTransactions'),
+    path('encoded/soa/', encodedSoa, name='encodedSoa'),
     path('generatePWD/', generatePWD, name='generatePWD'),
     path('generateTransactions/', generateTransactions, name='generateTransactions'),
     path('generateAICSData/',generateAICSData, name='generateAICSData'),
@@ -34,6 +35,7 @@ urlpatterns = [
     path('generate/billed/unbilled', ExportBilledUnbilled, name='ExportBilledUnbilled'),
     path('my/encoded/data',myEncodedData,name='myEncodedData'),
     path('media/cis/<str:path>', media_access, name='media'),
+    path('dv/data/', DVData, name='DVData'),
 
     #FOR MODULES
     path('cash-transaction/', include('app.cash.urls')), 
