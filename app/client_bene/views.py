@@ -75,7 +75,6 @@ def view_client_bene_info(request, pk):
 		barangay_name = request.POST.get('barangay_name')  # Matches 'barangayText' key in JS
 
 		# Debug: Print the retrieved values to the console
-		print(region_name, province_name, city_name, barangay_name)
 		if request.POST.get('suffix'):
 			suffix = Suffix.objects.filter(id=request.POST.get('suffix')).first()
 			if request.POST.get('middle_name'):

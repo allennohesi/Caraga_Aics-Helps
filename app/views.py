@@ -22,7 +22,7 @@ from openpyxl.styles import Font, PatternFill
 from app.requests.models import ClientBeneficiary, ClientBeneficiaryFamilyComposition, \
 	 Transaction, TransactionServiceAssistance, Mail, transaction_description, AssessmentProblemPresented, \
 	uploadfile, TransactionStatus1, SocialWorker_Status
-from app.finance.models import finance_voucher
+from app.finance.models import finance_voucher, disbursementVoucher
 from django.core.paginator import Paginator
 from django.http import StreamingHttpResponse
 from calendar import month_name
@@ -1042,7 +1042,7 @@ def generate_case_study(request):
 
 @csrf_exempt  # You can remove this decorator if CSRF protection is not needed
 @api_view(['GET'])
-def withDvTransactions(request): #FOR GENERAL
+def encodedSoa(request): #FOR GENERAL
 	if request.method == "GET":
 		data = finance_voucher.objects.filter(Q(added_by=request.user.id) | Q(user_id=request.user.id)) #WITHOUT DV ENCODED
 		# Create a generator function to yield CSV rows
@@ -1057,6 +1057,29 @@ def withDvTransactions(request): #FOR GENERAL
 					str(item.with_without_dv),
 					str(item.added_by.fullname if hasattr(item, 'added_by') and item.added_by else "N/A"),
 					str(item.user.fullname if item.user and item.user.fullname else "")
+				]) + '\n'
+		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
+		return response
+
+@csrf_exempt  # You can remove this decorator if CSRF protection is not needed
+@api_view(['GET'])
+def DVData(request): #FOR GENERAL
+	if request.method == "GET":
+		data = disbursementVoucher.objects.filter(Q(updated_by=request.user.id)) #WITHOUT DV ENCODED
+		# Create a generator function to yield CSV rows
+		def generate_csv():
+			yield ','.join(['DV CODE','DV NAME', 'CREATED BY','AMOUNT','SERVICE PROVIDER','DV DATE', 'DV BY']) + '\n'
+			for item in data:
+				service_provider = str(item.sp.name).replace(",", "") if item.sp.name is not None else "N/a"
+				yield ','.join([
+					str(item.dv_tracking_code),
+					str(item.dv_name),
+					str(item.created_by.fullname),
+					str(item.amount),
+					service_provider,
+					str(item.dv_date),
+					str(item.updated_by.fullname),
 				]) + '\n'
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="personal_data.csv"'
