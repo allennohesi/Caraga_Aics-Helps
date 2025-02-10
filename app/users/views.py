@@ -24,6 +24,7 @@ def handle_error(error, location, user): #ERROR HANDLING
 		user_id=user,
 	)
 
+@login_required
 def userFeedback(request):
 	context = {
 		'title': "feedback",

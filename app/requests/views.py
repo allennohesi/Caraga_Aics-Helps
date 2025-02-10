@@ -1018,6 +1018,7 @@ def save_assessment(request, pk):
 		handle_error(e, "EXCEPTION ERROR IN SAVE ASSESSMENT", request.user.id)
 		return JsonResponse({'error': True, 'msg': 'There was an unexpected error, please refresh'})
 
+@login_required
 def modal_provided(request,pk):
 	transaction_id = Transaction.objects.filter(id=pk).first()
 	tracking_id = transaction_id.tracking_number
@@ -1402,6 +1403,7 @@ def printGLMEDCal(request, pk):
 	}
 	return render(request,"requests/printableforms/printGLMEDCal.html", context)
 
+@login_required
 def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	transaction = Transaction.objects.filter(id=pk).first()
 	EndDate = transaction.date_entried.date() + timedelta(days=3)
@@ -1424,6 +1426,7 @@ def printPettyCashVoucher(request, pk): #PettyCashVoucher
 	}
 	return render(request, "requests/printableforms/print_pettyCashVoucher.html", context)
 
+@login_required
 def printPagPamatuod(request, pk): #PettyCashVoucher
 	transaction = Transaction.objects.filter(id=pk).first()
 	EndDate = transaction.date_entried.date() + timedelta(days=3)
@@ -1449,6 +1452,7 @@ def printPagPamatuod(request, pk): #PettyCashVoucher
 	}
 	return render(request, "requests/printableforms/printPagpamatuod.html", context)
 
+@login_required
 def printingModal(request, pk): #ForPrintingPurposesInAssessment
 	data = Transaction.objects.filter(id=pk).first()
 	context = {
