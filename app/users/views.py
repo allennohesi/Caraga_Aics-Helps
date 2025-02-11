@@ -63,10 +63,10 @@ def user_list(request):
 						barangay_id=request.POST.get('barangay'),
 						service_provider_id=request.POST.get('service_provider_id'),
 					)
-					AuthUserGroups.objects.create(
-						user_id=user.id,
-						group_id=request.POST.get('group')
-					)
+					group_ids = request.POST.getlist('group[]')  # Get list of selected groups
+					AuthUserGroups.objects.bulk_create([
+						AuthUserGroups(user_id=user.id, group_id=group_id) for group_id in group_ids
+					])
 					return JsonResponse({'data': 'success', 'msg': "New user '{}' has been added successfully.".format(request.POST.get('username'))})
 				return JsonResponse({'error': True, 'msg': 'Internal Error. An uncaught exception was raised.'})
 			return JsonResponse({'error': True, 'msg': "User '{}' is already existed.".format(request.POST.get('username'))})
@@ -104,6 +104,18 @@ def change_password(request):
 @login_required
 def edit_user(request, pk):
 	if request.method == "POST":
+		user = AuthUser.objects.filter(id=pk).first()
+
+		# Get selected group IDs from the form
+		group_ids = list(map(int, request.POST.getlist('group[]')))
+
+		# Get current groups assigned to the user
+		current_group_ids = set(AuthUserGroups.objects.filter(user_id=pk).values_list('group_id', flat=True))
+
+		# Determine groups to add & remove
+		groups_to_add = set(group_ids) - current_group_ids
+		groups_to_remove = current_group_ids - set(group_ids)
+
 		check = AuthUser.objects.filter(Q(username=request.POST.get('username')) | Q(email=request.POST.get('email')) |
 										Q(first_name=request.POST.get('first_name')) | Q(last_name=request.POST.get('last_name')))
 		check_if_details_exists = AuthuserDetails.objects.filter(user_id=pk)
@@ -132,12 +144,18 @@ def edit_user(request, pk):
 						'service_provider_id':request.POST.get('sp_name')
 					}
 				)
-				AuthUserGroups.objects.update_or_create(
-					user_id=pk,  # This is the lookup field
-					defaults={
-						'group_id': request.POST.get('group')  # This will be updated or set when creating
-					}
-				)
+				group_ids = request.POST.getlist('group[]')
+				# AuthUserGroups.objects.update_or_create(
+				# 	user_id=pk,  # This is the lookup field
+				# 	defaults={
+				# 		'group_id': request.POST.get('group')  # This will be updated or set when creating
+				# 	}
+				# )
+				for group_id in groups_to_add:
+					AuthUserGroups.objects.create(user_id=pk, group_id=group_id)
+
+				# Remove old group assignments
+				AuthUserGroups.objects.filter(user_id=pk, group_id__in=groups_to_remove).delete()
 				return JsonResponse({'data': 'success', 'msg': "User '{}' has been updated successfully.".format(
 					request.POST.get('username'))})
 		else:
@@ -148,7 +166,7 @@ def edit_user(request, pk):
 		'user': AuthUser.objects.filter(id=pk).first(),
 		'information': AuthuserDetails.objects.filter(user_id=pk).first(),
 		'region': region.objects.filter(is_active=1).order_by('region_name'),
-		'user_group': AuthUserGroups.objects.filter(user_id=pk).first(),
+		'user_groups': list(AuthUserGroups.objects.filter(user_id=pk).values_list('group_id', flat=True)),
 		'group': AuthGroup.objects.all().order_by('name')
 	}
 	return render(request, 'users/edit_user.html', context)
