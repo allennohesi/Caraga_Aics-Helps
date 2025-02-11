@@ -1108,7 +1108,7 @@ def ExportBilledUnbilled(request):  # FOR GENERAL
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield 'Tracking number,Service Provider,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
+			yield 'Tracking number,Service Provider,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished,SOA name\n'
 			for item in data.iterator():  # Using iterator to efficiently handle large querysets
 				total_amount_str = str(item['total_amount']) if item['total_amount'] is not None else '0'
 				total_amount_str = total_amount_str.replace(',', '')
@@ -1123,6 +1123,7 @@ def ExportBilledUnbilled(request):  # FOR GENERAL
 					"Billed" if item['dv_number'] else "Unbilled",
 					str(item['swo__fullname']),
 					swo_date_time_end_str,
+					str(item['dv_number']),
 				]) + '\n'
 
 		response = StreamingHttpResponse(generate_csv(), content_type='text/csv')
