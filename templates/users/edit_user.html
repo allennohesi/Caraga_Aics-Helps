@@ -24,18 +24,27 @@
             </div>
         </div>
         <br>
-        <div class="form-group mb-3">
-            <label>Group <span class="txt-danger">*</span></label>
-            <select class="form-control select" name="group" id="group_id" required>
-                <option></option>
-                {% for row in group %}
-                    {% if row.id == user_group.group_id %}
-                    <option value="{{ row.id }}" selected>{{ row.name|upper  }}</option>
-                    {% else %}
-                    <option value="{{ row.id }}">{{ row.name|upper  }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
+
+        <div id="group-dynamic">
+            <div class="row mb-3 align-items-end">
+                <div class="col-md-12">
+                    <div class="form-group mb-2 group-item">
+                        <label>Group <span class="txt-danger">*</span><button type="button" class="btn btn-primary btn-xs ms-2" id="add-dynamic">
+                            <i class="fa fa-plus"></i>
+                        </button></label>
+                        <select class="form-control select" name="group[]" id="group_id" multiple required>
+                            <option></option>
+                            {% for row in group %}
+                                {% if row.id in user_groups %}
+                                    <option value="{{ row.id }}" selected>{{ row.name|upper }}</option>
+                                {% else %}
+                                    <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="form-group mb-3">
             <label>Service Provider Name <span class="txt-danger" id="txt-id-edit_service_provider"></span></label>
