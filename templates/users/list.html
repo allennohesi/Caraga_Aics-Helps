@@ -33,7 +33,6 @@
                                 <th>Username</th>
                                 <th>Full Name</th>
                                 <th class="text-center">Email</th>
-                                <th class="text-center">Role</th>
                                 <th class="text-center">Staff</th>
                                 <th class="text-center">Super User</th>
                                 <th class="text-center">Updated By</th>
@@ -348,16 +347,6 @@
                 {'data': 'username'},
                 {'data': 'fullname', 'className': 'text-center', 'sortable': false},
                 {'data': 'email', 'className': 'text-center', 'sortable': false},
-                {
-                    'data': 'role',
-                    'render': function(data, type, row, meta) {
-                        // Check if role is empty or null, return "No Role" if it is
-                        return data ? data : "No Role";
-                    },
-                    'className': 'text-center',
-                    'searchable': false,   // Make role searchable
-                    'sortable': false       // Make role sortable
-                },
                 {'data': 'is_staff',
                     'render': function(data, type, row, meta) {
                         if(data == 1) {
