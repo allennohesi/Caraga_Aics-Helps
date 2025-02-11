@@ -1099,29 +1099,29 @@ def DVData(request): #FOR GENERAL
 def ExportBilledUnbilled(request):  # FOR GENERAL
 	if request.method == "GET":
 		# Select only the required fields
-		data = Transaction.objects.filter(
-			Q(status=3) | Q(status=6)
+		data = Transaction.objects.filter(status__in=[3,6],date_of_transaction__year=year
 		).select_related(
 			'fund_source', 'swo'
 		).values(
-			'tracking_number', 'total_amount', 'fund_source__description', 'dv_number', 'swo__first_name', 'swo__last_name', 'swo_date_time_end'
+			'tracking_number','service_provider__name', 'total_amount', 'fund_source__description', 'dv_number', 'swo__first_name', 'swo__last_name','swo__fullname', 'swo_date_time_end'
 		)
 
 		# Create a generator function to yield CSV rows
 		def generate_csv():
-			yield 'Tracking number,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
+			yield 'Tracking number,Service Provider,Amount of Assistance,Source of Fund,Billed/Unbilled,Interviewer/Swo,Date Accomplished\n'
 			for item in data.iterator():  # Using iterator to efficiently handle large querysets
 				total_amount_str = str(item['total_amount']) if item['total_amount'] is not None else '0'
 				total_amount_str = total_amount_str.replace(',', '')
-				swo_fullname_str = f"{item['swo__first_name']} {item['swo__last_name']}" if item['swo__first_name'] and item['swo__last_name'] else ''
 				swo_date_time_end_str = str(item['swo_date_time_end']) if item['swo_date_time_end'] else ''
+				service_provider = str(item['service_provider__name']).replace(",", "") if item['service_provider__name'] is not None else "N/a"
 
 				yield ','.join([
 					str(item['tracking_number']),
+					service_provider,
 					total_amount_str,
 					str(item['fund_source__description']) if item['fund_source__description'] else "",
 					"Billed" if item['dv_number'] else "Unbilled",
-					swo_fullname_str,
+					str(item['swo__fullname']),
 					swo_date_time_end_str,
 				]) + '\n'
 
