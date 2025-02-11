@@ -42,14 +42,13 @@ def get_user_info(user_id):
 @register.simple_tag
 def get_user_role(user_id):
 	# Fetch the first AuthUserGroups object for the given user_id
-	user_group = AuthUserGroups.objects.filter(user_id=user_id).first()
-	
-	# Check if user_group is None
-	if user_group is None:
-		return None  # or return a default value, e.g., 'No Role Assigned'
-	
-	# Return the group name
-	return user_group.group.name
+    user_groups = AuthUserGroups.objects.filter(user_id=user_id).select_related('group')
+
+    # Extract group names as a list
+    roles = [ug.group.name for ug in user_groups]
+
+    # Return a comma-separated string of roles (or a default message if none found)
+    return ", ".join(roles) if roles else "No Role Assigned"
 
 
 

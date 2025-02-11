@@ -84,14 +84,25 @@
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label>Group <span class="txt-danger">*</span></label>
-                        <select class="form-control select" name="group" id="group" required>
-                            <option></option>
-                            {% for row in group %}
-                            <option value="{{ row.id }}">{{ row.name|upper  }}</option>
-                            {% endfor %}
-                        </select>
+                    <div id="group-container">
+                        <div class="row mb-3 align-items-end">
+                            <div class="col-md-12">
+                                <div class="form-group mb-2 group-item">
+                                    <label>Group <span class="txt-danger">*</span></label>
+                                    <div class="d-flex">
+                                        <select class="form-control select flex-grow-1" name="group[]" multiple required>
+                                            <option></option>
+                                            {% for row in group %}
+                                            <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% comment %} <button type="button" class="btn btn-primary btn-xs ms-2" id="add-provided">
+                                            <i class="fa fa-plus"></i>
+                                        </button> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group mb-3">
                         <label>Service Provider Name <span class="txt-danger" id="txt-id-service_provider_id"></span></label>
@@ -193,6 +204,43 @@
 </div>
 {% endblock %}
 {% block script %}
+<script>
+    $(document).ready(function () {
+        $("#add-provided").on("click", function () {
+            var newSelect = `
+                <div class="row mb-3 align-items-end group-item">
+                    <div class="col-md-12">
+                        <div class="form-group d-flex">
+                            <select class="form-control select group-select flex-grow-1" name="group[]" required>
+                                <option></option>
+                                {% for row in group %}
+                                <option value="{{ row.id }}">{{ row.name|upper }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-danger btn-xs remove-group ms-2">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+    
+            $("#group-container").append(newSelect);
+    
+            // Initialize Select2 for newly added elements
+            $("#group-container .group-select").last().select2({
+                width: "100%",
+                containerCssClass: "select",
+                placeholder: "Choose",
+            });
+        });
+    
+        // Remove selected dropdown
+        $(document).on("click", ".remove-group", function () {
+            $(this).closest(".group-item").remove();
+        });
+    });
+    
+</script>
 <script>
     $('#group').on('change', function(){
         if($(this).val() == "4") {
