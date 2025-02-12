@@ -1098,8 +1098,15 @@ def DVData(request): #FOR GENERAL
 @api_view(['GET'])
 def ExportBilledUnbilled(request):  # FOR GENERAL
 	if request.method == "GET":
-		# Select only the required fields
-		data = Transaction.objects.filter(status__in=[3,6],date_of_transaction__year=year
+		semester = request.GET.get("semester", "")
+
+		if semester == "1st_semester":
+			start_date = f"{year}-01-01"
+			end_date = f"{year}-06-30"
+		elif semester == "2nd_semester":
+			start_date = f"{year}-07-01"
+			end_date = f"{year}-12-31"
+		data = Transaction.objects.filter(status__in=[3,6],date_of_transaction__range=[start_date, end_date],date_of_transaction__year=year
 		).select_related(
 			'fund_source', 'swo'
 		).values(
