@@ -326,7 +326,7 @@
                                                     <li><a href="{% url 'export_report_csv' %}" target="_blank">Finance data</a></li> {% endcomment %}
                                                     <li><a href="{% url 'encodedSoa' %}" target="_blank">Encoded Soa</a></li>
                                                     <li><a href="{% url 'DVData' %}" target="_blank">My DV Data</a></li>
-                                                    <li><a href="{% url 'ExportBilledUnbilled' %}" target="_blank">Billed/Unbilled</a></li>
+                                                    <li><a data-bs-toggle="modal" data-bs-target="#billed_unbilled_transaction">Billed/Unbilled</a></li>
                                                 </ul>
                                             </li>
                                         </ul>
@@ -582,6 +582,36 @@
                                             {% for station in office_stations %}
                                                 <option value="{{ station.id }}">{{ station.name }}</option>
                                             {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Generate</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="billed_unbilled_transaction" aria-labelledby="fundsource" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="fundsource">BILLED / UNBILLED REPORT</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'ExportBilledUnbilled' %}" target="_blank" method="GET">
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Filter by semester</label><span class="txt-danger">*</span>
+                                        <select class="form-control by_semester hidden" name="semester" id="station" required>
+                                            <option></option>
+                                            <option value="1st_semester">1st Semester</option>
+                                            <option value="2nd_semester">2nd Semester</option>
                                         </select>
                                     </div>
                                 </div>
