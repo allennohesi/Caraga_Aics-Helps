@@ -1171,13 +1171,19 @@ def confirmAmount(request):
 					signatories_id = office_signatories.signatory_user if office_signatories else None
 
 				# Update signatories_id for the transaction
-				Transaction.objects.filter(id=transaction_id).update(signatories_id=signatories_id)
+				#Transaction.objects.filter(id=transaction_id).update(signatories_id=signatories_id)
 
 				# Determine and update `is_case_study` and `total_amount`
+				#print("TEST",transaction_id)
 				is_case_study = 2 if integer_value > 10000 else 1
 				Transaction.objects.filter(tracking_number=tracking_number).update(
 					is_case_study=is_case_study,
-					total_amount=total
+					total_amount=total,
+					signatories_id=signatories_id,
+					swo_date_time_end=datetime.now(),
+				)
+				TransactionStatus1.objects.filter(transaction_id=transaction_id).update(
+					swo_time_end=datetime.now(),
 				)
 
 				return JsonResponse({
