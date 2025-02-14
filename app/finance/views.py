@@ -494,7 +494,8 @@ def export_fund_summary(request):
 			"swo__first_name",
 			"dv_number",
 			"dv_date",
-			"status"
+			"status",
+			"office_station_in__name"
 
 		)
 
@@ -513,7 +514,7 @@ def generate_csv_data(queryset):
 					"Civil Status", "Birthday", "Bene Sex", "Street", "Barangay", "Municipality", "Bene District", "Bene Province",
 					"Bene Region",
 					"Relation", "Assistance Category", "Amount of assistance", "Mode of release", "Source of referral",
-					"Source of fund", "Date Interview", "Interviewer/SWO", "Service provider", "DV Date", "DV Number", "STATUS"]
+					"Source of fund", "Date Interview", "Interviewer/SWO", "Service provider", "DV Date", "DV Number", "STATUS", "Office Station"]
 
 	yield ','.join(header) + '\n'
 
@@ -583,7 +584,8 @@ def generate_csv_data(queryset):
 			service_provider_str,
 			smart_str(transaction.dv_date),
 			dv_number_str,
-			smart_str(transaction.exp_status)
+			smart_str(transaction.exp_status),
+			smart_str(transaction.office_station_in.name)
 		]) + '\n'
 
 @login_required 
