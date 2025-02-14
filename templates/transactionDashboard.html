@@ -35,6 +35,58 @@
     <div class="col-xl-6 xl-100 box-col-12">
       <div class="card">
         <div class="card-header">
+          <h5>Top 10 Fastest Social Workers</h5>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+              <li><i class="fa fa-spin fa-cog"></i></li>
+              <li><i class="view-html fa fa-code"></i></li>
+              <li><i class="icofont icofont-maximize full-card"></i></li>
+              <li><i class="icofont icofont-minus minimize-card"></i></li>
+              <li><i class="icofont icofont-refresh reload-card"></i></li>
+              <li><i class="icofont icofont-error close-card"></i></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="user-status table-responsive">
+            <table class="table table-bordernone">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Average</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sw in top_fastest_swos %}
+                <tr>
+                  <td class="bd-t-none u-s-tb">
+                      {% with user_id=sw.transaction__swo_id %}
+                      {% profile_picture_dashboard user_id as profile %}
+                      {% if profile %}
+                      <div class="align-middle image-sm-size"><img src="{{ profile.profile_pict.url }}" class="rounded-circle img-radius align-top m-r-15 " width="500" height="30"> 
+                      {% else %}
+                      <div class="align-middle image-sm-size"><img class="img-radius align-top m-r-15 rounded-circle" src="{% static 'images/login/icon.png' %}" alt="">
+                      {% endif %}
+                      {% endwith %}
+                      <div class="d-inline-block">
+                        <h6>{{ sw.transaction__swo__first_name }} {{ sw.transaction__swo__last_name }} </h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>AVERAGE DURATION PER CLIENT IS {{ sw.formatted_duration }} </td>
+                  <td>({{ sw.transaction_count }} transactions)</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 xl-100 box-col-12">
+      <div class="card">
+        <div class="card-header">
           <h5>Most completed transactions</h5>
           <div class="card-header-right">
             <ul class="list-unstyled card-option">

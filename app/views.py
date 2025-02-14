@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app.requests.models import SocialWorker_Status, TransactionStatus1
 from app.models import AuthUser, AuthUserGroups, AuthGroup
-from django.db.models import Value, Sum, Count, Q
+from django.db.models import Value, Sum, Count, Q, Avg, F, ExpressionWrapper, fields
 from datetime import date
 from app.libraries.models import Category, FundSource
 from django.utils.encoding import smart_str
@@ -425,6 +425,29 @@ def transactionDashboard(request): #TRANSACTION OVERVIEW
 		.order_by('-transaction_count')  # Order by transaction count in descending order
 	)[:6]
 
+	top_fastest_swos = (
+		TransactionStatus1.objects
+		.filter(status__in=[3, 6], verified_time_end__year=year, upload_time_end__isnull=False)
+		.annotate(
+			transaction_duration=ExpressionWrapper(
+				F('upload_time_end') - F('verified_time_start'),
+				output_field=fields.DurationField()
+			)
+		)
+		.values('transaction__swo_id', 'transaction__swo__first_name', 'transaction__swo__last_name')
+		.annotate(
+			avg_duration=Avg('transaction_duration'),
+			transaction_count=Count('id')  # Count the number of transactions per SWO
+		)
+		.filter(transaction_count__gte=5)  # Only include SWOs with at least 5 transactions
+		.order_by('avg_duration', '-transaction_count')[:5]  # Sort by fastest, then most transactions
+	)
+
+	# Format the average duration before sending it to the template
+	for sw in top_fastest_swos:
+		avg_seconds = sw['avg_duration'].total_seconds()
+		sw['formatted_duration'] = f"{int(avg_seconds // 60)} minutes {int(avg_seconds % 60)} seconds"
+
 	transaction_status_summary = (
 		TransactionStatus1.objects
 		.filter(status__in=[1, 2, 3, 4, 5, 6, 7],verified_time_end__year=year)  # Filter transactions with status 3 or 6
@@ -491,6 +514,7 @@ def transactionDashboard(request): #TRANSACTION OVERVIEW
 		'data': Paginator(case_study_per_swo, rows).page(page),
 		'total_case_study': total_case_study,
 		'today':today,
+		'top_fastest_swos': top_fastest_swos,
 
 	}
 	return render(request, 'transactionDashboard.html', context)
