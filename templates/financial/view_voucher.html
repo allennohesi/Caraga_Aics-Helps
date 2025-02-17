@@ -350,6 +350,8 @@
                                     $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
                                   }
                             });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
                         }
                     });
                 }
@@ -391,6 +393,8 @@
                                     $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
                                   }
                             });
+                        }else{
+                            Swal.fire("Oops...", response.msg, "warning");
                         }
                     });
                 }
@@ -425,6 +429,8 @@
                                             $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
                                         }
                                     });
+                                }else{
+                                    Swal.fire("Oops...", response.msg, "warning");
                                 }
                             },
                             cache       : false,
@@ -438,44 +444,58 @@
         $(document).on('click', 'a[data-role=confirm]', function(){
             var id = $(this).data('id');
             Swal.fire({
-              title: "Are you sure",
-              text: "Is this data officially confirmed?",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#3498DB",
-              confirmButtonText: "Yes",
-              allowOutsideClick: false,
+                title: "Are you sure?",
+                text: "Is this data officially confirmed?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3498DB",
+                confirmButtonText: "Yes",
+                allowOutsideClick: false,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.showLoading()
+                    Swal.showLoading();
                     $.ajax({
                         url: "{% url 'confirmSoa' finance_datas.id %}",
                         data: {
                             id: id
                         },
-                        type: "POST"
+                        type: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }, // Ensure CSRF token is included
                     })
-                    .done(function(data){
-                        if (data.data == 'success'){
+                    .done(function(response){
+                        if (response.data === 'success'){
                             Swal.fire({
-                              title: "Good job!",
-                              text: "Data is confirmed",
-                              icon: "success",
-                              confirmButtonColor: "#3498DB",
-                              allowOutsideClick: false,
+                                title: "Good job!",
+                                text: "Data is confirmed",
+                                icon: "success",
+                                confirmButtonColor: "#3498DB",
+                                allowOutsideClick: false,
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    //$('#voucher-data').DataTable().ajax.reload();
                                     $('#client_content').load('/financial-transaction/view_dv_number/{{finance_datas.id}}');
-                                  }
+                                }
                             });
-                        }else {
+                        } else {
                             Swal.fire("Oops...", response.msg, "warning");
                         }
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown){
+                        let errorMsg = "An unexpected error occurred.";
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.msg) {
+                            errorMsg = jqXHR.responseJSON.msg;
+                        }
+                        Swal.fire({
+                            title: "Error!",
+                            text: errorMsg,
+                            icon: "error",
+                            confirmButtonColor: "#E74C3C",
+                            allowOutsideClick: false,
+                        });
                     });
                 }
             });
         });
+        
         $(document).on('click','a[data-role=edit_amount]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
             $('#empid').val(id)
