@@ -45,7 +45,11 @@
                         <div class="col-md-8">
                             <div class="form-group">
                                 <label>Update Amount</label>
-                                <input type="text" class="form-control" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="amount" id="amount" value="{% if transaction.total_amount %}{{transaction.total_amount|intcomma}}{% else %}0{% endif %}" required>
+                                <input type="text" class="form-control" 
+                                onkeypress="return validateAmountInput(event, this)" 
+                                name="amount" id="amount" 
+                                value="{% if transaction.total_amount %}{{ transaction.total_amount|intcomma }}{% else %}0{% endif %}" 
+                                required>                         
                             </div>
                             <br>
                             <input type="submit" class="btn btn-primary" value="UPDATE" style="width:100%">
@@ -88,6 +92,29 @@
     
     <!-- Modal -->
 </div>
+<script>
+    function validateAmountInput(event, input) {
+        let charCode = event.charCode;
+        let value = input.value;
+    
+        // Allow backspace (8) and delete (0)
+        if (charCode === 8 || charCode === 0) return true;
+    
+        // Allow only one period (.)
+        if (charCode === 46) {
+            if (value.includes('.')) return false; // Prevent multiple dots
+            return true;
+        }
+    
+        // Allow commas (,)
+        if (charCode === 44) return true;
+    
+        // Allow only numbers (0-9)
+        if (charCode >= 48 && charCode <= 57) return true;
+    
+        return false; // Block any other character
+    }
+    </script>
 <script>
     var template_provided = `
     <tr>
