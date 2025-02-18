@@ -322,6 +322,8 @@
         $('#back, #close_modal').on('click', function(){
             window.location.href = "{% url 'dibursement_voucher' %}"
         });
+
+        let delayTimer;
         $('.soa').select2({
             width: '100%',
             placeholder: 'CHOOSE',
@@ -330,20 +332,30 @@
             ajax: {
                 url: "{% url 'get_all_soa' %}",
                 method: "GET",
-                datatype: "json",
-                data: function(params) {
-                    return {
-                        searchTerm: params.term
-                    }
+                dataType: "json",
+                delay: 300,  // Optional: built-in delay to reduce rapid requests from typing
+                transport: function (params, success, failure) {
+                    // Clear the previous timeout to prevent sending multiple requests
+                    clearTimeout(delayTimer);
+                    // Set a new timeout for the AJAX request after 1 second
+                    delayTimer = setTimeout(function () {
+                        $.ajax(params).done(success).fail(failure);
+                    }, 1000); // 1000ms = 1-second delay
                 },
-                processResults: function(response) {
+                data: function (params) {
                     return {
-                        results:response
+                        searchTerm: params.term  // Sends the search term entered by the user
                     };
                 },
-                cache: true
+                processResults: function (response) {
+                    return {
+                        results: response  // Assumes the response is an array of objects with 'id' and 'text' properties
+                    };
+                },
+                cache: true  // Enables caching for repeated requests
             }
-        });
+        });        
+        
         function validationForm(){
             var invalid = false;
             $('.form-control').each(function() {
