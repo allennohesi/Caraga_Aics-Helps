@@ -427,11 +427,16 @@
                     <tr>
                     <td colspan="6"  style="font-size: 12px;" >
                         <span style="display: inline-block;width: 15px;height: 15px;text-align: center;border: 1px solid black;">A.</span> Certified:  Expenses/Cash Advance necessary,  lawful and  incurred under my direct supervision.<br><br><br><br>
-                        {% get_office_station_signatories user.id as signatory %}
+                        {% get_office_station_head_and_designation user.id as signatory %}
                         {% if signatory %}
-                        <center><u><b><span  style="font-size: 12px;">{{ signatory }}</span></b></u></center><br>
+                            <center>
+                                <u><b><span style="font-size: 12px;">{{ signatory.head }}</span></b></u>
+                            </center><br>
+                            <center>
+                                <span style="font-size: 12px;">{{ signatory.designation }}</span>
+                            </center><br>
                         {% endif %}
-                        <center><span  style="font-size: 12px;">CIS Head</span></center><br>
+                        
     
                     </td>
     
