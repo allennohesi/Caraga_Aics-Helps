@@ -295,30 +295,11 @@ def get_all_user(request):
     return JsonResponse([], safe=False)
 
 
-# @login_required
-# @csrf_exempt
-# def get_all_client_beneficiary(request):
-#     search_term = request.GET.get('searchTerm', '')
-#     if search_term:
-#         clients_query = (
-#             ClientBeneficiary.objects
-#             .filter(client_bene_fullname__icontains=search_term, is_validated=1)
-#             .order_by('client_bene_fullname')
-#             .values_list('id', 'client_bene_fullname')[:6]
-#         )
-        
-#         json_data = [{'id': client[0], 'text': client[1]} for client in clients_query]
-#         return JsonResponse(json_data, safe=False)
-    
-#     return JsonResponse([], safe=False)
-
 @login_required
 @csrf_exempt
 def get_all_client_beneficiary(request):
     search_term = request.GET.get('searchTerm', '')
-    
-    # Only process if the search term has at least 3 characters
-    if search_term and len(search_term) >= 3:
+    if search_term:
         clients_query = (
             ClientBeneficiary.objects
             .filter(client_bene_fullname__icontains=search_term, is_validated=1)
@@ -329,8 +310,27 @@ def get_all_client_beneficiary(request):
         json_data = [{'id': client[0], 'text': client[1]} for client in clients_query]
         return JsonResponse(json_data, safe=False)
     
-    # If the search term is less than 3 characters or empty, return an empty list
     return JsonResponse([], safe=False)
+
+# @login_required
+# @csrf_exempt
+# def get_all_client_beneficiary(request):
+#     search_term = request.GET.get('searchTerm', '')
+    
+#     # Only process if the search term has at least 3 characters
+#     if search_term and len(search_term) >= 3:
+#         clients_query = (
+#             ClientBeneficiary.objects
+#             .filter(client_bene_fullname__icontains=search_term, is_validated=1)
+#             .order_by('client_bene_fullname')
+#             .values_list('id', 'client_bene_fullname')[:6]
+#         )
+        
+#         json_data = [{'id': client[0], 'text': client[1]} for client in clients_query]
+#         return JsonResponse(json_data, safe=False)
+    
+#     # If the search term is less than 3 characters or empty, return an empty list
+#     return JsonResponse([], safe=False)
 
 
 # @login_required #ORIGINAL CODE
