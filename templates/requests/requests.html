@@ -664,6 +664,32 @@
         });
 
         birthdate.max = new Date().toISOString().split("T")[0];
+        //$('.client_beneficiary').select2({
+        //    width: '100%',
+        //    placeholder: 'CHOOSE',
+        //    containerCssClass: 'select',
+        //    allowClear: true,
+        //    ajax: {
+        //        url: "{% url 'get_all_client_beneficiary' %}",
+        //        method: "GET",
+        //        dataType: "json",  // Corrected the property name to "dataType"
+        //        data: function(params) {
+        //            return {
+        //                searchTerm: params.term
+        //            };
+        //        },
+        //        processResults: function(response) {
+        //            $('#relationship').val("").trigger('change');
+        //            $('#same_with_client').prop('checked', false);
+        //            return {
+        //                results: response
+        //            };
+        //        },
+        //        cache: true
+        //    }
+        //});
+        let delayTimer;
+
         $('.client_beneficiary').select2({
             width: '100%',
             placeholder: 'CHOOSE',
@@ -672,13 +698,20 @@
             ajax: {
                 url: "{% url 'get_all_client_beneficiary' %}",
                 method: "GET",
-                dataType: "json",  // Corrected the property name to "dataType"
-                data: function(params) {
+                dataType: "json",
+                delay: 300,  // Small built-in delay to smooth out rapid keystrokes
+                transport: function (params, success, failure) {
+                    clearTimeout(delayTimer); // Clear previous timeout to prevent duplicate requests
+                    delayTimer = setTimeout(function () {
+                        $.ajax(params).done(success).fail(failure);
+                    }, 1000); // 1-second delay before sending the request
+                },
+                data: function (params) {
                     return {
                         searchTerm: params.term
                     };
                 },
-                processResults: function(response) {
+                processResults: function (response) {
                     $('#relationship').val("").trigger('change');
                     $('#same_with_client').prop('checked', false);
                     return {
@@ -688,6 +721,7 @@
                 cache: true
             }
         });
+
         var select2options = {
             width: "100%",
             containerCssClass: 'select',
