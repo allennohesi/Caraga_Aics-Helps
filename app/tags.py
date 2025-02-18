@@ -140,6 +140,23 @@ def get_office_station_signatories(user_id):
 	
 	return data
 
+@register.simple_tag
+def get_office_station_head_and_designation(user_id):
+    """
+    Retrieves the office station signatory details (head and designation) for the given user.
+    """
+    try:
+        # Fetch the AuthuserDetails instance for the given user_id
+        data = AuthuserDetails.objects.get(user_id=user_id).OfficeStationLib
+        head = data.head
+        designation = data.designation
+    except AuthuserDetails.DoesNotExist:
+        # Return None or default values if no matching record is found
+        head = None
+        designation = None
+    
+    return {'head': head, 'designation': designation}
+
 @register.simple_tag(takes_context=True)
 def get_user_details(context):
 	request = context['request']
