@@ -320,7 +320,21 @@
                     'sortable': false,
                     'searchable': false
                 },
-            ]
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#assigned-to-me_filter input').attr('placeholder', 'Type to search...');
+        
+                let delayTimer; // Store timeout reference
+        
+                $('#assigned-to-me_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+        
+                    delayTimer = setTimeout(() => {
+                        $('#assigned-to-me').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
+                });
+            }
         });
         $('#assessment-table').DataTable({ //ASSIGNED TO OTHER SOCIALWOERKER
             'serverSide': true, 
@@ -432,7 +446,21 @@
                     'sortable': false,
                     'searchable': false
                 },
-            ]
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#assessment-table_filter input').attr('placeholder', 'Type to search...');
+        
+                let delayTimer; // Store timeout reference
+        
+                $('#assessment-table_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+        
+                    delayTimer = setTimeout(() => {
+                        $('#assessment-table').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
+                });
+            }
         });
         $(document).on('click', 'a[data-role=details]', function(){
             var id = $(this).data('id');

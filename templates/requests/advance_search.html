@@ -168,74 +168,53 @@
 {% endblock %}
 {% block script %}
 <script>
-    $('.get_user').select2({
-        width: '100%',
-        placeholder: 'CHOOSE',
-        containerCssClass: 'select',
-        allowClear: true,
-        ajax: {
-            url: "{% url 'get_all_user' %}",
-            method: "GET",
-            dataType: "json",  // Corrected the property name to "dataType"
-            data: function(params) {
-                return {
-                    searchTerm: params.term
-                };
-            },
-            processResults: function(response) {
-                return {
-                    results: response
-                };
-            },
-            cache: true
-        }
+    $('.get_user, .client_beneficiary, .transaction').each(function () {
+        let $select = $(this);
+        let delayTimer;
+    
+        $select.select2({
+            width: '100%',
+            placeholder: 'CHOOSE',
+            containerCssClass: 'select',
+            allowClear: true,
+            ajax: {
+                url: (function () {
+                    switch (true) {
+                        case $select.hasClass('get_user'):
+                            return "{% url 'get_all_user' %}";
+                        case $select.hasClass('client_beneficiary'):
+                            return "{% url 'get_all_client_beneficiary' %}";
+                        case $select.hasClass('transaction'):
+                            return "{% url 'get_transaction_advance_search' %}";
+                        default:
+                            return "#"; // Fallback URL (avoid errors)
+                    }
+                })(),
+                method: "GET",
+                dataType: "json",
+                delay: 300,  // Built-in delay before making a request
+                transport: function (params, success, failure) {
+                    clearTimeout(delayTimer); // Clear previous timeout
+                    delayTimer = setTimeout(function () {
+                        $.ajax(params).done(success).fail(failure);
+                    }, 1000); // 1-second delay
+                },
+                data: function (params) {
+                    return { searchTerm: params.term };
+                },
+                processResults: function (response, params) {
+                    if ($(params.element).hasClass('client_beneficiary')) {
+                        $('#relationship').val("").trigger('change');
+                        $('#same_with_client').prop('checked', false);
+                    }
+                    return { results: response };
+                },
+                cache: true
+            }
+        });
     });
-    $('.client_beneficiary').select2({
-        width: '100%',
-        placeholder: 'CHOOSE',
-        containerCssClass: 'select',
-        allowClear: true,
-        ajax: {
-            url: "{% url 'get_all_client_beneficiary' %}",
-            method: "GET",
-            dataType: "json",  // Corrected the property name to "dataType"
-            data: function(params) {
-                return {
-                    searchTerm: params.term
-                };
-            },
-            processResults: function(response) {
-                $('#relationship').val("").trigger('change');
-                $('#same_with_client').prop('checked', false);
-                return {
-                    results: response
-                };
-            },
-            cache: true
-        }
-    });
-    $('.transaction').select2({
-        width: '100%',
-        placeholder: 'CHOOSE',
-        containerCssClass: 'select',
-        allowClear: true,
-        ajax: {
-            url: "{% url 'get_transaction_advance_search' %}",
-            method: "GET",
-            datatype: "json",
-            data: function(params) {
-                return {
-                    searchTerm: params.term
-                }
-            },
-            processResults: function(response) {
-                return {
-                    results:response
-                };
-            },
-            cache: true
-        }
-    });
+    
+      
     $(document).ready(function () {
         function check(param, paramName) {
             $('#incoming-table').DataTable({
