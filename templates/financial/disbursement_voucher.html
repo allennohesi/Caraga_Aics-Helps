@@ -285,7 +285,21 @@
                 }
             },
             {'data': 'remarks', 'className': 'text-start', 'sortable': false },
-            ]
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#voucher-title_filter input').attr('placeholder', 'Type to search...');
+        
+                let delayTimer; // Store timeout reference
+        
+                $('#voucher-title_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+        
+                    delayTimer = setTimeout(() => {
+                        $('#voucher-title').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
+                });
+            }
         });
         $(document).on('click','a[data-role=cr_voucher]', function(){ // FOR MODAL SUMMARY
             var id = $(this).data('id');
