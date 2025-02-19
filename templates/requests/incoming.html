@@ -167,7 +167,7 @@
                   <button class="btn btn-outline-primary" type="button" id="filter-area">Filter</button>
             </div>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Funds" id="code" aria-describedby="button-addon2" autocomplete="off">
+                <input type="text" class="form-control" placeholder="Fund source" id="code" aria-describedby="button-addon2" autocomplete="off">
                 <button class="btn btn-outline-primary" type="button" id="filter-code">Filter</button>
             </div>
             <div class="input-group mb-3">
@@ -336,7 +336,7 @@
 			if($('#year').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by year cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&year=' + $('#year').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&year=' + $('#year').val()).load();
 			}
 		});
         
@@ -344,7 +344,7 @@
 			if($('#aoa').val() == "") {
 				Swal.fire("Ooops!", "Fields on filter by area of assignment cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&aoa=' + $('#aoa').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&aoa=' + $('#aoa').val()).load();
 			}
 		});
 
@@ -357,9 +357,9 @@
 		});
         $('#filter-code').on('click', function(){
 			if($('#code').val() == "") {
-				Swal.fire("Ooops!", "Fields on filter by code cannot be blank.", "warning");
+				Swal.fire("Ooops!", "Fields on filter by fund source cannot be blank.", "warning");
 			} else {
-				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&region={{user_address.OfficeStationLib.id}}&code=' + $('#code').val()).load();
+				$('#incoming-table').DataTable().ajax.url('/api/requests/transaction/incoming/list/?format=datatables&code=' + $('#code').val()).load();
 			}
 		});
         $(document).on('click', 'a[data-role=submit_case_study]', function(){
