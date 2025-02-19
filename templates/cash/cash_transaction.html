@@ -206,7 +206,21 @@
                 {'data': 'beneficiary', 'name': 'transaction.bene.client_bene_fullname', 'className': 'text-start', 'sortable': false },
                 {'data': 'verified_time_start', 'className': 'text-center', },
                 {'data': 'swo', 'name': 'transaction.swo.get_fullname', 'className': 'text-center', 'searchable':false, 'sortable': false},
-            ]
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#cash_transaction_filter input').attr('placeholder', 'Type to search...');
+        
+                let delayTimer; // Store timeout reference
+        
+                $('#cash_transaction_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+        
+                    delayTimer = setTimeout(() => {
+                        $('#cash_transaction').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
+                });
+            }
         });
         $(document).on('click', 'a[data-role=details]', function(){
             var id = $(this).data('id');

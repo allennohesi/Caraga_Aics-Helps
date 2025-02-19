@@ -253,15 +253,15 @@
             'initComplete': function(settings, json) {
                 // Set placeholder for the search input
                 $('#incoming-table_filter input').attr('placeholder', 'Type to search...');
-
+        
                 let delayTimer; // Store timeout reference
-                
+        
                 $('#incoming-table_filter input').unbind().bind('keyup', function() {
                     clearTimeout(delayTimer); // Clear previous timeout
-
+        
                     delayTimer = setTimeout(() => {
-                        table.search(this.value).draw();
-                    }, 1000); // Adjust delay time (10000ms = 10000ms)
+                        $('#incoming-table').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
                 });
             }
         });
