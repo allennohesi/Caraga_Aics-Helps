@@ -171,7 +171,21 @@
                     'searchable': false,
                     'sortable': false
                 },
-            ]
+            ],
+            'initComplete': function(settings, json) {
+                // Set placeholder for the search input
+                $('#client-beneficiary-list_filter input').attr('placeholder', 'Type to search...');
+        
+                let delayTimer; // Store timeout reference
+        
+                $('#client-beneficiary-list_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+        
+                    delayTimer = setTimeout(() => {
+                        $('#client-beneficiary-list').DataTable().search(this.value).draw();
+                    }, 1000); // 1-second delay before searching
+                });
+            }
         });
         $(document).on('click','a[data-role=view_transactions]', function(){ // FOR MODAL PASS TO DIFFERENT MODAL
             var id = $(this).data('id');
