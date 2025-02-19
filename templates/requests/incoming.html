@@ -252,13 +252,16 @@
             ],
             'initComplete': function(settings, json) {
                 // Set placeholder for the search input
-                $('#incoming-table_filter input').attr('placeholder', 'Press Enter to search');
+                $('#incoming-table_filter input').attr('placeholder', 'Type to search...');
+
+                let delayTimer; // Store timeout reference
                 
-                // Bind the Enter key to trigger search on the table
-                $('#incoming-table_filter input').unbind().bind('keyup', function(e) {
-                    if (e.key === 'Enter') {  // Check if the Enter key was pressed
+                $('#incoming-table_filter input').unbind().bind('keyup', function() {
+                    clearTimeout(delayTimer); // Clear previous timeout
+
+                    delayTimer = setTimeout(() => {
                         table.search(this.value).draw();
-                    }
+                    }, 1000); // Adjust delay time (10000ms = 10000ms)
                 });
             }
         });
