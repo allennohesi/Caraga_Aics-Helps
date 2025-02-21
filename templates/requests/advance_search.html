@@ -177,6 +177,7 @@
             placeholder: 'CHOOSE',
             containerCssClass: 'select',
             allowClear: true,
+            minimumInputLength: 3,  // Prevents API requests if less than 3 characters
             ajax: {
                 url: (function () {
                     switch (true) {
@@ -194,16 +195,27 @@
                 dataType: "json",
                 delay: 300,  // Built-in delay before making a request
                 transport: function (params, success, failure) {
-                    clearTimeout(delayTimer); // Clear previous timeout
+                    let searchTerm = params.data.searchTerm || "";
+    
+                    // Prevent sending requests if input is empty or less than 3 characters
+                    if (searchTerm.trim().length < 3) {
+                        success({ results: [] }); // Return empty results without making a request
+                        return;
+                    }
+    
+                    // Clear previous timeout to avoid duplicate requests
+                    clearTimeout(delayTimer);
                     delayTimer = setTimeout(function () {
                         $.ajax(params).done(success).fail(failure);
-                    }, 1000); // 1-second delay
+                    }, 800); // Adjust delay for a more responsive search
                 },
                 data: function (params) {
-                    return { searchTerm: params.term };
+                    return {
+                        searchTerm: params.term ? params.term.trim() : ""
+                    };
                 },
                 processResults: function (response, params) {
-                    if ($(params.element).hasClass('client_beneficiary')) {
+                    if ($select.hasClass('client_beneficiary')) {
                         $('#relationship').val("").trigger('change');
                         $('#same_with_client').prop('checked', false);
                     }
@@ -213,6 +225,7 @@
             }
         });
     });
+    
     
       
     $(document).ready(function () {
