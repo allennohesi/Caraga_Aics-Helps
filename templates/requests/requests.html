@@ -695,23 +695,34 @@
             placeholder: 'CHOOSE',
             containerCssClass: 'select',
             allowClear: true,
+            minimumInputLength: 3,  // Prevents API requests if less than 3 characters
             ajax: {
                 url: "{% url 'get_all_client_beneficiary' %}",
                 method: "GET",
                 dataType: "json",
-                delay: 300,  // Small built-in delay to smooth out rapid keystrokes
+                delay: 300,  // Small built-in delay to handle rapid typing
                 transport: function (params, success, failure) {
-                    clearTimeout(delayTimer); // Clear previous timeout to prevent duplicate requests
+                    let searchTerm = params.data.searchTerm || "";
+        
+                    // Prevent sending requests if input is empty or less than 3 characters
+                    if (searchTerm.trim().length < 3) {
+                        success({ results: [] }); // Return empty results without making a request
+                        return;
+                    }
+        
+                    // Clear previous timeout to avoid duplicate requests
+                    clearTimeout(delayTimer);
                     delayTimer = setTimeout(function () {
                         $.ajax(params).done(success).fail(failure);
-                    }, 1000); // 1-second delay before sending the request
+                    }, 800); // Adjust delay for a more responsive search
                 },
                 data: function (params) {
                     return {
-                        searchTerm: params.term
+                        searchTerm: params.term ? params.term.trim() : ""
                     };
                 },
                 processResults: function (response) {
+                    // Reset additional fields when results are updated
                     $('#relationship').val("").trigger('change');
                     $('#same_with_client').prop('checked', false);
                     return {
@@ -721,6 +732,8 @@
                 cache: true
             }
         });
+        
+        
 
         var select2options = {
             width: "100%",
@@ -769,6 +782,16 @@
                         
                     }
                });
+        });
+        $('#same_with_client').prop('disabled', true);
+
+        // Watch for changes in client_beneficiary
+        $('#client_beneficiary').on('change', function () {
+            if ($(this).val()) {
+                $('#same_with_client').prop('disabled', false);  // Enable if value exists
+            } else {
+                $('#same_with_client').prop('disabled', true).prop('checked', false).trigger('change'); // Disable and reset
+            }
         });
         $('#same_with_client').on('change', function(){
             if($("#same_with_client").is(':checked')){
