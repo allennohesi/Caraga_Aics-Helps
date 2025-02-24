@@ -132,12 +132,6 @@ class TransactionIncoming(generics.ListAPIView):
 			queryset = TransactionStatus1.objects.filter(
 				transaction__fund_source__name=code
 			).order_by('-id')
-			# queryset = TransactionStatus1.objects.filter(
-			# 	transaction__fund_source__name=code,
-			# 	verified_time_start__gte=seven_months_ago
-			# ).order_by('-id')
-
-		# Filter by AOA
 		elif aoa:
 			queryset = TransactionStatus1.objects.filter(
 				transaction_id__office_station_in_id=aoa
@@ -153,14 +147,6 @@ class TransactionIncoming(generics.ListAPIView):
 				"6": {},  # ALL TRANSACTIONS
 				"7": {"verified_time_start__date": today},
 			}
-			# dropdown_filters = {
-			# 	"0": {"status__in": [1, 2, 3, 4], "verified_time_start__gte": seven_months_ago},
-			# 	"1": {"status__in": [3, 6], "verified_time_start__gte": seven_months_ago},  # COMPLETED
-			# 	"4": {"case_study_status": 1, "verified_time_start__gte": seven_months_ago},  # SUBMITTED CASE STUDY
-			# 	"5": {"transaction__dv_number__isnull": False, "verified_time_start__gte": seven_months_ago},  # WITH DV
-			# 	"6": {"verified_time_start__gte": seven_months_ago},  # ALL TRANSACTIONS
-			# 	"7": {"verified_time_start__date": today},
-			# }
 			filter_params = dropdown_filters.get(dropdown)
 			if filter_params:
 				queryset = TransactionStatus1.objects.filter(
