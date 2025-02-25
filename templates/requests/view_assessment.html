@@ -808,12 +808,12 @@
                             <option value="AKAP" {% if transaction.type_of_service == "AKAP" %}selected{% endif %}>AKAP</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    {% comment %} <div class="col-md-3">
                         <div class="form-group">
                             <label>Date of assessment <span class="txt-danger">*</span></label>
                             <input type="datetime-local" class="form-control f-w-900 upper" name="date_assessment" value="{{ transaction.swo_date_time_end|date:'Y-m-d\TH:i' }}" required min="1900-05-11T00:00" max="{{ today|date:'Y-m-d' }}T23:59" onkeydown="return false">
                         </div>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
                 {% if requirements %}
                 <div class="col-md-4">

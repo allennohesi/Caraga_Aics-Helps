@@ -33,6 +33,7 @@ import base64
 import uuid
 
 today = date.today()
+now = datetime.now()
 
 def generate_serial_string(oldstring, prefix=None):
 	current_year = datetime.now().year
@@ -935,8 +936,8 @@ def save_assessment(request, pk):
 		bene_sub_category=""
 		if request.method == "POST":
 			with transaction.atomic():
-				date_assessment_str = request.POST.get('date_assessment')
-				date_assessment = datetime.strptime(date_assessment_str, '%Y-%m-%dT%H:%M')
+				# date_assessment_str = request.POST.get('date_assessment')
+				# date_assessment = datetime.strptime(date_assessment_str, '%Y-%m-%dT%H:%M')
 				check_client_bene = request.POST.get('checking_if_same')
 				if check_client_bene == "same_with_client":
 					#CHECK IF THE CLIENT AND BENEFICIARY ARE THE SAME IF YES, GET THE CATEGORY AND SUB CATEGORY OF THE CLIENT ARE THE SAME ALSO IF NOT THEY WILL BE DIFFERENT
@@ -980,27 +981,26 @@ def save_assessment(request, pk):
 				)
 				Check_exists = TransactionStatus1.objects.filter(transaction_id=pk).first() #THIS QUERY WILL ONLY BE EXECUTED IF THERE'S NOT TIME OF TRANSACTIONSTATUS1
 				if Check_exists.swo_time_end == None: # TRANSACTION STATUS IS NOT YET ASSESSED, SAVE THE DETAILS OF ASSESSMENT
-					if Check_exists.upload_time_end: # IF TRANSACTION ALREADY HAD AN UPLOADED TIME AND DATE EXECUTE THIS QUERY
-						Check_exists.is_swo=1
-						Check_exists.swo_time_end=request.POST.get('date_assessment')
+					if Check_exists.upload_time_end: # IF TRANSACTION ALREADY HAVE AN UPLOADED TIME AND DATE EXECUTE THIS QUERY
+						Check_exists.swo_time_end=now
 						Check_exists.status=6
-						Check_exists.end_assessment=date_assessment
+						Check_exists.end_assessment=today
 						Check_exists.save()
-						
+
 						check.update( #
 							status=6,
-							swo_date_time_end=request.POST.get('date_assessment'),
+							swo_date_time_end=now,
 						)
 					else:
 						Check_exists.is_swo=1
-						Check_exists.swo_time_end=request.POST.get('date_assessment')
+						Check_exists.swo_time_end=now
 						Check_exists.status=3
-						Check_exists.end_assessment=date_assessment
+						Check_exists.end_assessment=today
 						Check_exists.save()
 
 						check.update( #
 							status=3,
-							swo_date_time_end=request.POST.get('date_assessment'),
+							swo_date_time_end=now,
 						)
 				return JsonResponse({'data': 'success',
 									'msg': 'You have successfully submitted the assessment for tracking number {}.'.format(check.first().tracking_number)})
