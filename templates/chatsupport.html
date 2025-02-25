@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chat-container { width: 80%; /* Increased width */
+                         max-width: 1200px; /* Maximum width for very large screens */
+                         margin: 20px auto; /* Centered with more margin */
+                         border: 2px solid #bbb; /* Thicker border */
+                         padding: 20px; /* Increased padding */
+                         font-size: 18px; /* Larger font size */
+        }
+        #chat-box { height: 1000px; /* Increased height */
+                    overflow-y: scroll;
+                    border-bottom: 2px solid #bbb; /* Thicker border */
+                    padding: 15px; /* Increased padding */
+                    font-size: 18px; /* Larger font size */
+        }
+        .message { margin: 10px 0; /* Increased margin */
+                  padding: 15px; /* Increased padding */
+                  border-radius: 8px; /* More rounded corners */
+                  font-size: 18px; /* Larger font size */
+        }
+        .user { background-color: #e0ffe0; /* Lighter green */
+                text-align: right;
+        }
+        .bot { background-color: #f0f0f0; /* Lighter grey */
+              text-align: left;
+        }
+        #user-input { width: 90%; /* Increased width */
+                      padding: 10px; /* Increased padding */
+                      font-size: 18px; /* Larger font size */
+        }
+        #send-btn { padding: 10px 20px; /* Increased padding */
+                    font-size: 18px; /* Larger font size */
+        }
+        h2 { font-size: 28px; /* Larger heading */
+             text-align: center;
+             margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <h2>AICS-Helps AI</h2>
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+
+        function sendMessage() {
+            let userInput = document.getElementById("user-input").value;
+            if (userInput.trim() === "") return;
+
+            let chatBox = document.getElementById("chat-box");
+
+            // Append user message
+            let userMessage = document.createElement("div");
+            userMessage.className = "message user";
+            userMessage.textContent = userInput;
+            chatBox.appendChild(userMessage);
+
+            // Clear input field
+            document.getElementById("user-input").value = "";
+
+            // Send message to backend (Gemini)
+            fetch("{% url 'gemini_chat' %}", {  // Correct URL for Gemini
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: "message=" + encodeURIComponent(userInput)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let botMessage = document.createElement("div");
+                botMessage.className = "message bot";
+                botMessage.innerHTML = data.response.replace(/\n/g, '<br>'); // Replace newlines with <br> tags
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function getCSRFToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split("; ");
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].split("=");
+                if (cookie[0] === "csrftoken") {
+                    cookieValue = decodeURIComponent(cookie[1]);
+                    break;
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+</body>
+</html>
