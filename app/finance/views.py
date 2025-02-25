@@ -824,7 +824,8 @@ def view_dv_number(request,pk):
 		except Exception as e:
 			handle_error(e, "EXCEPTION ERROR IN REQUEST view_dv_number FO", request.user.id)
 			return JsonResponse({'error': True, 'msg': 'There was a problem submitting the request, please refresh'})	
-	validation = finance_voucherData.objects.filter(voucher_id=pk).exists()
+	validation = finance_voucherData.objects.filter(voucher_id=pk).exists() or finance_outsideFo.objects.filter(voucher_id=finance_data.id).exists()
+
 	context = {
 		'finance_datas':finance_data,
 		'voucher_data':voucher_data,
