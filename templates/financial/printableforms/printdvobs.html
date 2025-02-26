@@ -405,7 +405,12 @@
                     </tr>
                     <tr>
                       <td colspan="3" style="font-size: 15px; height:80px; width:300px;" contenteditable="true">
-                        <center><b>Medical Assistance Incurred by CIU clients for the period covered {{covered_date_start}} - {{covered_date_end}}</b></center><br>
+                        <center><b>Medical Assistance Incurred by CIU clients for the period covered                           
+                        {% if covered_date_start == covered_date_end %}  
+                          {{ covered_date_start }}  
+                        {% else %}  
+                          {{ covered_date_start }} - {{ covered_date_end }}  
+                        {% endif %}</b></center><br>
                     </td>
                     <td rowspan="2">
                     </td>
@@ -643,7 +648,13 @@
                     <tr >
                     <td style="border-bottom: 0;">00016-00003-01-01</td>
                     <td style="font-size: 15px;border-bottom: 0; height:150px;" contenteditable="true" colspan="5">
-                        <center><b>Medical Assistance Incurred by CIU clients for the period covered {{covered_date_start}} - {{covered_date_end}}</b></center>
+                        <center><b>Medical Assistance Incurred by CIU clients for the period covered 
+                          {% if covered_date_start == covered_date_end %}  
+                              {{ covered_date_start }}  
+                          {% else %}  
+                              {{ covered_date_start }} - {{ covered_date_end }}  
+                          {% endif %}
+                        </b></center>
                         <br><br><br><center>{{trans.transaction.get_project_src}}</center><br></td>
                     <td style="border-bottom: 0;">32010410000</td>
                     <td style="border-bottom: 0;">5021499000</td>

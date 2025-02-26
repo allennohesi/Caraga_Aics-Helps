@@ -1,19 +1,18 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, redirect
-from .models import ChatMessage
-import json
-import os
+from django.conf import settings
 import google.generativeai as genai
-from django.conf import settings  # Import settings
-from app.requests.models import ClientBeneficiaryFamilyComposition, ClientBeneficiary, Transaction, uploadfile, TransactionStatus1, SocialWorker_Status, \
-	FileType,Category,SubCategory,ServiceProvider,TypeOfAssistance,SubModeofAssistance,LibAssistanceType,PriorityLine, ErrorLogData, ClientBeneficiaryUpdateHistory
-import re # Import the re module
+from app.requests.models import ClientBeneficiary
+import re
+from django.db.models import Q
+
+# Debug: Print the API key
+print(f"API Key: {settings.GOOGLE_API_KEY}")
 
 genai.configure(api_key=settings.GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
 
+model = genai.GenerativeModel('gemini-1.5-pro-latest')
 def chatPage(request):
     chat_history = request.session.get('chat_history', [])
     return render(request, "chatsupport.html", {'chat_history': chat_history})
@@ -28,19 +27,36 @@ def gemini_chat(request):
 
         try:
             user_message_lower = user_message.lower()
-            if "client details" in user_message_lower or "bene details" in user_message_lower or "beneficiary details" in user_message_lower:
-                name_to_search = extract_name_from_full_message_preserve_initials(user_message_lower)
+            print(user_message_lower)
+            if "give me the details of" in user_message_lower:
+                parts = user_message_lower.split("give me the details of", 1)  # Split lowercase message
+                if len(parts) > 1 and parts[1].strip():  # Check for name after phrase
+                    name_to_search = parts[1].strip()
+                    print(name_to_search)
 
-                print(name_to_search) #debugging
+                    beneficiaries = find_related_beneficiaries(name_to_search)
+                    print(beneficiaries)
+
+                    if beneficiaries:
+                        bot_reply = format_beneficiary_details(beneficiaries)
+                    else:
+                        bot_reply = f"Client with name '{name_to_search}' not found."
+                else:
+                    bot_reply = "Please use the format: give me the details of [name]"
+
+            elif "client details" in user_message_lower or "bene details" in user_message_lower or "beneficiary details" in user_message_lower:
+                name_to_search = extract_name_from_full_message_preserve_initials(user_message_lower)
+                print(name_to_search)
                 if name_to_search:
-                    beneficiaries = find_related_beneficiaries(name_to_search) #use new function
-                    print(beneficiaries) #debugging
+                    beneficiaries = find_related_beneficiaries(name_to_search)
+                    print(beneficiaries)
                     if beneficiaries:
                         bot_reply = format_beneficiary_details(beneficiaries)
                     else:
                         bot_reply = f"Client with related name '{name_to_search}' not found."
                 else:
                     bot_reply = "Please provide a client name after 'client details'."
+
             elif "unique id" in user_message_lower:
                 unique_id = extract_unique_id(user_message)
                 if unique_id:
@@ -51,11 +67,11 @@ def gemini_chat(request):
                         bot_reply = "Client with that ID not found."
                 else:
                     bot_reply = "Please provide a Unique ID."
+
             else:
                 response = model.generate_content(user_message)
                 bot_reply = response.text
 
-            # Store chat history in session
             if 'chat_history' not in request.session:
                 request.session['chat_history'] = []
 
@@ -63,7 +79,7 @@ def gemini_chat(request):
                 'user': user_message,
                 'bot': bot_reply,
             })
-            request.session.modified = True #Important to save the session changes.
+            request.session.modified = True
 
         except Exception as e:
             bot_reply = f"Error: {str(e)}"
@@ -97,7 +113,7 @@ def format_beneficiary_details(beneficiaries):
         details += f"Sex: {beneficiary.sex.name}\n"
         details += f"Contact Number: {beneficiary.contact_number}\n"
         details += f"Civil Status: {beneficiary.civil_status.name}\n"
-        details += f"Barangay: {beneficiary.barangay.brgy_name}\n"
+        details += f"address: {beneficiary.region}, {beneficiary.province}, {beneficiary.city}, {beneficiary.barangay_value}\n"
         details += f"Date Registered: {beneficiary.date_of_registration}\n"
         details += f"Unique ID: {beneficiary.unique_id_number}\n\n"
 
@@ -105,29 +121,10 @@ def format_beneficiary_details(beneficiaries):
 
 def find_related_beneficiaries(name_to_search):
     search_parts = name_to_search.lower().split()
-    all_beneficiaries = ClientBeneficiary.objects.all()
-    related_beneficiaries = []
+    query = Q()
 
-    for beneficiary in all_beneficiaries:
-        full_name_lower = beneficiary.client_bene_fullname.lower()
-        all_parts_found = True
-        for part in search_parts:
-            if part not in full_name_lower:
-                all_parts_found = False
-                break
-        if all_parts_found:
-            related_beneficiaries.append(beneficiary)
+    for part in search_parts:
+        query &= Q(client_bene_fullname__icontains=part) # icontains for case-insensitive search
 
+    related_beneficiaries = ClientBeneficiary.objects.filter(query)
     return related_beneficiaries
-# def chatPage(request, *args, **kwargs):
-#     if not request.user.is_authenticated:
-#         return redirect("login-user")
-
-#     room_name = kwargs.get('room_name', 'default')  # Get room name or set default chat room
-#     chat_messages = ChatMessage.objects.filter(room_name=room_name).order_by('timestamp')[:50]  # Fetch latest 50 messages
-
-#     context = {
-#         'room_name': room_name,
-#         'chat_messages': chat_messages,  # Add chat messages to context
-#     }
-#     return render(request, "chatpage.html", context)
